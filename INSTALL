@@ -1,0 +1,14 @@
+Install the package using
+
+  $ perl Build.PL
+  $ ./Build
+  $ ./Build test
+  $ ./Build install
+
+Alternatively you may try
+
+  $ perl Makefile.PL
+  $ make
+  $ make test
+  $ make install
+  
