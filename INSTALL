@@ -1,4 +1,9 @@
-Install the package using
+Install the package automatically using
+
+$ cpanm Photonic
+
+Otherwise you can download the package and unpack it to any directory,
+change to it and give the commands:
 
   $ perl Build.PL
   $ ./Build
@@ -11,4 +16,9 @@ Alternatively you may try
   $ make
   $ make test
   $ make install
-  
+
+
+Note: You may need to install some prerequisites by hand. For example,
+PDL::FFTW3 requires that the library libfftw3 be installed (packages
+fftw3 and fftw3-dev under Debian) and Alien::FFTW3 or pkg-config.
+

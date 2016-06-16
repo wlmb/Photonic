@@ -4,7 +4,7 @@ metamaterials.
 
 Read the file INSTALL for installation instructions.
 
-Read Photonic.pod for usage instructions.
+Read lib/Photonic.pm for usage instructions.
 
 
 This software is copyright (c) 2016 by W. Luis Mochan.

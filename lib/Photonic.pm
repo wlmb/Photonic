@@ -22,12 +22,13 @@ $Photonic::VERSION = '0.005';
   use Photonic::NonRetarded::EpsTensor;
 
   my $g=Photonic::Geometry->new(B=>$b);
-  my $eps=Photonic::Nonretarded::EpsTensor->new(geometry=>$g);
+  my $eps=Photonic::Nonretarded::EpsTensor->new(geometry=>$g, nh=>$N);
   my $epsValue=$eps->evaluate($epsA, $epsB);
 
 Calculates the dielectric tensor of a metamaterial made up of two
 materials with dielectric functions $epsA and $epsB with a geometry $g
-corresponding to a characteristic funcion $b.
+corresponding to a characteristic funcion $b and using $N Haydock
+coefficients.  
 
 =head1 DESCRIPTION
 
