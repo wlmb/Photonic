@@ -1,5 +1,5 @@
 package Photonic::Types;
-$Photonic::Types::VERSION = '0.005';
+$Photonic::Types::VERSION = '0.006';
 use Moose::Util::TypeConstraints;
 #use PDL::Lite;
 #use PDL::NiceSlice;
@@ -33,7 +33,7 @@ Photonic::Types
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 

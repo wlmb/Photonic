@@ -1,4 +1,4 @@
-pp_setversion('0.005');
+pp_setversion('0.006');
 
 pp_addpm({At=>Top},<<'EOD');
 

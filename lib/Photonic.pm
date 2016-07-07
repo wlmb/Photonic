@@ -4,17 +4,19 @@ use 5.006;
 use strict;
 use warnings;
 
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic - A perl package for calculations on photonics and metamaterials.
 
 =head1 VERSION
 
-Version 0.005
+Version 0.006
 
 =cut
     
-$Photonic::VERSION = '0.005';
+$Photonic::VERSION = '0.006';
 
 =head1 SYNOPSIS
 
@@ -112,6 +114,25 @@ Flag that is factored as it is common in different packages.
 
 =cut
     
+=head1 AUTHORS
+
+=over 4
+
+=item * W. Luis Mochán, Instituto de Ciencias Físicas, UNAM, México
+C<mochan@fis.unam.mx> 
+
+=item * Guillermo Ortiz, Departamento de Física - FCENA, Universidad
+Nacional del Nordeste, Argentina C<gortiz@exa.unne.edu.ar>
+
+=item * Bernardo S. Mendoza, Department of Photonics, Centro de
+Investigaciones en Óptica, México C<bms@cio.mx>  
+
+=item * José Samuel Pérez-Huerta, Unidad Académica de Física,
+Universidad Autónoma de Zacatecas, México  C<jsperez@fisica.uaz.edu.mx>
+
+=back
+
+
 =head1 ACKNOWLEDGMENTS
 
 This work was partially supported by DGAPA-UNAM under grants IN108413

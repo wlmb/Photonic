@@ -4,7 +4,7 @@ Photonic::NonRetarded::EpsL
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -87,7 +87,7 @@ Criteria of convergence. 0 means don't check.
 =cut
 
 package Photonic::NonRetarded::EpsL;
-$Photonic::NonRetarded::EpsL::VERSION = '0.005';
+$Photonic::NonRetarded::EpsL::VERSION = '0.006';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

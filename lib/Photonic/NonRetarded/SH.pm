@@ -4,7 +4,7 @@ Photonic::NonRetarded::SH
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -47,7 +47,7 @@ and B materials at the fundamental and the second harmonic frequency
 =cut
 
 package Photonic::NonRetarded::SH;
-$Photonic::NonRetarded::SH::VERSION = '0.005';
+$Photonic::NonRetarded::SH::VERSION = '0.006';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
