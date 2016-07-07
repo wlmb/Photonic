@@ -1,6 +1,6 @@
 # Build.PL
 # Use to build the package Photonic
-our $VERSION = '0.005';
+our $VERSION = '0.006';
     
 use strict;
 use warnings;
