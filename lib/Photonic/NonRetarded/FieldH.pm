@@ -26,7 +26,9 @@ the components.
 
 Initializes the structure.
 
-$nr Photonic::NonRetarded::AllH is a Haydock calculator for the structure
+$nr Photonic::NonRetarded::AllH is a Haydock calculator for the
+structure, *initialized* with the flag keepStates=>1
+(Photonic::Types::NonRetarded::AllHSave, as defined in Photonic::Types).
 
 $nh is the maximum number of Haydock coefficients to use.
 
