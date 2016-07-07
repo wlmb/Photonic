@@ -1,11 +1,10 @@
 This archive contains the distribution Photonic,
-version 0.004 to run electromagnetic calculations for photonics and
+version 0.006 to run electromagnetic calculations for photonics and
 metamaterials.
 
 Read the file INSTALL for installation instructions.
 
-Read lib/Photonic.pm for usage instructions.
-
+Read lib/Photonic.pm for usage instructions and other information.
 
 This software is copyright (c) 2016 by W. Luis Mochan.
 
