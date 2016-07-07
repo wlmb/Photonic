@@ -18,8 +18,8 @@ subtype 'Photonic::Types::GeometryG0' =>
   where { $_->has_Direction0 },
   message { "You should define a direction for G=0 reciprocal vector" };
 
-subtype 'Photonic::Types::NRAllHSave' =>
-  as 'Photonic::NRAllH',
+subtype 'Photonic::Types::NonRetarded::AllHSave' =>
+  as 'Photonic::NonRetarded::AllH',
   where { $_->keepStates == 1 },
   message { "Can't calculate fields if you don't keepStates" };
 
@@ -63,9 +63,9 @@ Array of OddInts
 
 Photonic::Geometry with a direction for G=0 reciprocal vector
 
-=item * Photonic::Types::NRAllHSave
+=item * Photonic::Types::NonRetarded::AllHSave
 
-Photonic::NRALLH object where the keepStates flag has been
+Photonic::NonRetarded:AllH object where the keepStates flag has been
 turned on.
 
 =back
