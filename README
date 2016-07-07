@@ -1,10 +1,12 @@
+#Photonic#
+
 This archive contains the distribution Photonic,
 version 0.006 to run electromagnetic calculations for photonics and
 metamaterials.
 
-Read the file INSTALL for installation instructions.
+Read the file *INSTALL* for installation instructions.
 
-Read lib/Photonic.pm for usage instructions and other information.
+Read *lib/Photonic.pm* for usage instructions and other information.
 
 This software is copyright (c) 2016 by W. Luis Mochan.
 
@@ -14,4 +16,10 @@ the same terms as the Perl 5 programming language system itself.
 This work was partially supported by DGAPA-UNAM under grants IN108413
 and IN113016.
 
+##Reference:##
+
+ W. Luis Mochán, Guillemo P. Ortiz y Bernardo S. Mendoza, 
+*Efficient homogenization procedure for the calculation of optical properties of 3D nanostructured composites*,
+Optics Express **18** (21) 22119-22127 (2010).
+doi:10.1364/OE.18.022119
 
