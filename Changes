@@ -11,3 +11,6 @@
   4. [2016-06-16 Thu] Correct error in SYNOPSIS of Photonic.pm
   5. [2016-07-07 Thu] Add authors.
   6. Correct mistake in Types and in FieldH.
+* 0.007
+  1. Put authors in Build.PL
+

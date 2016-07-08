@@ -10,7 +10,12 @@ use Module::Build::Pluggable ('Fortran','PDL');
 my $builder = Module::Build::Pluggable->new(
     module_name=> 'Photonic',
     dist_name  => 'Photonic',
-    dist_author=> 'W. Luis Mochan',
+    dist_author=> [
+	'W. Luis Mochan <mochan@fis.unam.mx>',
+	'Guillermo Ortiz <gortiz@exa.unne.edu.ar>',
+	'Bernardo S. Mendoza <bms@cio.mx>',
+	'Jose Samuel Perez-Huerta <jsperez@fisica.uaz.edu.mx>'
+	],
     dist_version_from => 'lib/Photonic.pm',
     license    => 'perl',
     release_status => 'stable', #stable, testing or unstable
