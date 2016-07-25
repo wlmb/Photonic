@@ -63,6 +63,12 @@ $Photonic::Geometry::FromImage2D::VERSION = '0.006';
 use namespace::autoclean;
 use Moose;
 extends 'Photonic::Geometry';
+
+BEGIN {
+# Put inoffensive path. Or else, PDL::IO::Pic fails in taint mode. 
+$ENV{'PATH'} = '/bin:/usr/bin';
+}
+
 use PDL::Lite;
 use PDL::IO::Pic qw();
 use Carp;
@@ -71,20 +77,17 @@ has 'path' => ( is => 'ro', required => 1,
 	       documentation => 'File name of 2D monochrome image' );
 has '+B' => (is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_B' );
 
-
 sub _build_B {
     my $self=shift;
     my $path=$self->path;
-    ( $path ) = ($path =~ m/^([A-Z0-9_.-]+)$/ig);
+    ( $path ) = ($path =~ m|^([A-Z0-9_.-\\/]+)$|ig);
+    print $ENV{PATH};
     ($ENV{PATH})=($ENV{PATH}=~m|^([A-Z0-9_.-\\/]+)$|ig);
+print "\n".$ENV{PATH}."\n";
     croak 
-	"Only letters, numbers, underscores, dots and hyphens " . 
+	"Only letters, numbers, underscores, dots, slashes and hyphens " . 
 	"allowed in file names"
 	unless $path;
-    croak 
-	"Only letters, numbers, underscores, dots, hyphens " .
-	"and slashes allowed in the \$PATH"
-    unless $ENV{PATH};
     my $B=PDL->rpic($path);
     croak "Please convert image $self->path to 2D monochrome first" 
 	if $B->ndims != 2 || (($B|!$B)!=1)->any;

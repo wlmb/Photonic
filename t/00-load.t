@@ -21,10 +21,6 @@ BEGIN {
     
 
 BEGIN { 
-    # Untaint without checking the EPATH, so that
-    # Photonic::Geometry::FromImage2D  may be loaded, as it loads
-    # PDL::IO::Pic which fails in taint mode.
-    ($ENV{PATH}) = ($ENV{PATH} =~ /^(.*)$/g);
     use_ok( 'Photonic::Geometry::FromImage2D' ) || print "Bail out!\n";
 }
 
