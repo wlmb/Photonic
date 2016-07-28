@@ -9,7 +9,7 @@ version 0.006
 =head1 SYNOPSIS
 
    use Photonic::NonRetarded::EpsL;
-   my $eps=Photonic::NonRetarded::EpsL(nr=>$nr);
+   my $eps=Photonic::NonRetarded::EpsL(nr=>$nr, nh=>$nh);
    my $epsilonLongitudinal=$eps->evaluate($epsA, $epsB);
 
 =head1 DESCRIPTION
@@ -26,11 +26,11 @@ functions of the components.
 
 Initializes the structure.
 
-$nr is a Photonic::NonRetarded::AllH structure.
+$nr is a Photonic::NonRetarded::AllH structure (required).
 
-$nh is the maximum number of Haydock coefficients to use.
+$nh is the maximum number of Haydock coefficients to use (required).
 
-$small is the criteria of convergence
+$small is the criteria of convergence (defaults to 1e-7)
 
 =item * evaluate($epsA, $epsB)
 
