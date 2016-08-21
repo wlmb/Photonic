@@ -54,10 +54,10 @@ field.
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero.
 
-=item * B ndims dims
+=item * B ndims dims epsilon
 
 Accesors handled by metric (see Photonic::Retarded::Metric, inherited
-=from Photonic::Geometry)
+from Photonic::Geometry)
 
 =item * previousState currentState nextState 
 
@@ -92,10 +92,16 @@ Number of completed iterations
 
 =item * iterate
 
-Performs a single Haydock iteration and updates current_a, next_state,
-next_b2, next_b, shifting the current values where necessary. Returns
+Performs a single Haydock iteration and updates current_a, next_b,
+next_b2, next_c, next_g, shifting the current values where necessary. Returns 
 0 when unable to continue iterating. 
  
+=begin Pod::Coverage
+
+=head2 BUILD
+
+=end Pod::Coverage
+
 =back
 
 =cut
@@ -113,7 +119,7 @@ use Moose;
 #use Photonic::Types;
 
 has 'metric'=>(is=>'ro', isa => 'Photonic::Retarded::Metric',
-    handles=>[qw(B ndims dims)],required=>1
+    handles=>[qw(B ndims dims epsilon)],required=>1
 );
 
 has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
@@ -141,15 +147,16 @@ has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef, default=>0);
 
 has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
 
-has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef,
-                 default=>\&_firstb); 
+has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef); 
 
 has 'next_c' => (is=>'ro', writer=>'_next_c', init_arg=>undef, default=>0);
 
+has 'next_bc' => (is=>'ro', writer=>'_next_bc', init_arg=>undef, default=>0);
+
 has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef);
 
-has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef,
-     default=>0, default => \&_firstg);
+has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef);
+
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
 
@@ -160,9 +167,11 @@ sub iterate { #single Haydock iteration in N=1,2,3 dimensions
     return 0 unless defined $self->nextState;
     $self->_iterate_indeed; 
 }
+
 sub _iterate_indeed {
     my $self=shift;
     #Shift and fetch results of previous calculations
+    #Notation: nm1 is n-1, np1 is n+1
     $self->_previousState(my $psi_nm1=$self->currentState);
     $self->_currentState(my $psi_n #state in reciprocal space 
 			 =$self->nextState);
@@ -180,36 +189,37 @@ sub _iterate_indeed {
     my $gpsi_nr=ifftn($gpsi->real->mv(1,-1), $self->ndims);
     #$gpsi_nr is RorI nx ny nz  xyz, B is nx ny nz
     # Multiply by characteristic function
-    my $psi_nM1r=Cscale($gpsir, $self->B);
-    #psi_nM1r is RorI nx ny nz  xyz
+    my $psi_np1r=Cscale($gpsir, $self->B);
+    #psi_np1r is RorI nx ny nz  xyz
     #the result is RorI, nx, ny,... cartesian
     #Transform to reciprocal space, move cartesian back and make complex, 
-    my $psi_nM1=fftn($nextPsir, $self->ndims)->mv(-1,1)->complex;
-    my $gPsi_nM1=($gGG*gPsi_nM1(:,:,*))->sumover;
+    my $psi_np1=fftn($nextPsir, $self->ndims)->mv(-1,1)->complex;
+    my $gPsi_np1=($gGG*gPsi_np1(:,:,*))->sumover;
     # Eq. 4.41
     #$gpsiG and BgpsiG are RorI xyz nx ny nz
-    my $an=$gn*($gpsi->Cconj*$psi_nM1)->re->sum;
+    my $an=$gn*($gpsi->Cconj*$psi_np1)->re->sum;
     # Eq 4.43
-    my $psi2_nM1=($psi_nM1->Cconj*$gPsi_nM1)->re->sum;
+    my $psi2_np1=($psi_np1->Cconj*$gPsi_np1)->re->sum;
     # Eq. 4.30
-    my $g_nM1=1;
-    my $b2_nM1=$psi_nM12-$gn*$an**2-$g_nm1*$b2_n;
-    $g_nM1=-1, $b2_nM1=-$b2_nM1 if $b2_nM1 < 0;
-    carp "\$next_b2=$next_b2 is too negative!" if $next_b2 < -$self->small;
-    my $b_nM1=sqrt($b2_nM1);
+    my $g_np1=1;
+    my $b2_np1=$psi_np12-$gn*$an**2-$g_nm1*$b2_n;
+    $g_np1=-1, $b2_np1=-$b2_np1 if $b2_np1 < 0;
+    my $b_np1=sqrt($b2_np1);
     # Eq. 4.31
-    my $c_nM1=$g_nM1*$g_n*$b_nM1;
+    my $c_np1=$g_np1*$g_n*$b_np1;
+    my $bc_np1=$g_np1*$g_n*$b2_np1;
     # Eq. 4.33
     my $next_state=undef;
-    $next_state=($psi_nM1-$an*$psi_n-$c_n*$psi_nm1)/$b_nM1 
-	unless $b2_nM1 < $self->small;
+    $next_state=($psi_np1-$an*$psi_n-$c_n*$psi_nm1)/$b_np1 
+	unless $b2_np1 < $self->small;
     #save values
     $self->_nextState($next_state);
     $self->_current_a($a_n);
-    $self->_next_b2($b2_nM1);
-    $self->_next_b($b_nM1);
-    $self->_next_g($g_nM1);
-    $self->_next_c($c_nM1);
+    $self->_next_b2($b2_np1);
+    $self->_next_b($b_np1);
+    $self->_next_g($g_np1);
+    $self->_next_c($c_np1);
+    $self->_next_bc($bc_np1);
     $self->_iteration($self->iteration+1); #increment counter
     return 1;
 }
@@ -241,7 +251,8 @@ sub BUILD {
     #skip $self->current_a;
     $self->_next_b2($b2);
     $self->_next_b($b);
-    # skip $self->next_c; no c0
+    $self->_next_c(0); #no c0
+    $self->_next_bc(0); #no bc0
     $self->_next_g($g);
 }
     
