@@ -51,7 +51,7 @@ has 'unitDyadsLU'=>(is=>'ro', isa=>'ArrayRef', lazy=>1,
      documentation=>'LU decomposition of unitDyads');
 has 'Direction0' =>(is => 'rw', isa => 'PDL', trigger=>\&_G0, 
      predicate=>'has_Direction0');
-     
+
 sub _build_L {
     my $self=shift;
     my $L=PDL->pdl($self->dims);
