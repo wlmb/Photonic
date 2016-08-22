@@ -36,8 +36,9 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 =item * evaluate($epsB)
 
-Returns the macroscopic dielectric function for a given value of the
-dielectric functions of the host $epsA and the particle $epsB.
+Returns the macroscopic Green's operator for a given value of the
+dielectric functions of the particle $epsB. The host's
+response $epsA is taken from the metric.  
 
 =back
 
@@ -71,7 +72,7 @@ Array of Photonic::Retarded::GreenP structures, one for each direction.
 
 =item * greenTensor
 
-The Green's tensor
+The Green's tensor of the last evaluation
 
 =item * nh
 
