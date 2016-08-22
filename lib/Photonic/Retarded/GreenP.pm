@@ -15,7 +15,7 @@ version 0.006
 =head1 DESCRIPTION
 
 Calculates the longitudinal dielectric function for a given fixed
-Photonic::NonRetarded::AllH structure as a function of the dielectric
+Photonic::Retarded::AllH structure as a function of the dielectric
 functions of the components.
 
 =head1 METHODS
