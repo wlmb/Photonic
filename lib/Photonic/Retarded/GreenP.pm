@@ -9,8 +9,8 @@ version 0.006
 =head1 SYNOPSIS
 
    use Photonic::Retarded::GreenP;
-   my $green=Photonic::Retarded::GreepP(nr=>$nr, nh=>$nh);
-   my $greenProjection=$green->evaluate($epsA, $epsB);
+   my $green=Photonic::Retarded::GreepP(haydock=>$h, nh=>$nh);
+   my $greenProjection=$green->evaluate($epsB);
 
 =head1 DESCRIPTION
 
@@ -145,7 +145,7 @@ sub evaluate {
     }
     $self->_converged($converged);
     $self->_nhActual($n);
-    my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->[0]*
+    my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->[0];
     $self->_Gpp($u*$g0b02/($epsA*$fn));
     return $self->Gpp;
 }

@@ -31,17 +31,19 @@ retarded regime and saves them for later retrieval.
 
 =over 4
 
-=item * new(metric=>$m, nh=>$nh, keepStates=>$k) 
+=item * new(metric=>$m, polarization=>$p, nh=>$nh[, keepStates=>$k, small=>$s]) 
 
-Initializes an Ph::NR::AllH object. $nh is the maximum number of desired
-coefficients, $k is a flag, non zero to save the Haydock states. All
-other arguments are as in Photonic::NonRetarded::OneH.
+Initializes an Ph::NR::AllH object. $m is the retarded metric to use,
+$p is the polarization of the field, $nh is the maximum number of desired
+coefficients to calculate, $k is a flag, non zero to save the Haydock
+states, $s is a number to be considered negligible. Other arguments
+are as in Photonic::Retarded::OneH.
 
 =item * run
 
 Runs the iteration to completion
 
-=item * All the Photonic::NonRetarded::OneH methods
+=item * All the Photonic::Retarded::OneH methods
 
 =back
 
@@ -74,6 +76,18 @@ Array of Haydock b coefficients
 
 Array of Haydock b coefficients squared
 
+=item * cs
+
+Array of Haydock c coefficients 
+
+=item * bcs
+
+Array of Haydock b times c coefficients
+
+=item * gs
+
+Array of Haydock g coefficients 
+
 =item * All the Photonic::NonRetarded::OneH methods
 
 =back
@@ -85,24 +99,33 @@ $Photonic::Retarded::AllH::VERSION = '0.006';
 use namespace::autoclean;
 use PDL::Lite;
 use Moose;
+
 extends 'Photonic::Retarded::OneH';
 
 has nh=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock coefficients');
+
 with 'Photonic::Roles::KeepStates';
+
 has states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', 
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
+
 has as=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved a coefficients');
+
 has bs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved b coefficients');
+
 has b2s=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved b^2 coefficients');
+
 has cs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved c coefficients');
+
 has bcs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved b*c coefficients');
+
 has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved g coefficients');
 
@@ -156,14 +179,19 @@ sub _save_b2 {
     push @{$self->b2s}, $self->next_b2;
 }
 
+sub _save_bc {
+    my $self=shift;
+    push @{$self->bcs}, $self->next_bc;
+}
+
 sub _save_c {
     my $self=shift;
-    push @{$self->bs}, $self->next_c;
+    push @{$self->cs}, $self->next_c;
 }
 
 sub _save_g {
     my $self=shift;
-    push @{$self->bs}, $self->next_g;
+    push @{$self->gs}, $self->next_g;
 }
 
 

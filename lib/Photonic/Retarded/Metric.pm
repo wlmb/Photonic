@@ -51,6 +51,7 @@ package Photonic::Retarded::Metric;
 $Photonic::Retarded::Metric::VERSION = '0.006';
 use namespace::autoclean;
 use PDL::Lite;
+use PDL::MatrixOps;
 use PDL::NiceSlice;
 use PDL::Complex;
 use List::Util;
@@ -58,18 +59,18 @@ use Carp;
 use Moose;
 use Photonic::Types;
 
-has 'geometry'  => (is=>'ro', isa=>'Geometry', required=>1,
+has 'geometry'  => (is=>'ro', isa=>'Photonic::Geometry', required=>1,
                     handles=>[qw(B dims ndims r G GNorm L scale f)],
-                    required=>1
+                    required=>1,
                     documentation=>'Geometry');
 has 'epsilon'   => (is=>'ro', isa=>'PDL', required=>1,
-                   documetation=>'Dielectric function of host');
+                   documentation=>'Dielectric function of host');
 has 'wavenumber'=> (is=>'ro', isa=>'PDL', required=>1,
                    documentation=>'Vacuum wavenumber w/c');
 has 'wavevector'=> (is=>'ro', isa=>'PDL', required=>1,
                    documentation=>'Wave vector');
 has 'value'     => (is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
-                   writer=>'_value', 
+                   builder=>'_value', 
                    documentation=>'Metric tensor');
 
 sub _value {
@@ -91,8 +92,9 @@ sub _value {
     my $k02=$eps*$q*$q; # squared wavenumber in host
     #xyz xyz nx ny nz
     #cartesian matrix for each wavevector.
-    my $gGG=($k02*$id-$kPGkPG)/(($k02-$kPG2)->(*,*));
+    my $gGG=($k02*$id-$kPGkPG)/(($k02-$kPG2)->(*1,*1));
     return $gGG;
 }
     
 
+1;

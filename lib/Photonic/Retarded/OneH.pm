@@ -76,9 +76,9 @@ The n-th and n+1-th b^2 and b Haydock coefficients
 
 The n+1-th c Haydock coefficient
 
-=item * current_g next_g 
+=item * previous_g current_g next_g 
 
-The n-th and n+1-th g Haydock coefficient
+The n-1-th n-th and n+1-th g Haydock coefficients
 
 =item * iteration
 
@@ -135,7 +135,7 @@ has 'currentState' => (is=>'ro', isa=>'PDL::Complex',
       lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
 
 has 'nextState' =>(is=>'ro', isa=>'PDL::Complex|Undef', 
-    writer=>'_nextState', lazy=>1, init_arg=>undef);
+    writer=>'_nextState', init_arg=>undef);
 
 has 'current_a' => (is=>'ro', writer=>'_current_a',
     init_arg=>undef);
@@ -149,11 +149,16 @@ has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
 
 has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef); 
 
+has 'current_c' => (is=>'ro', writer=>'_current_c', init_arg=>undef); 
+
 has 'next_c' => (is=>'ro', writer=>'_next_c', init_arg=>undef, default=>0);
 
 has 'next_bc' => (is=>'ro', writer=>'_next_bc', init_arg=>undef, default=>0);
 
-has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef);
+has 'previous_g' => (is=>'ro', writer=>'_previous_g', init_arg=>undef);
+
+has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef, 
+     default=>0);
 
 has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef);
 
@@ -175,34 +180,35 @@ sub _iterate_indeed {
     $self->_previousState(my $psi_nm1=$self->currentState);
     $self->_currentState(my $psi_n #state in reciprocal space 
 			 =$self->nextState);
-    $self->_current_b2(my $b2_n=$self->next_b2);
     $self->_current_b(my $b_n=$self->next_b);
+    $self->_current_b2(my $b2_n=$self->next_b2);
+    $self->_current_c(my $c_n=$self->next_c);
     $self->_previous_g(my $g_nm1=$self->current_g);
     $self->_current_g(my $g_n=$self->next_g);
     #Use eqs. 4.29-4.33 of Samuel's thesis.
     #state is RorI xy.. nx ny..
     my $gGG=$self->metric->value;
     #$gGG is xyz xyz nx ny nz, $psiG is RorI xyz nx ny nz
-    my $gpsi=($gGG*$psi_n(:,:,*))->sumover; #seems real*complex works.
+    my $gpsi=($gGG*$psi_n(:,:,*1))->sumover; #seems real*complex works.
     # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
     # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
     my $gpsi_nr=ifftn($gpsi->real->mv(1,-1), $self->ndims);
     #$gpsi_nr is RorI nx ny nz  xyz, B is nx ny nz
     # Multiply by characteristic function
-    my $psi_np1r=Cscale($gpsir, $self->B);
+    my $psi_np1r=Cscale($gpsi_nr, $self->B);
     #psi_np1r is RorI nx ny nz  xyz
     #the result is RorI, nx, ny,... cartesian
     #Transform to reciprocal space, move cartesian back and make complex, 
-    my $psi_np1=fftn($nextPsir, $self->ndims)->mv(-1,1)->complex;
-    my $gPsi_np1=($gGG*gPsi_np1(:,:,*))->sumover;
+    my $psi_np1=fftn($psi_np1r, $self->ndims)->mv(-1,1)->complex;
+    my $gPsi_np1=($gGG*$psi_np1(:,:,*1))->sumover;
     # Eq. 4.41
     #$gpsiG and BgpsiG are RorI xyz nx ny nz
-    my $an=$gn*($gpsi->Cconj*$psi_np1)->re->sum;
+    my $a_n=$g_n*($gpsi->Cconj*$psi_np1)->re->sum;
     # Eq 4.43
     my $psi2_np1=($psi_np1->Cconj*$gPsi_np1)->re->sum;
     # Eq. 4.30
     my $g_np1=1;
-    my $b2_np1=$psi_np12-$gn*$an**2-$g_nm1*$b2_n;
+    my $b2_np1=$psi2_np1-$g_n*$a_n**2-$g_nm1*$b2_n;
     $g_np1=-1, $b2_np1=-$b2_np1 if $b2_np1 < 0;
     my $b_np1=sqrt($b2_np1);
     # Eq. 4.31
@@ -210,7 +216,7 @@ sub _iterate_indeed {
     my $bc_np1=$g_np1*$g_n*$b2_np1;
     # Eq. 4.33
     my $next_state=undef;
-    $next_state=($psi_np1-$an*$psi_n-$c_n*$psi_nm1)/$b_np1 
+    $next_state=($psi_np1-$a_n*$psi_n-$c_n*$psi_nm1)/$b_np1 
 	unless $b2_np1 < $self->small;
     #save values
     $self->_nextState($next_state);
@@ -225,8 +231,8 @@ sub _iterate_indeed {
 }
 
 sub BUILD {
-    my $self=$shift;
-    $d=$self->ndims;
+    my $self=shift;
+    my $d=$self->ndims;
 
     my $v=PDL->zeroes(@{$self->dims}); #build a nx ny nz pdl
     my $arg="(0)" . ",(0)" x ($d-1); #(0),(0),... ndims times
@@ -240,12 +246,12 @@ sub BUILD {
     croak "Polarization should be non null" unless
 	$modulus > 0;
     $e=$e/sqrt($modulus);
-    my $phi=$e*$v(*); #initial state ordinarily normalized
-    my $gphi=$self->metric->value*$phi(:,:,*)->sumover;
+    my $phi=$e*$v(*1); #initial state ordinarily normalized
+    my $gphi=($self->metric->value*$phi(:,:,*1))->sumover;
     my $g=1;
-    my $b2=$psi->Cconj*$gphi->re->sum;
+    my $b2=($phi->Cconj*$gphi)->re->sum;
     $g=-1, $b2=-$b2 if $b2<0;
-    $b=sqrt(b2);
+    $b=sqrt($b2);
     $phi=$phi/$b; #initial state;
     $self->_nextState($phi);
     #skip $self->current_a;
