@@ -21,9 +21,11 @@ lib/Photonic/NonRetarded/SH.pm
 lib/Photonic/NonRetarded/SHChiTensor.pm
 lib/Photonic/NonRetarded/SHP.pm
 lib/Photonic/Retarded/AllH.pm
+lib/Photonic/Retarded/Green.pm
 lib/Photonic/Retarded/GreenP.pm
 lib/Photonic/Retarded/Metric.pm
 lib/Photonic/Retarded/OneH.pm
+lib/Photonic/Retarded/Wave.pm
 lib/Photonic/Roles/EpsParams.pm
 lib/Photonic/Roles/KeepStates.pm
 lib/Photonic/Types.pm
