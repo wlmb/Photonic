@@ -119,8 +119,8 @@ has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::Retarded::GreenP]',
              init_arg=>undef, lazy=>1, builder=>'_build_greenP',
              documentation=>'Array of projected G calculators');
 has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
-             writer=>'_epsTensor',   
-             documentation=>'Green's Tensor from last evaluation');
+             writer=>'_greenTensor',   
+             documentation=>'Greens Tensor from last evaluation');
 
 sub evaluate {
     my $self=shift;
@@ -153,12 +153,13 @@ sub evaluate {
 sub _build_haydock { # One Haydock coefficients calculator per direction0
     my $self=shift;
     my @haydock;
+    # This must change if G is not symmetric
     foreach(@{$self->geometry->unitPairs}){
 	my $m=dclone($self->metric); #clone metric, to be safe
-	my $e=$_; #polarization
+	my $e=$_->r2C; #polarization
 	#Build a corresponding Photonic::Retarded::AllH structure
 	my $haydock=Photonic::Retarded::AllH->new(
-	    metric=>$m, polarization=>$e, $nh=$self->nh,
+	    metric=>$m, polarization=>$e, nh=>$self->nh,
 	    keepStates=>$self->keepStates, small=>$self->small);
 	push @haydock, $haydock;
     }
