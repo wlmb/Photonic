@@ -64,7 +64,7 @@ has 'geometry'  => (is=>'ro', isa=>'Photonic::Geometry', required=>1,
                     required=>1,
                     documentation=>'Geometry');
 has 'epsilon'   => (is=>'ro', isa=>'PDL', required=>1,
-                   documentation=>'Dielectric function of host');
+                   documentation=>'Real dielectric function 'host' epsA');
 has 'wavenumber'=> (is=>'ro', isa=>'PDL', required=>1,
                    documentation=>'Vacuum wavenumber w/c');
 has 'wavevector'=> (is=>'ro', isa=>'PDL', required=>1,
@@ -87,12 +87,12 @@ sub _value {
     # (k+G)(k+G) diad
     my $kPGkPG = $kPG->outer($kPG); #xyz xyz nx ny nz
     # interior product
-    my $kPG2 = $kPG->inner($kPG); 
+    my $kPG2 = $kPG->inner($kPG); #nx ny nz 
     my $id=identity($self->ndims);
-    my $k02=$eps*$q*$q; # squared wavenumber in host
+    my $k02=$eps*$q*$q; # squared wavenumber in 'host'
     #xyz xyz nx ny nz
     #cartesian matrix for each wavevector.
-    my $gGG=($k02*$id-$kPGkPG)/(($k02-$kPG2)->(*1,*1));
+    my $gGG=($k02*$id-$kPGkPG)/(($k02-$kPG2)->(*1,*1)); #xyz xyz nx ny nz
     return $gGG;
 }
     
