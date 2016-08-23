@@ -97,6 +97,7 @@ Array of Haydock g coefficients
 package Photonic::Retarded::AllH;
 $Photonic::Retarded::AllH::VERSION = '0.006';
 use namespace::autoclean;
+use Carp;
 use PDL::Lite;
 use Moose;
 
@@ -134,7 +135,7 @@ has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
 
 before 'states' => sub {
     my $self=shift;
-    die "Can't return states unless keepStates!=0" unless $self->keepStates;
+    croak "Can't return states unless keepStates!=0" unless $self->keepStates;
 };
 
 before '_iterate_indeed' => sub {

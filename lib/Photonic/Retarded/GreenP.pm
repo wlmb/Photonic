@@ -122,7 +122,7 @@ sub evaluate {
     #    b0+a1/b1+a2/...
     #	lo debo convertir a
     #       u-a_0-g0g1b1^2/u-a1-g1g2b2^2/...
-    #   entonces bn->u-an y an->-g{n-1}gnbn^2 o -bncn
+    #   entonces bn->u-an y an->-g{n-1}gnbn^2 o -bc_n
     my $fnm1=$u-$as->[0];
     $fnm1=r2C($tiny) if $fnm1->re==0 and $fnm1->im==0;
     my $n=1;

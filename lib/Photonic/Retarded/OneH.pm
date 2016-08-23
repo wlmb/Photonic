@@ -188,7 +188,7 @@ sub _iterate_indeed {
     #Use eqs. 4.29-4.33 of Samuel's thesis.
     #state is RorI xy.. nx ny..
     my $gGG=$self->metric->value;
-    #$gGG is xyz xyz nx ny nz, $psiG is RorI xyz nx ny nz
+    #$gGG is xyz xyz nx ny nz, $psi_n is RorI xyz nx ny nz
     my $gpsi=($gGG*$psi_n(:,:,*1))->sumover; #seems real*complex works.
     # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
     # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
@@ -198,14 +198,20 @@ sub _iterate_indeed {
     my $psi_np1r=Cscale($gpsi_nr, $self->B);
     #psi_np1r is RorI nx ny nz  xyz
     #the result is RorI, nx, ny,... cartesian
-    #Transform to reciprocal space, move cartesian back and make complex, 
+    #Transform to reciprocal space, move xyz back and make complex, 
     my $psi_np1=fftn($psi_np1r, $self->ndims)->mv(-1,1)->complex;
+    # psi_np1 is RorI xyz nx ny nz
     my $gPsi_np1=($gGG*$psi_np1(:,:,*1))->sumover;
+    # gPsi_np1 is RorI xyz nx ny nz
     # Eq. 4.41
-    #$gpsiG and BgpsiG are RorI xyz nx ny nz
     my $a_n=$g_n*($gpsi->Cconj*$psi_np1)->re->sum;
+    my $err = $g_n*($gpsi->Cconj*$psi_np1)->im->sum;
+    #croak "Imaginary part of \$a_n too large: $err" unless abs($err) < $small; 
     # Eq 4.43
     my $psi2_np1=($psi_np1->Cconj*$gPsi_np1)->re->sum;
+    $err = ($psi_np1->Cconj*$gPsi_np1)->im->sum;
+    #croak "Imaginary part of \$psi2_np1 too large: $err" unless
+    #abs($err) < $small;
     # Eq. 4.30
     my $g_np1=1;
     my $b2_np1=$psi2_np1-$g_n*$a_n**2-$g_nm1*$b2_n;
@@ -242,11 +248,12 @@ sub BUILD {
 	  " Should be $d-dimensional complex vector."
 	unless $e->isa('PDL::Complex') && $e->ndims==2 &&
 	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d; 
-    my $modulus=$e->Cabs2->sumover;
+    my $modulus2=$e->Cabs2->sumover;
     croak "Polarization should be non null" unless
-	$modulus > 0;
-    $e=$e/sqrt($modulus);
-    my $phi=$e*$v(*1); #initial state ordinarily normalized
+	$modulus2 > 0;
+    $e=$e/sqrt($modulus2);
+    my $phi=$e*$v(*1); #initial state ordinarily normalized 
+                       # RorI xyz nx ny nz
     my $gphi=($self->metric->value*$phi(:,:,*1))->sumover;
     my $g=1;
     my $b2=($phi->Cconj*$gphi)->re->sum;
@@ -262,17 +269,6 @@ sub BUILD {
     $self->_next_g($g);
 }
     
-
-
-#sub _firstState { #\delta_{G0}
-#    my $self=shift;
-#    my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
-#    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
-#    $v->slice($arg).=1; #delta_{G0}
-#    return $v;
-#}
-
-
 __PACKAGE__->meta->make_immutable;
     
 1;

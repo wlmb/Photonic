@@ -87,9 +87,8 @@ around 'evaluate' => sub {
     my $d=$self->geometry->ndims;
     my $idreim=identity($d)->glue(1,PDL->zeroes($d,$d))->mv(0,-1);
     my $wavereim=lu_backsub($lu,$perm,$par,$idreim);
-    print "$wavereim\n";
     my $wave=$wavereim->reshape($d,2,$d)->mv(1,0)->complex;
-    _waveOperator($wave);
+    $self->_waveOperator($wave);
     return $wave;
 };
 
