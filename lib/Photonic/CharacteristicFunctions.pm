@@ -75,7 +75,7 @@ version 0.006
 
 =head1 SYNOPSIS
 
-   use Photonic::CharacterizticFuncions qw(triangle isosceles ellipse)
+   use Photonic::CharacteristicFuncions qw(triangle isosceles ellipse)
    my $e=ellipse($N, $ff, $e);
    my $t=triangle($N, $r0, $deltar, $theta0);
    my $i=isosceles($N, $r0, $delta2, $delta3, $theta0);
