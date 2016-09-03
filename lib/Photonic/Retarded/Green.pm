@@ -122,16 +122,21 @@ has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::Retarded::GreenP]',
 has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
              writer=>'_greenTensor',   
              documentation=>'Greens Tensor from last evaluation');
-
+has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
+             documentation=>
+                  'All greenP evaluations converged in last evaluation'); 
 sub evaluate {
     my $self=shift;
     $self->_epsA(my $epsA=$self->metric->epsilon->r2C);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my @greenP; #array of Green's projections along different directions.
+    my $converged=1;
     foreach(@{$self->greenP}){
 	push @greenP, $_->evaluate($epsB);
+	$converged &&=$_->converged;
     }
+    $self->_converged($converged);
     my $reGreenP=PDL->pdl([map {$_->re} @greenP]);
     my $imGreenP=PDL->pdl([map {$_->im} @greenP]);
     my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
