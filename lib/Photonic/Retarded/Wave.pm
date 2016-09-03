@@ -58,7 +58,7 @@ The macroscopic wave operator of the last operation
 =cut
 
 package Photonic::Retarded::Wave;
-$Photonic::Retarded::Green::VERSION = '0.007';
+$Photonic::Retarded::Wave::VERSION = '0.007';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
