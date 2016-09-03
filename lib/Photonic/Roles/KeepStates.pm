@@ -4,7 +4,7 @@ Photonic::Roles::KeepStates
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
@@ -29,7 +29,7 @@ keep states (0).
 =cut
 
 package Photonic::Roles::KeepStates;
-$Photonic::Roles::KeepStates::VERSION = '0.006';
+$Photonic::Roles::KeepStates::VERSION = '0.007';
 use Moose::Role;
 
 

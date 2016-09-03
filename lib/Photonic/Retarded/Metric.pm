@@ -4,7 +4,7 @@ Photonic::Retarded::Metric
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
@@ -48,7 +48,7 @@ identify the other wavevector.
 =cut
 
 package Photonic::Retarded::Metric;
-$Photonic::Retarded::Metric::VERSION = '0.006';
+$Photonic::Retarded::Metric::VERSION = '0.007';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::MatrixOps;

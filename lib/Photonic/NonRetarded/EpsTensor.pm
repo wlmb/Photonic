@@ -4,7 +4,7 @@ Photonic::NonRetarded::EpsTensor
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
@@ -94,7 +94,7 @@ Criteria of convergence. 0 means don't check.
 =cut
 
 package Photonic::NonRetarded::EpsTensor;
-$Photonic::NonRetarded::EpsTensor::VERSION = '0.006';
+$Photonic::NonRetarded::EpsTensor::VERSION = '0.007';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

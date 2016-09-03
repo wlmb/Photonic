@@ -4,7 +4,7 @@ Photonic::NonRetarded::SHP
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
@@ -69,7 +69,7 @@ Number of dimensions of the system
 =cut
 
 package Photonic::NonRetarded::SHP;
-$Photonic::NonRetarded::SHP::VERSION = '0.006';
+$Photonic::NonRetarded::SHP::VERSION = '0.007';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
