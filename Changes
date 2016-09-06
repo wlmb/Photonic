@@ -13,4 +13,6 @@
   6. Correct mistake in Types and in FieldH.
 * 0.007
   1. Put authors in Build.PL
+  2. Update references in README
+  3. Add modules for retarded calculations.
 
