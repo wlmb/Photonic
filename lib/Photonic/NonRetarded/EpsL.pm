@@ -143,6 +143,10 @@ sub evaluate {
 	$Cnm1=$Cn;
 	$n++;
     }
+    #If there are less available coefficients than $self->nh and all
+    #of them were used, there is no remaining work to do, so, converged 
+    $converged=1 if $self->haydock->iteration < $self->nh;
+    $self->_converged($converged);
     $self->_converged($converged);
     $self->_nhActual($n);
     $self->_epsL($epsA*$fn/$u);

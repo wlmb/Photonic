@@ -120,6 +120,9 @@ has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::EpsL]',
              documentation=>'Array of epsilon calculators');
 has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_epsTensor', 
              documentation=>'Dielectric Tensor from last evaluation');
+has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
+             documentation=>
+                  'All EpsL evaluations converged in last evaluation'); 
 
 sub evaluate {
     my $self=shift;
@@ -127,9 +130,12 @@ sub evaluate {
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my @eps; #array of @eps along different directions.
+    my $converged=1;
     foreach(@{$self->epsL}){
 	push @eps, $_->evaluate($epsA, $epsB);
+	$converged &&=$_->converged;
     }
+    $self->_converged($converged);
     my $reEpsL=PDL->pdl([map {$_->re} @eps]);
     my $imEpsL=PDL->pdl([map {$_->im} @eps]);
     my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};

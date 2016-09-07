@@ -88,7 +88,7 @@ Array of Haydock b times c coefficients
 
 Array of Haydock g coefficients 
 
-=item * All the Photonic::NonRetarded::OneH methods
+=item * All the Photonic::Retarded::OneH methods
 
 =back
 

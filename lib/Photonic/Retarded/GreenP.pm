@@ -143,6 +143,9 @@ sub evaluate {
 	$Cnm1=$Cn;
 	$n++;
     }
+    #If there are less available coefficients than $self->nh and all
+    #of them were used, there is no remaining work to do, so, converged 
+    $converged=1 if $self->haydock->iteration < $self->nh;
     $self->_converged($converged);
     $self->_nhActual($n);
     my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->[0];
