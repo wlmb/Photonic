@@ -37,11 +37,10 @@ $k. $q and $k may be real or complex.
 
 =item * value 
 
-The actual metric tensor as a complex PDL (2,d,d,n1,n2..nd, m1,m2..md)
+The actual metric tensor as a complex PDL (2,d,d,n1,n2..nd)
 where the first index identifies real or imaginary part, the second
-and thir run over cartesian indices for 0 to d-1 in d dimensions, the
-next d indicen1,n2...nd identify the wavevector G and final d indices
-identify the other wavevector.
+and third run over cartesian indices for 0 to d-1 in d dimensions, the
+next d indicen1,n2...nd identify the wavevector G.
 
 =back
 

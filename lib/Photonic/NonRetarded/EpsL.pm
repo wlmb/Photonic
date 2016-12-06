@@ -22,7 +22,7 @@ functions of the components.
 
 =over 4
 
-=item * new(nr=>$nr, nh=>$nh, small=>$small)
+=item * new(nr=>$nr, nh=>$nh, smallE=>$smallE)
 
 Initializes the structure.
 
@@ -30,7 +30,8 @@ $nr is a Photonic::NonRetarded::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
-$small is the criteria of convergence (defaults to 1e-7)
+$smallE is the criteria of convergence for the continued fraction 
+(defaults to 1e-7)
 
 =item * evaluate($epsA, $epsB)
 
@@ -72,9 +73,10 @@ The actual number of Haydock coefficients used in the last calculation
 
 Flags that the last calculation converged before using up all coefficients
 
-=item * small
+=item * smallE
 
-Criteria of convergence. 0 means don't check.
+Criteria of convergence for continued fraction. 0 means don't
+check. From Photonic::Roles::EpsParams
 
 =back
 
@@ -137,7 +139,7 @@ sub evaluate {
 	$Dn=1/$Dn;
 	$Deltan=$Cn*$Dn;
 	$fn=$fnm1*$Deltan;
-	last if $converged=$Deltan->approx(1, $self->small)->all;
+	last if $converged=$Deltan->approx(1, $self->smallE)->all;
 	$fnm1=$fn;
 	$Dnm1=$Dn;
 	$Cnm1=$Cn;
@@ -145,7 +147,7 @@ sub evaluate {
     }
     #If there are less available coefficients than $self->nh and all
     #of them were used, there is no remaining work to do, so, converged 
-    $converged=1 if $self->haydock->iteration < $self->nh;
+    $converged=1 if $self->nr->iteration < $self->nh;
     $self->_converged($converged);
     $self->_converged($converged);
     $self->_nhActual($n);

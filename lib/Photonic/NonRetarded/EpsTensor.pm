@@ -22,7 +22,7 @@ functions of the components.
 
 =over 4
 
-=item * new(geometry=>$g, nh=>$nh, small=>$small, keepStates=>$k)
+=item * new(geometry=>$g, nh=>$nh, smallH=>$smallH, smallE=>$smallE, keepStates=>$k) 
 
 Initializes the structure.
 
@@ -30,7 +30,8 @@ $g Photonic::Geometry describing the structure
 
 $nh is the maximum number of Haydock coefficients to use.
 
-$small is the criteria of convergence (default 1e-7)
+$smallH and $smallE are the criteria of convergence (default 1e-7) for
+the Haydock coefficients and the tensor calculations.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
@@ -85,9 +86,12 @@ The actual number of Haydock coefficients used in the last calculation
 
 Flags that the last calculation converged before using up all coefficients
 
-=item * small
+=item * smallH smallE
 
-Criteria of convergence. 0 means don't check.
+Criteria of convergence for Haydock and epsilon calculations. 0 means
+don't check. From Photonic::Roles::EpsParams.
+
+    *Check last remark* 
 
 =back
 
@@ -106,6 +110,7 @@ use Photonic::NonRetarded::AllH;
 use Photonic::NonRetarded::EpsL;
 use Moose;
 use Photonic::Types;
+with 'Photonic::Roles::EpsParams';
 
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1
@@ -162,7 +167,7 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
 	my $g=dclone($self->geometry); #clone geometry
 	$g->Direction0($_); #add G0 direction
 	#Build a corresponding NonRetarded::AllH structure
-	my $nr=Photonic::NonRetarded::AllH->new(geometry=>$g, small=>$self->small, 
+	my $nr=Photonic::NonRetarded::AllH->new(geometry=>$g, smallH=>$self->smallH, 
 			   nh=>$self->nh, keepStates=>$self->keepStates);
 	push @nr, $nr;
     }
@@ -174,7 +179,7 @@ sub _build_epsL {
     my @eps;
     foreach(@{$self->nr}){
 	my $e=Photonic::NonRetarded::EpsL->
-	    new(nr=>$_, nh=>$self->nh, small=>$self->small);
+	    new(nr=>$_, nh=>$self->nh, smallE=>$self->smallE);
 	push @eps, $e;
     }
     return [@eps]

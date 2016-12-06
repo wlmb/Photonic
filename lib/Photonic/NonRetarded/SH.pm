@@ -263,8 +263,8 @@ sub _build_HP { #build haydock states for P2
     my $ext=$self->externalL_G;
     my $normext=sqrt(Cabs2($ext)->sum);
     my $extnorm=$ext->complex/$normext;
-    my $hp=Photonic::NonRetarded::AllH->new(	nh=>$self->nrf->nh, 
-	geometry=>$self->nrf->nr->geometry, small=>$self->nrf->nr->small,
+    my $hp=Photonic::NonRetarded::AllH->new(nh=>$self->nrf->nh, 
+	geometry=>$self->nrf->nr->geometry, smallH=>$self->nrf->nr->smallH,
 		keepStates=>1, nextState=>$extnorm);
     $hp->run;
     return $hp;

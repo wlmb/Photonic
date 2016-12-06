@@ -31,7 +31,7 @@ retarded regime and saves them for later retrieval.
 
 =over 4
 
-=item * new(metric=>$m, polarization=>$p, nh=>$nh[, keepStates=>$k, small=>$s]) 
+=item * new(metric=>$m, polarization=>$p, nh=>$nh[, keepStates=>$k, smallH=>$s]) 
 
 Initializes an Ph::NR::AllH object. $m is the retarded metric to use,
 $p is the polarization of the field, $nh is the maximum number of desired

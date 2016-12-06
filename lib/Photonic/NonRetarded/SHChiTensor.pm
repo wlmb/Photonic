@@ -24,7 +24,7 @@ functions of the components.
 
 =over 4
 
-=item * new(geometry=>$g, densityA=>$da, densityB=>$db, nh=>$nh, nhf=>$nhf[, filter=>$ff][, small=>$small])
+=item * new(geometry=>$g, densityA=>$da, densityB=>$db, nh=>$nh, nhf=>$nhf[, filter=>$ff][, smallH=>$smallH][, smallE=>$smallE])
 
 Initializes the structure.
 
@@ -38,7 +38,8 @@ $nhf is the maximum number of Haydock coefficients for the field calculation.
 
 $ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geometry. 
 
-$small is the criteria of convergence (default 1e-7)
+$smallH and $smallE are the criteria of convergence (default 1e-7) for
+haydock coefficients and continued fraction. From Photonic::Roles::EpsParams.
 
 =item * evaluate($epsA1, $epsB1, $epsA2, $epsB2)
 
@@ -77,9 +78,10 @@ The actual number of Haydock coefficients used in the last calculation
 
 Flags that the last calculation converged before using up all coefficients
 
-=item * small
+=item * smallH smallE
 
-Criteria of convergence. 0 means don't check.
+Criteria of convergence for Haydock coefficients and for fields. 0
+means don't check. 
 
 =back
 
@@ -106,6 +108,7 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Moose;
 use Photonic::Types;
+with 'Photonic::Roles::EpsParams';
 
 #required parameters
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
@@ -115,13 +118,10 @@ has 'densityA'=>(is=>'ro', isa=>'Num', required=>1,
          documentation=>'Normalized dipole entities density in medium A');
 has 'densityB'=>(is=>'ro', isa=>'Num', required=>1,
          documentation=>'Normalized dipole entities density in medium B');
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
-	    documentation=>'Desired no. of Haydock coefficients');
 has 'nhf'=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock
                          coefficients for field calculation');
 #optional parameters 
-has 'small' => (is=>'ro', required=>1, default=>1e-7);
 has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 
@@ -202,9 +202,9 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 	$g->Direction0($_); #add G0 direction
 	#Build a corresponding NonRetarded::AllH structure
 	my $nr=Photonic::NonRetarded::AllH->new(nh=>$self->nh, geometry=>$g,
-					  keepStates=>1); 
+				keepStates=>1, smallH=>$self->smallH);  
 	my $nrf=Photonic::NonRetarded::FieldH->new(nr=>$nr, nh=>$self->nhf, 
-					small=>$self->small);
+					smallE=>$self->smallE);
 	my $nrshp=Photonic::NonRetarded::SHP->
 	    new(nrf=>$nrf, densityA=>$self->densityA, 
 		densityB=>$self->densityB); 

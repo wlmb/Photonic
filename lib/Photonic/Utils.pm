@@ -3,7 +3,7 @@ $Photonic::Utils::VERSION = '0.007';
 # Collection of subroutines. Thus, no Moose
 require Exporter;
 @ISA=qw(Exporter);
-@EXPORT_OK=qw(vectors2Dlist tile cmatmult dgtsl cgtsl RtoG GtoR LC
+@EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
               HProd linearCombine);
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -93,7 +93,7 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
     my $d=shift; #decimation
     my $f1=$s*$f->(:,0:-1:$d, 0:-1:$d); #decimate two dimensions
     my $coords=$d*PDL::ndcoords(@{[$f1->dims]}[1,2]);
-    return ( #basx, basey, vectorx vectory
+    return ( #basex, basey, vectorx vectory
 	($coords((0))-.5*$f1((0)))->flat, 
 	($coords((1))-.5*$f1((1)))->flat, 
 	$f1((0))->flat, $f1((1))->flat);
@@ -202,24 +202,6 @@ rows of b, i denotes rows of a and of the result c, k denotes columns
 of b and the result c. Recall that in pdl the first (row) index is
 faster. May thread over extra dimensions.
 
-=item * ($r,$i)=dgtsl($c, $d, $e, $b)
-
-Solves the tridiagonal matrix equation $m x $r=$b. $m is a tridiagonal
-double matrix with subdiagonal $c, diagonal $d and supradiagonal $e, $b is an
-ordinary vector (not necessarily column vector) with the right hand
-side. $r is the result vector and $i is and integer indicator of where the
-calculation failed, zero on success. The signature would be double c(n),
-d(n), e(n), b(n), r(n) and long i(n). May thread over extra dimensions.
-
-=item * ($r,$i)=cgtsl($c, $d, $e, $b)
-
-Solves the tridiagonal matrix equation $m x $r=$b. $m is a tridiagonal
-complex matrix with subdiagonal $c, diagonal $d and supradiagonal $e, $b is an
-ordinary vector (not necessarily column vector) with the right hand
-side. $r is the result vector and $i is and integer indicator of where the
-calculation failed, zero on success. The signature would be double c(2,n),
-d(2,n), e(2,n), b(2,n), r(2,n) and long i(n). May thread over extra dimensions.
-
 =back
 
 =head1 NOTE
@@ -230,17 +212,5 @@ remove the directory _Inline/ before running.
 
 B<You must make sure that the relative location of the libutils.so
 library is correct.> See $Bin below.
-
-The sources for the Fortran routines cgtsl and dgtsl are in
-F<Photonic/sources>. They must be compiled as
-
-   gfortran -fPIC -c dgtsl.f
-   gfortran -fPIC -c cgtsl.f
-
-and linked to the library as
-
-   gcc -shared -o libutils.so dgtsl.o cgtsl.o
-
-The library is at F<Photonic/lib>.
 
 =cut

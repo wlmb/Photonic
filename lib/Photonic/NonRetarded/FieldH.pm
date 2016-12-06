@@ -22,7 +22,7 @@ the components.
 
 =over 4
 
-=item * new(nr=>$nr, nh=>$nh, small=>$small)
+=item * new(nr=>$nr, nh=>$nh, smallE=>$smallE)
 
 Initializes the structure.
 
@@ -32,7 +32,8 @@ structure, *initialized* with the flag keepStates=>1
 
 $nh is the maximum number of Haydock coefficients to use.
 
-$small is the criteria of convergence (default 1e-7)
+$smallE is the criteria of convergence (default 1e-7) for
+Field calculations  
 
 =item * evaluate($epsA, $epsB...)
 
@@ -53,9 +54,9 @@ Photonic::NonRetarded::AllH structure
 
 Maximum number of Haydock coefficients to use.
 
-=item * small
+=item * smallE
 
-Criteria of convergence. 0 means don't check
+Criteria of convergence. 0 means don't check. From Photonic::Roles::EpsParams
 
 =item * epsA
 
@@ -93,6 +94,7 @@ real space field in format RorI, cartesian, nx, ny,...
 
 package Photonic::NonRetarded::FieldH;
 $Photonic::NonRetarded::FieldH::VERSION = '0.007';
+
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -101,11 +103,10 @@ use PDL::FFTW3;
 use Photonic::NonRetarded::AllH;
 use Moose;
 use Photonic::Types;
-
+with 'Photonic::Roles::EpsParams';
 
 has 'nr'=>(is=>'ro', isa=>'Photonic::Types::NonRetarded::AllHSave', required=>1,  
            documentation=>'Haydock recursion calculator');
-with 'Photonic::Roles::EpsParams';
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', init_arg=>undef, 
            writer=>'_Es', documentation=>'Field coefficients');
 has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',

@@ -25,9 +25,13 @@ Photonic subpackages to calculate the macroscopic dielectric function
    
 Desired no. of Haydock coefficients
 
-=head2 small
+=head2 smallH
 
-Convergence criterium. Default is 1e-7.
+Convergence criterium for Haydock coefficient calculations. Default is 1e-7.
+
+=head2 smallE
+
+Convergence criterium for Haydock coefficient use. Default is 1e-7.
 
 =head2 epsA
 
@@ -53,8 +57,10 @@ use Moose::Role;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'small'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'epsA'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA',
     documentation=>'Dielectric function of host');
 has 'epsB'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB',
