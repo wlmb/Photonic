@@ -54,7 +54,8 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::NonRetarded::AllH;
-use Photonic::Utils qw(RtoG GtoR HProd cgtsl linearCombine);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombine);
+use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
 use PDL::Constants qw(PI);
 

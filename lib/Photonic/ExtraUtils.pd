@@ -62,6 +62,10 @@ complex numbers, as in PDL::Complex.
 
 =begin Pod::Coverage
 
+       dgtls
+
+       cgtls
+
 =head2 set_boundscheck
 
 =head2 set_debugging

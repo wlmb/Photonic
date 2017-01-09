@@ -75,7 +75,8 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
-use Photonic::Utils qw(RtoG HProd cgtsl linearCombine);
+use Photonic::Utils qw(RtoG HProd linearCombine);
+use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
 use PDL::Constants qw(PI);
 
