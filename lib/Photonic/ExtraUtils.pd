@@ -10,8 +10,8 @@ Photonic::ExtraUtils - Glue for utility Fortran routines
 
        use Photonic::ExtraUtils;
 
-       dgtsl($c, $d, $e, $b, $info);
-       cgtsl($c, $d, $e, $b, $info);
+       dgtsl($c, $d, $e, $b, $info=PDL->null);
+       cgtsl($c, $d, $e, $b, $info=PDL->null);
       
 
 =head1 DESCRIPTION
@@ -33,10 +33,10 @@ system of equations in double precission.
 
 =for usage
 
-       dgtsl($c, $d, $e, $b, $info);
+       dgtsl($c, $d, $e, $b, $info=PDL->null);
 
 where $c(1..$n-1) is the subdiagonal, $d(0..$n-1) the diagonal and
-$e(0..$n-2) the supradiagonal of an $nX$n tridiagonal
+$e(0..$n-2) the supradiagonal of an $nX$n tridiagonal double precission
 matrix. $b(0..$n-1) is the right hand side vector. $b is replaced by
 the solution. $info returns 0 for success or k if the k-1-th element
 of the diagonal became zero.
@@ -51,10 +51,10 @@ system of equations.
 
 =for usage
 
-       dgtsl($c, $d, $e, $b, $info);
+       dgtsl($c, $d, $e, $b, $info=PDL->null);
 
 where $c(2,1..$n-1) is the subdiagonal, $d(2,0..$n-1) the diagonal and
-$e(2,0..$n-2) the supradiagonal of an $nX$n tridiagonal complex
+$e(2,0..$n-2) the supradiagonal of an $nX$n tridiagonal complex double precission
 matrix. $b(2,0..$n-1) is the right hand side vector. $b is replaced by
 the solution. $info returns 0 for success or k if the k-1-th element
 of the diagonal became zero. Either 2Xn pdl's are used to represent
@@ -90,18 +90,24 @@ pp_addhdr(qq{
 });
           
 pp_def('dgtsl', 
-       Pars=>'c(n); d(n); e(n); [o] b(n); int [o] info();',
+       Pars=>'c(n); d(n); e(n); y(n); [o] b(n); int [o] info();',
        GenericTypes=>['D'],
        Code=> qq{
           int N=\$SIZE(n);
+          if(\$P(y)!=\$P(b)){
+              loop(n) %{ \$b()=\$y(); %}
+          }
           dgtsl$underscore(&N, \$P(c), \$P(d), \$P(e),\$P(b), \$P(info));
        },
     );
 pp_def('cgtsl', 
-       Pars=>'c(2,n); d(2,n); e(2,n); [o] b(2,n); int [o] info();',
+       Pars=>'c(2,n); d(2,n); e(2,n); y(m=2,n); [o] b(m=2,n); int [o] info();',
        GenericTypes=>['D'],
        Code=> qq{
           int N=\$SIZE(n);
+          if(\$P(y)!=\$P(b)){
+              loop(m) %{ loop(n) %{ \$b()=\$y(); %} %}
+          }
           cgtsl$underscore(&N, \$P(c), \$P(d), \$P(e),\$P(b), \$P(info));
        },
     );

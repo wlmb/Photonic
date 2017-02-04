@@ -143,8 +143,7 @@ version 0.007
 
 =head1 SYNOPSIS
 
-    use Photonic::Utils qw(cgtsl cmatmult);
-    my ($r, $info)=cgtsl($c,$d,$e, $b);
+    use Photonic::Utils qw(cmatmult);
     $c=cmatmult($a, $b);
 
 =head1 DESCRIPTION
