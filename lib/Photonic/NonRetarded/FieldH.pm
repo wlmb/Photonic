@@ -4,7 +4,7 @@ Photonic::NonRetarded::FieldH
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
@@ -93,7 +93,7 @@ real space field in format RorI, cartesian, nx, ny,...
 =cut
 
 package Photonic::NonRetarded::FieldH;
-$Photonic::NonRetarded::FieldH::VERSION = '0.007';
+$Photonic::NonRetarded::FieldH::VERSION = '0.008';
 
 use namespace::autoclean;
 use PDL::Lite;

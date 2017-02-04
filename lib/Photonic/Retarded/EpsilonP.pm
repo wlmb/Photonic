@@ -4,7 +4,7 @@ Photonic::Retarded::EpsilonP
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
@@ -64,7 +64,7 @@ The macroscopic dielectric projection of the last operation
 =cut
 
 package Photonic::Retarded::EpsilonP;
-$Photonic::Retarded::EpsilonP::VERSION = '0.007';
+$Photonic::Retarded::EpsilonP::VERSION = '0.008';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

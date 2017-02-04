@@ -4,7 +4,7 @@ Photonic::NonRetarded::SHChiTensor
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
@@ -98,7 +98,7 @@ Spectral variables
 =cut
 
 package Photonic::NonRetarded::SHChiTensor;
-$Photonic::NonRetarded::SHChiTensor::VERSION = '0.007';
+$Photonic::NonRetarded::SHChiTensor::VERSION = '0.008';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

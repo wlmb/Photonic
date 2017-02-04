@@ -4,7 +4,7 @@ Photonic::Retarded::Green
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
@@ -98,7 +98,7 @@ fraction. 0 means don't check.
 =cut
 
 package Photonic::Retarded::Green;
-$Photonic::Retarded::Green::VERSION = '0.007';
+$Photonic::Retarded::Green::VERSION = '0.008';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

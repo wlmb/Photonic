@@ -1,5 +1,5 @@
 package Photonic::CharacteristicFunctions;
-$Photonic::CharacteristicFunctions::VERSION = '0.007';
+$Photonic::CharacteristicFunctions::VERSION = '0.008';
 use Carp;
 BEGIN {
     require Exporter;
@@ -71,7 +71,7 @@ Photonic::CharacteristicFunctions
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
