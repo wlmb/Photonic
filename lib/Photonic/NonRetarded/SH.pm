@@ -291,8 +291,7 @@ sub _build_selfConsistentL_n {
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
     my $supradiag=$subdiag->mv(0,-1)->rotate(-1)->mv(-1,0);
-    my ($result, $info)=(PDL->null, PDL->null);
-    cgtsl($subdiag, $diag, $supradiag, $external, $result, $info); 
+    my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $external); 
     die "Error solving tridiag system" unless $info == 0;
     $result->complex;
     $result *= $u2/$self->epsA2;

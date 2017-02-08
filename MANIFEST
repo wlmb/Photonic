@@ -2,14 +2,16 @@ Build.PL
 Changes
 INSTALL
 LICENSE
+Makefile.PL
 MANIFEST
 META.yml
-Makefile.PL
+META.json
 README
 fortran/cgtsl.f
 fortran/dgtsl.f
 lib/Photonic.pm
 lib/Photonic/CharacteristicFunctions.pm
+lib/Photonic/ExtraUtils.pd
 lib/Photonic/Geometry.pm
 lib/Photonic/Geometry/FromImage2D.pm
 lib/Photonic/NonRetarded/AllH.pm
@@ -29,9 +31,9 @@ lib/Photonic/Retarded/OneH.pm
 lib/Photonic/Retarded/Wave.pm
 lib/Photonic/Roles/EpsParams.pm
 lib/Photonic/Roles/KeepStates.pm
+lib/Photonic/typemap.PL
 lib/Photonic/Types.pm
 lib/Photonic/Utils.pm
-lib/Photonic/ExtraUtils.pd
 t/author-critic.t
 t/author-pod-coverage.t
 t/author-pod-syntax.t
@@ -43,4 +45,3 @@ t/version.t
 t/cgtsl.t
 t/dgtsl.t
 t/characteristic-functions.t
-META.json

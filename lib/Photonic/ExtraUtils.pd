@@ -79,6 +79,7 @@ complex numbers, as in PDL::Complex.
 END
 
 use strict;
+use Carp;
 use ExtUtils::F77;
 my $underscore=ExtUtils::F77->trail_? "_" : ""; #need fortran underscores?
 
@@ -92,24 +93,65 @@ pp_addhdr(qq{
 pp_def('dgtsl', 
        Pars=>'c(n); d(n); e(n); y(n); [o] b(n); int [o] info();',
        GenericTypes=>['D'],
+       PMCode => q{
+          sub PDL::dgtsl {
+	      use Carp;
+	      confess "Wrong number of arguments"
+	       	      unless scalar(@_)==6 or scalar(@_)==4;
+	      my ($c, $d, $e, $y, $b, $i)=@_;
+	      $i=PDL->null unless defined $i;
+	      $b=$y if $y->is_inplace;
+	      $b=$y->copy if not defined $b and not $y->is_inplace;
+	      $b.=$y if defined $b and not $y->is_inplace;
+	      $y->is_inplace(0);
+	      PDL::_dgtsl_int($c, $d, $e, $b, $b, $i);
+	      return ($b, $i);
+	      }
+        },
        Code=> qq{
           int N=\$SIZE(n);
-          if(\$P(y)!=\$P(b)){
-              loop(n) %{ \$b()=\$y(); %}
-          }
-          dgtsl$underscore(&N, \$P(c), \$P(d), \$P(e),\$P(b), \$P(info));
+	  dgtsl$underscore(&N, \$P(c), \$P(d), \$P(e),\$P(b), \$P(info));
        },
     );
 pp_def('cgtsl', 
-       Pars=>'c(2,n); d(2,n); e(2,n); y(m=2,n); [o] b(m=2,n); int [o] info();',
+       Pars=>'c(2,n); d(2,n); e(2,n); y(2,n); [o] b(2,n); int [o] info();',
        GenericTypes=>['D'],
+       PMCode => q{
+          sub PDL::cgtsl {
+	      use Carp;
+	      confess "Wrong number of arguments"
+	       	      unless scalar(@_)==6 or scalar(@_)==4;
+	      my ($c, $d, $e, $y, $b, $i)=@_;
+	      $i=PDL->null unless defined $i;
+	      $b=$y if $y->is_inplace;
+	      $b=$y->copy if not defined $b and not $y->is_inplace;
+	      $b.=$y if defined $b and not $y->is_inplace;
+	      $y->is_inplace(0);
+	      PDL::_cgtsl_int($c, $d, $e, $b, $b, $i);
+	      return ($b, $i);
+	      }
+        },
        Code=> qq{
           int N=\$SIZE(n);
-          if(\$P(y)!=\$P(b)){
-              loop(m) %{ loop(n) %{ \$b()=\$y(); %} %}
-          }
+	  /* parameter \$y is here unneeded */
           cgtsl$underscore(&N, \$P(c), \$P(d), \$P(e),\$P(b), \$P(info));
        },
     );
+#pp_def('test', 
+#       Pars=>'a(); [o] b();',
+# 	#       GenericTypes=>['D'],
+#       PMCode => q{
+#       	          sub PDL::test { #NOp
+#		      my ($a)=@_;
+#		      $b=PDL->null;
+#		      PDL::_test_int($a, $b);
+#		      return $b;
+#	          }
+#       },
+#	 Code=> q{
+#      	  $b()=2*$a();
+#     },
+# );
+
 pp_done();
 

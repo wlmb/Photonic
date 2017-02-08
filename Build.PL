@@ -4,8 +4,9 @@ our $VERSION = '0.008';
     
 use strict;
 use warnings;
+use PDL::Core::Dev;
 use ExtUtils::F77 1.20;
-use Module::Build::Pluggable ('Fortran','PDL');
+use Module::Build::Pluggable ('PDL', 'Fortran');
 
 my $builder = Module::Build::Pluggable->new(
     module_name=> 'Photonic',
@@ -45,6 +46,7 @@ my $builder = Module::Build::Pluggable->new(
 	'Module::Build::Pluggable::PDL'      => '0.23',
 	'ExtUtils::F77'                      => '1.20',
 	'ExtUtils::CBuilder'                 => '0',
+	'File::Copy'                         => '0',
     },
     add_to_cleanup  => [ 'Photonic-*', '.xs' ],
     create_makefile_pl => 'small',

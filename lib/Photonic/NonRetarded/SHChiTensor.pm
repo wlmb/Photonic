@@ -147,15 +147,20 @@ sub evaluate {
     $self->_epsB1(my $epsB1=shift);
     $self->_epsA2(my $epsA2=shift);
     $self->_epsB2(my $epsB2=shift);
+    my $kind=shift; # Undocumented, for testing: Use full (f) P2 or
+		    # (d) dipolar or (e) external  
     my @P2M; #array of longitudinal polarizations along different directions.
     foreach(@{$self->nrshp}){
 	my $nrsh=Photonic::NonRetarded::SH->new(
 	    shp=>$_, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
 	    epsB2=>$epsB2);
 	# RorI, XorY,nx,ny
-	my $P2=$nrsh->P2;
-#	my $P2=$nrsh->dipolar;
-#	my $P2=$nrsh->external;
+	my $P2;
+	if(not defined $kind or $kind eq 'f'){ $P2=$nrsh->P2;}
+	elsif($kind eq 'd'){$P2=$nrsh->dipolar;	}
+	elsif($kind eq 'q'){$P2=$nrsh->quadrupolar;} 
+	elsif($kind eq 'e'){$P2=$nrsh->external;}
+	else {die "Wrong kind. Should be undef, f d q e: $kind"}
 	my $P2M=$P2->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
