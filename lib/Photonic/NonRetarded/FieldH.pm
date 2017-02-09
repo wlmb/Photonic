@@ -8,8 +8,8 @@ version 0.008
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::Field;
-   my $nrf=Photonic::NonRetarded::Field->new(...);
+   use Photonic::NonRetarded::FieldH;
+   my $nrf=Photonic::NonRetarded::FieldH->new(...);
    my $field=$nrf->evaluate($epsA, $epsB);
 
 =head1 DESCRIPTION
