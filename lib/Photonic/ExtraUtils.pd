@@ -81,6 +81,8 @@ END
 use strict;
 use Carp;
 use ExtUtils::F77;
+use PDL::Complex;
+
 my $underscore=ExtUtils::F77->trail_? "_" : ""; #need fortran underscores?
 
 pp_addhdr(qq{
@@ -100,10 +102,16 @@ pp_def('dgtsl',
 	       	      unless scalar(@_)==6 or scalar(@_)==4;
 	      my ($c, $d, $e, $y, $b, $i)=@_;
 	      $i=PDL->null unless defined $i;
-	      $b=$y if $y->is_inplace;
-	      $b=$y->copy if not defined $b and not $y->is_inplace;
-	      $b.=$y if defined $b and not $y->is_inplace;
-	      $y->is_inplace(0);
+	      map {
+		  $_=$_->copy unless $_->is_inplace;
+	          $_->set_inplace(0); 
+              }  ($c, $d, $e);  
+	      if($y->is_inplace){$b=$y}
+	      elsif(not defined $b and not $y->is_inplace){
+		  $b=$y->copy;
+	      }elsif(defined $b and not $y->is_inplace){$b.=$y}
+	      else {die "Weird";}
+	      $y->set_inplace(0);
 	      PDL::_dgtsl_int($c, $d, $e, $b, $b, $i);
 	      return ($b, $i);
 	      }
@@ -119,16 +127,25 @@ pp_def('cgtsl',
        PMCode => q{
           sub PDL::cgtsl {
 	      use Carp;
+	      use PDL::Complex;
 	      confess "Wrong number of arguments"
 	       	      unless scalar(@_)==6 or scalar(@_)==4;
 	      my ($c, $d, $e, $y, $b, $i)=@_;
+	      my $complex=$y->isa("PDL::Complex");
 	      $i=PDL->null unless defined $i;
-	      $b=$y if $y->is_inplace;
-	      $b=$y->copy if not defined $b and not $y->is_inplace;
-	      $b.=$y if defined $b and not $y->is_inplace;
+	      map {
+		  $_=$_->copy unless $_->is_inplace;
+	          $_->set_inplace(0); 
+              }  ($c, $d, $e);  
+	      if($y->is_inplace){$b=$y}
+	      elsif(not defined $b and not $y->is_inplace){
+		  $b=$y->copy;
+	      }elsif(defined $b and not $y->is_inplace){$b.=$y}
+	      else {die "Weird";}
+	      PDL::_cgtsl_int($c, $d, $e, undef, $b, $i);
 	      $y->is_inplace(0);
-	      PDL::_cgtsl_int($c, $d, $e, $b, $b, $i);
-	      return ($b, $i);
+      	      return ($b->complex, $i) if $complex;
+	      return ($b, $i) unless $complex;
 	      }
         },
        Code=> qq{
