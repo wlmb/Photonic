@@ -83,9 +83,7 @@ sub _build_B {
     my $self=shift;
     my $path=$self->path;
     ( $path ) = ($path =~ m|^([A-Z0-9_.-\\/]+)$|ig);
-    print $ENV{PATH};
     ($ENV{PATH})=($ENV{PATH}=~m|^([A-Z0-9_.-\\/]+)$|ig);
-    print "\n".$ENV{PATH}."\n";
     croak 
 	"Only letters, numbers, underscores, dots, slashes and hyphens " . 
 	"allowed in file names"
