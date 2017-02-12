@@ -51,7 +51,7 @@ system of equations.
 
 =for usage
 
-       dgtsl($c, $d, $e, $b, $info=PDL->null);
+       cgtsl($c, $d, $e, $b, $info=PDL->null);
 
 where $c(2,1..$n-1) is the subdiagonal, $d(2,0..$n-1) the diagonal and
 $e(2,0..$n-2) the supradiagonal of an $nX$n tridiagonal complex double precission

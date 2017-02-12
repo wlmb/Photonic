@@ -180,17 +180,17 @@ sub evaluate {
 	    shp=>$_, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
 	    epsB2=>$epsB2);
 	# RorI, XorY,nx,ny
-	my $P2;
-	if(not defined $kind or $kind eq 'f'){ $P2=$nrsh->P2;}
-	elsif($kind eq 'd'){$P2=$nrsh->dipolar;	}
-	elsif($kind eq 'q'){$P2=$nrsh->quadrupolar;} 
-	elsif($kind eq 'e'){$P2=$nrsh->external;}
-	else {die "Wrong kind. Should be undef, f d q e: $kind"}
-	my $P2M=$P2->mv(0,-1)->mv(0,-1)
+	my $P2ex=$nrsh->external;
+	my $P2full=$nrsh->P2;
+	my $P2M=$P2full->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
 	    ->complex->sumover  #RorI, XorY
 	    /$self->geometry->npoints;
+	my $field=$nrsh->nrf->evaluate($epsA2, $epsB2);
+	#RorI xory nx ny
+	my $prod=$field->Cconj*$P2ex;
+	$prod=$prod->real->mv(0,-1)->mv(0,-1)->clump(-3)->sumover->complex;
 	push @P2M, $P2M;
     }
     #NOTE. Maybe I have to correct response to D-> response to E

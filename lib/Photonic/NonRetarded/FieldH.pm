@@ -138,16 +138,31 @@ sub evaluate {
     unshift @Es, $En; 
     my $bnp1=0+0*i; #n+1
     for(my $n=$nh-1; $n>0; --$n){ #downwards iteration
-	my $bn=$bs->[$n];
-	#nm1 means n-1
-	my $Enm1=(($u-$as->[$n])*$En-$bnp1*$Enp1)/$bn; #solve Haydock's row
-	unshift @Es, $Enm1; #save result
-	$Enp1=$En; #shift upwards for next iteration
-	$En=$Enm1;
-	$bnp1=$bn;
+    my $bn=$bs->[$n];
+    #nm1 means n-1
+    my $Enm1=(($u-$as->[$n])*$En-$bnp1*$Enp1)/$bn; #solve Haydock's row
+    unshift @Es, $Enm1; #save result
+    $Enp1=$En; #shift upwards for next iteration
+    $En=$Enm1;
+    $bnp1=$bn;
     }
     my $first=$Es[0];
     @Es=map {$_/$first} @Es; #Normalize
+    #Alternative calculation using linpack
+    my $diag=$u->complex - PDL->pdl([@$as])->(0:$nh-1);
+    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
+    # rotate complex zero from first to last element.
+    my $supradiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
+    my $rhs=zeroes($nh);
+    $rhs->((0)).=1;
+    $rhs=$rhs->r2C;
+    my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs); 
+    die "Error solving tridiag system" unless $info == 0;
+    my @EsAlt= map {pdl($_)->complex} $result->unpdl;
+    $first=$EsAlt[0];
+    @EsAlt=map {$_/$first} @EsAlt; #Normalize
+    # Result should be same as @Es
+    
     #states are RorI,nx,ny...
     #field is RorY,cartesian,nx,ny...
     my $ndims=$self->nr->B->ndims; # num. of dims of space
