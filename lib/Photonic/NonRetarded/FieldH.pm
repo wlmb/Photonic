@@ -82,6 +82,11 @@ optional reciprocal space filter
 
 real space field in format RorI, cartesian, nx, ny,...
 
+=item * epsL 
+
+Longitudinal dielectric response, obtained colateraly from last
+evaluation of the field
+
 =back
 
 =begin Pod::Coverage
@@ -101,6 +106,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::NonRetarded::AllH;
+use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::EpsParams';
@@ -113,7 +119,9 @@ has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 has 'field'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
            writer=>'_field', documentation=>'Calculated real space field');
-
+has 'epsL' =>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+		 writer=>'_epsL', 
+		 documentation=>'Longitudinal dielectric response');
 sub BUILD {
     my $self=shift;
     $self->nr->run unless $self->nr->iteration;
@@ -131,38 +139,23 @@ sub evaluate {
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->nr->iteration if $nh>=$self->nr->iteration;
-    #get field coefficients
-    my $Enp1=0+0*i; #n+1
-    my $En=1+0*i;
-    my @Es; #array of field coefficients
-    unshift @Es, $En; 
-    my $bnp1=0+0*i; #n+1
-    for(my $n=$nh-1; $n>0; --$n){ #downwards iteration
-    my $bn=$bs->[$n];
-    #nm1 means n-1
-    my $Enm1=(($u-$as->[$n])*$En-$bnp1*$Enp1)/$bn; #solve Haydock's row
-    unshift @Es, $Enm1; #save result
-    $Enp1=$En; #shift upwards for next iteration
-    $En=$Enm1;
-    $bnp1=$bn;
-    }
-    my $first=$Es[0];
-    @Es=map {$_/$first} @Es; #Normalize
-    #Alternative calculation using linpack
+    # calculate using linpack for tridiag system
+    # solve \epsilon^LL \vec E^L=D^L.
+    # At first take D=|0>
     my $diag=$u->complex - PDL->pdl([@$as])->(0:$nh-1);
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
     my $supradiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
-    my $rhs=zeroes($nh);
+    my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
     my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs); 
     die "Error solving tridiag system" unless $info == 0;
-    my @EsAlt= map {pdl($_)->complex} $result->unpdl;
-    $first=$EsAlt[0];
-    @EsAlt=map {$_/$first} @EsAlt; #Normalize
-    # Result should be same as @Es
-    
+    # Obtain longitudinal macroscopic response from result
+    $self->_epsL(my $epsL=1/$result->(:,(0)));
+    # Normalize result so macroscopic field is 1.
+    $result*=$epsL;
+    my @Es= map {PDL->pdl($_)->complex} @{$result->unpdl};
     #states are RorI,nx,ny...
     #field is RorY,cartesian,nx,ny...
     my $ndims=$self->nr->B->ndims; # num. of dims of space
