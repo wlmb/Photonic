@@ -187,10 +187,14 @@ sub evaluate {
 	    ->mv(-2,0) #RorI, index, XorY
 	    ->complex->sumover  #RorI, XorY
 	    /$self->geometry->npoints;
-	my $field=$nrsh->nrf->evaluate($epsA2, $epsB2);
+	#my $field=$nrsh->nrf->evaluate($epsA2->Cconj, $epsB2->Cconj);
+	#Note that epsilonLL is not Hermitian.
+	#Normalize field
+	#$field/=$self->geometry->npoints;
 	#RorI xory nx ny
-	my $prod=$field->Cconj*$P2ex;
-	$prod=$prod->real->mv(0,-1)->mv(0,-1)->clump(-3)->sumover->complex;
+	#my $prod=$field->Cconj*$P2ex;
+	#$prod=$prod->real->mv(0,-1)->mv(0,-1)->clump(-3)->sumover->complex;
+	# I expect $prod to be equal to $P2M, if both were correct(?)
 	push @P2M, $P2M;
     }
     #NOTE. Maybe I have to correct response to D-> response to E
