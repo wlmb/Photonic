@@ -38,6 +38,107 @@ and B materials at the fundamental and the second harmonic frequency
 
 =back
 
+=head1 ACCESORS (read only)
+
+=over 4
+
+=item * shp 
+
+Invariant part of SHG calculator.
+
+=item * ndims nrf densityA densityB density nr
+
+Accesors handled by shp
+
+=item * epsA1, epsB1
+
+Dielectric functions of materials A and B at the fundamental frequency
+
+=item * epsA2, epsB2
+
+Dielectric functions of materials A and B at the second harmonic frequency
+
+=item * alpha1
+
+Polarizabity field at the fundamental frequency
+
+=item * alpha2
+
+Polarizabity field at the second harmonic frequency
+
+=item * u1
+
+Spectral variable at fundamental frequency
+
+=item * u2
+
+Spectral variable at second harmonic frequency
+
+=item * dipolar
+
+Dipolar contribution to SH polarization field
+
+=item * quadrupolar
+
+SH quadrupolar contribution to SH polarization field
+
+=item * external
+
+External contribution to SH polarization field (quadrupolar + dipolar)
+
+=item * external_G
+
+External SH polarization field in reciprocal space
+
+=item * externalL_G
+
+Longitudinal projection of external polarization field in reciprocal space
+
+=item * HP
+
+Photonic::NonRetarded::AllH structure to calculate Haydock basis for
+non linear polarization
+
+=item * externalL_n
+
+External SH polarization field represented in Haydock basis
+
+=item * selfConsistentL_n
+
+SH self consistent longitudinal polarization in Haydock representation
+
+=item * selfConsistentL_G
+
+SH self consistent longitudinal polarization components in reciprocal
+space
+
+=item * selfConsistentVecL_G
+
+SH self consistent longitudinal polarization vector field projection in
+reciprocal space
+
+=item * selfConsistentVecL
+
+SH self consistent longitudinal polarization vector projection field
+in real space
+
+=item * P2
+
+SH self consistent total polarization vector field in real space
+
+=back
+
+=head1 ACCESORS (read/write)
+
+=over 4
+
+=item * filterflag
+
+Flag to filter results in reciprocal space to smooth non linear
+polarization using the field (nrf) filter.
+
+=back
+
 =begin Pod::Coverage
 
 =head2 BUILD

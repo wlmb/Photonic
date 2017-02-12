@@ -41,17 +41,42 @@ $ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geome
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
 haydock coefficients and continued fraction. From Photonic::Roles::EpsParams.
 
-=item * evaluate($epsA1, $epsB1, $epsA2, $epsB2)
+=item * evaluate($epsA1, $epsB1, $epsA2, $epsB2, [$kind])
 
 Returns the macroscopic second Harmonic susceptibility function for a
 given value of the dielectric functions of the host $epsA and the
-=particle $epsB at the fundamental 1 and second harmonic 2 frequency. 
+particle $epsB at the fundamental 1 and second harmonic 2 frequency. 
+$kind is an optional letter for testing purposes with values 'd' for
+dipolar, 'q' for quadrupolar, 'e' for external and 'f' for full
+selfconsistent calculation (the default).
+
 
 =back
 
 =head1 ACCESORS (read only)
 
 =over 4
+
+=item * geometry
+
+Photonic::Geometry structure describing the geometry of the
+metamaterial
+
+=item * B dims r G GNorm L scale f
+
+Accesors handled by geometry.
+
+=item * densityA, densityB
+
+Dipole entities density in mediums A and B
+
+=item * nhf 
+
+Maximum number of Haydock coefficients for field calculation
+
+=item * filter
+
+Optional filter to multiply by in reciprocal space 
 
 =item * epsA1, epsB1, epsA2, epsB2
 

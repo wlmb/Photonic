@@ -44,7 +44,7 @@ $dB is the density of polarizable entities in medium B
 
 =item * nrf
 
-Haydock field calculator
+Photonic::NonRetarded::FieldH Haydock field calculator
 
 =item * densityA, densityB
 
@@ -52,7 +52,7 @@ Normalized (to what?) dipole entities density in media A and B
 
 =item * density
 
-Density over unit cell
+Density field over unit cell
 
 =item * ndims
 
