@@ -188,13 +188,15 @@ sub evaluate {
 	    ->complex->sumover  #RorI, XorY
 	    /$self->geometry->npoints;
 	#my $field=$nrsh->nrf->evaluate($epsA2->Cconj, $epsB2->Cconj);
-	#Note that epsilonLL is not Hermitian.
+	#Note that epsilonLL is not Hermitian. So I conjugate epsilon
+	#and afterwards  I conjugate the resulting field.
 	#Normalize field
 	#$field/=$self->geometry->npoints;
 	#RorI xory nx ny
 	#my $prod=$field->Cconj*$P2ex;
 	#$prod=$prod->real->mv(0,-1)->mv(0,-1)->clump(-3)->sumover->complex;
 	# I expect $prod to be equal to $P2M, if both were correct(?)
+	#Wrong: I have to make scalar product!
 	push @P2M, $P2M;
     }
     #NOTE. Maybe I have to correct response to D-> response to E

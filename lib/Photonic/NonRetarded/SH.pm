@@ -74,6 +74,14 @@ Spectral variable at fundamental frequency
 
 Spectral variable at second harmonic frequency
 
+=item * field1
+
+longitudinal field at fundamental
+
+=item * field2
+
+longitudinal field at second harmonic
+
 =item * dipolar
 
 Dipolar contribution to SH polarization field
@@ -139,11 +147,11 @@ polarization using the field (nrf) filter.
 
 =back
 
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
+#=begin Pod::Coverage
+#
+#=head2 BUILD
+#
+#=end Pod::Coverage
 
 =cut
 
@@ -183,6 +191,12 @@ has 'u1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
 has 'u2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
          lazy=>1, builder=>'_build_u2',  
          documentation=>'Spectral variable at SH');
+has 'field1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+         lazy=>1, builder=>'_build_field1', 
+         documentation=>'longitudinal field at fundamental');
+has 'field2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+         lazy=>1, builder=>'_build_field1', 
+         documentation=>'longitudinal field at second harmonic');
 has 'dipolar'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
          lazy=>1, builder=>'_build_dipolar', 
          documentation=>'SH dipolar contribution to SH polarization');
@@ -239,16 +253,25 @@ has 'P2'=>(is=>'ro', isa=>'PDL::Complex',
              'SH self consistent total polarization vector
               field in real space');
 
+has 'P2alt'=>(is=>'ro', isa=>'PDL::Complex',
+         init_arg=>undef, lazy=>1,
+         builder=>'_build_P2alt',
+         documentation=>
+             'SH self consistent total polarization vector
+              field in real space. Alternative');
+
 has 'filterflag'=>(is=>'rw', 
          documentation=>'Filter results in reciprocal space');
 
-sub BUILD {
-    my $self=shift;
-    $self->nrf->evaluate($self->epsA1, $self->epsB1); #solve linear field
-    #my $nh=$self->nrf->nh;
-    #$nh=$self->nrf->nr->iteration if $nh>=$self->nrf->nr->iteration;
-    #$self->_nh($nh);
-}
+#sub BUILD {
+#    my $self=shift;
+#    #solve linear longitudinal field at w and 2w
+#    $self->_field1($self->nrf->evaluate($self->epsA1, $self->epsB1));
+#    $self->_field2($self->nrf->evaluate($self->epsA2, $self->epsB2));
+#    #my $nh=$self->nrf->nh;
+#    #$nh=$self->nrf->nr->iteration if $nh>=$self->nrf->nr->iteration;
+#    #$self->_nh($nh);
+#}
 
 sub _alpha {
     my $self=shift;
@@ -274,9 +297,19 @@ sub _build_alpha2 {
 }
 
 
+sub _build_field1 {
+    my $self=shift;
+    $self->nrf->evaluate($self->epsA1, $self->epsB1);
+}
+
+sub _build_field2 {
+    my $self=shift;
+    $self->nrf->evaluate($self->epsA1, $self->epsB1);
+}
+
 sub _build_dipolar {
     my $self=shift;
-    my $field=$self->nrf->field;
+    my $field=$self->field1;
     my $ndims=$self->ndims;
     #E^2 Square each complex component and sum over components
     #result is RorI, nx, ny...
@@ -302,7 +335,7 @@ sub _build_dipolar {
 
 sub _build_quadrupolar {
     my $self=shift;
-    my $field=$self->nrf->field;
+    my $field=$self->field1;
     my $ndims=$self->ndims; #dims of space
     #E E tensor
     #result is RorI, cartesian, cartesian, nx, ny...
