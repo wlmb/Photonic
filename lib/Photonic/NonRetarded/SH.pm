@@ -197,6 +197,9 @@ has 'field1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
 has 'field2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
          lazy=>1, builder=>'_build_field1', 
          documentation=>'longitudinal field at second harmonic');
+has 'epsL2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+         writer=>'_epsL2', predicate=>'has_epsL2', 
+         documentation=>'longitudinal dielectric function at 2w');
 has 'dipolar'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
          lazy=>1, builder=>'_build_dipolar', 
          documentation=>'SH dipolar contribution to SH polarization');
@@ -253,12 +256,12 @@ has 'P2'=>(is=>'ro', isa=>'PDL::Complex',
              'SH self consistent total polarization vector
               field in real space');
 
-has 'P2alt'=>(is=>'ro', isa=>'PDL::Complex',
+has 'P2LMCalt'=>(is=>'ro', isa=>'PDL::Complex',
          init_arg=>undef, lazy=>1,
-         builder=>'_build_P2alt',
+         builder=>'_build_P2LMCalt',
          documentation=>
-             'SH self consistent total polarization vector
-              field in real space. Alternative');
+             'SH self consistent total macroscopic polarization
+              in real space. Alternative');
 
 has 'filterflag'=>(is=>'rw', 
          documentation=>'Filter results in reciprocal space');
@@ -304,7 +307,8 @@ sub _build_field1 {
 
 sub _build_field2 {
     my $self=shift;
-    $self->nrf->evaluate($self->epsA1, $self->epsB1);
+    $self->nrf->evaluate($self->epsA2, $self->epsB2);
+    $self->_epsL2($self->nrf->epsL);
 }
 
 sub _build_dipolar {
@@ -466,6 +470,19 @@ sub _build_P2 {
     my $Pext=$self->external;
     my $P2=-4*PI*($alpha2*$density)->(,*1)*$PL+$Pext;
     return $P2;
+}
+
+sub _build_P2LMCalt {
+    my $self=shift;
+    my $Pex=$self->external; #external 2w polarization
+    #normalized longitudinal field.
+    my $field=$self->field2/$self->nrf->nr->geometry->npoints; 
+    #RorI xory nx ny
+    # <0|epsilon^{-1}_{LL}|P^{ex}>
+    my $prod=$field*$Pex; #Notice I don't conjugate. Epsilon is no hermitian
+    $prod=$prod->real->mv(0,-1)->clump(-2)->sumover->complex;
+    die "Strange, no epsilonL2" unless $self->has_epsL2;
+    $prod/=$self->epsL2;
 }
 
 sub _build_u1 {
