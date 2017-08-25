@@ -26,19 +26,36 @@ sub linearCombine { #complex linear combination of states
     return $result;
 }
     
-sub HProd { #Hermitean product between two scalar fields
+sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $first=shift; 
     my $second=shift;
-    my $iscomplex = 
-	(ref $first eq 'PDL::Complex' and ref $second eq 'PDL::Complex'); 
+    my $skip=shift//0;
+    my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
+	'PDL::Complex');  
     my $ndims=$first->ndims;
+    die "Dimensions should be equal" unless $ndims == $second->ndims;
     my $prod=$first->complex->Cconj*$second->complex;
-    my $result=$prod->mv(0,-1)->clump($ndims-1)->mv(-1,0)->sumover;
+    my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
+	->mv(-1,0)->sumover;
     #Note: real does not take the real part, just gives a 2-real
     #vector view of each complex
     $result=$result->real unless $iscomplex;
     return $result;
 }
+
+#sub HProd { #Hermitean product between two fields.
+#    my $first=shift; 
+#    my $second=shift;
+#    my $iscomplex = 
+#	(ref $first eq 'PDL::Complex' and ref $second eq 'PDL::Complex'); 
+#    my $ndims=$first->ndims;
+#    my $prod=$first->complex->Cconj*$second->complex;
+#    my $result=$prod->mv(0,-1)->clump($ndims-1)->mv(-1,0)->sumover;
+#    #Note: real does not take the real part, just gives a 2-real
+#    #vector view of each complex
+#    $result=$result->real unless $iscomplex;
+#    return $result;
+#}
 
 
 sub RtoG { #transform a 'complex' scalar, vector or tensorial field
@@ -72,6 +89,7 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
 sub tile { # repeat field Nx X Ny X... times
     my $f=shift;
     my @n=@_; #number of repetitions along dimension
+    # Is next comment correct (2 X)?
     my $dim=0; #field is 2 X dims X nx,ny,nz...
     my $r=$f; #result
     for my $n(@n){

@@ -14,7 +14,7 @@ use warnings;
 use strict;
 
 sub ellipse { #f y e determinan univocamente el problema  general de inclusion
-              #eliptica con excentricidad e=zeta_y/zeta_x en una celda cuadrada
+              #eliptica con e=zeta_y/zeta_x en una celda cuadrada
     my $N=shift;
     my $ff=shift;
     my $e=shift;
@@ -92,7 +92,7 @@ calculations.
 =item * ellipse($N, $ff, $e)
 
 returns an ellipse in a square lattice of side (2*$N+1)x(2*$N+1) with
-filling fraction $ff and excentricity $e with major axis along X.
+filling fraction $ff and quotient between Y and X axes $e.
 
 =item * triangle($N, $r0, $deltar, $theta0)
 

@@ -9,7 +9,7 @@ version 0.008
 =head1 SYNOPSIS
 
    use Photonic::NonRetarded::EpsL;
-   my $eps=Photonic::NonRetarded::EpsL(nr=>$nr, nh=>$nh);
+   my $eps=Photonic::NonRetarded::EpsL->new(nr=>$nr, nh=>$nh);
    my $epsilonLongitudinal=$eps->evaluate($epsA, $epsB);
 
 =head1 DESCRIPTION

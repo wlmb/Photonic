@@ -38,6 +38,7 @@ my $builder = Module::Build::Pluggable->new(
     test_requires => {
 	"Test::More" => 0,
 	"Pod::Coverage::TrustPod" => 0,
+	# "namespace::autoclean" => 0,
     },
     configure_requires => {
 	'Module::Build'                      => '0.4004',

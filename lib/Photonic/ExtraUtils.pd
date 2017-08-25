@@ -93,7 +93,7 @@ pp_addhdr(qq{
 });
           
 pp_def('dgtsl', 
-       Pars=>'c(n); d(n); e(n); y(n); [o] b(n); int [o] info();',
+       Pars=>'[phys] c(n); [phys] d(n); [phys] e(n); [phys] y(n); [o] b(n); int [o] info();',
        GenericTypes=>['D'],
        PMCode => q{
           sub PDL::dgtsl {
@@ -122,7 +122,7 @@ pp_def('dgtsl',
        },
     );
 pp_def('cgtsl', 
-       Pars=>'c(2,n); d(2,n); e(2,n); y(2,n); [o] b(2,n); int [o] info();',
+       Pars=>'[phys]c(2,n); [phys]d(2,n); [phys]e(2,n); [phys]y(2,n); [o] b(2,n); int [o] info();',
        GenericTypes=>['D'],
        PMCode => q{
           sub PDL::cgtsl {
