@@ -1,5 +1,5 @@
 This archive contains the distribution Photonic,
-version 0.006 to run electromagnetic calculations for photonics and
+version 0.008 to run electromagnetic calculations for photonics and
 metamaterials.
 
 Read the file INSTALL for installation instructions.
