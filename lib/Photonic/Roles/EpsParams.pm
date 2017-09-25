@@ -4,7 +4,7 @@ Photonic::Roles::EpsParams
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -52,7 +52,7 @@ Spectral variable
 
 
 package Photonic::Roles::EpsParams;
-$Photonic::Roles::EpsParams::VERSION = '0.008';
+$Photonic::Roles::EpsParams::VERSION = '0.009';
 use Moose::Role;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 

@@ -4,7 +4,7 @@ Photonic::Retarded::WaveP
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -59,7 +59,7 @@ The macroscopic wave operator of the last operation
 =cut
 
 package Photonic::Retarded::WaveP;
-$Photonic::Retarded::WaveP::VERSION = '0.008';
+$Photonic::Retarded::WaveP::VERSION = '0.009';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

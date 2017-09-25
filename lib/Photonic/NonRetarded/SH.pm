@@ -4,7 +4,7 @@ Photonic::NonRetarded::SH
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -156,7 +156,7 @@ polarization using the field (nrf) filter.
 =cut
 
 package Photonic::NonRetarded::SH;
-$Photonic::NonRetarded::SH::VERSION = '0.008';
+$Photonic::NonRetarded::SH::VERSION = '0.009';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -437,8 +437,11 @@ sub _build_externalL_n {
     my $states=$self->HP->states;
     my $nh=$self->HP->iteration;
     # innecesario: \propto \delta_{n0}
-    my @Pn=map HProd($states->[$_],$pol), 0..$nh-1;
-    # print join "Pn ", @Pn[0..3], "\n";
+    #my @Pn=map HProd($states->[$_],$pol), 0..$nh-1;
+    my @Pn=map {0+0*i} 0..$nh-1;
+    #$Pn[0]=$pol->(:,(0),(0));
+    $Pn[0]=HProd($states->[0],$pol);
+    #print join " Pn ", @Pn[0..3], "\n";
     return PDL->pdl([@Pn])->complex;
 }
     

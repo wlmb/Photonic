@@ -1,4 +1,4 @@
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 
 # Copy pdl's typemap to this directory
     

@@ -4,7 +4,7 @@ Photonic::NonRetarded::EpsTensor
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -98,7 +98,7 @@ don't check. From Photonic::Roles::EpsParams.
 =cut
 
 package Photonic::NonRetarded::EpsTensor;
-$Photonic::NonRetarded::EpsTensor::VERSION = '0.008';
+$Photonic::NonRetarded::EpsTensor::VERSION = '0.009';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
