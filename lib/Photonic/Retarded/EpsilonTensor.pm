@@ -4,7 +4,7 @@ Photonic::Retarded::EpsilonTensor
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -61,7 +61,7 @@ The macroscopic dielectric tensor of the last operation
 =cut
 
 package Photonic::Retarded::EpsilonTensor;
-$Photonic::Retarded::EpsilonTensor::VERSION = '0.008';
+$Photonic::Retarded::EpsilonTensor::VERSION = '0.009';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

@@ -4,7 +4,7 @@ Photonic::NonRetarded::SHP
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -69,7 +69,7 @@ Number of dimensions of the system
 =cut
 
 package Photonic::NonRetarded::SHP;
-$Photonic::NonRetarded::SHP::VERSION = '0.008';
+$Photonic::NonRetarded::SHP::VERSION = '0.009';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -85,7 +85,7 @@ has 'nrf'=>(is=>'ro', isa=>'Photonic::NonRetarded::FieldH', required=>1,
 has 'densityA'=>(is=>'ro', isa=>'Num', required=>1,
          documentation=>'Normalized dipole entities density in medium A');
 has 'densityB'=>(is=>'ro', isa=>'Num', required=>1,
-         documentation=>'Normalized dipole entities density in medium A');
+         documentation=>'Normalized dipole entities density in medium B');
 has 'density'=>(is=>'ro', isa=>'PDL', writer=>'_density', init_arg=>undef,
          documentation=>'Normalized dipole entities density over unit cell');
 has 'ndims' =>(is=>'ro', isa=>'Int', init_arg=>undef, lazy=>1,

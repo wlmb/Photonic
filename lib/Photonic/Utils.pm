@@ -1,5 +1,5 @@
 package Photonic::Utils;
-$Photonic::Utils::VERSION = '0.008';
+$Photonic::Utils::VERSION = '0.009';
 # Collection of subroutines. Thus, no Moose
 require Exporter;
 @ISA=qw(Exporter);
@@ -157,7 +157,7 @@ Photonic::Utils
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 

@@ -4,7 +4,7 @@ Photonic::NonRetarded::SHChiTensor
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
@@ -123,7 +123,7 @@ Spectral variables
 =cut
 
 package Photonic::NonRetarded::SHChiTensor;
-$Photonic::NonRetarded::SHChiTensor::VERSION = '0.008';
+$Photonic::NonRetarded::SHChiTensor::VERSION = '0.009';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -133,6 +133,8 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Moose;
 use Photonic::Types;
+use Photonic::NonRetarded::EpsTensor;
+use Photonic::Utils qw(cmatmult);
 with 'Photonic::Roles::EpsParams';
 
 #required parameters
@@ -162,6 +164,10 @@ has 'epsB2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB2',
 has 'nrshp' =>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::SHP]',
             init_arg=>undef, lazy=>1, builder=>'_build_nrshp',
             documentation=>'Array of Haydock SH polarization calculators');
+has 'epsTensor'=>(is=>'ro', isa=>'Photonic::NonRetarded::EpsTensor',
+         init_arg=>undef, 
+         lazy=>1,  builder=>'_build_epsTensor',
+         documentation=>'diel. tensor at 2w');
 has 'chiTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_chiTensor', 
              documentation=>'SH Susceptibility from last evaluation');
 
@@ -172,31 +178,37 @@ sub evaluate {
     $self->_epsB1(my $epsB1=shift);
     $self->_epsA2(my $epsA2=shift);
     $self->_epsB2(my $epsB2=shift);
-    my $kind=shift; # Undocumented, for testing: Use full (f) P2 or
-		    # (d) dipolar or (e) external  
+    my $kind=lc(shift); # Undocumented, for testing: Use full (f) P2 or
+		    # (d) dipolar or  (q) quadrupolar or (e) external  
+    my $nd=$self->geometry->B->ndims;
+    my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
     my @P2M; #array of longitudinal polarizations along different directions.
     foreach(@{$self->nrshp}){
 	my $nrsh=Photonic::NonRetarded::SH->new(
 	    shp=>$_, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
-	    epsB2=>$epsB2);
+	    epsB2=>$epsB2, filterflag=>0);
 	# RorI, XorY,nx,ny
-	my $P2ex=$nrsh->external;
-	my $P2full=$nrsh->P2;
-	my $P2M=$P2full->mv(0,-1)->mv(0,-1)
+	# dipolar, quadrupolar, external, full
+	my $P2;
+	$P2=$nrsh->P2 if not defined $kind;
+	$P2=$nrsh->P2 if $kind eq 'f';
+	$P2=$nrsh->selfConsistentVecL if $kind eq 'l';
+	$P2=$nrsh->P2LMCalt if $kind eq 'a';
+	$P2=$nrsh->dipolar if $kind eq 'd';
+	$P2=$nrsh->quadrupolar if $kind eq 'q';
+	$P2=$nrsh->external if $kind eq 'e';
+	$P2=$nrsh->externalVecL if $kind eq 'el';
+	my $P2M=$P2->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
 	    ->complex->sumover  #RorI, XorY
 	    /$self->geometry->npoints;
-	#my $field=$nrsh->nrf->evaluate($epsA2->Cconj, $epsB2->Cconj);
-	#Note that epsilonLL is not Hermitian. So I conjugate epsilon
-	#and afterwards  I conjugate the resulting field.
-	#Normalize field
-	#$field/=$self->geometry->npoints;
-	#RorI xory nx ny
-	#my $prod=$field->Cconj*$P2ex;
-	#$prod=$prod->real->mv(0,-1)->mv(0,-1)->clump(-3)->sumover->complex;
-	# I expect $prod to be equal to $P2M, if both were correct(?)
-	#Wrong: I have to make scalar product!
+	my $k=$_->nrf->nr->geometry->Direction0;
+	my $FPChi=$epsT-identity($nd); #four pi chi linear 2w
+	my $P2MLC=($k*$P2M)->sumover; #Longitudinal projection
+	my $P2ML=$k*$P2MLC; #longitudinal projection
+	my $Dep2=($FPChi*$P2ML)->sumover; # depolarization polarization
+	$P2M += $Dep2 if $kind eq 'f' or $kind eq 'l' or $kind eq 'a';
 	push @P2M, $P2M;
     }
     #NOTE. Maybe I have to correct response to D-> response to E
@@ -211,7 +223,6 @@ sub evaluate {
     #equations, and move the cartesian indices back
     my $reChi=lu_backsub($lu, $perm, $parity, $reP2M->mv(0,-1))->mv(-1,0);
     my $imChi=lu_backsub($lu, $perm, $parity, $imP2M->mv(0,-1))->mv(-1,0);
-    my $nd=$self->geometry->B->ndims;
     #chi has three cartesian indices
     my $chiTensor=PDL->zeroes(2, $nd, $nd, $nd)->complex;
     #convert dyadic to cartesian indices
@@ -239,14 +250,27 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 	#Build a corresponding NonRetarded::AllH structure
 	my $nr=Photonic::NonRetarded::AllH->new(nh=>$self->nh, geometry=>$g,
 				keepStates=>1, smallH=>$self->smallH);  
-	my $nrf=Photonic::NonRetarded::FieldH->new(nr=>$nr, nh=>$self->nhf, 
-					smallE=>$self->smallE);
+	my @args=(nr=>$nr, nh=>$self->nhf, smallE=>$self->smallE);
+	push @args, filter=>$self->filter if $self->has_filter;
+	my $nrf=Photonic::NonRetarded::FieldH->new(@args);
 	my $nrshp=Photonic::NonRetarded::SHP->
 	    new(nrf=>$nrf, densityA=>$self->densityA, 
 		densityB=>$self->densityB); 
 	push @nrshp, $nrshp;
     }
     return [@nrshp]
+}
+
+sub _build_epsTensor {
+    my $self=shift;
+    my $geometry=$self->geometry;
+    my $nh=$self->nh; #desired number of Haydock terms
+    my $smallH=$self->smallH; #smallness 
+    my $smallE=$self->smallE; #smallness 
+    my $eT=Photonic::NonRetarded::EpsTensor
+	->new(geometry=>$self->geometry, nh=>$self->nh, smallH=>$self->smallH, 
+	      smallE=>$self->smallE);
+    return $eT;
 }
 
 
