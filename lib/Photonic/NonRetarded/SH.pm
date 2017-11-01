@@ -292,7 +292,9 @@ sub _alpha {
     $alphaA1=($epsA1-1)/(4*$self->densityA*PI) unless
 	$self->densityA==0; 
     $alphaB1=($epsB1-1)/(4*$self->densityB*PI) unless
-	$self->densityB==0; 
+	$self->densityB==0;
+    $alphaA1=$alphaB1 if $densityA=0;
+    $alphaB1=$alphaA1 if $densityB=0;
     my $B=$self->nrf->nr->B;
     return $alphaA1*(1-$B)+$B*$alphaB1;
 }
