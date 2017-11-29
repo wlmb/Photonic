@@ -116,8 +116,7 @@ after '_iterate_indeed' => sub {
 
 sub run { #run the iteration
     my $self=shift;
-    my $niter=0;
-    while($niter++ < $self->nh && $self->iterate){
+    while($self->iteration < $self->nh && $self->iterate){
     }
 }
 

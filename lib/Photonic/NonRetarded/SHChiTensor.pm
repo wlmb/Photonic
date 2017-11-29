@@ -248,7 +248,7 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 	#OJO: Cuánto vale el campo macroscópico? Hay que normalizar esto?
 	$g->Direction0($_); #add G0 direction
 	#Build a corresponding NonRetarded::AllH structure
-	my $nr=Photonic::NonRetarded::AllH->new(nh=>$self->nh, geometry=>$g,
+	my $nr=Photonic::NonRetarded::AllHStable->new(nh=>$self->nh, geometry=>$g, 
 				keepStates=>1, smallH=>$self->smallH);  
 	my @args=(nr=>$nr, nh=>$self->nhf, smallE=>$self->smallE);
 	push @args, filter=>$self->filter if $self->has_filter;

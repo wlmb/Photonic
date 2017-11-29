@@ -162,7 +162,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
-use Photonic::NonRetarded::AllH;
+use Photonic::NonRetarded::AllHStable;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombine);
 use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
@@ -224,7 +224,7 @@ has 'externalVecL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
          lazy=>1, builder=>'_build_externalVecL', 
          documentation=>
              'SH ext. longitudinal polarization proj. in real space'); 
-has 'HP' =>(is=>'ro', isa=>'Photonic::NonRetarded::AllH', init_arg=>undef,
+has 'HP' =>(is=>'ro', isa=>'Photonic::NonRetarded::AllHStable', init_arg=>undef,
          lazy=>1, builder=>'_build_HP',
          documentation=>
          'Structure to calculate Haydock basis for non linear polarization');
@@ -293,8 +293,8 @@ sub _alpha {
 	$self->densityA==0; 
     $alphaB1=($epsB1-1)/(4*$self->densityB*PI) unless
 	$self->densityB==0;
-    $alphaA1=$alphaB1 if $densityA=0;
-    $alphaB1=$alphaA1 if $densityB=0;
+    $alphaA1=$alphaB1 if $self->densityA==0;
+    $alphaB1=$alphaA1 if $self->densityB==0;
     my $B=$self->nrf->nr->B;
     return $alphaA1*(1-$B)+$B*$alphaB1;
 }
@@ -426,7 +426,7 @@ sub _build_HP { #build haydock states for P2
     my $ext=$self->externalL_G;
     my $normext=sqrt(Cabs2($ext)->sum);
     my $extnorm=$ext->complex/$normext;
-    my $hp=Photonic::NonRetarded::AllH->new(nh=>$self->nrf->nh, 
+    my $hp=Photonic::NonRetarded::AllHStable->new(nh=>$self->nrf->nh, 
 	geometry=>$self->nrf->nr->geometry, smallH=>$self->nrf->nr->smallH,
 		keepStates=>1, nextState=>$extnorm);
     $hp->run;

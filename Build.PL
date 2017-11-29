@@ -24,6 +24,7 @@ my $builder = Module::Build::Pluggable->new(
     requires   => { 
 	"Inline" => 0,
 	"List::Util" => 0,
+	"Machine::Epsilon",
 	"Moose" => 0,
 	"Moose::Role" => 0,
 	"Moose::Util::TypeConstraints" => 0,

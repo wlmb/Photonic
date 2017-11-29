@@ -106,7 +106,7 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-use Photonic::NonRetarded::AllH;
+use Photonic::NonRetarded::AllHStable;
 use Photonic::NonRetarded::EpsL;
 use Moose;
 use Photonic::Types;
@@ -117,7 +117,7 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
 );
 with 'Photonic::Roles::KeepStates';
 with 'Photonic::Roles::EpsParams';
-has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::AllH]',
+has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::AllHStable]',
             init_arg=>undef, lazy=>1, builder=>'_build_nr',
             documentation=>'Array of Haydock calculators');
 has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::EpsL]',
@@ -167,7 +167,7 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
 	my $g=dclone($self->geometry); #clone geometry
 	$g->Direction0($_); #add G0 direction
 	#Build a corresponding NonRetarded::AllH structure
-	my $nr=Photonic::NonRetarded::AllH->new(geometry=>$g, smallH=>$self->smallH, 
+	my $nr=Photonic::NonRetarded::AllHStable->new(geometry=>$g, smallH=>$self->smallH, 
 			   nh=>$self->nh, keepStates=>$self->keepStates);
 	push @nr, $nr;
     }
