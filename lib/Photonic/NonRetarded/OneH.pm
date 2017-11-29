@@ -174,6 +174,9 @@ sub _iterate_indeed {
 	$self->current_b*$self->previousState,  
 	$next_state=Cscale($next_state,1/$next_b)
 	unless $next_b2 < $self->smallH;
+    #Necessary??
+    my $size=sqrt($next_state->Cabs2->sum);
+    $next_state/=$size;
     #save values
     $self->_current_a($current_a);
     $self->_next_b2($next_b2);
