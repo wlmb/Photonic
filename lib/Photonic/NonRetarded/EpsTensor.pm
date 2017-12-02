@@ -78,10 +78,6 @@ The dielectric tensor
 
 The maximum number of Haydock coefficients to use.
 
-=item * nhActual
-
-The actual number of Haydock coefficients used in the last calculation
-
 =item * converged
 
 Flags that the last calculation converged before using up all coefficients

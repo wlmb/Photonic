@@ -170,13 +170,14 @@ sub _iterate_indeed {
     my $next_b=sqrt($next_b2);
     #If b is too small, time to quit.
     my $next_state=undef;
-    $next_state=$GBGpsi_G - $current_a*$psi_G -
-	$self->current_b*$self->previousState,  
-	$next_state=Cscale($next_state,1/$next_b)
-	unless $next_b2 < $self->smallH;
-    #Necessary??
-    my $size=sqrt($next_state->Cabs2->sum);
-    $next_state/=$size;
+    if($next_b2 > $self->smallH){
+	$next_state=$GBGpsi_G - $current_a*$psi_G -
+	    $self->current_b*$self->previousState,  
+	    $next_state=Cscale($next_state,1/$next_b);
+	#Necessary??
+	my $size=sqrt($next_state->Cabs2->sum);
+	$next_state/=$size;
+    }
     #save values
     $self->_current_a($current_a);
     $self->_next_b2($next_b2);

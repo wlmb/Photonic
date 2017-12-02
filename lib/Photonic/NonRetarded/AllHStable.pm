@@ -113,10 +113,14 @@ has 'Accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
 #    my $self=shift;
 #    $self->_save_W;
 #};
+#after '_iterate_indeed' => \&_donothing;
+#sub _donothing {}
 after '_iterate_indeed' => \&_withoutname;
 sub _withoutname
 {
     my $self=shift;
+    my $nextState=$self->nextState;
+    return unless defined $nextState;
     my $a=PDL->pdl($self->as);
     my $b=PDL->pdl($self->bs);
     my $n=$self->iteration;
@@ -134,7 +138,7 @@ sub _withoutname
 	    -$b->(($n-1))
 	    *$previous_W);
 	$next_W->(1:-1)+=$b->(1:-2)*$current_W->(0:-3) if ($n>=3);
-	$next_W+=_sign($next_W)*2*$self->Accuracy*$self->geometry->npoints;
+	$next_W+=_sign($next_W)*2*$self->Accuracy;
 	$next_W/=$self->next_b;
     }
     $next_W=$next_W->append($self->Accuracy) if $n>=1;
@@ -143,8 +147,8 @@ sub _withoutname
     return unless $n>=2;
     my $max=$next_W->(0:-2)->maximum;
     return unless $max > sqrt($self->Accuracy);
+    #print "Ortoghonalize at $n\n";
     my $states=$self->states;
-    my $nextState=$self->nextState;
     my $currentState=$self->currentState;
     my $scold=sqrt($currentState->Cabs2->sum);
     pop(@{$states}); #should be currentState;
@@ -158,6 +162,7 @@ sub _withoutname
     $currentState/=$sc;
     $self->_currentState($currentState);
     push @{$self->states}, $currentState;
+    #necessary?:
     $nextState-=$currentState*HProd($currentState, $nextState);
     my $sn=sqrt($nextState->Cabs2->sum);
     $nextState/=$sn;
