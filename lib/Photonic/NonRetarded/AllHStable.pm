@@ -80,7 +80,7 @@ Array of Haydock b coefficients squared
 =cut
 
 package Photonic::NonRetarded::AllHStable;
-$Photonic::NonRetarded::AllH::VERSION = '0.009';
+$Photonic::NonRetarded::AllHStable::VERSION = '0.009';
 use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;
@@ -114,8 +114,8 @@ has 'Accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
 #    $self->_save_W;
 #};
 #after '_iterate_indeed' => \&_donothing;
-#sub _donothing {}
 after '_iterate_indeed' => \&_withoutname;
+#sub _donothing {}
 sub _withoutname
 {
     my $self=shift;

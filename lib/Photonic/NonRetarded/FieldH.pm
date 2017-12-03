@@ -105,7 +105,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
-use Photonic::NonRetarded::AllHStable;
+use Photonic::NonRetarded::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
 use Photonic::Types;

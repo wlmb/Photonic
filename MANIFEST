@@ -15,7 +15,6 @@ lib/Photonic/ExtraUtils.pd
 lib/Photonic/Geometry.pm
 lib/Photonic/Geometry/FromImage2D.pm
 lib/Photonic/NonRetarded/AllH.pm
-lib/Photonic/NonRetarded/AllHStable.pm
 lib/Photonic/NonRetarded/EpsL.pm
 lib/Photonic/NonRetarded/EpsTensor.pm
 lib/Photonic/NonRetarded/FieldH.pm

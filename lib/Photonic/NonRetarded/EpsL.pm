@@ -94,12 +94,12 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use Photonic::NonRetarded::AllHStable;
+use Photonic::NonRetarded::AllH;
 use Moose;
 use Photonic::Types;
 
 with 'Photonic::Roles::EpsParams';
-has 'nr' =>(is=>'ro', isa=>'Photonic::NonRetarded::AllHStable', required=>1);
+has 'nr' =>(is=>'ro', isa=>'Photonic::NonRetarded::AllH', required=>1);
 has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsL');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
                  writer=>'_nhActual');
@@ -148,7 +148,6 @@ sub evaluate {
     #If there are less available coefficients than $self->nh and all
     #of them were used, there is no remaining work to do, so, converged 
     $converged=1 if $self->nr->iteration < $self->nh;
-    $self->_converged($converged);
     $self->_converged($converged);
     $self->_nhActual($n);
     $self->_epsL($epsA*$fn/$u);

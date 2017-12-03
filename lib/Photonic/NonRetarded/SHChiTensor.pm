@@ -95,10 +95,6 @@ The dielectric tensor
 
 The maximum number of Haydock coefficients to use.
 
-=item * nhActual
-
-The actual number of Haydock coefficients used in the last calculation
-
 =item * converged
 
 Flags that the last calculation converged before using up all coefficients
@@ -148,6 +144,9 @@ has 'densityB'=>(is=>'ro', isa=>'Num', required=>1,
 has 'nhf'=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock
                          coefficients for field calculation');
+has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
+         documentation=>'Reorthogonalize haydock flag');
+
 #optional parameters 
 has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
@@ -238,8 +237,8 @@ sub evaluate {
     return $chiTensor;
 }
 
-#Need geometry, maximum number of Haydock coefficients for NonRetarded::ALL nh, número de
-#haydock para el comp nhf
+#Need geometry, maximum number of Haydock coefficients for NonRetarded::ALL nh
+
 sub _build_nrshp { # One Haydock coefficients calculator per direction0
     my $self=shift;
     my @nrshp;
@@ -248,8 +247,9 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 	#OJO: Cuánto vale el campo macroscópico? Hay que normalizar esto?
 	$g->Direction0($_); #add G0 direction
 	#Build a corresponding NonRetarded::AllH structure
-	my $nr=Photonic::NonRetarded::AllHStable->new(nh=>$self->nh, geometry=>$g, 
-				keepStates=>1, smallH=>$self->smallH);  
+	my $nr=Photonic::NonRetarded::AllH->new(
+	    nh=>$self->nh, geometry=>$g, keepStates=>1,
+	    reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH);  
 	my @args=(nr=>$nr, nh=>$self->nhf, smallE=>$self->smallE);
 	push @args, filter=>$self->filter if $self->has_filter;
 	my $nrf=Photonic::NonRetarded::FieldH->new(@args);
@@ -268,7 +268,8 @@ sub _build_epsTensor {
     my $smallH=$self->smallH; #smallness 
     my $smallE=$self->smallE; #smallness 
     my $eT=Photonic::NonRetarded::EpsTensor
-	->new(geometry=>$self->geometry, nh=>$self->nh, smallH=>$self->smallH, 
+	->new(geometry=>$self->geometry, nh=>$self->nh,
+	      reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH, 
 	      smallE=>$self->smallE);
     return $eT;
 }
