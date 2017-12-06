@@ -34,7 +34,7 @@ use Moose::Role;
 
 
 
-has 'keepStates'=>(is=>'ro', required=>1, default=>0,
+has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepstates',
          documentation=>'flag to save Haydock states');
 
 

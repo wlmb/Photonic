@@ -450,11 +450,11 @@ sub _build_externalL_n {
 sub _build_selfConsistentL_n {
     my $self=shift;
     my $external=$self->externalL_n;
-    my $nh=$self->HP->nh;
+    my $nh=$self->HP->iteration;
     my $as=$self->HP->as;
     my $bs=$self->HP->bs;
     my $u2=$self->u2;
-    my $diag=$u2->complex - PDL->pdl([@$as])->(0:$nh-1);
+    my $diag=$u2->complex - PDL->pdl($as)->(0:$nh-1);
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
     my $supradiag=$subdiag->mv(0,-1)->rotate(-1)->mv(-1,0);

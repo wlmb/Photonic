@@ -149,7 +149,6 @@ sub evaluate {
     #of them were used, there is no remaining work to do, so, converged 
     $converged=1 if $self->nr->iteration < $self->nh;
     $self->_converged($converged);
-    $self->_converged($converged);
     $self->_nhActual($n);
     $self->_epsL($epsA*$fn/$u);
     return $self->epsL;

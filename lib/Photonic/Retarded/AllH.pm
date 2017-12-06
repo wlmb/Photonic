@@ -9,8 +9,8 @@ version 0.009
 =head1 SYNOPSIS
 
    use Photonic::Retarded::AllH;
-   my $iter=Photonic::Retarded::AllH->new(metric=>$metric,nh=>$Nh,
-            keepStates=>$save); 
+   my $iter=Photonic::Retarded::AllH->new(metric=>$metric,
+            nh=>$Nh, polarization=>$p, keepStates=>$save); 
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
