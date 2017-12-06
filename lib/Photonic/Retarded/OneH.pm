@@ -207,12 +207,6 @@ sub _iterate_indeed {
     # gPsi_np1 is RorI xyz nx ny nz
     # Eq. 4.41
     my $a_n=$g_n*($gpsi->Cconj*$psi_np1)->re->sum;
-    #my $err = $g_n*($gpsi->Cconj*$psi_np1)->im->sum;
-    #croak "Imaginary part of \$a_n too large: $err" unless abs($err)
-    #< $smallH;   Eq 4.43
-    #$err = ($psi_np1->Cconj*$gPsi_np1)->im->sum;
-    #croak "Imaginary part of \$psi2_np1 too large: $err" unless
-    #abs($err) < $smallH;
     # Eq. 4.30
     #Modified algorithm:
     my $next_state=($psi_np1-$a_n*$psi_n-$c_n*$psi_nm1);
