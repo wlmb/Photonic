@@ -3,4 +3,4 @@ perl:
   - "5.24"
   - "5.22"
   - "5.20"
-  
+ after_failure: "cat /home/travis/.cpanm/latest_build/build.log"
