@@ -41,7 +41,7 @@ $ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geome
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
 haydock coefficients and continued fraction. From Photonic::Roles::EpsParams.
 
-=item * evaluate($epsA1, $epsB1, $epsA2, $epsB2, [$kind])
+=item * evaluate($epsA1, $epsB1, $epsA2, $epsB2, [kind=>$kind,] [mask=>$mask] )
 
 Returns the macroscopic second Harmonic susceptibility function for a
 given value of the dielectric functions of the host $epsA and the
@@ -177,8 +177,10 @@ sub evaluate {
     $self->_epsB1(my $epsB1=shift);
     $self->_epsA2(my $epsA2=shift);
     $self->_epsB2(my $epsB2=shift);
-    my $kind=lc(shift); # Undocumented, for testing: Use full (f) P2 or
+    my %options=@_; #the rest are options. Currently, kind and mask.
+    my $kind=lc($options{kind}); # Undocumented, for testing: Use full (f) P2 or
 		    # (d) dipolar or  (q) quadrupolar or (e) external  
+    my $mask=$options{mask};
     my $nd=$self->geometry->B->ndims;
     my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
     my @P2M; #array of longitudinal polarizations along different directions.
@@ -197,7 +199,8 @@ sub evaluate {
 	$P2=$nrsh->quadrupolar if $kind eq 'q';
 	$P2=$nrsh->external if $kind eq 'e';
 	$P2=$nrsh->externalVecL if $kind eq 'el';
-	my $P2M=$P2->mv(0,-1)->mv(0,-1)
+	$P2=$P2*$mask->(*) if defined $mask;
+	$P2M$P2->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
 	    ->complex->sumover  #RorI, XorY
