@@ -124,6 +124,7 @@ requires:
   PDL::IO::Storable: '0'
   PDL::NiceSlice: '0'
   Storable: '0'
+  namespace::autoclean: '0'
 resources:
   license: http://dev.perl.org/licenses/
 version: '0.009'

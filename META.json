@@ -51,7 +51,8 @@
             "PDL::IO::Pic" : "0",
             "PDL::IO::Storable" : "0",
             "PDL::NiceSlice" : "0",
-            "Storable" : "0"
+            "Storable" : "0",
+            "namespace::autoclean" : "0"
          }
       },
       "test" : {
@@ -178,5 +179,5 @@
       ]
    },
    "version" : "0.009",
-   "x_serialization_backend" : "JSON::PP version 2.94"
+   "x_serialization_backend" : "JSON::PP version 2.97001"
 }

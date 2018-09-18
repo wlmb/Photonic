@@ -48,7 +48,9 @@ given value of the dielectric functions of the host $epsA and the
 particle $epsB at the fundamental 1 and second harmonic 2 frequency. 
 $kind is an optional letter for testing purposes with values 'd' for
 dipolar, 'q' for quadrupolar, 'e' for external and 'f' for full
-selfconsistent calculation (the default).
+selfconsistent calculation (the default). Mask is a mask with ones and
+zeroes, to evaluate the contribution of certain regions to the
+susceptibility. 
 
 
 =back
@@ -199,19 +201,31 @@ sub evaluate {
 	$P2=$nrsh->quadrupolar if $kind eq 'q';
 	$P2=$nrsh->external if $kind eq 'e';
 	$P2=$nrsh->externalVecL if $kind eq 'el';
-	$P2=$P2*$mask->(*) if defined $mask;
-	$P2M$P2->mv(0,-1)->mv(0,-1)
+	my $P2M=$P2->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
 	    ->complex->sumover  #RorI, XorY
 	    /$self->geometry->npoints;
 	my $k=$_->nrf->nr->geometry->Direction0;
 	my $FPChi=$epsT-identity($nd); #four pi chi linear 2w
-	my $P2MLC=($k*$P2M)->sumover; #Longitudinal projection
+	my $P2MLC=($k*$P2M)->sumover; #Longitudinal component
 	my $P2ML=$k*$P2MLC; #longitudinal projection
 	my $Dep2=($FPChi*$P2ML)->sumover; # depolarization polarization
-	$P2M += $Dep2 if $kind eq 'f' or $kind eq 'l' or $kind eq 'a';
-	push @P2M, $P2M;
+	my $P2Mmask=$P2M; #masked macroscopic polarization
+	my $f=1; #filling fraction of masked region.
+	if (defined $mask){ # is there a real mask?
+	    $f=$mask->sum/$self->geometry->npoints; #filling fraction
+				#of mask
+	    $P2=$P2*$mask->(*1); #masked polarization
+	    $P2Mmask=$P2->mv(0,-1)->mv(0,-1) #masked macroscopic polarization
+	    ->clump(-3) #linear index, RorI, XorY
+	    ->mv(-2,0) #RorI, index, XorY
+	    ->complex->sumover  #RorI, XorY
+		/$self->geometry->npoints;
+	}
+	$P2Mmask = $P2Mmask + $f*$Dep2 if $kind eq 'f' or $kind eq 'l'
+	    or $kind eq 'a'; # substract masked macro depolarization field
+	push @P2M, $P2Mmask; 
     }
     #NOTE. Maybe I have to correct response to D-> response to E
     #I have to convert from the array of polarizations for given
