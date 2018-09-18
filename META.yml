@@ -77,11 +77,17 @@ provides:
   Photonic::Retarded::EpsilonTensor:
     file: lib/Photonic/Retarded/EpsilonTensor.pm
     version: '0.009'
+  Photonic::Retarded::EpsilonTensorF:
+    file: lib/Photonic/Retarded/EpsilonTensorF.pm
+    version: '0.009'
   Photonic::Retarded::FieldH:
     file: lib/Photonic/Retarded/FieldH.pm
     version: '0.009'
   Photonic::Retarded::Green:
     file: lib/Photonic/Retarded/Green.pm
+    version: '0.009'
+  Photonic::Retarded::GreenF:
+    file: lib/Photonic/Retarded/GreenF.pm
     version: '0.009'
   Photonic::Retarded::GreenP:
     file: lib/Photonic/Retarded/GreenP.pm
@@ -94,6 +100,9 @@ provides:
     version: '0.009'
   Photonic::Retarded::Wave:
     file: lib/Photonic/Retarded/Wave.pm
+    version: '0.009'
+  Photonic::Retarded::WaveF:
+    file: lib/Photonic/Retarded/WaveF.pm
     version: '0.009'
   Photonic::Retarded::WaveP:
     file: lib/Photonic/Retarded/WaveP.pm
