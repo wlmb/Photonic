@@ -61,7 +61,7 @@ The macroscopic dielectric tensor of the last operation
 =cut
 
 package Photonic::Retarded::EpsilonTensorF;
-$Photonic::Retarded::EpsilonTensor::VERSION = '0.009';
+$Photonic::Retarded::EpsilonTensorF::VERSION = '0.009';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
