@@ -43,6 +43,9 @@ has 'f'=>(is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_f',
 has 'unitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
      builder=>'_build_unitPairs', 
      documentation=>'Normalized sum of pairs of basis vectors');
+has 'CunitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
+     builder=>'_build_CunitPairs',
+     documentation=>'Normalized complex sum of pairs of basis vectors');
 has 'unitDyads'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
      builder=>'_build_unitDyads',
      documentation=>'Matrix of dyads of unit vector pairs');
@@ -143,6 +146,23 @@ sub _build_unitPairs {
     return [@pairs];
 }
 
+sub _build_CunitPairs {
+    my $self=shift;
+    my $nd=$self->B->ndims;
+    my $units=$self->units;
+    my @cpairs;
+    for my $i(0..$nd-1){ #build pairs of vectors
+	for my $j($i+1..$nd-1){
+		my $vc=($units->[$i]+i*$units->[$j]);
+		my $vn=sqrt(($units->[$i]+i*$units->[$j])->Cabs2->sumover);
+		my $vcn=$vc*(1/$vn);
+		push @cpairs, $vcn;	    
+	}
+    }
+    return [@cpairs];
+}
+
+
 sub _build_unitDyads {
     my $self=shift;
     my $nd=$self->B->ndims; #Number of dimensions
@@ -166,14 +186,13 @@ sub _build_unitDyads {
     }
     return $matrix;
 }
-	
+
 sub _build_unitDyadsLU {
     my $self=shift;
     my ($lu, $perm, $parity) = lu_decomp($self->unitDyads);
     die 'Unit Dyad not invertible' unless defined $lu;
     return [($lu, $perm, $parity)];
 }
-
 
 sub _G0 {
     my $self=shift;
