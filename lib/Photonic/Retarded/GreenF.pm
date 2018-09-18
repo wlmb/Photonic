@@ -117,36 +117,50 @@ extends 'Photonic::Retarded::Green';
 
 has 'Chaydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::Retarded::AllH]',
             init_arg=>undef, lazy=>1, builder=>'_build_Chaydock',
-            documentation=>'Array of Haydock calculators');
+            documentation=>'Array of Haydock calculators for complex projection');
+
 has 'CgreenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::Retarded::GreenP]',
              init_arg=>undef, lazy=>1, builder=>'_build_CgreenP',
-             documentation=>'Array of projected G calculators');
+             documentation=>'Array of projected G calculators for complex projection');
 
+has 'CChaydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::Retarded::AllH]',
+            init_arg=>undef, lazy=>1, builder=>'_build_CChaydock',
+            documentation=>'Array of Haydock calculators for complex-conjugate projection');
 
-after 'evaluate' => sub {
+has 'CCgreenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::Retarded::GreenP]',
+             init_arg=>undef, lazy=>1, builder=>'_build_CCgreenP',
+             documentation=>'Array of projected G calculators for complex-conjugate projection');
+
+around 'evaluate' => sub {
+    my $orig=shift;
     my $self=shift;
-    my @CCgreenP; #array of Green's projections along complex directions.
+    my $epsB=shift;
+    $self->$orig($epsB);    
+    my @greenPc; #array of Green's projections along complex directions.
+    my @greenPcc; #array of Green's projections along complex-conjugate directions.
     my $converged=1;
-    my $epsB=$self->epsB;
     foreach(@{$self->CgreenP}){
-	push @CCgreenP, $_->evaluate($epsB);
+	push @greenPc, $_->evaluate($epsB);
 	$converged &&=$_->converged;
     }
+    foreach(@{$self->CCgreenP}){
+        push @greenPcc, $_->evaluate($epsB);
+        $converged &&=$_->converged;
+    } 
     $self->_converged($converged);
     my $nd=$self->geometry->B->ndims;
     my $greenTensor=$self->greenTensor;
+    my $asy=$greenTensor->zeroes->complex;
     my $m=0;
     for my $i(0..$nd-2){
 	for my $j($i+1..$nd-1){
-	    $greenTensor->(:,($i),($j))+= -i*($CCgreenP[$m] 
-	       -(1/2)*$greenTensor->(:,($i),($i))
-		+(1/2)*$greenTensor->(:,($j),($j)) );
-	    $greenTensor->(:,($j),($i))+= i*( $CCgreenP[$m]
-	       -(1/2)*$greenTensor->(:,($i),($i))
-		+(1/2)*$greenTensor->(:,($j),($j)) );
+	    $asy->(:,($i),($j)).= i*($greenPcc[$m]-$greenPc[$m])/2;
+	    $asy->(:,($j),($i)).= i*($greenPc[$m]-$greenPcc[$m])/2;
 	    $m++
 	}
      }
+    #print $asy, "\n";
+    $greenTensor= $greenTensor+$asy; 
     $self->_greenTensor($greenTensor);
     return $greenTensor;
 };
@@ -160,13 +174,30 @@ sub _build_Chaydock { # One Haydock coefficients calculator per direction0
 	my $m=dclone($self->metric); #clone metric, to be safe
 	my $e=$_; #polarization
 	#Build a corresponding Photonic::Retarded::AllH structure
-	my $cchaydock=Photonic::Retarded::AllH->new(
+	my $chaydock=Photonic::Retarded::AllH->new(
 	    metric=>$m, polarization=>$e, nh=>$self->nh,
 	    keepStates=>$self->keepStates, smallH=>$self->smallH);
-	push @Chaydock, $cchaydock;
+	push @Chaydock, $chaydock;
     }
     return [@Chaydock]
 }
+
+sub _build_CChaydock { # One Haydock coefficients calculator per direction0
+    my $self=shift;
+    my @CChaydock;
+    # This must change if G is not symmetric
+    foreach(@{$self->geometry->CCunitPairs}){
+	my $m=dclone($self->metric); #clone metric, to be safe
+	my $e=$_; #polarization
+	#Build a corresponding Photonic::Retarded::AllH structure
+	my $cchaydock=Photonic::Retarded::AllH->new(
+	    metric=>$m, polarization=>$e, nh=>$self->nh,
+	    keepStates=>$self->keepStates, smallH=>$self->smallH);
+	push @CChaydock, $cchaydock;
+    }
+    return [@CChaydock]
+}
+
 
 sub _build_CgreenP {
     my $self=shift;
@@ -180,6 +211,16 @@ sub _build_CgreenP {
 }
 
 
+sub _build_CCgreenP {
+    my $self=shift;
+    my @CCgreenP;
+    foreach(@{$self->CChaydock}){
+	my $g=Photonic::Retarded::GreenP->new(
+	    haydock=>$_, nh=>$self->nh, smallE=>$self->smallE);
+	push @CCgreenP, $g;
+    }
+    return [@CCgreenP]
+}
 
 __PACKAGE__->meta->make_immutable;
     
