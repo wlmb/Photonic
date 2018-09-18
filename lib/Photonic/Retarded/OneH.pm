@@ -4,7 +4,7 @@ Photonic::Retarded::OneH
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 
@@ -107,7 +107,7 @@ next_b2, next_c, next_g, shifting the current values where necessary. Returns
 =cut
 
 package Photonic::Retarded::OneH;
-$Photonic::Retarded::OneH::VERSION = '0.009';
+$Photonic::Retarded::OneH::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

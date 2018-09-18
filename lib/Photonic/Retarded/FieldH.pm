@@ -4,7 +4,7 @@ Photonic::Retarded::FieldH
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 
@@ -98,7 +98,7 @@ evaluation of the field
 =cut
 
 package Photonic::Retarded::FieldH;
-$Photonic::Retarded::FieldH::VERSION = '0.009';
+$Photonic::Retarded::FieldH::VERSION = '0.010';
 
 use constant PI=>4*atan2(1,1);
 

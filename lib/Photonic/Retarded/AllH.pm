@@ -4,7 +4,7 @@ Photonic::Retarded::AllH
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 
@@ -95,7 +95,7 @@ Array of Haydock g coefficients
 =cut
 
 package Photonic::Retarded::AllH;
-$Photonic::Retarded::AllH::VERSION = '0.009';
+$Photonic::Retarded::AllH::VERSION = '0.010';
 use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;

@@ -4,7 +4,7 @@ Photonic::Retarded::GreenP
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 
@@ -87,7 +87,7 @@ Criteria of convergence. 0 means don't check. From Photonic::Roles::EpsParams.
 =cut
 
 package Photonic::Retarded::GreenP;
-$Photonic::Retarded::GreenP::VERSION = '0.009';
+$Photonic::Retarded::GreenP::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
