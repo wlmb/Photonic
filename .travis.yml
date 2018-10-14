@@ -1,4 +1,8 @@
 language: perl
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
 before_install:
   - sudo apt-get -qq update 
   - >
