@@ -1,9 +1,9 @@
 language: perl
 before_install:
-  - sudo apt-get add-apt-repository restricted -y
-  - sudo apt-get add-apt-repository universe -y
-  - sudo apt-get add-apt-repository multiverse -y
-  - sudo apt-get add-apt-repository ubuntu-toolchain-r-test -y
+  - sudo apt-get add-apt-repository restricted
+  - sudo apt-get add-apt-repository universe
+  - sudo apt-get add-apt-repository multiverse
+  - sudo apt-get add-apt-repository ubuntu-toolchain-r-test
   - sudo apt-get -qq update 
   - >
     sudo apt-get -qq install -y sharutils, libncurses5-dev,
