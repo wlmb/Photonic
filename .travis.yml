@@ -1,12 +1,12 @@
 language: perl
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
 before_install:
+  - sudo apt-get add-apt-repository restricted -y
+  - sudo apt-get add-apt-repository universe -y
+  - sudo apt-get add-apt-repository multiverse -y
+  - sudo apt-get add-apt-repository ubuntu-toolchain-r-test -y
   - sudo apt-get -qq update 
   - >
-    sudo apt-get -qq install sharutils, libncurses5-dev,
+    sudo apt-get -qq install -y sharutils, libncurses5-dev,
     libreadline-dev, freeglut3-dev, libxi-dev, libxmu-dev,
     libgsl-dev, libnetpbm10-dev, ffmpeg, gfortran, libfftw3-dev,
     pkg-config
