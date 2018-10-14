@@ -2,7 +2,7 @@ language: perl
 before_install:
   - sudo apt-get -qq update 
   - >
-    sudo apt-get -qq install cpanminus, make, gcc, sharutils, libncurses5-dev,
+    sudo apt-get -qq install sharutils, libncurses5-dev,
     libreadline-dev, freeglut3-dev, libxi-dev, libxmu-dev,
     libgsl-dev, libnetpbm10-dev, ffmpeg, gfortran, libfftw3-dev,
     pkg-config
