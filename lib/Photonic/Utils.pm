@@ -9,7 +9,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
 use PDL::Complex;
-use feature qw(say);
+use Carp;
 use warnings;
 use strict;
 
@@ -35,6 +35,7 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     my $prod=$first->complex->Cconj*$second->complex;
+    # clump all except skip dimensions, protecto RorI index and sum.
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
 	->mv(-1,0)->sumover;
     #Note: real does not take the real part, just gives a 2-real
@@ -43,7 +44,8 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     return $result;
 }
 
-sub MHProd { #Hermitean product between two fields. skip first 'skip' dims
+sub MHProd { #Hermitean product between two fields with metric. skip
+	     #first 'skip' dims  
     my $first=shift; 
     my $second=shift;
     my $metric=shift;
@@ -53,6 +55,8 @@ sub MHProd { #Hermitean product between two fields. skip first 'skip' dims
 	'PDL::Complex');  
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
+    carp "We don't trust the skip argument in MHProd yet" if $skip;
+    # I'm not sure about the skiped dimensions in the next line. Is it right?
     my $mprod=($metric*$second(:,:,*1))->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
     my $prod=$first->complex->Cconj*$mprod->complex;
@@ -63,21 +67,6 @@ sub MHProd { #Hermitean product between two fields. skip first 'skip' dims
     $result=$result->real unless $iscomplex;
     return $result;
 }
-
-
-#sub HProd { #Hermitean product between two fields.
-#    my $first=shift; 
-#    my $second=shift;
-#    my $iscomplex = 
-#	(ref $first eq 'PDL::Complex' and ref $second eq 'PDL::Complex'); 
-#    my $ndims=$first->ndims;
-#    my $prod=$first->complex->Cconj*$second->complex;
-#    my $result=$prod->mv(0,-1)->clump($ndims-1)->mv(-1,0)->sumover;
-#    #Note: real does not take the real part, just gives a 2-real
-#    #vector view of each complex
-#    $result=$result->real unless $iscomplex;
-#    return $result;
-#}
 
 
 sub RtoG { #transform a 'complex' scalar, vector or tensorial field
@@ -153,20 +142,6 @@ sub cmatmult {
     return $c;
 }
 
-#sub dgtsl { #dgtsl glue
-#    my ($c, $d, $e, $b)=map {$_->copy} @_;
-#    my $info=long(0);
-#    PDL::dgtslPP($c,$d,$e,$b,$info);
-#    return ($b, $info)
-#}
-#sub cgtsl { #cgtsl glue
-#    my ($c, $d, $e, $b)=map {$_->copy} @_;
-#    my $info=PDL::long(0);
-#    PDL::cgtslPP($c,$d,$e,$b,$info);
-#    return ($b, $info)
-#}
-
-
 1;
 
 
@@ -200,9 +175,18 @@ Complex linear combination of states. $c is an arrayref of 'complex' pdl
 scalars and $s is an arrayref of 'complex' states ('complex'
 multidimensional pdl). 
 
-=item * $p=HProd($a, $b)
+=item * $p=HProd($a, $b, $skip)
 
-Hermitean product <a|b> of two 2xNx... 'complex' pdls.
+Hermitean product <a|b> of two 2x.... 'complex' multidimensional
+pdls $a and $b. If $skip is present, preserve the first 1+$skip
+_dimensions (the first dimension is RorI) before adding up.
+
+=item * $p=MHProd($a, $b, $m, $skip)
+
+Hermitean product <a|m|b> of two 2x.... 'complex' multidimensional
+pdls $a and $b representing vector fields using metric $m. If $skip is
+present, preserve the first 1+$skip dimensions (the first dimension
+is RorI) before adding up. (Might not be functional yet, or might be wrong)
 
 =item * $psiG = RtoG($psiR, $ndims, $skip)
 
@@ -229,8 +213,6 @@ along the y direction, etc. Useful for making plots.
 Returns a 2D vector field ready for gnuplotting from a vector field $f
 scaling the result by $s and decimating the field by $d. The vectors
 are centered on the decimated lattice points.
-
-
 
 =item * $c=cmatmult($a, $b)
 
