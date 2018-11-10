@@ -540,16 +540,12 @@ sub _build_P2LMCalt {
     my $betaV_n=PDL->pdl(
 	[map {HProd($betaV_G,$states->[$_]->(,*1), 1)} (0..$nh-1)]
 	)->complex;
-    #my $tmp=HProd($betaV_G->(,(1),:,:), $states->[200]);
-    #print $tmp, "==?", $betaV_n->(:,(1), (200)), "\n";
-    
     my @Ppsi;
     foreach(0..$ndims-1){
 	my ($psi_n, $psiinfo)= 
 	    cgtsl($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:)); 
 	die "Error solving tridiag system" unless $psiinfo == 0;
 	# RorI nx ny .... cartesian
-	#print "psi_n[$_]=$psi_n\n";
 	my $psi_G=linearCombine([$psi_n->dog], $states);
 	my $Ppsi=HProd($psi_G, $PexL_G);
 	push @Ppsi, $Ppsi;
