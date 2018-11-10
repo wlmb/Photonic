@@ -153,21 +153,21 @@ sub evaluate {
     return $self->Gpp;
 }
 
-sub storeAllH {
-    my $self=shift;
-    my $nh=$self->nh;
-    my $polr=$self->haydock->polarization->re;
-    my $poli=$self->haydock->polarization->im;
-    my $filename="nh_$nh-pol_$polr.i$poli";
-    my @states=@{$self->haydock->states};
-    open(OUT, ">", $filename) or die "Couldn't open $filename for writing. $!";
-    print OUT "@states";
-}
+#sub storeAllH {
+#    my $self=shift;
+#    my $nh=$self->nh;
+#    my $polr=$self->haydock->polarization->re;
+#    my $poli=$self->haydock->polarization->im;
+#    my $filename="nh_$nh-pol_$polr.i$poli";
+#    my @states=@{$self->haydock->states};
+#    open(OUT, ">", $filename) or die "Couldn't open $filename for writing. $!";
+#    print OUT "@states";
+#}
 
-sub forgetstates {
-        my $self=shift;
-        undef @{$self->haydock->states} if  $self->haydock->reorthogonalize;
-}
+#sub forgetstates {
+#        my $self=shift;
+#        undef @{$self->haydock->states} if  $self->haydock->reorthogonalize;
+#}
 
 
 __PACKAGE__->meta->make_immutable;
