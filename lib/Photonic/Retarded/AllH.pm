@@ -92,6 +92,13 @@ Array of Haydock g coefficients
 
 =back
 
+=begin Pod::Coverage
+
+=head2 BUILD
+
+=end Pod::Coverage
+
+
 =cut
 
 package Photonic::Retarded::AllH;
