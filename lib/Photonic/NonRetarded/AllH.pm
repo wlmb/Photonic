@@ -73,6 +73,12 @@ Array of Haydock b coefficients squared
 
 =back
 
+=begin Pod::Coverage
+
+=head2 BUILD
+
+=end Pod::Coverage
+
 =cut
 
 package Photonic::NonRetarded::AllH;
