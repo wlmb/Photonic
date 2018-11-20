@@ -1,0 +1,9 @@
+# -*- mode: org; -*-
+
+* TODO Write and publish paper.
+* TODO Allow non-orthogonal unit vectors
+* TODO Allow saving states for reorthogonalization and reinitialization
+* TODO Generalize to three or more media nonretarded
+* TODO Generalize to three or more media retarded
+
+* DONE Add TODO file
