@@ -7,6 +7,7 @@ MANIFEST
 META.yml
 META.json
 README
+TODO
 fortran/cgtsl.f
 fortran/dgtsl.f
 lib/Photonic.pm
