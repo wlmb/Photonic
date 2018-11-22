@@ -30,7 +30,7 @@ Haydock coefficient at a time.
 
 =item * new(epsilon=>$e, geometry=>$g[, smallH=>$s])
 
-Create a new Ph::NR::OneH object with GeometryG0 $g, dielectric
+Create a new Ph::NR::NP::OneH object with GeometryG0 $g, dielectric
 function $e and optional smallness parameter  $s.
 
 =back
@@ -114,13 +114,16 @@ has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
     init_arg=>undef);
 has 'nextState' =>(is=>'ro', isa=>'PDL::Complex|Undef', writer=>'_nextState',
     lazy=>1, default=>\&_firstState);
-has 'current_a' => (is=>'ro', writer=>'_current_a',
+has 'current_a' => (is=>'ro', isa0>'PDL::Complex', writer=>'_current_a',
     init_arg=>undef);
-has 'current_b2' => (is=>'ro', writer=>'_current_b2',
+has 'current_b2' => (is=>'ro', isa=>'PDL::Complex', writer=>'_current_b2',
     init_arg=>undef);
-has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef, default=>0);
-has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
-has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef, default=>0);
+has 'next_b2' => (is=>'ro', isa=>'PDL::Complex', writer=>'_next_b2', 
+		  init_arg=>undef, default=>0+0*i);
+has 'current_b' => (is=>'ro', isa=>'PDL::Complex', 
+		    writer=>'_current_b', init_arg=>undef);
+has 'next_b' => (is=>'ro', isa=>'PDL::Complex', writer=>'_next_b', 
+		 init_arg=>undef, default=>0);
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
 sub iterate { #single Haydock iteration in N=1,2,3 dimensions
@@ -143,40 +146,56 @@ sub _iterate_indeed {
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest 
     my $Gpsi_G=Cscale($psi_G, $self->GNorm->mv(0,-1)); #^G |psi>
-    #the result is RorI, nx, ny,... cartesian
+    #the result is complex RorI, nx, ny,... cartesian
     #Take inverse Fourier transform over all space dimensions,
     #thread over cartesian indices
     #Notice that (i)fftn wants a real 2,nx,ny... piddle, not a complex
     #one. Thus, I have to convert complex to real and back here and
     #downwards. 
-    my $Gpsi_R=ifftn($Gpsi_G->real, $self->B->ndims); #real space ^G|psi>
+    my $Gpsi_R=ifftn($Gpsi_G->real, $self->B->ndims)->complex; #real
+				#space ^G|psi> 
     #the result is RorI, nx, ny,... cartesian
-    ##Multiply by characteristic function. Thread cartesian
-    #my $BGpsi_R=Cscale($Gpsi_R, $self->B); #B^G|psi> in Real Space
-    # Multiply by the dielectric function in Real Space
+    # Multiply by the dielectric function in Real Space. Thread
+    # cartesian index
     #the result is RorI, nx, ny,... cartesian
-    my $eGPsi=$self->epsilon*$Gpsi_R;
+    my $eGPsi_R=$self->epsilon*$Gpsi_R;
     #Transform to reciprocal space
-    my $BGpsi_G=fftn($BGpsi_R, $self->B->ndims); #reciprocal space B^G|psi>
+    my $eGpsi_G=fftn($eGpsi_R->real, $self->B->ndims)->complex; #reciprocal
+				#space B^G|psi> 
     #the result is RorI, nx, ny,... cartesian
     #Scalar product with Gnorm
-    my $GBGpsi_G=Cscale($BGpsi_G, $self->GNorm->mv(0,-1)) #^GB^G|psi>
+    my $GeGpsi_G=Cscale($eGpsi_G, $self->GNorm->mv(0,-1)) #^GB^G|psi>
 	# RorI, nx, ny,... cartesian
 	# Move cartesian to front and sum over
-	->mv(-1,0)->sumover->complex; #^G.B^G|psi>
-    # Result is RorI, nx, ny,...
+	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
+    #Note: it was ->mv(-1,0)->sumover->complex, but as eGpsi is a
+    #blessed complex, sumover doesn't sum over RorI; 
+    #Result is ^G.epsilon^G|psi>, RorI, nx, ny,...
     #Normalization should have been taken care of by fftw3
+    #Instead of conjugating the current \psi, change G to -G
+    #First reverse all reciprocal dimensions
+    my $sl=":" . (", -1:0" x $self->B->ndims); #:,-1:0,-1:0...
+    my $psi_mG=$psi_G->slice($sl);
+    #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
+    foreach(1..$self->B->ndims){
+	$psi_mG=$psi_mG->mv($_,0)->rotate(1)->mv(0,$_);
+    }
     # Calculate Haydock coefficients
-    # current_a is (real part) of Hermitean product
-    my $current_a=(Cmul(Cconj($psi_G), $GBGpsi_G))->re->sum;
-    # was ->((0))->real->sum;
+    # current_a is (real part) of Euclidean product with G -> -G
+    my $current_a=($psi_mG*$GeGpsi_G)->sum;
     # next b^2
-    my $bpsi=$GBGpsi_G - $current_a*$psi_G -
+    my $bpsi_G=$GeGpsi_G - $current_a*$psi_G -
 	    $self->current_b*$self->previousState;
-    my $next_b2=$bpsi->Cabs2->sum;
+    #reverse all reciprocal dimensions
+    my $bpsi_mG=$psi_G->slice($sl);
+    #Then rotate bpsi_{G=0} to opposite corner with coords. (0,0,...)
+    foreach(1..$self->B->ndims){
+	$bpsi_mG=$bpsi_mG->mv($_,0)->rotate(1)->mv(0,$_);
+    }
+    my $next_b2=($bpsi_mG*$bpsi_mG)->sum;
     my $next_b=sqrt($next_b2);
     my $next_state=undef;
-    $next_state=$bpsi/$next_b if($next_b2 > $self->smallH);
+    $next_state=$bpsi/$next_b if($next_b2->Cabs > $self->smallH);
     #save values
     $self->_current_a($current_a);
     $self->_next_b2($next_b2);
