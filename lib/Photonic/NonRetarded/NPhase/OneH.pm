@@ -92,7 +92,7 @@ next_b2, next_b, shifting the current values where necessary. Returns
 =cut
 
 package Photonic::NonRetarded::OneH;
-$Photonic::NonRetarded::OneH::NPhase::VERSION = '0.010';
+$Photonic::NonRetarded::NPhase::OneH::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
