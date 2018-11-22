@@ -8,7 +8,7 @@ version 0.010
 
 =head1 SYNOPSIS
 
-    use Photonic::NonRetarded::OneH;
+    use Photonic::NonRetarded::NPhase::OneH;
     my $nr=Photonic::NonRetarded::NPhase::OneH->new(epsilon=>$epsilon,
            geometry=>$geometry);  
     $nr->iterate;
@@ -91,7 +91,7 @@ next_b2, next_b, shifting the current values where necessary. Returns
 
 =cut
 
-package Photonic::NonRetarded::OneH;
+package Photonic::NonRetarded::NPhase::OneH;
 $Photonic::NonRetarded::NPhase::OneH::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
@@ -114,7 +114,7 @@ has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
     init_arg=>undef);
 has 'nextState' =>(is=>'ro', isa=>'PDL::Complex|Undef', writer=>'_nextState',
     lazy=>1, default=>\&_firstState);
-has 'current_a' => (is=>'ro', isa0>'PDL::Complex', writer=>'_current_a',
+has 'current_a' => (is=>'ro', isa=>'PDL::Complex', writer=>'_current_a',
     init_arg=>undef);
 has 'current_b2' => (is=>'ro', isa=>'PDL::Complex', writer=>'_current_b2',
     init_arg=>undef);
