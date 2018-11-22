@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::AllH
+Photonic::NonRetarded::NPhase::AllH
 
 =head1 VERSION
 
@@ -8,9 +8,9 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::AllH;
-   my $iter=Photonic::NonRetarded::AllH->new(geometry=>$geometry,nh=>$Nh,
-            keepStates=>$save); 
+   use Photonic::NonRetarded::NPhase::AllH;
+   my $iter=Photonic::NonRetarded::Nphase::AllH->new(
+       epsilon=>$e, geometry=>$geometry,nh=>$Nh, keepStates=>$save); 
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
@@ -30,7 +30,7 @@ them for later retrieval.
 
 Initializes an Ph::NR::NP::AllH object. $nh is the maximum number of desired
 coefficients, $k is a flag, non zero to save the Haydock states. All
-other arguments are as in Photonic::NonRetarded::OneH.
+other arguments are as in Photonic::NonRetarded::NPhase::OneH.
 
 =item * run
 
@@ -69,7 +69,7 @@ Array of Haydock b coefficients
 
 Array of Haydock b coefficients squared
 
-=item * All the Photonic::NonRetarded::OneH methods
+=item * All the Photonic::NonRetarded::NPhase::OneH methods
 
 =back
 
@@ -81,7 +81,7 @@ Array of Haydock b coefficients squared
 
 =cut
 
-package Photonic::NonRetarded::AllH;
+package Photonic::NonRetarded::NPhase::AllH;
 $Photonic::NonRetarded::NPhase::AllH::VERSION = '0.010';
 use namespace::autoclean;
 use Machine::Epsilon;
@@ -90,7 +90,7 @@ use PDL::NiceSlice;
 use Photonic::Utils qw(HProd);
 use Moose;
 
-extends 'Photonic::NonRetarded::OneH';
+extends 'Photonic::NonRetarded::NPhase::OneH';
 
 has nh=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock coefficients');
