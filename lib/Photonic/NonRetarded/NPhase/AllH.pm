@@ -26,9 +26,9 @@ them for later retrieval.
 
 =over 4
 
-=item * new(geometry=>$g, nh=>$nh, keepStates=>$k) 
+=item * new(epsilon=>$e, geometry=>$g, nh=>$nh, keepStates=>$k) 
 
-Initializes an Ph::NR::AllH object. $nh is the maximum number of desired
+Initializes an Ph::NR::NP::AllH object. $nh is the maximum number of desired
 coefficients, $k is a flag, non zero to save the Haydock states. All
 other arguments are as in Photonic::NonRetarded::OneH.
 
@@ -36,7 +36,7 @@ other arguments are as in Photonic::NonRetarded::OneH.
 
 Runs the iteration to completion
 
-=item * All the Photonic::NonRetarded::OneH methods
+=item * All the Photonic::NonRetarded::NPhase::OneH methods
 
 =back
 
@@ -82,13 +82,14 @@ Array of Haydock b coefficients squared
 =cut
 
 package Photonic::NonRetarded::AllH;
-$Photonic::NonRetarded::AllH::VERSION = '0.010';
+$Photonic::NonRetarded::NPhase::AllH::VERSION = '0.010';
 use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::Utils qw(HProd);
 use Moose;
+
 extends 'Photonic::NonRetarded::OneH';
 
 has nh=>(is=>'ro', required=>1, 
@@ -97,12 +98,12 @@ with 'Photonic::Roles::KeepStates';
 has states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', 
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
-has as=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
-         documentation=>'Saved a coefficients');
-has bs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
-         documentation=>'Saved b coefficients');
-has b2s=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
-         documentation=>'Saved b^2 coefficients');
+has as=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', default=>sub{[]},
+	 init_arg=>undef, documentation=>'Saved a coefficients');
+has bs=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', default=>sub{[]},
+	 init_arg=>undef, documentation=>'Saved b coefficients');
+has b2s=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', default=>sub{[]},
+	  init_arg=>undef, documentation=>'Saved b^2 coefficients');
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag'); 
 has 'previous_W' =>(is=>'ro', isa=>'PDL',
@@ -125,6 +126,7 @@ has 'Accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
 
 sub BUILD {
     my $self=shift;
+    die "Don't know yet how to reorthogonalize" if $self->reorthogonalize;
     # Can't reorthogonalize without previous states
     $self->_keepstates(1) if  $self->reorthogonalize;
 }
@@ -180,11 +182,14 @@ sub _save_a {
 
 sub _checkorthogonalize 
 {
+    return; #don't know how to reorthogonalize with complex haydock's
     my $self=shift;
     my $nextState=$self->nextState;
     return unless defined $nextState;
-    my $a=PDL->pdl($self->as);
-    my $b=PDL->pdl($self->bs);
+    my $a=PDL->cat($self->as);
+    die "Didn't build a complex pdl"
+         unless ref($a) eq 'PDL::Complex' && $a->dim(0) == 2;
+    my $b=PDL->cat($self->bs);
     my $n=$self->iteration;
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
