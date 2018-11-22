@@ -119,11 +119,11 @@ has 'current_a' => (is=>'ro', isa=>'PDL::Complex', writer=>'_current_a',
 has 'current_b2' => (is=>'ro', isa=>'PDL::Complex', writer=>'_current_b2',
     init_arg=>undef);
 has 'next_b2' => (is=>'ro', isa=>'PDL::Complex', writer=>'_next_b2', 
-		  init_arg=>undef, default=>0+0*i);
+		  init_arg=>undef, default=>sub{0+0*i});
 has 'current_b' => (is=>'ro', isa=>'PDL::Complex', 
 		    writer=>'_current_b', init_arg=>undef);
 has 'next_b' => (is=>'ro', isa=>'PDL::Complex', writer=>'_next_b', 
-		 init_arg=>undef, default=>0);
+		 init_arg=>undef, default=>sub {0+0*i});
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
 sub iterate { #single Haydock iteration in N=1,2,3 dimensions
@@ -158,7 +158,7 @@ sub _iterate_indeed {
     # Multiply by the dielectric function in Real Space. Thread
     # cartesian index
     #the result is RorI, nx, ny,... cartesian
-    my $eGPsi_R=$self->epsilon*$Gpsi_R;
+    my $eGpsi_R=$self->epsilon*$Gpsi_R;
     #Transform to reciprocal space
     my $eGpsi_G=fftn($eGpsi_R->real, $self->B->ndims)->complex; #reciprocal
 				#space B^G|psi> 
@@ -187,15 +187,15 @@ sub _iterate_indeed {
     my $bpsi_G=$GeGpsi_G - $current_a*$psi_G -
 	    $self->current_b*$self->previousState;
     #reverse all reciprocal dimensions
-    my $bpsi_mG=$psi_G->slice($sl);
+    my $bpsi_mG=$bpsi_G->slice($sl);
     #Then rotate bpsi_{G=0} to opposite corner with coords. (0,0,...)
     foreach(1..$self->B->ndims){
 	$bpsi_mG=$bpsi_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $next_b2=($bpsi_mG*$bpsi_mG)->sum;
+    my $next_b2=($bpsi_mG*$bpsi_G)->sum;
     my $next_b=sqrt($next_b2);
     my $next_state=undef;
-    $next_state=$bpsi/$next_b if($next_b2->Cabs > $self->smallH);
+    $next_state=$bpsi_G/$next_b if($next_b2->Cabs > $self->smallH);
     #save values
     $self->_current_a($current_a);
     $self->_next_b2($next_b2);
