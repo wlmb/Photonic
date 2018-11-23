@@ -188,11 +188,11 @@ sub _iterate_indeed {
 	    $self->current_b*$self->previousState;
     #reverse all reciprocal dimensions
     my $bpsi_mG=$bpsi_G->slice($sl);
-    #Then rotate bpsi_{G=0} to opposite corner with coords. (0,0,...)
+    #Then rotate bpsi_{-G=0} to opposite corner with coords. (0,0,...)
     foreach(1..$self->B->ndims){
 	$bpsi_mG=$bpsi_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $next_b2=($bpsi_mG*$bpsi_G)->sum;
+    my $next_b2= ($bpsi_mG*$bpsi_G)->sum;
     my $next_b=sqrt($next_b2);
     my $next_state=undef;
     $next_state=$bpsi_G/$next_b if($next_b2->Cabs > $self->smallH);
