@@ -133,6 +133,7 @@ sub iterate { #single Haydock iteration in N=1,2,3 dimensions
     return 0 unless defined $self->nextState;
     $self->_iterate_indeed; 
 }
+my $sign=-1; #Black magic. 
 sub _iterate_indeed {
     my $self=shift;
     #Shift and fetch results of previous calculations
@@ -182,7 +183,7 @@ sub _iterate_indeed {
     }
     # Calculate Haydock coefficients
     # current_a is (real part) of Euclidean product with G -> -G
-    my $current_a=($psi_mG*$GeGpsi_G)->sum;
+    my $current_a=$sign*($psi_mG*$GeGpsi_G)->sum;
     # next b^2
     my $bpsi_G=$GeGpsi_G - $current_a*$psi_G -
 	    $self->current_b*$self->previousState;
@@ -193,6 +194,7 @@ sub _iterate_indeed {
 	$bpsi_mG=$bpsi_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
     my $next_b2= ($bpsi_mG*$bpsi_G)->sum;
+    $sign=1;
     my $next_b=sqrt($next_b2);
     my $next_state=undef;
     $next_state=$bpsi_G/$next_b if($next_b2->Cabs > $self->smallH);
@@ -208,8 +210,8 @@ sub _iterate_indeed {
 sub _firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
-    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
-    $v->slice($arg).=1; #delta_{G0}
+    my $arg="(1)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
+    $v->slice($arg).=1; #i*delta_{G0}
     return $v;
 }
 
