@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::EpsTensor
+Photonic::NonRetarded::NPhase::EpsTensor
 
 =head1 VERSION
 
@@ -8,9 +8,10 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::EpsTensor;
-   my $eps=Photonic::NonRetarded::EpsTensor->new(geometry=>$g);
-   my $epsilonTensor=$eps->evaluate($epsA, $epsB);
+   use Photonic::NonRetarded::NPhase::EpsTensor;
+   my $eps=Photonic::NonRetarded::NPhase::EpsTensor->new(
+                     epsilon=>$e, geometry=>$g);
+   my $epsilonTensor=$epsTensor;
 
 =head1 DESCRIPTION
 
@@ -22,10 +23,13 @@ functions of the components.
 
 =over 4
 
-=item * new(geometry=>$g, nh=>$nh, smallH=>$smallH, smallE=>$smallE, keepStates=>$k) 
+=item * new(epsilon=>$e, geometry=>$g, nh=>$nh, smallH=>$smallH, 
+            smallE=>$smallE, keepStates=>$k) 
 
 Initializes the structure.
 
+$e PDL::Complex is the dielectric function as a complex scalar field
+ 
 $g Photonic::Geometry describing the structure
 
 $nh is the maximum number of Haydock coefficients to use.
@@ -35,44 +39,32 @@ the Haydock coefficients and the tensor calculations.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
-=item * evaluate($epsA, $epsB)
-
-Returns the macroscopic dielectric function for a given value of the
-dielectric functions of the host $epsA and the particle $epsB.
-
 =back
 
 =head1 ACCESORS (read only)
 
 =over 4
 
+=item * epsilon 
+
+A PDL::Complex PDL giving the value of the dielectric function epsilon
+for each pixel of the system
+
 =item * keepStates
 
 Value of flag to keep Haydock states
 
-=item * epsA
-
-Dielectric function of component A
-
-=item * epsB
-
-Dielectric function of componente B
-
-=item * u 
-
-Spectral variable
-
 =item * nr
 
-Array of Photonic::NonRetarded::AllH structures, one for each direction
+Array of Photonic::NonRetarded::NPhase::AllH structures, one for each direction
 
 =item * epsL
 
-Array of Photonic::NonRetarded::EpsL structures, one for each direction.
+Array of Photonic::NonRetarded::NPhase::EpsL structures, one for each direction.
 
 =item * epsTensor
 
-The dielectric tensor
+The valuated dielectric tensor 
 
 =item * nh
 
@@ -93,8 +85,8 @@ don't check. From Photonic::Roles::EpsParams.
 
 =cut
 
-package Photonic::NonRetarded::EpsTensor;
-$Photonic::NonRetarded::EpsTensor::VERSION = '0.010';
+package Photonic::NonRetarded::NPhase::EpsTensor;
+$Photonic::NonRetarded::NPhase::EpsTensor::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -102,12 +94,13 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-use Photonic::NonRetarded::AllH;
-use Photonic::NonRetarded::EpsL;
+use Photonic::NonRetarded::NPhase::AllH;
+use Photonic::NonRetarded::NPhase::EpsL;
 use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::EpsParams';
 
+has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1
 );
@@ -115,27 +108,25 @@ with 'Photonic::Roles::KeepStates';
 with 'Photonic::Roles::EpsParams';
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
-has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::AllH]',
+has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::NPhase::AllH]',
             init_arg=>undef, lazy=>1, builder=>'_build_nr',
             documentation=>'Array of Haydock calculators');
-has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::EpsL]',
+has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::NPhase::EpsL]',
              init_arg=>undef, lazy=>1, builder=>'_build_epsL',
              documentation=>'Array of epsilon calculators');
-has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_epsTensor', 
-             documentation=>'Dielectric Tensor from last evaluation');
+has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+		  builder=>'_build_epsTensor',
+		  documentation=>'Dielectric Tensor');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All EpsL evaluations converged in last evaluation'); 
 
-sub evaluate {
+sub _build_epsTensor {
     my $self=shift;
-    $self->_epsA(my $epsA=shift);
-    $self->_epsB(my $epsB=shift);
-    $self->_u(my $u=1/(1-$epsB/$epsA));
     my @eps; #array of @eps along different directions.
     my $converged=1;
     foreach(@{$self->epsL}){
-	push @eps, $_->evaluate($epsA, $epsB);
+	push @eps, $_->epsL;
 	$converged &&=$_->converged;
     }
     $self->_converged($converged);
@@ -154,7 +145,6 @@ sub evaluate {
 	    ++$n;
 	}
     }
-    $self->_epsTensor($epsTensor);
     return $epsTensor;
 }
 
@@ -164,9 +154,9 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
     foreach(@{$self->geometry->unitPairs}){
 	my $g=dclone($self->geometry); #clone geometry
 	$g->Direction0($_); #add G0 direction
-	#Build a corresponding NonRetarded::AllH structure
-	my $nr=Photonic::NonRetarded::AllH->new(
-	    geometry=>$g, smallH=>$self->smallH, 
+	#Build a corresponding NonRetarded::NPhase::AllH structure
+	my $nr=Photonic::NonRetarded::NPhase::AllH->new(
+	    epsilon=>$self->epsilon, geometry=>$g, smallH=>$self->smallH, 
 	    nh=>$self->nh, keepStates=>$self->keepStates,
 	    reorthogonalize=>$self->reorthogonalize);
 	push @nr, $nr;
@@ -178,7 +168,7 @@ sub _build_epsL {
     my $self=shift;
     my @eps;
     foreach(@{$self->nr}){
-	my $e=Photonic::NonRetarded::EpsL->
+	my $e=Photonic::NonRetarded::NPhase::EpsL->
 	    new(nr=>$_, nh=>$self->nh, smallE=>$self->smallE);
 	push @eps, $e;
     }
