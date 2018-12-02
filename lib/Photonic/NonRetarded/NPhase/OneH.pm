@@ -102,6 +102,7 @@ use List::Util;
 use Carp;
 use Moose;
 use Photonic::Types;
+use Photonic::Utils qw(EProd);
 with "Photonic::Roles::EpsParams";
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
@@ -176,25 +177,13 @@ sub _iterate_indeed {
     #Normalization should have been taken care of by fftw3
     #Instead of conjugating the current \psi, change G to -G
     #First reverse all reciprocal dimensions
-    my $sl=":" . (", -1:0" x $self->B->ndims); #:,-1:0,-1:0...
-    my $psi_mG=$psi_G->slice($sl);
-    #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
-    foreach(1..$self->B->ndims){
-	$psi_mG=$psi_mG->mv($_,0)->rotate(1)->mv(0,$_);
-    }
-    # Calculate Haydock coefficients
+     # Calculate Haydock coefficients
     # current_a is the Euclidean product with G -> -G
-    my $current_a=$self->_sign_state*($psi_mG*$GeGpsi_G)->sum;
+    my $current_a=$self->_sign_state*EProd($psi_G,$GeGpsi_G);
     # next b^2
     my $bpsi_G=$GeGpsi_G - $current_a*$psi_G -
 	    $self->current_b*$self->previousState;
-    #reverse all reciprocal dimensions
-    my $bpsi_mG=$bpsi_G->slice($sl);
-    #Then rotate bpsi_{-G=0} to opposite corner with coords. (0,0,...)
-    foreach(1..$self->B->ndims){
-	$bpsi_mG=$bpsi_mG->mv($_,0)->rotate(1)->mv(0,$_);
-    }
-    my $next_b2= -($bpsi_mG*$bpsi_G)->sum;
+    my $next_b2= -EProd($bpsi_G,$bpsi_G);
     $self->_write_sign_state(-1);
     my $next_b=sqrt($next_b2);
     my $next_state=undef;
