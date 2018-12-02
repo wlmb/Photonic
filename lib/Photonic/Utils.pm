@@ -4,7 +4,7 @@ $Photonic::Utils::VERSION = '0.010';
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
-              HProd MHProd SProd linearCombine);
+              HProd MHProd EProd linearCombine);
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
@@ -68,7 +68,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     return $result;
 }
 
-sub SProd { #Symmetric product between two fields in reciprocal
+sub EProd { #Euclidean product between two fields in reciprocal
 	    #space. Have to map G->-G and change magical sign. skip
 	    #first 'skip' dims   
     my $first=shift; 
