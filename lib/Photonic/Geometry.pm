@@ -142,12 +142,14 @@ sub _build_GNorm { #origin set to zero here.
 
 sub _build_mGNorm { #normalized negated reciprocal lattice. Leave
     #direction 0 invariant
+    my $self=shift;
     return -$self->GNorm;
 }
 sub _build_pmGNorm { #normalized +- reciprocal lattice. Leave
     #direction 0 invariant
     #xory, +or-, nx, ny
-    return pdl($self->GNorm, $self->mGNorm)->mv(-1,1);
+    my $self=shift;
+    return PDL->pdl($self->GNorm, $self->mGNorm)->mv(-1,1);
 }
 
 sub _build_f { #calculate filling fraction
