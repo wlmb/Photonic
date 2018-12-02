@@ -21,8 +21,8 @@ version 0.010
 
 Implements calculation of Haydock coefficients and Haydock states for
 the calculation of the non retarded dielectric function of arbitrary
-periodic two component systems in arbitrary number of dimentions. One
-Haydock coefficient at a time.
+periodic N component systems in arbitrary number of dimensions. One
+Haydock coefficient at a time. Use k,-k spinors. MQ notes.
 
 =head1 METHODS
 
@@ -30,7 +30,7 @@ Haydock coefficient at a time.
 
 =item * new(epsilon=>$e, geometry=>$g[, smallH=>$s])
 
-Create a new Ph::NR::NP::OneH object with GeometryG0 $g, dielectric
+Create a new Ph::NR::NPS::OneH object with GeometryG0 $g, dielectric
 function $e and optional smallness parameter  $s.
 
 =back
@@ -61,7 +61,8 @@ b^2 coefficients are taken to be zero. Handled by Photonic::Roles::EpsParams
 
 =item * previousState currentState nextState 
 
-The n-1-th, n-th and n+1-th Haydock states; a complex number for each pixel
+The n-1-th, n-th and n+1-th Haydock states; a complex 2-spinor for each
+reciprocal vector.
 
 =item * current_a
 
@@ -127,8 +128,6 @@ has 'next_b' => (is=>'ro', isa=>'PDL::Complex', writer=>'_next_b',
 		 init_arg=>undef, default=>sub {0+0*i});
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
-has '_sign_state' =>(is=>'ro', writer=>'_write_sign_state', init_arg=>undef,
-                   default=>1);
 sub iterate { #single Haydock iteration in N=1,2,3 dimensions
     my $self=shift;
     #Note: calculate Current a, next b2, next b, next state
@@ -140,18 +139,20 @@ sub _iterate_indeed {
     my $self=shift;
     #Shift and fetch results of previous calculations
     $self->_previousState($self->currentState);
-    $self->_currentState(my $psi_G #state in reciprocal space 
-			 =$self->nextState);
+    $self->_currentState( #state in reciprocal space 
+			  my $psi_G = $self->nextState);
     $self->_current_b2($self->next_b2);
     $self->_current_b($self->next_b);
-    #state is RorI, nx, ny... gnorm=cartesian,nx,ny...
-    #Multiply by vector ^G.
+    #Each state is a spinor with two wavefunctions \psi_{k,G} and
+    #\psi_{-k,G}, thus the index plus or minus k, pmk.
+    #state is RorI, pmk, nx, ny... pmGnorm=cartesian,pmk,nx,ny...
+    #Multiply by vectors ^G and ^(-G).
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest 
-    my $Gpsi_G=Cscale($psi_G, $self->GNorm->mv(0,-1)); #^G |psi>
-    #the result is complex RorI, nx, ny,... cartesian
+    my $Gpsi_G=Cscale($psi_G, $self->pmGNorm->mv(0,-1))->mv(1,-1); #^G |psi>
+    #the result is complex RorI, nx, ny,... cartesian, pmk
     #Take inverse Fourier transform over all space dimensions,
-    #thread over cartesian indices
+    #thread over cartesian and pmk indices
     #Notice that (i)fftn wants a real 2,nx,ny... piddle, not a complex
     #one. Thus, I have to convert complex to real and back here and
     #downwards. 
@@ -159,32 +160,29 @@ sub _iterate_indeed {
 				#space ^G|psi> 
     #the result is RorI, nx, ny,... cartesian
     # Multiply by the dielectric function in Real Space. Thread
-    # cartesian index
-    #the result is RorI, nx, ny,... cartesian
+    # cartesian and pm indices
+    #the result is RorI, nx, ny,... cartesian, pmk
     my $eGpsi_R=$self->epsilon*$Gpsi_R; #Epsilon could be tensorial!
     #Transform to reciprocal space
-    my $eGpsi_G=fftn($eGpsi_R->real, $self->B->ndims)->complex; #reciprocal
-				#space B^G|psi> 
-    #the result is RorI, nx, ny,... cartesian
-    #Scalar product with Gnorm
-    my $GeGpsi_G=Cscale($eGpsi_G, $self->GNorm->mv(0,-1)) #^Ge^G|psi>
+    my $eGpsi_G=fftn($eGpsi_R->real, $self->B->ndims)
+	->complex->mv(-1,1); #reciprocal space B^G|psi> 
+    #the result is RorI, pmk, nx, ny,... cartesian
+    #Scalar product with pmGnorm
+    my $GeGpsi_G=Cscale($eGpsi_G, $self->pmGNorm->mv(0,-1)) #^Ge^G|psi>
 	# RorI, nx, ny,... cartesian
 	# Move cartesian to front and sum over
 	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
-    #Note: it was ->mv(-1,0)->sumover->complex, but as eGpsi is a
-    #blessed complex, sumover doesn't sum over RorI; 
-    #Result is ^G.epsilon^G|psi>, RorI, nx, ny,...
+    #Result is ^G.epsilon^G|psi>, RorI, pmk, nx, ny,...
     #Normalization should have been taken care of by fftw3
     #Instead of conjugating the current \psi, change G to -G
     #First reverse all reciprocal dimensions
      # Calculate Haydock coefficients
     # current_a is the Euclidean product with G -> -G
-    my $current_a=$self->_sign_state*EProd($psi_G,$GeGpsi_G);
+    my $current_a=SProd($psi_G,$GeGpsi_G);
     # next b^2
-    my $bpsi_G=$GeGpsi_G - $current_a*$psi_G -
-	    $self->current_b*$self->previousState;
-    my $next_b2= -EProd($bpsi_G,$bpsi_G);
-    $self->_write_sign_state(-1);
+    my $bpsi_G=$GeGpsi_G - $current_a*$psi_G 
+	- $self->current_b*$self->previousState;
+    my $next_b2= SProd($bpsi_G,$bpsi_G);
     my $next_b=sqrt($next_b2);
     my $next_state=undef;
     $next_state=$bpsi_G/$next_b if($next_b2->Cabs > $self->smallH);
@@ -199,9 +197,9 @@ sub _iterate_indeed {
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
-    my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
-    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
-    $v->slice($arg).=1; #i*delta_{G0}
+    my $v=PDL->zeroes(2,2,@{$self->dims})->complex; #RorI,pmk, nx, ny...
+    my $arg="(0),:" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
+    $v->slice($arg).=1/sqrt(2); 
     return $v;
 }
 
