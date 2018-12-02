@@ -126,8 +126,8 @@ has 'next_b' => (is=>'ro', isa=>'PDL::Complex', writer=>'_next_b',
 		 init_arg=>undef, default=>sub {0+0*i});
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
-has 'sign_state' =>(is=>'ro', writer=>'_sign_state', init_arg=>undef,
-                   default=>-1);
+has '_sign_state' =>(is=>'ro', writer=>'_write_sign_state', init_arg=>undef,
+                   default=>1);
 sub iterate { #single Haydock iteration in N=1,2,3 dimensions
     my $self=shift;
     #Note: calculate Current a, next b2, next b, next state
@@ -166,7 +166,7 @@ sub _iterate_indeed {
 				#space B^G|psi> 
     #the result is RorI, nx, ny,... cartesian
     #Scalar product with Gnorm
-    my $GeGpsi_G=Cscale($eGpsi_G, $self->GNorm->mv(0,-1)) #^GB^G|psi>
+    my $GeGpsi_G=Cscale($eGpsi_G, $self->GNorm->mv(0,-1)) #^Ge^G|psi>
 	# RorI, nx, ny,... cartesian
 	# Move cartesian to front and sum over
 	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
@@ -183,8 +183,8 @@ sub _iterate_indeed {
 	$psi_mG=$psi_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
     # Calculate Haydock coefficients
-    # current_a is (real part) of Euclidean product with G -> -G
-    my $current_a=$self->sign_state*($psi_mG*$GeGpsi_G)->sum;
+    # current_a is the Euclidean product with G -> -G
+    my $current_a=$self->_sign_state*($psi_mG*$GeGpsi_G)->sum;
     # next b^2
     my $bpsi_G=$GeGpsi_G - $current_a*$psi_G -
 	    $self->current_b*$self->previousState;
@@ -194,8 +194,8 @@ sub _iterate_indeed {
     foreach(1..$self->B->ndims){
 	$bpsi_mG=$bpsi_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $next_b2= ($bpsi_mG*$bpsi_G)->sum;
-    $self->_sign_state(1);
+    my $next_b2= -($bpsi_mG*$bpsi_G)->sum;
+    $self->_write_sign_state(-1);
     my $next_b=sqrt($next_b2);
     my $next_state=undef;
     $next_state=$bpsi_G/$next_b if($next_b2->Cabs > $self->smallH);
@@ -211,7 +211,7 @@ sub _iterate_indeed {
 sub _firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
-    my $arg="(1)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
+    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1; #i*delta_{G0}
     return $v;
 }
