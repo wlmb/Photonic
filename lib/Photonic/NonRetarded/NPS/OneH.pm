@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::NPhase::OneH
+Photonic::NonRetarded::NPS::OneH
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-    use Photonic::NonRetarded::NPhase::OneH;
-    my $nr=Photonic::NonRetarded::NPhase::OneH->new(epsilon=>$epsilon,
+    use Photonic::NonRetarded::NPS::OneH;
+    my $nr=Photonic::NonRetarded::NPS::OneH->new(epsilon=>$epsilon,
            geometry=>$geometry);  
     $nr->iterate;
     say $nr->iteration;
@@ -91,8 +91,8 @@ next_b2, next_b, shifting the current values where necessary. Returns
 
 =cut
 
-package Photonic::NonRetarded::NPhase::OneH;
-$Photonic::NonRetarded::NPhase::OneH::VERSION = '0.010';
+package Photonic::NonRetarded::NPS::OneH;
+$Photonic::NonRetarded::NPS::OneH::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
