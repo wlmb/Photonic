@@ -4,7 +4,7 @@ $Photonic::Utils::VERSION = '0.010';
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
-              HProd MHProd linearCombine);
+              HProd MHProd SProd linearCombine);
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
@@ -67,6 +67,36 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     $result=$result->real unless $iscomplex;
     return $result;
 }
+
+sub SProd { #Symmetric product between two fields in reciprocal
+	    #space. Have to map G->-G and change magical sign. skip
+	    #first 'skip' dims   
+    my $first=shift; 
+    my $second=shift;
+    my $skip=shift//0;
+    my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
+	'PDL::Complex');  
+    my $ndims=$first->ndims;
+    die "Dimensions should be equal" unless $ndims == $second->ndims;
+    #First reverse all reciprocal dimensions
+    my $sl=":" #slice to skip complex dimension
+	. (", :" x $skip) #skip dimensions
+	. (", -1:0" x ($ndims-1-$skip)); #and reverse the rest
+    my $first_mG=$first->slice($sl);
+    #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
+    foreach($skip+1..$ndims-1){
+	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
+    }
+    my $prod=$first_mG->complex*$second->complex;
+    # clump all except skip dimensions, protecto RorI index and sum.
+    my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
+	->mv(-1,0)->sumover;
+    #Note: real does not take the real part, just gives a 2-real
+    #vector view of each complex
+    $result=$result->real unless $iscomplex;
+    return $result;
+}
+
 
 
 sub RtoG { #transform a 'complex' scalar, vector or tensorial field
@@ -187,6 +217,12 @@ Hermitean product <a|m|b> of two 2x.... 'complex' multidimensional
 pdls $a and $b representing vector fields using metric $m. If $skip is
 present, preserve the first 1+$skip dimensions (the first dimension
 is RorI) before adding up. (Might not be functional yet, or might be wrong)
+
+=item * $p=EProd($a, $b, $skip)
+
+Euclidean product <a|b> of two 2x.... 'complex' multidimensional
+pdls $a and $b in reciprocal space. If $skip is present, preserve the
+first 1+$skip dimensions (the first dimension is RorI) before adding up. 
 
 =item * $psiG = RtoG($psiR, $ndims, $skip)
 
