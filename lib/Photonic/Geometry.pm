@@ -38,6 +38,10 @@ has 'G' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1, builder=>'_build_G',
 has 'GNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
      builder=>'_build_GNorm', 
      documentation=>'array of unit norm reciprocal vectors x_or_y, nx, ny');
+has 'mGNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+     builder=>'_build_mGNorm', 
+     documentation=>
+	  'array of negated unit norm reciprocal vectors x_or_y, nx, ny'); 
 has 'f'=>(is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_f',
      documentation=>'filling fraction of B region');
 has 'unitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
@@ -124,11 +128,17 @@ sub _build_G {
     return 2*PI/$self->L*$G; #reciprocal vectors.
 }
 
+
 sub _build_GNorm { #origin set to zero here.
     my $self=shift;
     croak "Can't normalize reciprocal lattice unless Direction0 is set" 
 	unless $self->has_Direction0;
     return $self->G->norm;
+}
+
+sub _build_mGNorm { #normalized negated reciprocal lattice. Leave
+    #direction 0 invariant
+    return -$self->GNorm;
 }
 
 sub _build_f { #calculate filling fraction
@@ -222,7 +232,8 @@ sub _G0 {
     croak "Direction must be non-null" unless $value->inner($value)>0;
     my $arg=":". (",(0)" x $self->B->ndims); #:,(0),... dimension of space times
     $value=$value->norm; #normalize
-    $self->GNorm->slice($arg).=$value; 
+    $self->GNorm->slice($arg).=$value; #Normalized 0.
+    $self->mGNorm->slice($arg).=$value; #Don't change sign for mGNorm!
 }
 
 sub Vec2LC_G { #longitudinal component of 'complex' vector field in
