@@ -103,12 +103,12 @@ use List::Util;
 use Carp;
 use Moose;
 use Photonic::Types;
-use Photonic::Utils qw(EProd);
+use Photonic::Utils qw(SProd);
 with "Photonic::Roles::EpsParams";
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
-    handles=>[qw(B dims r G GNorm L scale f)],required=>1
+    handles=>[qw(B dims r G GNorm L scale f pmGNorm)],required=>1
 );
 has 'currentState' => (is=>'ro', isa=>'PDL::Complex', writer=>'_currentState',
       lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
