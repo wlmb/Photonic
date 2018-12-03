@@ -220,24 +220,19 @@ sub _checkorthogonalize
     my $currentState=$self->currentState;
     pop(@{$states}); #should be currentState;
     my ($oldnext, $oldcurrent)=($nextState, $currentState);
-    my $sign=1; #Magic sign, notes MQ
-    #I change the sign of all EProd's save the first CHECK!
     for my $s (@{$states}){
-	($nextState,$currentState)=map {$_-$s*$sign*EProd($s, $_)}
+	($nextState,$currentState)=map {$_-$s*SProd($s, $_)}
 	($nextState, $currentState);
-	$sign=-1;
     }
-    #warn "Current change: ", ($currentState-$oldcurrent)->Cabs2->sum, "\n";
-    #warn "Next change: " . ($nextState-$oldnext)->Cabs2->sum, "\n";
-    my $sc=-EProd($currentState, $currentState)->sqrt; #normalization
+    my $sc=SProd($currentState, $currentState)->sqrt; #normalization
     # Is there a danger that $sc<$self->smallH?
     # print "scold $scold sc $sc\n";
     $currentState/=$sc; #normalize
     $self->_currentState($currentState);
     push @{$self->states}, $currentState;
     #necessary?:
-    $nextState-=-$currentState*EProd($currentState, $nextState); #orthogonalize
-    my $sn=-EProd($nextState, $nextState)->sqrt; #norm
+    $nextState-=$currentState*SProd($currentState, $nextState); #orthogonalize
+    my $sn=SProd($nextState, $nextState)->sqrt; #norm
     $nextState/=$sn; #normalize
     $self->_nextState($nextState);
     $current_W(0:-2).=$self->Accuracy;
