@@ -169,7 +169,7 @@ sub _iterate_indeed {
     #the result is RorI, pmk, nx, ny,... cartesian
     #Scalar product with pmGnorm
     my $GeGpsi_G=Cscale($eGpsi_G, $self->pmGNorm->mv(0,-1)) #^Ge^G|psi>
-	# RorI, nx, ny,... cartesian
+	# RorI, pmk, nx, ny,... cartesian
 	# Move cartesian to front and sum over
 	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
     #Result is ^G.epsilon^G|psi>, RorI, pmk, nx, ny,...

@@ -114,13 +114,13 @@ sub SProd { #Spinor product between two fields in reciprocal
     my $sl=":" #slice to keep complex dimension
 	. ", -1:0" #interchange spinor components +- to -+
 	. (", :" x $skip) #keep skip dimensions
-	. (", -1:0" x ($ndims-2-$skip)); #and reverse G indices
-    my $first_mG=$first->slice($sl); #rori,mpk,s1,s2,nx,ny
+	. (", -1:0" x ($ndims-1-1-$skip)); #and reverse G indices
+    my $first_mG=$first->slice($sl); #rori,pmk,s1,s2,nx,ny
     #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     foreach($skip+2..$ndims-1){
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $prod=$first_mG->complex*$second->complex;
+    my $prod=$first_mG->complex*$second->complex; #rori,pmk,s1,s2,nx,ny
     # clump all except skip dimensions, protect RorI index and sum.
     my $result=$prod #rori,pmk, s1,s2,nx,ny
 	->reorder($skip+2..$ndims-1,1..$skip+1,0) #nx,ny,pmk,s1,s2,rori
