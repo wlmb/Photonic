@@ -1,6 +1,3 @@
-#!perl -T
-#remove or add -T: Photonic::Geometry::FromImage2D fails with -T since
-#PDL::IO::Pic does too 
 use 5.006;
 use strict;
 use warnings;

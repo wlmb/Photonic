@@ -108,4 +108,26 @@
 * 0.011
   1. Change travis file
   2. Add before_install to .travis.yml
+  3. Other changes to travis.yml
+  4. Skip dimensions to HProd
+  5. Skip dimensions in MHProd, not sure it works
+  6. Commented out Lucila's storeAllH
+  7. Add generalizations to two and more media.
+  8. New directories: NPhase.
+  9. NPhase/OneH
+  10. NPhase/AllH
+  11. Change Pod to new OneH ALlH
+  12. Allow complex Haydock coefficients in new codes.
+  13. Added NPhase/EpsL
+  14. Added NPhase/EpsTensor
+  15. Added non Hermitian euclidean complex scalar product to Utils EProd
+  16. Modify NPhases::OneH and AllH to use EProd
+  17. Added N phases spinor methods in directory NPS
+  18. Add NPS::OneH, , NPS::EpsL, NPS::EpsTensor
+  19. Added mGNorm (minus normalized reciprocal vectors) to Geometry.
+  20. Added pmGNorm (plus and minus normalized reciprocal vectors) to
+      Geometry.
+  21. Added spinor euclidean scalar product SProd to Utils
+  22. Use SProd in NPS/OneH
+
 

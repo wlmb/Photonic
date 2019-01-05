@@ -1,9 +1,11 @@
 # -*- mode: org; -*-
 
+* TODO Merge exact surface SHG calculation with current surface calculation.
 * TODO Write and publish paper.
 * TODO Allow non-orthogonal unit vectors
 * TODO Allow saving states for reorthogonalization and reinitialization
-* TODO Generalize to three or more media nonretarded
+* DONE [2019-01-04 Fri] Generalize to three or more media nonretarded
+* TODO Complete spinor generalization.
 * TODO Generalize to three or more media retarded
 
 * DONE [2018-11-20 Tue] Add TODO file

@@ -60,19 +60,8 @@ the solution. $info returns 0 for success or k if the k-1-th element
 of the diagonal became zero. Either 2Xn pdl's are used to represent
 complex numbers, as in PDL::Complex.
 
-=begin Pod::Coverage
-
-       dgtls
-
-       cgtls
-
-=head2 set_boundscheck
-
-=head2 set_debugging
-
-=end Pod::Coverage
-
-
+=head2  set_boundscheck
+=head2  set_debugging
 
 =cut
 

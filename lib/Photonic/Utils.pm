@@ -101,7 +101,8 @@ sub EProd { #Euclidean product between two fields in reciprocal
 }
 
 sub SProd { #Spinor product between two fields in reciprocal
-	    #space. Have to map G->-G. skip first 'skip' dims   
+	    #space. Have to map G->-G. skip first 'skip' dims (after
+	    #complex and spinor dimension    
     my $first=shift; 
     my $second=shift;
     my $skip=shift//0;
@@ -259,6 +260,13 @@ is RorI) before adding up. (Might not be functional yet, or might be wrong)
 Euclidean product <a|b> of two 2x.... 'complex' multidimensional
 pdls $a and $b in reciprocal space. If $skip is present, preserve the
 first 1+$skip dimensions (the first dimension is RorI) before adding up. 
+
+=item * $p=SProd($a, $b, $skip)
+
+Spinor product <a|b> of two 2x.... 'complex' multidimensional
+pdls $a and $b in reciprocal space. If $skip is present, preserve the
+first 2+$skip dimensions (the first dimension is RorI and the second
+the spinor dimension) before adding up. 
 
 =item * $psiG = RtoG($psiR, $ndims, $skip)
 
