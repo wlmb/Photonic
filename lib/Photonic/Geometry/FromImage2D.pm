@@ -62,11 +62,13 @@ package Photonic::Geometry::FromImage2D;
 $Photonic::Geometry::FromImage2D::VERSION = '0.010';
 use namespace::autoclean;
 use Moose;
-extends 'Photonic::Geometry';
+with 'Photonic::Roles::Geometry';
+
+#extends 'Photonic::Geometry::Geometry';
 
 BEGIN {
 # Put inoffensive path. Or else, PDL::IO::Pic fails in taint mode. 
-$ENV{'PATH'} = '/bin:/usr/bin';
+    $ENV{'PATH'} = '/bin:/usr/bin';
 }
 
 use PDL::Lite;
@@ -94,6 +96,13 @@ sub _build_B {
     $B=!$B if $self->inverted;
     return $B;
 }
+
+sub _forme {
+    my $class=shift;
+    my $args=shift;
+    return defined $args->{path};
+}
+
 
 __PACKAGE__->meta->make_immutable; #faster execution
 

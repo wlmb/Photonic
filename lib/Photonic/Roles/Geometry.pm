@@ -1,0 +1,288 @@
+package Photonic::Roles::Geometry;
+$Photonic::Roles::Geometry::VERSION = '0.010';
+use Moose::Role;
+
+use PDL::Lite;
+use PDL::NiceSlice;
+use PDL::MatrixOps;
+use PDL::Complex;
+use Photonic::Types;
+use Carp;
+use constant PI=>4*atan2(1,1);
+
+has 'B' =>(is=>'ro', isa=>'PDL', required=>1,
+	   documentation=>'charateristic function');
+          #should check 0's and 1's?
+has 'L' =>(is=>'ro', isa => 'PDL', lazy=>1, builder=>'_build_L', 
+	   documentation=>'array of unit cell size');
+has 'units'=>(is=>'ro', isa=>'ArrayRef[PDL]', lazy=>1,
+     trigger=>\&_set_units, builder=>'_build_units',
+     documentation=>'Basis of unit vectors');
+has 'dims' =>(is=>'ro', isa=>'Photonic::Types::ArrayOfOddInts',
+           init_arg=>undef, lazy=>1, builder=>'_build_dims',
+           documentation=>'list of dimensions of B');
+has 'ndims' =>(is=>'ro', isa=>'Int',
+           init_arg=>undef, lazy=>1, builder=>'_build_ndims',
+           documentation=>'number of dimensions of B');
+has 'npoints' =>(is=>'ro', isa=>'Int',
+           init_arg=>undef, lazy=>1, builder=>'_build_npoints',
+           documentation=>'number of points within B');
+has 'scale'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+              builder=>'_build_scale',  
+	      documentation=>'distances between pixels');
+has 'r' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+           builder=>'_build_r', 
+	   documentation=>'array of positions x_or_y, nx, ny');
+has 'G' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1, builder=>'_build_G',
+	   documentation=>'array of reciprocal vectors x_or_y, nx, ny');
+has 'GNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+     builder=>'_build_GNorm', 
+     documentation=>'array of unit norm reciprocal vectors x_or_y, nx, ny');
+has 'mGNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+     builder=>'_build_mGNorm', 
+     documentation=>
+	  'array of negated unit norm reciprocal vectors x_or_y, nx, ny'); 
+has 'pmGNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+     builder=>'_build_pmGNorm', 
+     documentation=>
+       'array of spinors of +- unit norm reciprocal vectors x_or_y, nx, ny'); 
+has 'f'=>(is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_f',
+     documentation=>'filling fraction of B region');
+has 'unitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
+     builder=>'_build_unitPairs', 
+     documentation=>'Normalized sum of pairs of basis vectors');
+has 'CunitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
+     builder=>'_build_CunitPairs',
+     documentation=>'Normalized complex sum of pairs of basis vectors');
+has 'CCunitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
+     builder=>'_build_CCunitPairs',
+     documentation=>'Normalized complex-conjugate sum of pairs
+     of basis vectors');
+has 'unitDyads'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+     builder=>'_build_unitDyads',
+     documentation=>'Matrix of dyads of unit vector pairs');
+has 'unitDyadsLU'=>(is=>'ro', isa=>'ArrayRef', lazy=>1,
+     builder=>'_build_unitDyadsLU',
+     documentation=>'LU decomposition of unitDyads');
+has 'Direction0' =>(is => 'rw', isa => 'PDL', trigger=>\&_G0, 
+     predicate=>'has_Direction0');
+
+sub _build_L {
+    my $self=shift;
+    my $L=PDL->pdl($self->dims);
+    return $L;
+}
+
+sub _set_units {
+    #check the dimensions and number of units
+    my ($self, $new, $old)=@_;
+    croak "Wrong number of vectors" if 0+@$new != $self->ndims;
+    foreach(@$new){
+	croak "wrong dimension of unit vector $_" if [$_->dims]->[0] !=
+	    $self->ndims;
+    }
+    die "writing units is not implemented yet, sorry";
+}
+
+sub _build_units {
+    my $self=shift;
+    my @units; # unit vectors
+    my $nd=$self->B->ndims;
+    foreach(0..$nd-1){ #build unit vectors
+	my $e=PDL->zeroes($nd);
+	$e->(($_)).=1;
+	push @units, $e;
+    }
+    return [@units];
+}
+
+sub _build_dims {
+    my $self=shift;
+    return [$self->B->dims];
+}
+    
+sub _build_ndims {
+    my $self=shift;
+    return $self->B->ndims;
+}
+
+sub _build_npoints {
+    my $self=shift;
+    return $self->B->nelem;
+}
+    
+sub _build_scale {
+    my $self=shift;
+    return $self->L/PDL->pdl($self->dims);
+}
+
+sub _build_r {
+    my $self=shift;
+    my $scale=$self->scale;
+    return $self->scale*$self->B->ndcoords;
+}
+
+sub _build_G {
+    my $self=shift;
+    my @N=map {($_-1)/2} @{$self->dims}; #N in 2N+1
+    my $G=($self->B->ndcoords)-(PDL->pdl(@N)); #vector from center.
+    foreach(1..$G->ndims-1){
+	$G=$G->mv($_,0)->rotate(-$N[$_-1])->mv(0,$_); #move origin to 0,0
+    }
+    return 2*PI/$self->L*$G; #reciprocal vectors.
+}
+
+
+sub _build_GNorm { #origin set to zero here.
+    my $self=shift;
+    croak "Can't normalize reciprocal lattice unless Direction0 is set" 
+	unless $self->has_Direction0;
+    return $self->G->norm;
+}
+
+sub _build_mGNorm { #normalized negated reciprocal lattice. Leave
+    #direction 0 invariant
+    my $self=shift;
+    return -$self->GNorm;
+}
+sub _build_pmGNorm { #normalized +- reciprocal lattice. Leave
+    #direction 0 invariant
+    #xory, +or-, nx, ny
+    my $self=shift;
+    return PDL->pdl($self->GNorm, $self->mGNorm)->mv(-1,1);
+}
+
+sub _build_f { #calculate filling fraction
+    my $self=shift;
+    return $self->B->sum/$self->B->nelem;
+}
+
+sub _build_unitPairs {
+    my $self=shift;
+    my $nd=$self->B->ndims;
+    my $units=$self->units;
+    my @pairs;
+    for my $i(0..$nd-1){ #build pairs of vectors
+	for my $j($i..$nd-1){
+	    my $v=($units->[$i]+$units->[$j])->norm;
+	    push @pairs, $v;
+	}
+    }
+    return [@pairs];
+}
+
+sub _build_CunitPairs {
+    my $self=shift;
+    my $nd=$self->B->ndims;
+    my $units=$self->units;
+    my @cpairs;
+    for my $i(0..$nd-1){ #build pairs of vectors
+	for my $j($i+1..$nd-1){
+	    my $vc=($units->[$i]+i*$units->[$j]);
+	    my $vcn=sqrt(($units->[$i]+i*$units->[$j])->Cabs2->sumover);
+	    my $vp=$vc*(1/$vcn);
+	    push @cpairs, $vp;
+	}
+    }
+    return [@cpairs];
+}
+
+
+sub _build_CCunitPairs {
+    my $self=shift;
+    my $nd=$self->B->ndims;
+    my $units=$self->units;
+    my @ccpairs;
+    for my $i(0..$nd-1){ #build pairs of vectors
+	for my $j($i+1..$nd-1){
+	    my $vcc=($units->[$i]-i*$units->[$j]);
+	    my $vccn=sqrt(($units->[$i]-i*$units->[$j])->Cabs2->sumover);
+	    my $vm=$vcc*(1/$vccn);
+	    push @ccpairs, $vm;
+	}
+    }    
+    return [@ccpairs];
+}
+
+sub _build_unitDyads {
+    my $self=shift;
+    my $nd=$self->B->ndims; #Number of dimensions
+    my $ne=$nd*($nd+1)/2; #number of symetric matrix elements
+    my $matrix=PDL->zeroes($ne,$ne);
+    my $n=0; #run over vector pairs
+    for my $i(0..$nd-1){
+	for my $j($i..$nd-1){
+	    my $m=0; #run over components of dyads
+	    for my $k(0..$nd-1){
+		for my $l($k..$nd-1){
+		    my $factor=$k==$l?1:2;
+		    $matrix->(($m),($n)) .= #pdl order!
+			$factor*$self->unitPairs->[$n]->(($k)) * 
+			$self->unitPairs->[$n]->(($l));
+		    ++$m;
+		}
+	    }
+	    ++$n;
+	}
+    }
+    return $matrix;
+}
+	
+sub _build_unitDyadsLU {
+    my $self=shift;
+    my ($lu, $perm, $parity) = lu_decomp($self->unitDyads);
+    die 'Unit Dyad not invertible' unless defined $lu;
+    return [($lu, $perm, $parity)];
+}
+
+sub _G0 {
+    my $self=shift;
+    my $value=shift;
+    croak "Direction0 must be ".$self->ndims."-dimensional vector" unless
+	[$value->dims]->[0]==$self->ndims and $value->ndims==1; 
+    croak "Direction must be non-null" unless $value->inner($value)>0;
+    my $arg=":". (",(0)" x $self->B->ndims); #:,(0),... dimension of space times
+    $value=$value->norm; #normalize
+    #Set element 0,0 for normalized arrays.
+    $self->GNorm->slice($arg).=$value; #Normalized 0.
+    $self->mGNorm->slice($arg).=$value; #Don't change sign for mGNorm!
+    $self->pmGNorm->mv(1,-1)->slice($arg).=$value; 
+}
+
+sub Vec2LC_G { #longitudinal component of 'complex' vector field in
+               #reciprocal space  
+    my $self=shift;
+    my $field=shift; # vector field to project
+    croak "Can't project unless Direction0 is set" unless
+	$self->has_Direction0; 
+    my $iscomplex=ref $field eq 'PDL::Complex';
+    $field=$field->complex unless $iscomplex;
+    my $gnorm=$self->GNorm; 
+    my $result=Cscale($field, $gnorm)->sumover;
+    $result=$result->real unless $iscomplex;
+    return $result;
+}
+
+sub LC2Vec_G { #longitudinal vector field from its longitudinal
+	       #components in reciprocal space
+    my $self=shift;
+    my $field=shift; # scalar field of longitudinal components
+    croak "Can't project unless Direction0 is set" unless
+	$self->has_Direction0; 
+    my $iscomplex=ref $field eq 'PDL::Complex';
+    $field=$field->complex unless $iscomplex;
+    my $gnorm=$self->GNorm; 
+    #$gnorm is XorY nx, ny...
+    #$field is RoI nx ny nz
+    #$result RoI XoY nx ny nz
+    my $result=$field->(,*1)*$gnorm;
+    $result=$result->real unless $iscomplex;
+    return $result;
+}
+
+requires '_forme';
+
+no Moose::Role;
+
+1;
+

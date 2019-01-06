@@ -13,8 +13,13 @@ subtype 'Photonic::Types::ArrayOfOddInts' =>
     as 'ArrayRef[Photonic::Types::OddInt]',
     message { "Numbers [".join(", ", @$_). "] must have been odd" };
 
+subtype 'Photonic::Types::Geometry' =>
+  as 'Ref',
+  where { $_->does('Photonic::Roles::Geometry')},
+  message { "Expected a Geometry" };
+
 subtype 'Photonic::Types::GeometryG0' =>
-  as 'Photonic::Geometry',
+  as 'Photonic::Types::Geometry',
   where { $_->has_Direction0 },
   message { "You should define a direction for G=0 reciprocal vector" };
 
