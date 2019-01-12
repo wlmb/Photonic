@@ -56,15 +56,17 @@ The filename containing the image
 
 =end Pod::Coverage
 
+=head1 SEE ALSO
+
+L<Photonic::Roles::Geometry>
+
+
 =cut
 
 package Photonic::Geometry::FromImage2D;
 $Photonic::Geometry::FromImage2D::VERSION = '0.010';
 use namespace::autoclean;
 use Moose;
-with 'Photonic::Roles::Geometry';
-
-#extends 'Photonic::Geometry::Geometry';
 
 BEGIN {
 # Put inoffensive path. Or else, PDL::IO::Pic fails in taint mode. 
@@ -77,9 +79,11 @@ use Carp;
 
 has 'path' => ( is => 'ro', required => 1,
 	       documentation => 'File name of 2D monochrome image' );
-has '+B' => (is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_B' );
+has 'B' => (is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_B' );
 has 'inverted' => (is=>'ro', default=> 0,
                documentation=>'Flag to invert black/white');
+
+with 'Photonic::Roles::Geometry';
 
 sub _build_B {
     my $self=shift;

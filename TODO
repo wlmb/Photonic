@@ -1,5 +1,6 @@
 # -*- mode: org; -*-
 
+* TODO Relax need for odd dimensions
 * TODO Merge exact surface SHG calculation with current surface calculation.
 * TODO Write and publish paper.
 * TODO Allow non-orthogonal unit vectors
