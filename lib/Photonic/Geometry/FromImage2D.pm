@@ -101,13 +101,6 @@ sub _build_B {
     return $B;
 }
 
-sub _forme {
-    my $class=shift;
-    my $args=shift;
-    return defined $args->{path};
-}
-
-
 __PACKAGE__->meta->make_immutable; #faster execution
 
 

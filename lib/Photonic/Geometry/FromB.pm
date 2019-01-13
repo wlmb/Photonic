@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromB;
-$Photonic::Geometry::Geometry::VERSION = '0.010';
+$Photonic::Geometry::FromB::VERSION = '0.010';
 use namespace::autoclean;
 use Moose;
 
