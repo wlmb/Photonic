@@ -8,6 +8,7 @@ lib/Photonic/CharacteristicFunctions.pm
 lib/Photonic/ExtraUtils.pd
 lib/Photonic/Geometry.pm
 lib/Photonic/Geometry/FromImage2D.pm
+lib/Photonic/Geometry/FromB.pm
 lib/Photonic/NonRetarded/AllH.pm
 lib/Photonic/NonRetarded/EpsL.pm
 lib/Photonic/NonRetarded/EpsTensor.pm
@@ -38,6 +39,7 @@ lib/Photonic/Retarded/Wave.pm
 lib/Photonic/Retarded/WaveF.pm
 lib/Photonic/Retarded/WaveP.pm
 lib/Photonic/Roles/EpsParams.pm
+lib/Photonic/Roles/Geometry.pm
 lib/Photonic/Roles/KeepStates.pm
 lib/Photonic/typemap.PL
 lib/Photonic/Types.pm
