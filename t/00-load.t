@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Test::More;
 
-plan tests => 5;
+plan tests => 6;
 
 BEGIN {
     use_ok( 'Photonic' ) || print "Bail out!\n";
@@ -19,11 +19,13 @@ BEGIN {
     use_ok( 'Photonic::Geometry' ) || print "Bail out!\n";
 }
     
-
-BEGIN { 
-    use_ok( 'Photonic::Geometry::FromImage2D' ) || print "Bail out!\n";
+BEGIN {
+    use_ok( 'Photonic::Geometry::FromB' ) || print "Bail out!\n";
 }
 
+BEGIN {
+    use_ok( 'Photonic::Geometry::FromImage2D' ) || print "Bail out!\n";
+}
     
 BEGIN {
     use_ok( 'Photonic::ExtraUtils' ) || print "Bail out!\n";
