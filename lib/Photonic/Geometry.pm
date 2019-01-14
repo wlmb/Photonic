@@ -5,13 +5,10 @@ use strict;
 use Carp;
 
 my @implementations=qw(FromB FromImage2D);
-sub new {
-    my $self=shift;
-    croak "Use a specific implementation:" .
-	join ", ", map {"Photonic::Geometry::" . $_} @implementations;
-}
+croak "Dont use Photonic::Geometry. Use a specific implementation: " .
+    join ", ", map {"Photonic::Geometry::" . $_} @implementations;
     
-1;
+0;
 
 =head1 NAME
 
