@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use Test::More;
 
-plan tests => 6;
+plan tests => 5;
 
 BEGIN {
     use_ok( 'Photonic' ) || print "Bail out!\n";
@@ -15,9 +15,10 @@ BEGIN {
     use_ok( 'Photonic::CharacteristicFunctions' ) || print "Bail out!\n";
 }
     
-BEGIN {
-    use_ok( 'Photonic::Geometry' ) || print "Bail out!\n";
-}
+#    BEGIN {
+#	 use_ok( 'Photonic::Geometry' ) || print "Bail out!\n";
+#    }
+     
     
 BEGIN {
     use_ok( 'Photonic::Geometry::FromB' ) || print "Bail out!\n";

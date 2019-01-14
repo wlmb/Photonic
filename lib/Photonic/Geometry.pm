@@ -5,8 +5,9 @@ use strict;
 use Carp;
 
 my @implementations=qw(FromB FromImage2D);
-croak "Dont use Photonic::Geometry. Use a specific implementation: " .
-    join ", ", map {"Photonic::Geometry::" . $_} @implementations;
+croak "Dont use Photonic::Geometry. Use a specific implementation. " 
+    . "Choose from: "
+    . join ", ", map {"Photonic::Geometry::" . $_} @implementations;
     
 0;
 
