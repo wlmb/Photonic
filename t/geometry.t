@@ -4,7 +4,8 @@ use PDL;
 use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Geometry::FromB;
-use Test::More tests => 32;
+use Photonic::Geometry::FromImage2D;
+use Test::More tests => 37;
 my $pi=4*atan2(1,1);
 
 sub agree {    
@@ -68,3 +69,13 @@ ok(agree($g->Vec2LC_G(zeroes(11,11)->ndcoords->r2C)->re,
 	 (zeroes(11,11)->ndcoords*$g->GNorm)->sumover),
    "Vec2LC");
 ok(agree($g->LC2Vec_G(ones(11,11)->r2C)->re, $g->GNorm), "LC2Vec_G");
+##
+my $gw=Photonic::Geometry::FromImage2D->new(path=>'data/white.png');
+ok(defined $gw, "Create geometry from Image");
+ok($gw->npoints==11*11, "npoints");
+ok($gw->f==1, "filling fraction of white");
+my $gb=Photonic::Geometry::FromImage2D->new(path=>'data/black.png');
+ok($gb->f==0, "filling fraction of black");
+my $gbi=Photonic::Geometry::FromImage2D->new(
+   path=>'data/black.png', inverted=>1);
+ok($gbi->f==1, "filling fraction of inverted black");
