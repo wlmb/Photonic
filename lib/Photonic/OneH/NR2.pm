@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::OneH
+Photonic::OneH::NR2
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-    use Photonic::NonRetarded::OneH;
-    my $nr=Photonic::NonRetarded::OneH->new(geometry=>$geometry);
+    use Photonic::OneH::NR2;
+    my $nr=Photonic::OneH::NR2->new(geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -29,7 +29,7 @@ Haydock coefficient at a time.
 
 =item * new(geometry=>$g[, smallH=>$s])
 
-Create a new Ph::NR::OneH object with GeometryG0 $g and optional
+Create a new Ph::OneH::NR2 object with GeometryG0 $g and optional
 smallness parameter  $s.
 
 =back
@@ -46,7 +46,7 @@ be given in the initializer.
 
 =item * B dims r G GNorm L scale f
 
-Accesors handled by geometry (see Photonic::Geometry)
+Accesors handled by geometry (see Photonic::Roles::Geometry)
 
 =item * smallH
 
@@ -77,16 +77,16 @@ Number of completed iterations
 
 =item * iterate
 
-Performs a single Haydock iteration and updates current_a, next_state,
-next_b2, next_b, shifting the current values where necessary. Returns
+Performs a single Haydock iteration and updates current_a, next_b,
+next_b2, next_state, shifting the current values where necessary. Returns 
 0 when unable to continue iterating. 
  
 =back
 
 =cut
 
-package Photonic::NonRetarded::OneH;
-$Photonic::NonRetarded::OneH::VERSION = '0.010';
+package Photonic::OneH::NR2;
+$Photonic::OneH::NR2::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -96,16 +96,15 @@ use List::Util;
 use Carp;
 use Moose;
 use Photonic::Types;
-with "Photonic::Roles::EpsParams";
 
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
-    handles=>[qw(B dims r G GNorm L scale f)],required=>1
-);
-
-has 'currentState' => (is=>'ro', isa=>'PDL::Complex', writer=>'_currentState',
-      lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
+    handles=>[qw(B dims r G GNorm L scale f)],required=>1);
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
     init_arg=>undef);
+has 'currentState' => (is=>'ro', isa=>'PDL::Complex', writer=>'_currentState',
+      lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
 has 'nextState' =>(is=>'ro', isa=>'PDL::Complex|Undef', writer=>'_nextState',
     lazy=>1, default=>\&_firstState);
 has 'current_a' => (is=>'ro', writer=>'_current_a',
