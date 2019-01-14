@@ -1,5 +1,7 @@
 Build.PL
 Changes
+data/black.png
+data/white.png
 fortran/cgtsl.f
 fortran/dgtsl.f
 INSTALL
@@ -7,8 +9,9 @@ lib/Photonic.pm
 lib/Photonic/CharacteristicFunctions.pm
 lib/Photonic/ExtraUtils.pd
 lib/Photonic/Geometry.pm
-lib/Photonic/Geometry/FromImage2D.pm
 lib/Photonic/Geometry/FromB.pm
+lib/Photonic/Geometry/FromImage2D.pm
+lib/Photonic/Metric/R2.pm
 lib/Photonic/NonRetarded/AllH.pm
 lib/Photonic/NonRetarded/EpsL.pm
 lib/Photonic/NonRetarded/EpsTensor.pm
@@ -25,6 +28,9 @@ lib/Photonic/NonRetarded/OneH.pm
 lib/Photonic/NonRetarded/SH.pm
 lib/Photonic/NonRetarded/SHChiTensor.pm
 lib/Photonic/NonRetarded/SHP.pm
+lib/Photonic/OneH.pm
+lib/Photonic/OneH/NR2.pm
+lib/Photonic/OneH/R2.pm
 lib/Photonic/Retarded/AllH.pm
 lib/Photonic/Retarded/EpsilonP.pm
 lib/Photonic/Retarded/EpsilonTensor.pm
@@ -57,7 +63,11 @@ t/author-pod-syntax.t
 t/cgtsl.t
 t/characteristic-functions.t
 t/dgtsl.t
+t/geometry.t
 t/manifest.t
+t/metric.t
+t/oneh-nr2.t
+t/oneh-r2.t
 t/pod-coverage.t
 t/pod.t
 t/version.t
