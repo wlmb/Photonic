@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::Retarded::OneH
+Photonic::OneH::R2
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-    use Photonic::Retarded::OneH;
-    my $nr=Photonic::Retarded::OneH->new(metric=>$g, polarization=>$p);
+    use Photonic::OneH::R2;
+    my $nr=Photonic::OneH::R2->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -29,7 +29,7 @@ Haydock coefficient at a time.
 
 =item * new(metric=>$m, polarization=>$e, [, smallH=>$s])
 
-Create a new Ph::R::OneH object with PDL::Retarded::Metric $m, with a
+Create a new Ph::OneH::R2 object with PDL::Metric::R2 $m, with a
 field along the complex direction $e and with smallness parameter  $s.
 
 =back
@@ -38,9 +38,9 @@ field along the complex direction $e and with smallness parameter  $s.
 
 =over 4
 
-=item * metric Photonic::Retarded::Metric 
+=item * metric Photonic::Metric::R2 
 
-A Photonic::Retarded::Metric object defining the geometry of the
+A Photonic::Metric::R2 object defining the geometry of the
 system, the charateristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
 
@@ -56,8 +56,7 @@ b^2 coefficients are taken to be zero. From Photonic::Roles::EpsParams.
 
 =item * B ndims dims epsilon
 
-Accesors handled by metric (see Photonic::Retarded::Metric, inherited
-from Photonic::Geometry)
+Accesors handled by metric (see Photonic::Metric::R2)
 
 =item * previousState currentState nextState 
 
@@ -93,8 +92,8 @@ Number of completed iterations
 =item * iterate
 
 Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_c, next_g, shifting the current values where necessary. Returns 
-0 when unable to continue iterating. 
+next_b2, next_c, next_g, next_state, shifting the current values where
+necessary. Returns 0 when unable to continue iterating. 
  
 =begin Pod::Coverage
 
@@ -106,8 +105,8 @@ next_b2, next_c, next_g, shifting the current values where necessary. Returns
 
 =cut
 
-package Photonic::Retarded::OneH;
-$Photonic::Retarded::OneH::VERSION = '0.010';
+package Photonic::OneH::R2;
+$Photonic::OneH::R2::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -117,56 +116,39 @@ use List::Util;
 use Carp;
 use Moose;
 #use Photonic::Types;
-with 'Photonic::Roles::EpsParams';
+#with 'Photonic::Roles::EpsParams';
 
-has 'metric'=>(is=>'ro', isa => 'Photonic::Retarded::Metric',
-    handles=>[qw(B ndims dims epsilon)],required=>1
-);
-
+has 'metric'=>(is=>'ro', isa => 'Photonic::Metric::R2',
+    handles=>[qw(B ndims dims epsilon)],required=>1);
 has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
-
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
      init_arg=>undef, writer=>'_normalizedPolarization');
-
 has 'previousState' =>(is=>'ro', isa=>'PDL::Complex',
     writer=>'_previousState', lazy=>1, init_arg=>undef, 
     default=>sub {0+i*0});
-
 has 'currentState' => (is=>'ro', isa=>'PDL::Complex',
       writer=>'_currentState', 
       lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
-
 has 'nextState' =>(is=>'ro', isa=>'PDL::Complex|Undef', 
     writer=>'_nextState', init_arg=>undef);
-
 has 'current_a' => (is=>'ro', writer=>'_current_a',
     init_arg=>undef);
-
 has 'current_b2' => (is=>'ro', writer=>'_current_b2',
     init_arg=>undef);
-
 has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef, default=>0);
-
 has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
-
 has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef); 
-
 has 'current_c' => (is=>'ro', writer=>'_current_c', init_arg=>undef); 
-
 has 'next_c' => (is=>'ro', writer=>'_next_c', init_arg=>undef, default=>0);
-
 has 'next_bc' => (is=>'ro', writer=>'_next_bc', init_arg=>undef, default=>0);
-
 has 'previous_g' => (is=>'ro', writer=>'_previous_g', init_arg=>undef);
-
 has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef, 
      default=>0);
-
 has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef);
-
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
-
 sub iterate { #single Haydock iteration in N=1,2,3 dimensions
     my $self=shift;
     #Note: calculate Current a, next b2, next b, next state
@@ -174,7 +156,6 @@ sub iterate { #single Haydock iteration in N=1,2,3 dimensions
     return 0 unless defined $self->nextState;
     $self->_iterate_indeed; 
 }
-
 sub _iterate_indeed {
     my $self=shift;
     #Shift and fetch results of previous calculations
