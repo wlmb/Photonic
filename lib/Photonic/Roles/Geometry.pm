@@ -75,7 +75,7 @@ sub _build_L {
 sub _build_units {
     my $self=shift;
     my @units; # unit vectors
-    my $nd=$self->B->ndims;
+    my $nd=$self->ndims;
     foreach(0..$nd-1){ #build unit vectors
 	my $e=PDL->zeroes($nd);
 	$e->(($_)).=1;
@@ -147,7 +147,7 @@ sub _build_f { #calculate filling fraction
 
 sub _build_unitPairs {
     my $self=shift;
-    my $nd=$self->B->ndims;
+    my $nd=$self->ndims;
     my $units=$self->units;
     my @pairs;
     for my $i(0..$nd-1){ #build pairs of vectors
@@ -161,7 +161,7 @@ sub _build_unitPairs {
 
 sub _build_CunitPairs {
     my $self=shift;
-    my $nd=$self->B->ndims;
+    my $nd=$self->ndims;
     my $units=$self->units;
     my @cpairs;
     for my $i(0..$nd-1){ #build pairs of vectors
@@ -178,7 +178,7 @@ sub _build_CunitPairs {
 
 sub _build_CCunitPairs {
     my $self=shift;
-    my $nd=$self->B->ndims;
+    my $nd=$self->ndims;
     my $units=$self->units;
     my @ccpairs;
     for my $i(0..$nd-1){ #build pairs of vectors
@@ -194,7 +194,7 @@ sub _build_CCunitPairs {
 
 sub _build_unitDyads {
     my $self=shift;
-    my $nd=$self->B->ndims; #Number of dimensions
+    my $nd=$self->ndims; #Number of dimensions
     my $ne=$nd*($nd+1)/2; #number of symetric matrix elements
     my $matrix=PDL->zeroes($ne,$ne);
     my $n=0; #run over vector pairs
@@ -229,7 +229,7 @@ sub _G0 {
     croak "Direction0 must be ".$self->ndims."-dimensional vector" unless
 	[$value->dims]->[0]==$self->ndims and $value->ndims==1; 
     croak "Direction must be non-null" unless $value->inner($value)>0;
-    my $arg=":". (",(0)" x $self->B->ndims); #:,(0),... dimension of space times
+    my $arg=":". (",(0)" x $self->ndims); #:,(0),... dimension of space times
     $value=$value->norm; #normalize
     #Set element 0,0 for normalized arrays.
     $self->GNorm->slice($arg).=$value; #Normalized 0.
@@ -308,19 +308,13 @@ Roles consumed by geometry objects to be used in a Photonic
 calculation. See also the specific implementations under
 L<Photonic::Geometry>.  
 
-=head1 METHODS
+=head1 ACCESORS (defined by the implementation)
 
 =over 4
 
-=item * Vec2LC_G($v_G)
+=item * B 
 
-Returns the longitudinal component of a 'complex' vector field $v_G in
-reciprocal space 
-
-=item * LC2Vec_G($s_G)
-
-longitudinal vector field from its longitudinal components in
-reciprocal space. Scalar field to vector field.
+The characteristic function as PDL
 
 =back
 
@@ -328,7 +322,7 @@ reciprocal space. Scalar field to vector field.
 
 =over 4
 
-=item Direction0
+=item * Direction0
 
 Direction of the zero length wavevector
 
@@ -340,7 +334,7 @@ Direction of the zero length wavevector
 
 =item * L 
 
-Unit cell sizes as a B->ndims pdl.
+Unit cell sizes as a ndims pdl.
 
 =item * units
 
@@ -397,6 +391,22 @@ directions given by unitPairs
 
 =back
 
+=head1 METHODS
+
+=over 4
+
+=item * Vec2LC_G($v_G)
+
+Returns the longitudinal component of a 'complex' vector field $v_G in
+reciprocal space 
+
+=item * LC2Vec_G($s_G)
+
+longitudinal vector field from its longitudinal components in
+reciprocal space. Scalar field to vector field.
+
+=back
+
 =head1 PREDICATES
 
 =over 4
@@ -407,9 +417,10 @@ Test if Direction0 has been set.
 
 =back
 
-=for Pod::Coverage
+=begin Pod::Coverage
 
 =head2    PI
 
+=end  Pod::Coverage
 
 =cut
