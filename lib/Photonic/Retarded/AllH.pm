@@ -111,7 +111,7 @@ use Photonic::Utils qw(MHProd);
 use Moose;
 use Carp;
 
-extends 'Photonic::Retarded::OneH';
+extends 'Photonic::OneH::R2';
 
 has nh=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock coefficients');

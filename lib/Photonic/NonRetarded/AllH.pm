@@ -89,7 +89,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::Utils qw(HProd);
 use Moose;
-extends 'Photonic::NonRetarded::OneH';
+extends 'Photonic::OneH::NR2';
 
 has nh=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock coefficients');
