@@ -3,7 +3,9 @@ Changes
 data/black.png
 data/white.png
 fortran/cgtsl.f
+fortran/cgtsl.o
 fortran/dgtsl.f
+fortran/dgtsl.o
 INSTALL
 lib/Photonic.pm
 lib/Photonic/CharacteristicFunctions.pm
@@ -24,7 +26,6 @@ lib/Photonic/NonRetarded/NPS/AllH.pm
 lib/Photonic/NonRetarded/NPS/EpsL.pm
 lib/Photonic/NonRetarded/NPS/EpsTensor.pm
 lib/Photonic/NonRetarded/NPS/OneH.pm
-lib/Photonic/NonRetarded/OneH.pm
 lib/Photonic/NonRetarded/SH.pm
 lib/Photonic/NonRetarded/SHChiTensor.pm
 lib/Photonic/NonRetarded/SHP.pm
@@ -39,20 +40,20 @@ lib/Photonic/Retarded/FieldH.pm
 lib/Photonic/Retarded/Green.pm
 lib/Photonic/Retarded/GreenF.pm
 lib/Photonic/Retarded/GreenP.pm
-lib/Photonic/Retarded/Metric.pm
-lib/Photonic/Retarded/OneH.pm
 lib/Photonic/Retarded/Wave.pm
 lib/Photonic/Retarded/WaveF.pm
 lib/Photonic/Retarded/WaveP.pm
 lib/Photonic/Roles/EpsParams.pm
 lib/Photonic/Roles/Geometry.pm
 lib/Photonic/Roles/KeepStates.pm
+lib/Photonic/Roles/OneH.pm
+lib/Photonic/Roles/OneHM.pm
 lib/Photonic/typemap.PL
 lib/Photonic/Types.pm
 lib/Photonic/Utils.pm
 LICENSE
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
 META.json
 META.yml
 README
