@@ -112,10 +112,10 @@ use Carp;
 use Moose::Util::TypeConstraints;
 
 requires '_firstState'; #default first state
-requires 'applyOperator'; #Apply Hamiltonian to current state
-requires 'innerProduct'; #Apply Hamiltonian to current state
-requires 'more'; #check if iterations are done early
-requires 'coerce'; #if necessary coerce into desired type (ie real)
+requires 'applyOperator'; #Apply Hamiltonian to state
+requires 'innerProduct'; #Inner product between states
+requires 'more'; #check if more iterations are required
+requires 'coerce'; #coerce coefficients into desired type (ie real)
 
 has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
     init_arg=>undef);
