@@ -96,7 +96,7 @@ use List::Util;
 use Carp;
 use Moose;
 use Photonic::Types;
-
+use Photonic::Utils qw(HProd);
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1);
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
@@ -114,7 +114,7 @@ sub _firstState { #\delta_{G0}
 
 sub applyOperator { 
     my $self=shift;
-    my $psi_G=$self->currentState;
+    my $psi_G=shift;
     #state is RorI, nx, ny... gnorm=cartesian,nx,ny...
     #Multiply by vector ^G.
     #Have to get cartesian out of the way, thread over it and iterate
@@ -145,11 +145,7 @@ sub applyOperator {
 }
 
 sub innerProduct {
-    my $self=shift;
-    my $left=shift;
-    my $right=shift;
-    my $p=(Cmul(Cconj($left), $right));
-    return $p->re->sum+i*$p->im->sum;
+    return HProd($_[1], $_[2]); #skip self, Hermitian product
 }
 
 sub more {
