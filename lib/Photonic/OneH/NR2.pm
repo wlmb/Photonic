@@ -85,8 +85,8 @@ next_b2, next_state, shifting the current values where necessary. Returns
 
 =cut
 
-package Photonic::OneH::NR2;
-$Photonic::OneH::NR2::VERSION = '0.010';
+package Photonic::OneH::test;
+$Photonic::OneH::test::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -101,36 +101,20 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1);
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
-    init_arg=>undef);
-has 'currentState' => (is=>'ro', isa=>'PDL::Complex', writer=>'_currentState',
-      lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
-has 'nextState' =>(is=>'ro', isa=>'PDL::Complex|Undef', writer=>'_nextState',
-    lazy=>1, default=>\&_firstState);
-has 'current_a' => (is=>'ro', writer=>'_current_a',
-    init_arg=>undef);
-has 'current_b2' => (is=>'ro', writer=>'_current_b2',
-    init_arg=>undef);
-has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef, default=>0);
-has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
-has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef, default=>0);
-has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
-                   default=>0);
-sub iterate { #single Haydock iteration in N=1,2,3 dimensions
+
+with 'Photonic::Roles::OneH';
+
+sub _firstState { #\delta_{G0}
     my $self=shift;
-    #Note: calculate Current a, next b2, next b, next state
-    #Done if there is no next state
-    return 0 unless defined $self->nextState;
-    $self->_iterate_indeed; 
+    my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
+    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
+    $v->slice($arg).=1; #delta_{G0}
+    return $v;
 }
-sub _iterate_indeed {
+
+sub applyOperator { 
     my $self=shift;
-    #Shift and fetch results of previous calculations
-    $self->_previousState($self->currentState);
-    $self->_currentState(my $psi_G #state in reciprocal space 
-			 =$self->nextState);
-    $self->_current_b2($self->next_b2);
-    $self->_current_b($self->next_b);
+    my $psi_G=$self->currentState;
     #state is RorI, nx, ny... gnorm=cartesian,nx,ny...
     #Multiply by vector ^G.
     #Have to get cartesian out of the way, thread over it and iterate
@@ -157,34 +141,28 @@ sub _iterate_indeed {
 	->mv(-1,0)->sumover->complex; #^G.B^G|psi>
     # Result is RorI, nx, ny,...
     #Normalization should have been taken care of by fftw3
-    # Calculate Haydock coefficients
-    # current_a is (real part) of Hermitean product
-    my $current_a=(Cmul(Cconj($psi_G), $GBGpsi_G))->re->sum;
-    # was ->((0))->real->sum;
-    # next b^2
-    my $bpsi=$GBGpsi_G - $current_a*$psi_G -
-	    $self->current_b*$self->previousState;
-    my $next_b2=$bpsi->Cabs2->sum;
-    my $next_b=sqrt($next_b2);
-    my $next_state=undef;
-    $next_state=$bpsi/$next_b if($next_b2 > $self->smallH);
-    #save values
-    $self->_current_a($current_a);
-    $self->_next_b2($next_b2);
-    $self->_next_b($next_b);
-    $self->_nextState($next_state);
-    $self->_iteration($self->iteration+1); #increment counter
-    return 1;
+    return $GBGpsi_G;
 }
 
-sub _firstState { #\delta_{G0}
+sub innerProduct {
     my $self=shift;
-    my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
-    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
-    $v->slice($arg).=1; #delta_{G0}
-    return $v;
+    my $left=shift;
+    my $right=shift;
+    my $p=(Cmul(Cconj($left), $right));
+    return $p->re->sum+i*$p->im->sum;
 }
 
+sub more {
+    my $self=shift;
+    my $next_b2=shift;
+    return $next_b2->re > $self->smallH;
+}
+
+sub coerce {
+    my $self=shift;
+    my $x=shift;
+    return $x->re;
+}
 
 __PACKAGE__->meta->make_immutable;
     
