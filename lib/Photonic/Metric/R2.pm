@@ -46,7 +46,7 @@ dimensions, the next d indices n1,n2...nd identify the wavevector G.
 =cut
 
 package Photonic::Metric::R2;
-$Photonic::Retarded::Metric::VERSION = '0.010';
+$Photonic::Metric::R2::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::MatrixOps;
