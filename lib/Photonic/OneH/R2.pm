@@ -1,3 +1,102 @@
+package Photonic::OneH::R2;
+$Photonic::OneH::R2::VERSION = '0.010';
+use namespace::autoclean;
+use PDL::Lite;
+use PDL::NiceSlice;
+use PDL::FFTW3;
+use PDL::Complex;
+use List::Util;
+use Carp;
+use Moose;
+#use Photonic::Types;
+#with 'Photonic::Roles::EpsParams';
+use Photonic::Utils qw(HProd);
+
+with 'Photonic::Roles::OneHM';
+
+has 'metric'=>(is=>'ro', isa => 'Photonic::Metric::R2',
+    handles=>[qw(B ndims dims epsilon)],required=>1);
+has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
+     init_arg=>undef, writer=>'_normalizedPolarization');
+
+
+sub applyOperator {
+    my $self=shift;
+    my $psi=shift;
+    # psi is RorI xyz nx ny nz. Get cartesian out of the way and
+    # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
+    my $psi_r=ifftn($psi->real->mv(1,-1), $self->ndims);
+    #$psi_r is RorI nx ny nz  xyz, B is nx ny nz
+    # Multiply by characteristic function
+    my $Bpsi_r=Cscale($psi_r,$self->B);
+    #Bpsi_r is RorI nx ny nz  xyz
+    #Transform to reciprocal space, move xyz back and make complex, 
+    my $psi_G=fftn($Bpsi_r, $self->ndims)->mv(-1,1)->complex;
+    return $psi_G;
+}
+
+sub applyMetric {
+    my $self=shift;
+    my $psi=shift;
+    #psi is RorI xy.. nx ny..
+    my $g=$self->metric->value;
+    #$g is xyz xyz nx ny nz
+    my $gpsi=($g*$psi(:,:,*1))->sumover; 
+    #$gpsi is RorI xy.. nx ny..
+    return $gpsi;
+}
+
+sub innerProduct {  #ignore $self. Return Hermitian product
+    return HProd($_[1], $_[2]);
+}
+
+sub more { #check if I should continue
+    my $self=shift;
+    my $b2=shift;
+    return $b2->re > $self->smallH;
+}
+
+sub changesign { #flag change sign required if b^2 negative
+    return $_[1]->re < 0;
+}
+
+sub coerce { #Ignore $self. Take real part
+    return $_[1]->re;
+}
+
+    
+
+
+
+sub _initialState {
+    my $self=shift;
+    my $d=$self->ndims;
+    my $v=PDL->zeroes(@{$self->dims}); #build a nx ny nz pdl
+    my $arg="(0)" . ",(0)" x ($d-1); #(0),(0),... ndims times
+    $v->slice($arg).=1; #delta_{G0}
+    my $e=$self->polarization; #RorI xyz
+    croak "Polarization has wrong dimensions. " .
+	  " Should be $d-dimensional complex vector."
+	unless $e->isa('PDL::Complex') && $e->ndims==2 &&
+	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d; 
+    my $modulus2=$e->Cabs2->sumover;
+    croak "Polarization should be non null" unless
+	$modulus2 > 0;
+    $e=$e/sqrt($modulus2);
+    $self->_normalizedPolarization($e);
+    my $phi=$e*$v(*1); #initial state ordinarily normalized 
+                       # RorI xyz nx ny nz
+    return $phi;
+}
+
+    
+__PACKAGE__->meta->make_immutable;
+    
+1;
+
 =head1 NAME
 
 Photonic::OneH::R2
@@ -105,149 +204,3 @@ necessary. Returns 0 when unable to continue iterating.
 
 =cut
 
-package Photonic::OneH::R2;
-$Photonic::OneH::R2::VERSION = '0.010';
-use namespace::autoclean;
-use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::FFTW3;
-use PDL::Complex;
-use List::Util;
-use Carp;
-use Moose;
-#use Photonic::Types;
-#with 'Photonic::Roles::EpsParams';
-
-has 'metric'=>(is=>'ro', isa => 'Photonic::Metric::R2',
-    handles=>[qw(B ndims dims epsilon)],required=>1);
-has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
-     init_arg=>undef, writer=>'_normalizedPolarization');
-has 'previousState' =>(is=>'ro', isa=>'PDL::Complex',
-    writer=>'_previousState', lazy=>1, init_arg=>undef, 
-    default=>sub {0+i*0});
-has 'currentState' => (is=>'ro', isa=>'PDL::Complex',
-      writer=>'_currentState', 
-      lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
-has 'nextState' =>(is=>'ro', isa=>'PDL::Complex|Undef', 
-    writer=>'_nextState', init_arg=>undef);
-has 'current_a' => (is=>'ro', writer=>'_current_a',
-    init_arg=>undef);
-has 'current_b2' => (is=>'ro', writer=>'_current_b2',
-    init_arg=>undef);
-has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef, default=>0);
-has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
-has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef); 
-has 'current_c' => (is=>'ro', writer=>'_current_c', init_arg=>undef); 
-has 'next_c' => (is=>'ro', writer=>'_next_c', init_arg=>undef, default=>0);
-has 'next_bc' => (is=>'ro', writer=>'_next_bc', init_arg=>undef, default=>0);
-has 'previous_g' => (is=>'ro', writer=>'_previous_g', init_arg=>undef);
-has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef, 
-     default=>0);
-has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef);
-has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
-                   default=>0);
-sub iterate { #single Haydock iteration in N=1,2,3 dimensions
-    my $self=shift;
-    #Note: calculate Current a, next b2, next b, next state
-    #Done if there is no next state
-    return 0 unless defined $self->nextState;
-    $self->_iterate_indeed; 
-}
-sub _iterate_indeed {
-    my $self=shift;
-    #Shift and fetch results of previous calculations
-    #Notation: nm1 is n-1, np1 is n+1
-    $self->_previousState(my $psi_nm1=$self->currentState);
-    $self->_currentState(my $psi_n #state in reciprocal space 
-			 =$self->nextState);
-    $self->_current_b(my $b_n=$self->next_b);
-    $self->_current_b2(my $b2_n=$self->next_b2);
-    $self->_current_c(my $c_n=$self->next_c);
-    $self->_previous_g(my $g_nm1=$self->current_g);
-    $self->_current_g(my $g_n=$self->next_g);
-    #Use eqs. 4.29-4.33 of Samuel's thesis.
-    #state is RorI xy.. nx ny..
-    my $gGG=$self->metric->value;
-    #$gGG is xyz xyz nx ny nz, $psi_n is RorI xyz nx ny nz
-    my $gpsi=($gGG*$psi_n(:,:,*1))->sumover; #seems real*complex works.
-    # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
-    # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
-    my $gpsi_nr=ifftn($gpsi->real->mv(1,-1), $self->ndims);
-    #$gpsi_nr is RorI nx ny nz  xyz, B is nx ny nz
-    # Multiply by characteristic function
-    my $psi_np1r=Cscale($gpsi_nr, $self->B);
-    #psi_np1r is RorI nx ny nz  xyz
-    #the result is RorI, nx, ny,... cartesian
-    #Transform to reciprocal space, move xyz back and make complex, 
-    my $psi_np1=fftn($psi_np1r, $self->ndims)->mv(-1,1)->complex;
-    # psi_np1 is RorI xyz nx ny nz
-    my $gPsi_np1=($gGG*$psi_np1(:,:,*1))->sumover;
-    # gPsi_np1 is RorI xyz nx ny nz
-    # Eq. 4.41
-    my $a_n=$g_n*($gpsi->Cconj*$psi_np1)->re->sum;
-    # Eq. 4.30
-    #Modified algorithm:
-    my $next_state=($psi_np1-$a_n*$psi_n-$c_n*$psi_nm1);
-    my $gnext_state=($gGG*$next_state(:,:,*1))->sumover;
-    my $b2_np1=($next_state->Cconj*$gnext_state)->re->sum;
-    my $g_np1=1;
-    $g_np1=-1, $b2_np1=-$b2_np1 if $b2_np1 < 0;
-    my $b_np1=sqrt($b2_np1);
-    # Eq. 4.31
-    my $c_np1=$g_np1*$g_n*$b_np1;
-    my $bc_np1=$g_np1*$g_n*$b2_np1;
-    # Eq. 4.33
-    $next_state=undef if $b2_np1 < $self->smallH;
-    $next_state/=$b_np1 if defined $next_state;
-    #save values
-    $self->_nextState($next_state);
-    $self->_current_a($a_n);
-    $self->_next_b2($b2_np1);
-    $self->_next_b($b_np1);
-    $self->_next_g($g_np1);
-    $self->_next_c($c_np1);
-    $self->_next_bc($bc_np1);
-    $self->_iteration($self->iteration+1); #increment counter
-    return 1;
-}
-
-sub BUILD {
-    my $self=shift;
-    my $d=$self->ndims;
-
-    my $v=PDL->zeroes(@{$self->dims}); #build a nx ny nz pdl
-    my $arg="(0)" . ",(0)" x ($d-1); #(0),(0),... ndims times
-    $v->slice($arg).=1; #delta_{G0}
-    my $e=$self->polarization; #RorI xyz
-    croak "Polarization has wrong dimensions. " .
-	  " Should be $d-dimensional complex vector."
-	unless $e->isa('PDL::Complex') && $e->ndims==2 &&
-	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d; 
-    my $modulus2=$e->Cabs2->sumover;
-    croak "Polarization should be non null" unless
-	$modulus2 > 0;
-    $e=$e/sqrt($modulus2);
-    $self->_normalizedPolarization($e);
-    my $phi=$e*$v(*1); #initial state ordinarily normalized 
-                       # RorI xyz nx ny nz
-    my $gphi=($self->metric->value*$phi(:,:,*1))->sumover;
-    my $g=1;
-    my $b2=($phi->Cconj*$gphi)->re->sum;
-    $g=-1, $b2=-$b2 if $b2<0;
-    $b=sqrt($b2);
-    $phi=$phi/$b; #initial state;
-    $self->_nextState($phi);
-    #skip $self->current_a;
-    $self->_next_b2($b2);
-    $self->_next_b($b);
-    $self->_next_c(0); #no c0
-    $self->_next_bc(0); #no bc0
-    $self->_next_g($g);
-}
-    
-__PACKAGE__->meta->make_immutable;
-    
-1;
