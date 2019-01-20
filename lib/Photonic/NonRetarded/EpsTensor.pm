@@ -108,7 +108,7 @@ use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::EpsParams';
 
-has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
+has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1
 );
 with 'Photonic::Roles::KeepStates';
