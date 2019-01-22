@@ -125,13 +125,13 @@ sub evaluate {
 #	lo debo convertir a
 #	u-a0-b1^2/u-a1-b2^2/
 #	entonces bn->u-an y an->-b_n^2
-    my $fnm1=$u-$as->[0];
-    $fnm1=r2C($tiny) if $fnm1->re==0 and $fnm1->im==0;
+    my $fn=$u-$as->[0];
+    $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
     my $n=1;
-    my ($Cnm1, $Dnm1)=($fnm1, r2C(0)); #previous coeffs.
-    my ($fn, $Cn, $Dn); #current coeffs.
+    my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
+    my ($Cn, $Dn); #current coeffs.
     my $Deltan;
-    while($n<$self->nh && $n<=$self->nr->iteration){
+    while($n<$self->nh && $n<$self->nr->iteration){
 	$Dn=$u-$as->[$n]-$b2s->[$n]*$Dnm1;
 	$Dn=r2C($tiny) if $Dn->re==0 and $Dn->im==0;
 	$Cn=$u-$as->[$n]-$b2s->[$n]/$Cnm1;
