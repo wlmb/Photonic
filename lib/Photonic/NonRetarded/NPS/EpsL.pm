@@ -104,10 +104,10 @@ sub BUILD {
 #	lo debo convertir a
 #	a0-b1^2/a1-b2^2/
 #	entonces bn->an y an->-b_n^2
-    my $fnm1=$as->[0];
-    $fnm1=r2C($tiny) if $fnm1->re==0 and $fnm1->im==0;
+    my $fn=$as->[0];
+    $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
     my $n=1;
-    my ($Cnm1, $Dnm1)=($fnm1, r2C(0)); #previous coeffs.
+    my ($fnm1,$Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
     my ($fn, $Cn, $Dn); #current coeffs.
     my $Deltan;
     while($n<$self->nh && $n<$self->nr->iteration){
