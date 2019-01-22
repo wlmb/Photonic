@@ -123,11 +123,11 @@ sub evaluate {
     #	lo debo convertir a
     #       u-a_0-g0g1b1^2/u-a1-g1g2b2^2/...
     #   entonces bn->u-an y an->-g{n-1}gnbn^2 o -bc_n
-    my $fnm1=$u-$as->[0];
-    $fnm1=r2C($tiny) if $fnm1->re==0 and $fnm1->im==0;
+    my $fn=$u-$as->[0];
+    $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
     my $n=1;
-    my ($Cnm1, $Dnm1)=($fnm1, r2C(0)); #previous coeffs.
-    my ($fn, $Cn, $Dn); #current coeffs.
+    my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
+    my ($Cn, $Dn); #current coeffs.
     my $Deltan;
     while($n<$self->nh && $n<=$self->haydock->iteration){
 	$Dn=$u-$as->[$n]-$bcs->[$n]*$Dnm1;
