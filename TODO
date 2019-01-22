@@ -1,6 +1,8 @@
 # -*- mode: org; -*-
 
+* TODO Check upper iterations in continued fractions
 * TODO Factor out OneH?
+  Did for retarded and non retarded, 2 media
 * TODO Relax need for odd dimensions
 * TODO Merge exact surface SHG calculation with current surface calculation.
 * TODO Write and publish paper.
