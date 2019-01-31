@@ -129,5 +129,15 @@
       Geometry.
   21. Added spinor euclidean scalar product SProd to Utils
   22. Use SProd in NPS/OneH
+  23. Change organization to allow more code reuse.
+  24. Made Roles for Geometry, OneH and AllH.
+  25. Made directory/class hierarchy according to system. Thus, LE is for
+      longitudinal epsilon (dielectric function) and WE for wave
+      equation. NR2 is for non retarded with two media. R2 is for
+      retarded with 2 media.
+  26. Made documentation modules for the generic functions. Thus
+      Photonic::OneH is only documentation, while
+      Photonic::LE::NR2::OneH is one implementation.
+
 
 
