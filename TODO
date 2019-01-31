@@ -1,5 +1,6 @@
 # -*- mode: org; -*-
 
+* TODO Return as, bs, b2s as pdl instead of array?
 * TODO Check upper iterations in continued fractions
 * TODO Factor out OneH?
   Did for retarded and non retarded, 2 media
