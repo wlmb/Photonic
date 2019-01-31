@@ -4,7 +4,7 @@ use PDL;
 use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Geometry::FromB;
-use Photonic::Metric::R2;
+use Photonic::WE::R2::Metric;
 use Test::More tests => 7;
 
 #my $pi=4*atan2(1,1);
@@ -17,7 +17,7 @@ sub agree {
 
 my $B=zeroes(11)->xvals<5; #1D system
 my $g=Photonic::Geometry::FromB->new(B=>$B);
-my $gGG=Photonic::Metric::R2->new(geometry=>$g, epsilon=>pdl(2),
+my $gGG=Photonic::WE::R2::Metric->new(geometry=>$g, epsilon=>pdl(2),
    wavenumber=>pdl(1), wavevector=>pdl([1])); 
 my $v=$gGG->value;
 ok($v->ndims==3,"Number of dimensions of metric for 1d");
@@ -26,7 +26,7 @@ ok(agree($v, ones(1,1,11)), "Actual metric for 1d");
 
 $B=zeroes(1,11)->xvals<5; #2D system
 $g=Photonic::Geometry::FromB->new(B=>$B);
-$gGG=Photonic::Metric::R2->new(geometry=>$g, epsilon=>pdl(2),
+$gGG=Photonic::WE::R2::Metric->new(geometry=>$g, epsilon=>pdl(2),
    wavenumber=>pdl(1), wavevector=>pdl([0,1])); 
 $v=$gGG->value;
 ok($v->ndims==4,"Number of dimensions of metric for 2d");
