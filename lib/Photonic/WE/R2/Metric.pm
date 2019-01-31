@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::Metric::R2
+Photonic::WE::R2::Metric
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-    use Photonic::Metric::R2;
-    my $gGG=Photonic::Metric::R2->new(
+    use Photonic::WE::R2::Metric;
+    my $gGG=Photonic::WE::R2::Metric->new(
             geometry=>$geometry, epsilon=>$eps, 
             wavenumber => $q, $wavevector=>k);
     f($gGG->value);
@@ -17,7 +17,7 @@ version 0.010
 =head1 DESCRIPTION
 
 Calculates the retarded metric tensor g_{GG'}^{ij} for use in the
-calculation of the retarded Haydock coefficients.
+calculation of the retarded Haydock coefficients for the wave equation in a binary medium where the host has no dissipation.
 
 =head1 METHODS
 
@@ -25,7 +25,7 @@ calculation of the retarded Haydock coefficients.
 
 =item * new(geometry=>$g, epsilon=>$e, $wavenumber=>$q, $wavevector=>$k);
 
-Create a new Ph::Metric::R2 object with Geometry $g, dielectric
+Create a new Ph::WE::R2::Metric object with Geometry $g, dielectric
 function of the host $e, vacuum wavenumber $q=omega/c  and wavevector
 $k. $q and $k are real.
 
@@ -45,8 +45,8 @@ dimensions, the next d indices n1,n2...nd identify the wavevector G.
 
 =cut
 
-package Photonic::Metric::R2;
-$Photonic::Metric::R2::VERSION = '0.010';
+package Photonic::WE::R2::Metric;
+$Photonic::WE::R2::Metric::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::MatrixOps;

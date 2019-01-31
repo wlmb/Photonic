@@ -4,8 +4,8 @@ use PDL;
 use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Geometry::FromB;
-use Photonic::Metric::R2;
-use Photonic::OneH::R2;
+use Photonic::WE::R2::Metric;
+use Photonic::WE::R2::OneH;
 
 use Test::More tests => 4;
 
@@ -20,10 +20,10 @@ sub agree {
 #Check haydock coefficients for simple 1D system
 my $B=zeroes(11)->xvals<5; #1D system
 my $g=Photonic::Geometry::FromB->new(B=>$B);
-my $m=Photonic::Metric::R2->new(
+my $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>pdl(1), wavenumber=>pdl(2), wavevector=>pdl([1])
     );
-my $o=Photonic::OneH::R2->new(metric=>$m, polarization=>pdl([1])->r2C);
+my $o=Photonic::WE::R2::OneH->new(metric=>$m, polarization=>pdl([1])->r2C);
 $o->iterate;
 ok(agree(pdl($o->current_a), $g->f), "1D a_0");
 ok(agree(pdl($o->next_b2), $g->f*(1-$g->f)), "1D b_1^2");

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::OneH::NR2
+Photonic::LE::NR2::OneH;
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-    use Photonic::OneH::NR2;
-    my $nr=Photonic::OneH::NR2->new(geometry=>$geometry);
+    use Photonic::LE::NR2::OneH;
+    my $nr=Photonic::LE::NR2::OneH->new(geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -29,7 +29,7 @@ Haydock coefficient at a time.
 
 =item * new(geometry=>$g[, smallH=>$s])
 
-Create a new Ph::OneH::NR2 object with GeometryG0 $g and optional
+Create a new Ph::LE::NR2::OneH object with GeometryG0 $g and optional
 smallness parameter  $s.
 
 =back
@@ -44,7 +44,7 @@ A Photonic::Geometry object defining the geometry of the system,
 the charateristic function and the direction of the G=0 vector. Should
 be given in the initializer.
 
-=item * B dims r G GNorm L scale f
+=item * B ndims dims r G GNorm L scale f
 
 Accesors handled by geometry (see Photonic::Roles::Geometry)
 
@@ -85,8 +85,8 @@ next_b2, next_state, shifting the current values where necessary. Returns
 
 =cut
 
-package Photonic::OneH::NR2;
-$Photonic::OneH::NR2::VERSION = '0.010';
+package Photonic::LE::NR2::OneH;
+$Photonic::OneH::LE::NR2::OneH::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -98,7 +98,7 @@ use Moose;
 use Photonic::Types;
 use Photonic::Utils qw(HProd);
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
-    handles=>[qw(B dims r G GNorm L scale f)],required=>1);
+    handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 
@@ -107,7 +107,7 @@ with 'Photonic::Roles::OneH';
 sub _firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
-    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
+    my $arg="(0)" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1; #delta_{G0}
     return $v;
 }
@@ -115,24 +115,24 @@ sub _firstState { #\delta_{G0}
 sub applyOperator { 
     my $self=shift;
     my $psi_G=shift;
-    #state is RorI, nx, ny... gnorm=cartesian,nx,ny...
-    #Multiply by vector ^G.
+    # ri=real or imaginary, ij=cartesian
+    #state is c:nx:ny:... gnorm=ij:nx:ny...
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest 
-    my $Gpsi_G=Cscale($psi_G, $self->GNorm->mv(0,-1)); #^G |psi>
-    #the result is RorI, nx, ny,... cartesian
+    my $Gpsi_G=$psi_G*$self->GNorm->mv(0,-1); #^G |psi>
+    #the result is ri:nx:ny...:ij
     #Take inverse Fourier transform over all space dimensions,
     #thread over cartesian indices
     #Notice that (i)fftn wants a real 2,nx,ny... piddle, not a complex
     #one. Thus, I have to convert complex to real and back here and
     #downwards. 
-    my $Gpsi_R=ifftn($Gpsi_G->real, $self->B->ndims); #real space ^G|psi>
+    my $Gpsi_R=ifftn($Gpsi_G->real, $self->ndims); #real space ^G|psi>
     #the result is RorI, nx, ny,... cartesian
     #Multiply by characteristic function. Thread cartesian
     my $BGpsi_R=Cscale($Gpsi_R, $self->B); #B^G|psi> in Real Space
     #the result is RorI, nx, ny,... cartesian
     #Transform to reciprocal space
-    my $BGpsi_G=fftn($BGpsi_R, $self->B->ndims); #reciprocal space B^G|psi>
+    my $BGpsi_G=fftn($BGpsi_R, $self->ndims); #reciprocal space B^G|psi>
     #the result is RorI, nx, ny,... cartesian
     #Scalar product with Gnorm
     my $GBGpsi_G=Cscale($BGpsi_G, $self->GNorm->mv(0,-1)) #^GB^G|psi>

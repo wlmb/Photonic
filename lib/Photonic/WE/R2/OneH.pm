@@ -1,5 +1,5 @@
-package Photonic::OneH::R2;
-$Photonic::OneH::R2::VERSION = '0.010';
+package Photonic::WE::R2::OneH;
+$Photonic::WE::R2::OneH::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -14,7 +14,7 @@ use Photonic::Utils qw(HProd);
 
 with 'Photonic::Roles::OneHM';
 
-has 'metric'=>(is=>'ro', isa => 'Photonic::Metric::R2',
+has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
     handles=>[qw(B ndims dims epsilon)],required=>1);
 has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
@@ -43,8 +43,8 @@ sub applyMetric {
     my $psi=shift;
     #psi is RorI xy.. nx ny..
     my $g=$self->metric->value;
-    #$g is xyz xyz nx ny nz
-    my $gpsi=($g*$psi(:,:,*1))->sumover; 
+    #$g is xyz xyz nx ny nz 
+    my $gpsi=($g*$psi(:,:,*1))->sumover; #matrix times vector
     #$gpsi is RorI xy.. nx ny..
     return $gpsi;
 }
