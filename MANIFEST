@@ -76,3 +76,4 @@ t/pod.t
 t/version.t
 TODO
 xt/boilerplate.t
+Makefile.PL
