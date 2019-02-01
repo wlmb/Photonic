@@ -86,7 +86,7 @@ next_b2, next_state, shifting the current values where necessary. Returns
 =cut
 
 package Photonic::LE::NR2::OneH;
-$Photonic::OneH::LE::NR2::OneH::VERSION = '0.010';
+$Photonic::LE::NR2::OneH::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

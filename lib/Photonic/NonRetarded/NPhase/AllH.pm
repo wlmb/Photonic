@@ -121,7 +121,7 @@ has 'next_W' =>(is=>'ro', isa=>'PDL',
      default=>sub {PDL->pdl([1])},
      documentation=>"Next row of error matrix"
 );
-has 'Accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
+has 'accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
                 documentation=>'Desired or machine precision');
 
 sub BUILD {
@@ -206,15 +206,15 @@ sub _checkorthogonalize
 	    -$b_abs->(($n-1))
 	    *$previous_W);
 	$next_W->(1:-1)+=$b_abs->(1:-2)*$current_W->(0:-3) if ($n>=3);
-	$next_W+=_sign($next_W)*2*$self->Accuracy;
+	$next_W+=_sign($next_W)*2*$self->accuracy;
 	$next_W/=$self->next_b->Cabs;
     }
-    $next_W=$next_W->append($self->Accuracy) if $n>=1;
+    $next_W=$next_W->append($self->accuracy) if $n>=1;
     $next_W=$next_W->append(1);
     $self->_next_W($next_W);
     return unless $n>=2;
     my $max=$next_W->(0:-2)->maximum;
-    return unless $max > sqrt($self->Accuracy);
+    return unless $max > sqrt($self->accuracy);
     #warn "Ortoghonalize at $n\n";
     my $states=$self->states;
     my $currentState=$self->currentState;
@@ -240,8 +240,8 @@ sub _checkorthogonalize
     my $sn=-EProd($nextState, $nextState)->sqrt; #norm
     $nextState/=$sn; #normalize
     $self->_nextState($nextState);
-    $current_W(0:-2).=$self->Accuracy;
-    $next_W(0:-2).=$self->Accuracy;
+    $current_W(0:-2).=$self->accuracy;
+    $next_W(0:-2).=$self->accuracy;
     $self->_current_W($current_W);
     $self->_next_W($next_W);
 };

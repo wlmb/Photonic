@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-    use Photonic::OneH::NR2;
-    my $nr=Photonic::OneH::NR2->new(geometry=>$geometry);
+    use Photonic::LE::NR2::OneH;
+    my $nr=Photonic::LE::NR2::OneH->new(geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -20,10 +20,10 @@ version 0.010
 
 =item (for developers)
 
-    package Photonic::OneH::NR2.pm;
-    $Photonic::OneH::NR2::VERSION= '0.010';
+    package Photonic::LE::NR2::OneH.pm;
+    $Photonic::LE::NR2::OneH::VERSION= '0.010';
     use namespace::autoclean;
-    use Mosse;
+    use Moose;
     has...
     with 'Photonic::Roles::OneH';
 
@@ -32,9 +32,8 @@ version 0.010
 =head1 DESCRIPTION
 
 Roles consumed by OneH objects to be used in a Photonic
-calculation. See also the specific implementations under
-=L<Photonic::OneH>. Calculation of Haydock coefficients and Haydock
-states, one Haydock coefficient at a time.
+calculation. See also the specific implementations. Calculation of
+Haydock coefficients and Haydock states, one Haydock coefficient at a time.
 
 =head1 METHODS
 
@@ -42,7 +41,7 @@ states, one Haydock coefficient at a time.
 
 =item * new(geometry=>$g[, smallH=>$s])
 
-Create a new Ph::OneH::NR2 object with GeometryG0 $g and optional
+Create a new Photonic::...::OneH object with GeometryG0 $g and optional
 smallness parameter  $s.
 
 =back

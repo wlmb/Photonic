@@ -1,5 +1,5 @@
 package Photonic::EL::NR2;
-$Photonic::EL::VERSION='0.010';
+$Photonic::EL::NR2::VERSION='0.010';
 use warnings;
 use strict;
 use Carp;
