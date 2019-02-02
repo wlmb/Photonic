@@ -230,7 +230,6 @@ sub _checkorthogonalize {
 }
 
 sub _orthogonalize {
-    warn 'Hi there';
     my $self=shift;
     my $states=$self->states;
     my $currentState=$self->currentState;
