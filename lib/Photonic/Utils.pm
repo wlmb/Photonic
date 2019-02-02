@@ -33,7 +33,7 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
 	'PDL::Complex');  
     my $ndims=$first->ndims;
-    die "Dimensions should be equal" unless $ndims == $second->ndims;
+    confess "Dimensions should be equal" unless $ndims == $second->ndims;
     my $prod=$first->complex->Cconj*$second->complex;
     # clump all except skip dimensions, protecto RorI index and sum.
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
