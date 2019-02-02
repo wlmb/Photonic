@@ -5,8 +5,11 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::AllH;
+use Photonic::Utils qw(HProd);
 
-use Test::More tests => 6+4;
+use List::Util;
+
+use Test::More tests => 11;
 
 #my $pi=4*atan2(1,1);
 
@@ -43,5 +46,18 @@ ok(agree(pdl($at->iteration), 1), "Number of iterations 1D trans");
 ok(agree(pdl($b2st->[0]), 0), "1D T b_0^2");
 ok(agree(pdl($ast->[0]), $g->f), "1D T a_0");
 ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
+
+#check reorthogonalize with square array
+my $Bs=zeroes(15,15)->rvals<5;
+my $gs=Photonic::Geometry::FromB->new(B=>$Bs, Direction0=>pdl([1,0]));
+my $als=Photonic::LE::NR2::AllH->new(geometry=>$gs, nh=>2*15*15,
+				     reorthogonalize=>1);
+$als->run;
+my $st=$als->states;
+#my $first=shift @$st;
+#my $max=List::Util::max map {HProd($_, $first)} $st->[-10,-1];
+ok($als->iteration <= 15*15, "No more iterations than dimensions");
+diag("Actual iterations: ".$als->iteration);
+#diag("Max overlap to first state is $max");
 
 __END__

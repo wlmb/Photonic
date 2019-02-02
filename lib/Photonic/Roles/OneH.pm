@@ -113,6 +113,7 @@ use Moose::Util::TypeConstraints;
 requires '_firstState'; #default first state
 requires 'applyOperator'; #Apply Hamiltonian to state
 requires 'innerProduct'; #Inner product between states
+requires 'magnitude'; #magnitude of a state
 requires 'more'; #check if more iterations are required
 requires 'coerce'; #coerce coefficients into desired type (ie real)
 
