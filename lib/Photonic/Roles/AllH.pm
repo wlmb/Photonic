@@ -102,8 +102,6 @@ use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
-#use Photonic::Utils qw(HProd);
-#with 'Photonic::Roles::OneH';
 
 has nh=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock coefficients');

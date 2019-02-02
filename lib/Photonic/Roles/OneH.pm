@@ -123,10 +123,8 @@ has 'currentState' => (is=>'ro', isa=>'PDL::Complex', writer=>'_currentState',
       lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
 has 'nextState' =>(is=>'ro', isa=>maybe_type('PDL::Complex'),
 		   writer=>'_nextState',  lazy=>1, default=>\&_firstRState);
-has 'current_a' => (is=>'ro', writer=>'_current_a',
-    init_arg=>undef);
-has 'current_b2' => (is=>'ro', writer=>'_current_b2',
-    init_arg=>undef);
+has 'current_a' => (is=>'ro', writer=>'_current_a',  init_arg=>undef);
+has 'current_b2' => (is=>'ro', writer=>'_current_b2', init_arg=>undef);
 has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef, default=>0);
 has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
 has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef, default=>0);

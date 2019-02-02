@@ -5,7 +5,8 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::Geometry::FromImage2D;
-use Test::More tests => 37;
+use Photonic::Geometry::FromEpsilon;
+use Test::More tests => 40;
 my $pi=4*atan2(1,1);
 
 sub agree {    
@@ -79,3 +80,10 @@ ok($gb->f==0, "filling fraction of black");
 my $gbi=Photonic::Geometry::FromImage2D->new(
    path=>'data/black.png', inverted=>1);
 ok($gbi->f==1, "filling fraction of inverted black");
+
+my $eps=zeroes(11,11)+0*i;
+my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps);
+ok(defined $ge, "Create geometry from epsilon");
+is($ge->ndims, 2, "Number of dimensions");
+ok(agree(pdl($ge->dims),pdl(11,11)), "Size of each dimension");
+diag("Filling fraction: ". $ge->f);
