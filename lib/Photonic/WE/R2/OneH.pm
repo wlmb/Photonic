@@ -10,7 +10,7 @@ use Carp;
 use Moose;
 #use Photonic::Types;
 #with 'Photonic::Roles::EpsParams';
-use Photonic::Utils qw(HProd);
+use Photonic::Utils qw(MHProd);
 
 with 'Photonic::Roles::OneHM';
 
@@ -49,8 +49,12 @@ sub applyMetric {
     return $gpsi;
 }
 
-sub innerProduct {  #ignore $self. Return Hermitian product
-    return HProd($_[1], $_[2]);
+sub innerProduct {  #Return Hermitian product with metric
+    my $self=shift;
+    my $psi1=shift;
+    my $psi2=shift;
+    my $g=$self->metric->value;
+    return MHProd($psi1, $psi2, $g);
 }
 
 sub more { #check if I should continue

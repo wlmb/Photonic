@@ -100,8 +100,6 @@ use Photonic::Utils qw(HProd);
 
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
 
@@ -151,18 +149,6 @@ sub innerProduct {
 sub magnitude { #magnitude of a state
     return  sqrt($_[1]->Cabs2->sum);
     #could be innerProduct($_[1], $_[1]);
-}
-
-sub more {
-    my $self=shift;
-    my $next_b2=shift;
-    return $next_b2->re > $self->smallH;
-}
-
-sub coerce {
-    my $self=shift;
-    my $x=shift;
-    return $x->re;
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -110,8 +110,6 @@ has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B ndims dims r G GNorm L scale f pmGNorm)],required=>1
     );
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
 with 'Photonic::Roles::OneH';
@@ -178,20 +176,6 @@ sub magnitude {
     my $psi=shift;
     return $self->innerProduct($psi, $psi)->sqrt;
     #note: this is nor real/positive definite
-}
-sub more {
-    my $self=shift;
-    my $b2=shift;
-    my $more= $b2->Cabs > $self->smallH;
-    return $more;
-}
-sub coerce {
-    return $_[1]; #does nothing;
-}
-
-sub _checkorthogonalize {
-    my $self=shift;
-    $self->_checkorthogonalizeC(@_);
 }
 
 __PACKAGE__->meta->make_immutable;

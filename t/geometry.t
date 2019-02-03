@@ -86,4 +86,3 @@ my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps);
 ok(defined $ge, "Create geometry from epsilon");
 is($ge->ndims, 2, "Number of dimensions");
 ok(agree(pdl($ge->dims),pdl(11,11)), "Size of each dimension");
-diag("Filling fraction: ". $ge->f);

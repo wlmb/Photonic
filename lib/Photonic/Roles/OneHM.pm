@@ -189,14 +189,12 @@ sub _iterate_indeed {
     $self->_current_g(my $g_n=$self->next_g);
     my $gPsi=$self->applyMetric($psi_n);
     my $psi_np1=$self->applyOperator($gPsi);
-    my $gPsi_np1=$self->applyMetric($psi_np1);
     # Eq. 4.41
-    my $a_n=$g_n*$self->innerProduct($gPsi, $psi_np1);
+    my $a_n=$g_n*$self->innerProduct($psi_n, $psi_np1);
     # Eq. 4.30
     #Modified algorithm:
     my $next_state=($psi_np1-$a_n*$psi_n-$c_n*$psi_nm1);
-    my $gnext_state=$self->applyMetric($next_state);
-    my $b2_np1=$self->innerProduct($next_state,$gnext_state);
+    my $b2_np1=$self->innerProduct($next_state,$next_state);
     my $g_np1=1;
     $g_np1=-1, $b2_np1=-$b2_np1 if $self->changesign($b2_np1);
     my $b_np1=sqrt($b2_np1);
@@ -227,9 +225,8 @@ sub BUILD {} #noop
 after BUILD => sub {
     my $self=shift;
     my $phi=$self->initialState;
-    my $gphi=$self->applyMetric($phi);
     my $g=1;
-    my $b2=$self->innerProduct($phi,$gphi);
+    my $b2=$self->innerProduct($phi,$phi);
     $g=-1, $b2=-$b2 if $self->changesign($b2);
     $b=sqrt($b2);
     $phi=$phi/$b; #first state;

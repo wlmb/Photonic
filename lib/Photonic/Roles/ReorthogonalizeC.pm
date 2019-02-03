@@ -49,8 +49,8 @@ sub _checkorthogonalize {
 	$next_W=$next_W+$next_W/$next_W->Cabs*2*$self->normOp*$self->noise;
 	$next_W=$next_W/$self->next_b;
     }
-    $next_W=($self->normOp*$self->noise+0*i)->(:,*1) if $n==1;
-    $next_W=$next_W->transpose->append([[$self->normOp*$self->noise],[0]])
+    $next_W=($self->noise+0*i)->(:,*1) if $n==1;
+    $next_W=$next_W->transpose->append([[$self->noise],[0]])
 	->transpose->complex if $n>=2;
     $next_W=$next_W->transpose->append([[1],[0]])->transpose->complex;
     $self->_next_W($next_W);
@@ -58,8 +58,8 @@ sub _checkorthogonalize {
     my $max=$next_W->(:,0:-2)->Cabs->maximum;
     if($max > sqrt($self->accuracy)){
 	$self->_orthogonalize;
-	$current_W(:,0:-2).=r2C($self->normOp*$self->noise);
-	$next_W(:,0:-2).=r2C($self->normOp*$self->noise);
+	$current_W(:,0:-2).=r2C($self->noise);
+	$next_W(:,0:-2).=r2C($self->noise);
     }
     $self->_current_W($current_W);
     $self->_next_W($next_W);

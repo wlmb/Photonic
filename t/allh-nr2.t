@@ -7,6 +7,7 @@ use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(HProd);
 
+use Machine::Epsilon;
 use List::Util;
 
 use Test::More tests => 11;
@@ -50,15 +51,10 @@ ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
 #check reorthogonalize with square array
 my $Bs=zeroes(15,15)->rvals<5;
 my $gs=Photonic::Geometry::FromB->new(B=>$Bs, Direction0=>pdl([1,0]));
-my $als=Photonic::LE::NR2::AllH->new(geometry=>$gs, nh=>2*15*15,
-				     reorthogonalize=>1);
+my $als=Photonic::LE::NR2::AllH
+    ->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
+	  accuracy=>machine_epsilon(), noise=>machine_epsilon(), normOp=>1);  
 $als->run;
-my $st=$als->states;
-#my $first=shift @$st;
-#my $max=List::Util::max map {HProd($_, $first)} $st->[-10,-1];
 ok($als->iteration <= 15*15, "No more iterations than dimensions");
-diag("Actual iterations: ".$als->iteration);
-diag("Actual orthogonalizations: ", $als->orthogonalizations);
-#diag("Max overlap to first state is $max");
-
-__END__
+diag("Actual iterations: " . $als->iteration 
+     . " Actual orthogonalizations: ", $als->orthogonalizations);

@@ -67,7 +67,7 @@ b^2 coefficients are taken to be zero. Handled by Photonic::Roles::EpsParams
 
 =item * previousState currentState nextState 
 
-The n-1-th, n-th and n+1-th Haydock states; a complex number for each pixel
+The n-1-th, n-th and n+1-th Haydock states
 
 =item * current_a
 
@@ -114,8 +114,6 @@ requires '_firstState'; #default first state
 requires 'applyOperator'; #Apply Hamiltonian to state
 requires 'innerProduct'; #Inner product between states
 requires 'magnitude'; #magnitude of a state
-requires 'more'; #check if more iterations are required
-requires 'coerce'; #coerce coefficients into desired type (ie real)
 requires 'complexCoeffs'; #Haydock coefficients are complex
 
 has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
@@ -133,6 +131,8 @@ has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef,
 		 builder=>'_cero');
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
 
 sub _cero {
     my $self=shift;
@@ -161,11 +161,11 @@ sub _iterate_indeed {
     my $next_b2=$self->innerProduct($bpsi, $bpsi);
     my $next_b=sqrt($next_b2);
     my $next_state=undef;
-    $next_state=$bpsi/$next_b if $self->more($next_b2);
+    $next_state=$bpsi/$next_b unless $next_b2->abs<=$self->smallH;
     #save values
-    $self->_current_a($self->coerce($current_a));
-    $self->_next_b2($self->coerce($next_b2));
-    $self->_next_b($self->coerce($next_b));
+    $self->_current_a($self->_coerce($current_a));
+    $self->_next_b2($self->_coerce($next_b2));
+    $self->_next_b($self->_coerce($next_b));
     $self->_nextState($next_state);
     $self->_iteration($self->iteration+1); #increment counter
     return 1;
@@ -174,6 +174,13 @@ sub _iterate_indeed {
 sub _firstRState {
     my $self=shift;
     return $self->_firstState;
+}
+
+sub _coerce {
+    my $self=shift;
+    my $val=shift;
+    return $val if $self->complexCoeffs;
+    return $val->re;
 }
 
 1;

@@ -25,6 +25,8 @@ has 'accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
                 documentation=>'Desired or machine precision');
 has 'noise'=>(is=>'ro', default=>sub{machine_epsilon()},
     documentation=>'Noise introduced each iteration to overlap matrix');
+has 'normOp'=>(is=>'ro', required=>1, default=>1,
+	       documentation=>'Estimate of operator norm'); 
 has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 			   writer=>'_orthogonalizations');
 
@@ -42,7 +44,7 @@ sub _checkorthogonalize {
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
 	    - $b->(($n-1))*$previous_W;
 	$next_W->(1:-1)+=$b->(1:-2)*$current_W->(0:-3) if ($n>=3);
-	$next_W+=_sign($next_W)*2*$self->noise;
+	$next_W+=_sign($next_W)*2*$self->normOp*$self->noise;
 	$next_W/=$self->next_b;
     }
     $next_W=$next_W->append($self->noise) if $n>=1;
