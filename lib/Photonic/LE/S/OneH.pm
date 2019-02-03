@@ -104,7 +104,6 @@ use Carp;
 use Moose;
 use Photonic::Types;
 use Photonic::Utils qw(SProd);
-with 'Photonic::Roles::OneH';
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
 		builder=>'_epsilon');  
@@ -113,6 +112,9 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     );
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
+		      documentation=>'Haydock coefficients are complex');
+with 'Photonic::Roles::OneH';
 
 sub _epsilon {
     my $self=shift;
@@ -187,6 +189,10 @@ sub coerce {
     return $_[1]; #does nothing;
 }
 
+sub _checkorthogonalize {
+    my $self=shift;
+    $self->_checkorthogonalizeC(@_);
+}
 
 __PACKAGE__->meta->make_immutable;
     

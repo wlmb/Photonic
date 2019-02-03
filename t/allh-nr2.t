@@ -58,6 +58,7 @@ my $st=$als->states;
 #my $max=List::Util::max map {HProd($_, $first)} $st->[-10,-1];
 ok($als->iteration <= 15*15, "No more iterations than dimensions");
 diag("Actual iterations: ".$als->iteration);
+diag("Actual orthogonalizations: ", $als->orthogonalizations);
 #diag("Max overlap to first state is $max");
 
 __END__

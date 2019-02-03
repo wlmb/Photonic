@@ -102,6 +102,8 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
+		      documentation=>'Haydock coefficients are real');
 
 with 'Photonic::Roles::OneH';
 

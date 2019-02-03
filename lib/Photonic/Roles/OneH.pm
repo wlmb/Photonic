@@ -116,6 +116,7 @@ requires 'innerProduct'; #Inner product between states
 requires 'magnitude'; #magnitude of a state
 requires 'more'; #check if more iterations are required
 requires 'coerce'; #coerce coefficients into desired type (ie real)
+requires 'complexCoeffs'; #Haydock coefficients are complex
 
 has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
     init_arg=>undef);
@@ -125,11 +126,19 @@ has 'nextState' =>(is=>'ro', isa=>maybe_type('PDL::Complex'),
 		   writer=>'_nextState',  lazy=>1, default=>\&_firstRState);
 has 'current_a' => (is=>'ro', writer=>'_current_a',  init_arg=>undef);
 has 'current_b2' => (is=>'ro', writer=>'_current_b2', init_arg=>undef);
-has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef, default=>0);
+has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef,
+		  builder=>'_cero');
 has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
-has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef, default=>0);
+has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef,
+		 builder=>'_cero');
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
+
+sub _cero {
+    my $self=shift;
+    return r2C(0) if $self->complexCoeffs;
+    return 0;
+}
 
 sub iterate { #single Haydock iteration
     my $self=shift;

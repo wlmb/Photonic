@@ -73,7 +73,7 @@ use PDL::NiceSlice;
 #use Photonic::Utils qw(HProd);
 use Moose;
 extends 'Photonic::LE::NR2::OneH';
-with 'Photonic::Roles::AllH';
+with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeR';
 
 __PACKAGE__->meta->make_immutable;
     
