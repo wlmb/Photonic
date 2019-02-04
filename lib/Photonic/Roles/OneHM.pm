@@ -187,8 +187,7 @@ sub _iterate_indeed {
     $self->_current_c(my $c_n=$self->next_c);
     $self->_previous_g(my $g_nm1=$self->current_g);
     $self->_current_g(my $g_n=$self->next_g);
-    my $gPsi=$self->applyMetric($psi_n);
-    my $psi_np1=$self->applyOperator($gPsi);
+    my $psi_np1=$self->applyOperator($psi_n);
     # Eq. 4.41
     my $a_n=$g_n*$self->innerProduct($psi_n, $psi_np1);
     # Eq. 4.30

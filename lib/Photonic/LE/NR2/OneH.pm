@@ -151,6 +151,10 @@ sub magnitude { #magnitude of a state
     #could be innerProduct($_[1], $_[1]);
 }
 
+sub changesign { #don't change sign
+    return 0;
+}
+
 __PACKAGE__->meta->make_immutable;
     
 1;

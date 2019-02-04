@@ -177,6 +177,9 @@ sub magnitude {
     return $self->innerProduct($psi, $psi)->sqrt;
     #note: this is nor real/positive definite
 }
+sub changesign { #don't change sign
+    return 0;
+}
 
 __PACKAGE__->meta->make_immutable;
     
