@@ -12,8 +12,6 @@ use Moose;
 #with 'Photonic::Roles::EpsParams';
 use Photonic::Utils qw(MHProd);
 
-with 'Photonic::Roles::OneHM';
-
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
     handles=>[qw(B ndims dims epsilon)],required=>1);
 has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
@@ -21,20 +19,24 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
      init_arg=>undef, writer=>'_normalizedPolarization');
+has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
+		      documentation=>'Haydock coefficients are real');
+with 'Photonic::Roles::OneH';
 
 
 sub applyOperator {
     my $self=shift;
     my $psi=shift;
-    # psi is RorI xyz nx ny nz. Get cartesian out of the way and
+    my $gpsi=$self->applyMetric($psi);
+    # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
     # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
-    my $psi_r=ifftn($psi->real->mv(1,-1), $self->ndims);
+    my $gpsi_r=ifftn($gpsi->real->mv(1,-1), $self->ndims);
     #$psi_r is RorI nx ny nz  xyz, B is nx ny nz
     # Multiply by characteristic function
-    my $Bpsi_r=Cscale($psi_r,$self->B);
+    my $Bgpsi_r=Cscale($gpsi_r,$self->B);
     #Bpsi_r is RorI nx ny nz  xyz
     #Transform to reciprocal space, move xyz back and make complex, 
-    my $psi_G=fftn($Bpsi_r, $self->ndims)->mv(-1,1)->complex;
+    my $psi_G=fftn($Bgpsi_r, $self->ndims)->mv(-1,1)->complex;
     return $psi_G;
 }
 
@@ -57,6 +59,13 @@ sub innerProduct {  #Return Hermitian product with metric
     return MHProd($psi1, $psi2, $g);
 }
 
+sub magnitude {
+    my $self=shift;
+    my $psi=shift;
+    return $self->innerProduct($psi, $psi)->sqrt;
+    #note: this is nor real/positive definite
+}
+
 sub more { #check if I should continue
     my $self=shift;
     my $b2=shift;
@@ -71,11 +80,7 @@ sub coerce { #Ignore $self. Take real part
     return $_[1]->re;
 }
 
-    
-
-
-
-sub _initialState {
+sub _firstState {
     my $self=shift;
     my $d=$self->ndims;
     my $v=PDL->zeroes(@{$self->dims}); #build a nx ny nz pdl
