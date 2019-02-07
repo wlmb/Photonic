@@ -174,7 +174,7 @@ sub _iterate_indeed {
     $self->_previous_g(my $g_nm1=$self->current_g);
     $self->_current_g(my $g_n=$self->next_g);
     my $opPsi=$self->applyOperator($psi_n); 
-    my $a_n=$self->innerProduct($psi_n, $opPsi);
+    my $a_n=$g_n*$self->innerProduct($psi_n, $opPsi);
     my $bpsi_np1=$opPsi-$a_n*$psi_n-$c_n*$psi_nm1;
     $bpsi_np1=$self->_fullorthogonalize_indeed($bpsi_np1);
     my $b2_np1=$self->innerProduct($bpsi_np1, $bpsi_np1);
