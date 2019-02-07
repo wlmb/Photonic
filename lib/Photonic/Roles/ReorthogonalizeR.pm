@@ -57,14 +57,15 @@ sub _checkorthogonalize {
     my $n=$self->iteration;
     my $a=PDL->pdl($self->as);
     my $b=PDL->pdl($self->bs);
+    my $c=PDL->pdl($self->cs);
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
     if($n>=2){
 	$next_W= $b->(1:-1)*$current_W->(1:-1) 
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
-	    - $b->(($n-1))*$previous_W;
-	$next_W->(1:-1)+=$b->(1:-2)*$current_W->(0:-3) if ($n>=3);
+	    - $c->(($n-1))*$previous_W;
+	$next_W->(1:-1)+=$c->(1:-2)*$current_W->(0:-3) if ($n>=3);
 	$next_W=$next_W+_sign($next_W)*2*$self->normOp*$self->noise;
 	$next_W=$next_W/$self->next_b;
     }
