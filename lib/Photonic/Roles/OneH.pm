@@ -128,7 +128,6 @@ has 'current_b2' => (is=>'ro', writer=>'_current_b2', init_arg=>undef);
 has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef,
 		  builder=>'_cero');
 has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
-#Metric: no builder
 has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef,
 		 builder=>'_cero');
 has 'current_c' => (is=>'ro', writer=>'_current_c', init_arg=>undef); 
@@ -159,6 +158,11 @@ sub iterate { #single Haydock iteration
     $self->_iterate_indeed; 
 }
 
+sub _fullorthogonalize_indeed {
+    #stub for Reorthogonalize do nothing in OneH
+    return $_[1];
+}
+
 sub _iterate_indeed {
     my $self=shift;
     #Notation: nm1 is n-1, np1 is n+1
@@ -172,13 +176,14 @@ sub _iterate_indeed {
     my $opPsi=$self->applyOperator($psi_n); 
     my $a_n=$self->innerProduct($psi_n, $opPsi);
     my $bpsi_np1=$opPsi-$a_n*$psi_n-$c_n*$psi_nm1;
+    $bpsi_np1=$self->_fullorthogonalize_indeed($bpsi_np1);
     my $b2_np1=$self->innerProduct($bpsi_np1, $bpsi_np1);
     my $g_np1=1;
     $g_np1=-1, $b2_np1=-$b2_np1 if $self->changesign($b2_np1);
     my $b_np1=sqrt($b2_np1);
-    my $psi_np1;
     my $c_np1=$g_np1*$g_n*$b_np1;
     my $bc_np1=$g_np1*$g_n*$b2_np1;
+    my $psi_np1;
     $psi_np1=$bpsi_np1/$b_np1 unless $b2_np1->abs<=$self->smallH;
     #save values
     $self->_current_a($self->_coerce($a_n));

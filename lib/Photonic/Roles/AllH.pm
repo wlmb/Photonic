@@ -157,7 +157,7 @@ before '_iterate_indeed' => sub {
 after '_iterate_indeed' => sub {
     my $self=shift;
     $self->_save_a;
-    $self->_checkorthogonalize if $self->reorthogonalize;
+    $self->_checkorthogonalize;
 };
 
 sub run { #run the iteration
@@ -201,6 +201,31 @@ sub _save_g {
     my $self=shift;
     push @{$self->gs}, $self->next_g;
 }
+
+sub _pop { # undo the changes done after, in and before iteration, for
+	   # reorthogonalization, in reverse order
+    my $self=shift;
+    $self->_nextState(pop @{$self->states});
+    $self->_currentState($self->states->[-1]);
+    $self->_previousState($self->states->[-2]);
+    $self->_current_a(pop @{$self->as});
+    $self->_next_b2(pop @{$self->b2s});
+    $self->_current_b2($self->b2s->[-1]);
+    $self->_next_b(pop @{$self->bs});
+    $self->_current_b($self->bs->[-1]);
+    $self->_next_c(pop @{$self->cs});
+    $self->_current_c($self->cs->[-1]);
+    $self->_next_bc(pop @{$self->bcs});
+    $self->_next_g(pop @{$self->gs});
+    $self->_current_g($self->gs->[-1]);
+    $self->_previous_g($self->gs->[-2]);
+    $self->_iteration($self->iteration-1); #decrement counter
+}    
+
+
+    
+
+
 
 
 1;

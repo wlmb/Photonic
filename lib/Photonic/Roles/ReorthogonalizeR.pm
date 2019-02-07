@@ -5,6 +5,7 @@ use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
+use List::MoreUtils qw(pairwise);
 
 has 'previous_W' =>(is=>'ro', 
      writer=>'_previous_W', lazy=>1, init_arg=>undef,
@@ -27,15 +28,36 @@ has 'noise'=>(is=>'ro', default=>sub{machine_epsilon()},
     documentation=>'Noise introduced each iteration to overlap matrix');
 has 'normOp'=>(is=>'ro', required=>1, default=>1,
 	       documentation=>'Estimate of operator norm'); 
+has fullorthogonalize_N=>(is=>'ro', init_arg=>undef, default=>0,
+			  writer=>'_fullorthogonalize_N',
+			  documentation=>'# desired reorthogonalizations'); 
 has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 			   writer=>'_orthogonalizations');
+
+around '_fullorthogonalize_indeed' => sub {
+    my $orig=shift; #won't use
+    my $self=shift;
+    my $psi=shift; #state to orthogonalize
+    return $psi unless $self->fullorthogonalize_N;
+    $self->_fullorthogonalize_N($self->fullorthogonalize_N-1);
+    $self->_orthogonalizations($self->orthogonalizations+1);
+    foreach(pairwise {[$a, $b]} @{$self->states}, @{$self->gs}){
+	#for every saved state
+	my ($s, $g)=($_->[0], $_->[1]); #state, metric
+	$psi=$psi-$g*$self->innerProduct($s, $psi)*$s;
+    }
+    return $psi;
+};
 
 sub _checkorthogonalize {
     my $self=shift;
     return unless defined $self->nextState;
+    return unless $self->reorthogonalize;
+    return if $self->fullorthogonalize_N; #already orthogonalizing
+    my $n=$self->iteration;
+    return if $n < ${[$self->next_W->dims]}[0];
     my $a=PDL->pdl($self->as);
     my $b=PDL->pdl($self->bs);
-    my $n=$self->iteration;
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
@@ -44,8 +66,8 @@ sub _checkorthogonalize {
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
 	    - $b->(($n-1))*$previous_W;
 	$next_W->(1:-1)+=$b->(1:-2)*$current_W->(0:-3) if ($n>=3);
-	$next_W+=_sign($next_W)*2*$self->normOp*$self->noise;
-	$next_W/=$self->next_b;
+	$next_W=$next_W+_sign($next_W)*2*$self->normOp*$self->noise;
+	$next_W=$next_W/$self->next_b;
     }
     $next_W=$next_W->append($self->noise) if $n>=1;
     $next_W=$next_W->append(1);
@@ -53,38 +75,15 @@ sub _checkorthogonalize {
     return unless $n>=2;
     my $max=$next_W->(0:-2)->maximum;
     if($max > sqrt($self->accuracy)){
-	$self->_orthogonalize;
+	#recalculate the las two states with full reorthogonalization
+	$self->_fullorthogonalize_N(2); 
+	$self->_pop; #undoes stack 2 steps
+	$self->_pop;
 	$current_W(0:-2).=$self->noise;
 	$next_W(0:-2).=$self->noise;
     }
     $self->_current_W($current_W);
     $self->_next_W($next_W);
-}
-
-sub _orthogonalize {
-    my $self=shift;
-    $self->_orthogonalizations($self->orthogonalizations+1);
-    my $states=$self->states;
-    my $currentState=$self->currentState;
-    my $nextState=$self->nextState;
-    pop(@{$states}); #get rid of currentState;
-    for my $s (@{$states}){
-	($nextState,$currentState)=
-	    map {$_-$s*$self->innerProduct($s, $_)}($nextState, $currentState);
-    }
-    my $sc=$self->magnitude($currentState);
-    # Is there a danger that orthogonalization finishes the iteration
-    # early at current or next state?
-    $currentState/=$sc;
-    $self->_currentState($currentState);
-    push @{$self->states}, $currentState;
-    #necessary?: By the way, -= may not work yet
-    $nextState=$nextState
-	-$currentState*$self->innerProduct($currentState, $nextState); 
-    my $sn=$self->magnitude($nextState);
-    #What if nextstate disappears after reorthogonalization?
-    $nextState/=$sn;
-    $self->_nextState($nextState);
 }
 
 sub _sign {

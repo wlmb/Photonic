@@ -41,15 +41,15 @@ ok(agree(pdl($b2s), pdl($bs)**2), "1D L b2==b^2");
 my $Bs=zeroes(15,15)->rvals<5;
 my $gs=Photonic::Geometry::FromB->new(B=>$Bs);
 my $ms=Photonic::WE::R2::Metric->new(geometry=>$gs, epsilon=>pdl(1),
-   wavenumber=>pdl(1), wavevector=>pdl([.1,0]));
+   wavenumber=>pdl(.01), wavevector=>pdl([.001,0]));
 my $als=Photonic::WE::R2::AllH
-    ->new(metric=>$ms, polarization=>r2C(pdl([1,0])), nh=>2*15*15,
+    ->new(metric=>$ms, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
     reorthogonalize=>1, accuracy=>machine_epsilon(),
-    noise=>20*machine_epsilon(), normOp=>1);   
+    noise=>1e3*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
 $als->run;
 ok($als->iteration <= 15*15, "No more iterations than dimensions");
 diag("Actual iterations: " . $als->iteration 
-     . " Actual orthogonalizations: ", $als->orthogonalizations);
+     . " Actual orthogonalizations: ", $als->orthogonalizations/2);
 my $st=$als->states;
 #foreach(@$st){
 #    my $pr=$als->innerProduct($_, $st->[0]);

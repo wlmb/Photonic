@@ -62,8 +62,7 @@ sub innerProduct {  #Return Hermitian product with metric
 sub magnitude {
     my $self=shift;
     my $psi=shift;
-    return $self->innerProduct($psi, $psi)->sqrt;
-    #note: this is nor real/positive definite
+    return $self->innerProduct($psi, $psi)->abs->sqrt;
 }
 
 sub more { #check if I should continue
