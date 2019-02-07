@@ -55,7 +55,6 @@ sub _checkorthogonalize {
     return unless $self->reorthogonalize;
     return if $self->fullorthogonalize_N; #already orthogonalizing
     my $n=$self->iteration;
-    return if $n < ${[$self->next_W->dims]}[0];
     my $a=PDL->pdl($self->as);
     my $b=PDL->pdl($self->bs);
     $self->_previous_W(my $previous_W=$self->current_W);
@@ -76,7 +75,7 @@ sub _checkorthogonalize {
     my $max=$next_W->(0:-2)->maximum;
     if($max > sqrt($self->accuracy)){
 	#recalculate the las two states with full reorthogonalization
-	$self->_fullorthogonalize_N(2); 
+	$self->_fullorthogonalize_N(3); #2 states, but check until 3d state
 	$self->_pop; #undoes stack 2 steps
 	$self->_pop;
 	$current_W(0:-2).=$self->noise;

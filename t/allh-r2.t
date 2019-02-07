@@ -49,7 +49,7 @@ my $als=Photonic::WE::R2::AllH
 $als->run;
 ok($als->iteration <= 15*15, "No more iterations than dimensions");
 diag("Actual iterations: " . $als->iteration 
-     . " Actual orthogonalizations: ", $als->orthogonalizations/2);
+     . " Actual orthogonalizations: ", $als->orthogonalizations);
 my $st=$als->states;
 #foreach(@$st){
 #    my $pr=$als->innerProduct($_, $st->[0]);
