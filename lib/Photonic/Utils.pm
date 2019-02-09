@@ -69,7 +69,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
 }
 
 sub EProd { #Euclidean product between two fields in reciprocal
-	    #space. Have to map G->-G and change magical sign. skip
+	    #space. Have to map G->-G. skip
 	    #first 'skip' dims   
     my $first=shift; 
     my $second=shift;
@@ -89,13 +89,11 @@ sub EProd { #Euclidean product between two fields in reciprocal
     }
     my $prod=$first_mG->complex*$second->complex;
     # clump all except skip dimensions, protecto RorI index and sum.
-    my $result=$prod #rori, s1,s2, nx,ny
-	->reorder($skip+1..$ndims-1,1..$skip,0) #nx,ny,s1,s2,rori
-	->clump(-1-$skip-1) #nx*ny,s1,s2,rori
-	->mv(-1,0) #rori, nx*ny,s1,s2
-	->sumover; #rori, s1, s2
-    #Note: real does not take the real part, just gives a 2-real
-    #vector view of each complex
+    my $result=$prod #ri:s1:s2:nx:ny
+	->reorder($skip+1..$ndims-1,1..$skip,0) #nx:ny:s1:s2:ri
+	->clump(-1-$skip-1) #nx*ny:s1:s2:ri
+	->mv(-1,0) #ri:nx*ny,s1,s2
+	->sumover; #ri:s1:s2
     $result=$result->real unless $iscomplex;
     return $result;
 }
