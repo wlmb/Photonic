@@ -157,7 +157,6 @@ sub applyOperator {
     my $eGpsi_R=$self->epsilon*$Gpsi_R; #Epsilon could be tensorial!
     #$eGpsi_R is ri:nx:ny,...i:pmk
     #Transform to reciprocal space
-    #reciprocal space B^G|psi>
     my $eGpsi_G=fftn($eGpsi_R->real, $self->ndims)->complex->mv(-1,1); 
     #$eGpsi_G is ri:pmk:nx:ny...:i
     #Scalar product with pmGnorm: i:pm:nx:ny...
@@ -174,8 +173,7 @@ sub innerProduct {
 sub magnitude {
     my $self=shift;
     my $psi=shift;
-    return $self->innerProduct($psi, $psi)->sqrt;
-    #note: this is nor real/positive definite
+    return $self->innerProduct($psi, $psi)->abs->sqrt;
 }
 sub changesign { #don't change sign
     return 0;
