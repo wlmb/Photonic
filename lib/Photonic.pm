@@ -81,7 +81,7 @@ retarded regime.
 Object to calculate all components of the dielectric tensor in the non
 retarded regime.
 
-=item L<Photonic::NonRetarded::FieldH>
+=item L<Photonic::NonRetarded::Field>
 
 Object to calculate the microscopic electromagnetic fields in the non
 retarded regime.
@@ -124,7 +124,7 @@ including girotropy.
 Object to calculate the retarded macroscopic dielectric tensor without
 girotropy. 
 
-=item L<Photonic::Retarded::FieldH>
+=item L<Photonic::Retarded::Field>
 
 Object to calculate the microscopic retarded electric field.
 

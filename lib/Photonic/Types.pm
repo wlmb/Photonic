@@ -23,13 +23,18 @@ subtype 'Photonic::Types::GeometryG0' =>
   where { $_->has_Direction0 },
   message { "You should define a direction for G=0 reciprocal vector" };
 
-subtype 'Photonic::Types::NonRetarded::AllHSave' =>
-  as 'Photonic::NonRetarded::AllH',
+subtype 'Photonic::Types::AllH' =>
+  as 'Ref',
+  where { $_->does('Photonic::Roles::AllH')},
+  message { "Expected an AllH" };
+
+subtype 'Photonic::Types::AllHSave' =>
+  as 'Photonic::Types::AllH',
   where { $_->keepStates == 1 },
     message { "Can't calculate fields if you don't keepStates" };
 
-subtype 'Photonic::Types::Retarded::AllHSave' =>
-  as 'Photonic::Retarded::AllH',
+subtype 'Photonic::Types::WE::R2::AllHSave' =>
+  as 'Photonic::WE::R2::AllH',
   where { $_->keepStates == 1 },
     message { "Can't calculate fields if you don't keepStates" };
 

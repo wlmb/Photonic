@@ -37,7 +37,7 @@ Initializes an Ph::WE::R2::AllH object. $m is the retarded metric to use,
 $p is the polarization of the field, $nh is the maximum number of desired
 coefficients to calculate, $k is a flag, non zero to save the Haydock
 states, $s is a number to be considered negligible. Other arguments
-are as in Photonic::Retarded::OneH.
+are as in Photonic::WE::R2::OneH.
 
 =item * run
 
@@ -88,7 +88,7 @@ Array of Haydock b times c coefficients
 
 Array of Haydock g coefficients 
 
-=item * All the Photonic::Retarded::OneH methods
+=item * All the Photonic::WE::R2::OneH methods
 
 =back
 

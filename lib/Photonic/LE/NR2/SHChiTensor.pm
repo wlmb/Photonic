@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::SHChiTensor
+Photonic::LE::NR2::SHChiTensor
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::SHChiTensor;
-   my $chi=Photonic::NonRetarded::SHChiTensor->new(geometry=>$g,
+   use Photonic::LE::NR2::SHChiTensor;
+   my $chi=Photonic::LE::NR2::SHChiTensor->new(geometry=>$g,
            $densityA=>$dA, $densityB=>$dB, nh=>$nh, nhf=>$nhf,
            filter=>$f, filterflag=>$ff); 
    my $chiTensor=$chi->evaluate($epsA1, $epsB1, $epsA2, $epsB2);
@@ -86,7 +86,7 @@ Dielectric functions of components A and B at fundamental and SH frequency
 
 =item * nrshp
 
-Array of Photonic::NonRetarded::SHP Haydock SH polarization calculators,
+Array of Photonic::LE::NR2::SHP Haydock SH polarization calculators,
 one for each direction
 
 =item * chiTensor
@@ -120,8 +120,8 @@ Spectral variables
 
 =cut
 
-package Photonic::NonRetarded::SHChiTensor;
-$Photonic::NonRetarded::SHChiTensor::VERSION = '0.010';
+package Photonic::LE::NR2::SHChiTensor;
+$Photonic::LE::NR2::SHChiTensor::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -131,7 +131,7 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Moose;
 use Photonic::Types;
-use Photonic::NonRetarded::EpsTensor;
+use Photonic::LE::NR2::EpsTensor;
 use Photonic::Utils qw(cmatmult);
 with 'Photonic::Roles::EpsParams';
 
@@ -162,10 +162,10 @@ has 'epsA2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA2',
     documentation=>'Dielectric function of host');
 has 'epsB2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB2',
         documentation=>'Dielectric function of inclusions');
-has 'nrshp' =>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::SHP]',
+has 'nrshp' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::SHP]',
             init_arg=>undef, lazy=>1, builder=>'_build_nrshp',
             documentation=>'Array of Haydock SH polarization calculators');
-has 'epsTensor'=>(is=>'ro', isa=>'Photonic::NonRetarded::EpsTensor',
+has 'epsTensor'=>(is=>'ro', isa=>'Photonic::LE::NR2::EpsTensor',
          init_arg=>undef, 
          lazy=>1,  builder=>'_build_epsTensor',
          documentation=>'diel. tensor at 2w');
@@ -187,7 +187,7 @@ sub evaluate {
     my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
     my @P2M; #array of longitudinal polarizations along different directions.
     foreach(@{$self->nrshp}){
-	my $nrsh=Photonic::NonRetarded::SH->new(
+	my $nrsh=Photonic::LE::NR2::SH->new(
 	    shp=>$_, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
 	    epsB2=>$epsB2, filterflag=>0);
 	# RorI, XorY,nx,ny
@@ -254,7 +254,7 @@ sub evaluate {
     return $chiTensor;
 }
 
-#Need geometry, maximum number of Haydock coefficients for NonRetarded::ALL nh
+#Need geometry, maximum number of Haydock coefficients for LE::NR2::ALL nh
 
 sub _build_nrshp { # One Haydock coefficients calculator per direction0
     my $self=shift;
@@ -263,14 +263,14 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 	my $g=dclone($self->geometry); #clone geometry
 	#OJO: Cuánto vale el campo macroscópico? Hay que normalizar esto?
 	$g->Direction0($_); #add G0 direction
-	#Build a corresponding NonRetarded::AllH structure
-	my $nr=Photonic::NonRetarded::AllH->new(
+	#Build a corresponding LE::NR2::AllH structure
+	my $nr=Photonic::LE::NR2::AllH->new(
 	    nh=>$self->nh, geometry=>$g, keepStates=>1,
 	    reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH);  
 	my @args=(nr=>$nr, nh=>$self->nhf, smallE=>$self->smallE);
 	push @args, filter=>$self->filter if $self->has_filter;
-	my $nrf=Photonic::NonRetarded::FieldH->new(@args);
-	my $nrshp=Photonic::NonRetarded::SHP->
+	my $nrf=Photonic::LE::NR2::FieldH->new(@args);
+	my $nrshp=Photonic::LE::NR2::SHP->
 	    new(nrf=>$nrf, densityA=>$self->densityA, 
 		densityB=>$self->densityB); 
 	push @nrshp, $nrshp;
@@ -284,7 +284,7 @@ sub _build_epsTensor {
     my $nh=$self->nh; #desired number of Haydock terms
     my $smallH=$self->smallH; #smallness 
     my $smallE=$self->smallE; #smallness 
-    my $eT=Photonic::NonRetarded::EpsTensor
+    my $eT=Photonic::LE::NR2::EpsTensor
 	->new(geometry=>$self->geometry, nh=>$self->nh,
 	      reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH, 
 	      smallE=>$self->smallE);

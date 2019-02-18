@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::NPhase::EpsL
+Photonic::LE::NP::EpsL
 
 =head1 VERSION
 
@@ -8,14 +8,14 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::NPhase::EpsL;
-   my $eps=Photonic::NonRetarded::NPhase::EpsL->new(nr=>$nr, nh=>$nh);
+   use Photonic::LE::NP::EpsL;
+   my $eps=Photonic::LE::NP::EpsL->new(nr=>$nr, nh=>$nh);
    my $epsilonLongitudinal=$eps->evaluate($epsA, $epsB);
 
 =head1 DESCRIPTION
 
 Calculates the longitudinal dielectric function for a given fixed
-Photonic::NonRetarded::NPhase::AllH structure as a function of the dielectric
+Photonic::LE::NP::AllH structure as a function of the dielectric
 functions of the components.
 
 =head1 METHODS
@@ -26,7 +26,7 @@ functions of the components.
 
 Initializes the structure.
 
-$nr is a Photonic::NonRetarded::NPhase::AllH structure (required).
+$nr is a Photonic::LE::NP::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
@@ -45,7 +45,7 @@ The longitudinal macroscopic function.
 
 =item * nr
 
-The NonRetarded::NPhase::AllH structure
+The LE::NP::AllH structure
 
 =item * nh
 
@@ -74,18 +74,18 @@ check. From Photonic::Roles::EpsParams
 
 =cut
 
-package Photonic::NonRetarded::NPhase::EpsL;
-$Photonic::NonRetarded::NPhase::EpsL::VERSION = '0.010';
+package Photonic::LE::NP::EpsL;
+$Photonic::LE::NP::EpsL::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use Photonic::NonRetarded::NPhase::AllH;
+use Photonic::LE::NP::AllH;
 use Moose;
 use Photonic::Types;
 
 with 'Photonic::Roles::EpsParams';
-has 'nr' =>(is=>'ro', isa=>'Photonic::NonRetarded::NPhase::AllH', required=>1);
+has 'nr' =>(is=>'ro', isa=>'Photonic::LE::NP::AllH', required=>1);
 has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsL');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
                  writer=>'_nhActual');

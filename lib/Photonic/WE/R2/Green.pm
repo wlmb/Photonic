@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::Retarded::Green
+Photonic::WE::R2::Green
 
 =head1 VERSION
 
@@ -8,14 +8,14 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::Retarded::Green;
-   my $G=Photonic::Retarded::Green->new(metric=>$m, nh=>$nh);
+   use Photonic::WE::R2::Green;
+   my $G=Photonic::WE::R2::Green->new(metric=>$m, nh=>$nh);
    my $GreenTensor=$G->evaluate($epsB);
 
 =head1 DESCRIPTION
 
 Calculates the retarded green's tensor for a given fixed
-Photonic::Retarded::Metric structure as a function of the dielectric
+Photonic::WE::R2::Metric structure as a function of the dielectric
 functions of the components.
 
 =head1 METHODS
@@ -27,7 +27,7 @@ keepStates=>$k)
 
 Initializes the structure.
 
-$m Photonic::Retarded::Metric describing the structure and some parametres.
+$m Photonic::WE::R2::Metric describing the structure and some parametres.
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -66,11 +66,11 @@ Spectral variable
 
 =item * haydock
 
-Array of Photonic::Retarded::AllH structures, one for each polarization
+Array of Photonic::WE::R2::AllH structures, one for each polarization
 
 =item * greenP
 
-Array of Photonic::Retarded::GreenP structures, one for each direction.
+Array of Photonic::WE::R2::GreenP structures, one for each direction.
 
 =item * greenTensor
 
@@ -97,8 +97,8 @@ fraction. 0 means don't check.
 
 =cut
 
-package Photonic::Retarded::Green;
-$Photonic::Retarded::Green::VERSION = '0.010';
+package Photonic::WE::R2::Green;
+$Photonic::WE::R2::Green::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -106,19 +106,19 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-use Photonic::Retarded::AllH;
-use Photonic::Retarded::GreenP;
+use Photonic::WE::R2::AllH;
+use Photonic::WE::R2::GreenP;
 use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::KeepStates';
 with 'Photonic::Roles::EpsParams';
 
-has 'metric'=>(is=>'ro', isa => 'Photonic::Retarded::Metric',
+has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
        handles=>[qw(geometry B dims r G GNorm L scale f)],required=>1);
-has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::Retarded::AllH]',
+has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::AllH]',
             init_arg=>undef, lazy=>1, builder=>'_build_haydock',
 	    documentation=>'Array of Haydock calculators');
-has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::Retarded::GreenP]',
+has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::GreenP]',
              init_arg=>undef, lazy=>1, builder=>'_build_greenP',
              documentation=>'Array of projected G calculators');
 has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
@@ -169,8 +169,8 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
     foreach(@{$self->geometry->unitPairs}){
 	my $m=dclone($self->metric); #clone metric, to be safe
 	my $e=$_->r2C; #polarization
-	#Build a corresponding Photonic::Retarded::AllH structure
-	my $haydock=Photonic::Retarded::AllH->new(
+	#Build a corresponding Photonic::WE::R2::AllH structure
+	my $haydock=Photonic::WE::R2::AllH->new(
 	    metric=>$m, polarization=>$e, nh=>$self->nh,
 	    keepStates=>$self->keepStates, smallH=>$self->smallH);
 	push @haydock, $haydock;
@@ -182,7 +182,7 @@ sub _build_greenP {
     my $self=shift;
     my @greenP;
     foreach(@{$self->haydock}){
-	my $g=Photonic::Retarded::GreenP->new(
+	my $g=Photonic::WE::R2::GreenP->new(
 	    haydock=>$_, nh=>$self->nh, smallE=>$self->smallE);
 	push @greenP, $g;
     }

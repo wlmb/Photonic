@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::Retarded::EpsilonTensorF
+Photonic::WE::R2::EpsilonTensorF
 
 =head1 VERSION
 
@@ -8,14 +8,14 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::Retarded::EpsilonTensorF;
-   my $epsT=Photonic::Retarded::EpsilonTensor->new(metric=>$m, nh=>$nh);
+   use Photonic::WE::R2::EpsilonTensorF;
+   my $epsT=Photonic::WE::R2::EpsilonTensor->new(metric=>$m, nh=>$nh);
    my $EpsTensor=$W->evaluate($epsB);
 
 =head1 DESCRIPTION
 
 Calculates the macroscopic dielectric asymmetric tensor for a given fixed
-Photonic::Retarded::Metric structure as a function of the dielectric
+Photonic::WE::R2::Metric structure as a function of the dielectric
 functions of the components.
 
 =head1 METHODS
@@ -27,7 +27,7 @@ keepStates=>$k)
 
 Initializes the structure.
 
-$m Photonic::Retarded::Metric describing the structure and some parametres.
+$m Photonic::WE::R2::Metric describing the structure and some parametres.
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -53,15 +53,15 @@ response $epsA is taken from the metric.
 
 The macroscopic dielectric tensor of the last operation
 
-=item * All accesors of Photonic::Retarded::Wave
+=item * All accesors of Photonic::WE::R2::Wave
 
 
 =back
 
 =cut
 
-package Photonic::Retarded::EpsilonTensorF;
-$Photonic::Retarded::EpsilonTensorF::VERSION = '0.010';
+package Photonic::WE::R2::EpsilonTensorF;
+$Photonic::WE::R2::EpsilonTensorF::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -69,11 +69,11 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-#use Photonic::Retarded::AllH;
+#use Photonic::WE::R2::AllH;
 use Moose;
 use Photonic::Types;
 
-extends 'Photonic::Retarded::WaveF'; 
+extends 'Photonic::WE::R2::WaveF'; 
 
 has 'epsilonTensor' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
              writer=>'_epsilonTensor',   

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::EpsL
+Photonic::LE::NR2::EpsL
 
 =head1 VERSION
 
@@ -8,14 +8,14 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::EpsL;
-   my $eps=Photonic::NonRetarded::EpsL->new(nr=>$nr, nh=>$nh);
+   use Photonic::LE::NR2::EpsL;
+   my $eps=Photonic::LE::NR2::EpsL->new(nr=>$nr, nh=>$nh);
    my $epsilonLongitudinal=$eps->evaluate($epsA, $epsB);
 
 =head1 DESCRIPTION
 
 Calculates the longitudinal dielectric function for a given fixed
-Photonic::NonRetarded::AllH structure as a function of the dielectric
+Photonic::LE::NR2::AllH structure as a function of the dielectric
 functions of the components.
 
 =head1 METHODS
@@ -26,7 +26,7 @@ functions of the components.
 
 Initializes the structure.
 
-$nr is a Photonic::NonRetarded::AllH structure (required).
+$nr is a Photonic::LE::NR2::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
@@ -46,7 +46,7 @@ dielectric functions of the host $epsA and the particle $epsB.
 
 =item * nr
 
-The NonRetarded::AllH structure
+The LE::NR2::AllH structure
 
 =item * epsA epsB
 
@@ -88,27 +88,28 @@ check. From Photonic::Roles::EpsParams
 
 =cut
 
-package Photonic::NonRetarded::EpsL;
-$Photonic::NonRetarded::EpsL::VERSION = '0.010';
+package Photonic::LE::NR2::EpsL;
+$Photonic::LE::NR2::EpsL::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use Photonic::NonRetarded::AllH;
-use Moose;
+use Photonic::LE::NR2::AllH;
 use Photonic::Types;
+use Photonic::Utils qw(lentzCF);
 
-with 'Photonic::Roles::EpsParams';
-has 'nr' =>(is=>'ro', isa=>'Photonic::NonRetarded::AllH', required=>1);
-has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsL');
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
-                 writer=>'_nhActual');
-has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
+use List::Util qw(min);
 
-sub BUILD {
-    my $self=shift;
-    $self->nr->run unless $self->nr->iteration;
-}
+use Moose;
+
+with 'Photonic::Roles::EpsL';
+
+has 'epsA'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA',
+    documentation=>'Dielectric function of host');
+has 'epsB'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB',
+        documentation=>'Dielectric function of inclusions');
+has 'u'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_u',
+    documentation=>'Spectral variable');
 
 sub evaluate {
     my $self=shift;
@@ -117,37 +118,11 @@ sub evaluate {
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
-    # Continued fraction evaluation: Lentz method
-    # Numerical Recipes p. 171
-    my $tiny=1.e-30;
-    my $converged=0;
-#    b0+a1/b1+a2/...
-#	lo debo convertir a
-#	u-a0-b1^2/u-a1-b2^2/
-#	entonces bn->u-an y an->-b_n^2
-    my $fn=$u-$as->[0];
-    $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
-    my $n=1;
-    my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
-    my ($Cn, $Dn); #current coeffs.
-    my $Deltan;
-    while($n<$self->nh && $n<$self->nr->iteration){
-	$Dn=$u-$as->[$n]-$b2s->[$n]*$Dnm1;
-	$Dn=r2C($tiny) if $Dn->re==0 and $Dn->im==0;
-	$Cn=$u-$as->[$n]-$b2s->[$n]/$Cnm1;
-	$Cn=r2C($tiny) if $Cn->re==0 and $Cn->im==0;
-	$Dn=1/$Dn;
-	$Deltan=$Cn*$Dn;
-	$fn=$fnm1*$Deltan;
-	last if $converged=$Deltan->approx(1, $self->smallE)->all;
-	$fnm1=$fn;
-	$Dnm1=$Dn;
-	$Cnm1=$Cn;
-	$n++;
-    }
-    #If there are less available coefficients than $self->nh and all
-    #of them were used, there is no remaining work to do, so, converged 
-    $converged=1 if $self->nr->iteration < $self->nh;
+    my $min= min($self->nh, $self->nr->iteration);  
+    my ($fn, $n)=lentzCF([map {$u-$_} @$as], [map {-$_} @$b2s],
+			 $min, $self->smallE);  
+    # Check this logic:
+    my $converged=$n<$min || $self->nr->iteration<=$self->nh;
     $self->_converged($converged);
     $self->_nhActual($n);
     $self->_epsL($epsA*$fn/$u);

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::SH
+Photonic::LE::NR2::SH
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::SH;
-   my $nrsh=Photonic::NonRetarded::SH->
+   use Photonic::LE::NR2::SH;
+   my $nrsh=Photonic::LE::NR2::SH->
              new(shp=>$shp, epsA1=>$epsA1, epsB1=>$epsB1,
                  epsA2=>$epsA2, epsB2=>$epsB2); 
    my $PL_G=$nrsh->selfConsistentL_G;
@@ -30,7 +30,7 @@ using the continuous dipolium model.
 
 Initializes the structure
 
-$shp is a Photonic::NonRetarded::SHP object with the invariant part of
+$shp is a Photonic::LE::NR2::SHP object with the invariant part of
 the data structures for the calculations
 
 $epsA1, $epsB1, $epsA2, $epsB2 are the dielectric functions of the A
@@ -104,7 +104,7 @@ Longitudinal projection of external polarization field in reciprocal space
 
 =item * HP
 
-Photonic::NonRetarded::AllH structure to calculate Haydock basis for
+Photonic::LE::NR2::AllH structure to calculate Haydock basis for
 non linear polarization
 
 =item * externalL_n
@@ -155,20 +155,20 @@ polarization using the field (nrf) filter.
 
 =cut
 
-package Photonic::NonRetarded::SH;
-$Photonic::NonRetarded::SH::VERSION = '0.010';
+package Photonic::LE::NR2::SH;
+$Photonic::LE::NR2::SH::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
-use Photonic::NonRetarded::AllH;
+use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombine);
 use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
 use PDL::Constants qw(PI);
 
-has 'shp'=>(is=>'ro', 'isa'=>'Photonic::NonRetarded::SHP', required=>1,
+has 'shp'=>(is=>'ro', 'isa'=>'Photonic::LE::NR2::SHP', required=>1,
     handles=>[qw(ndims nrf densityA densityB density nr)],
     documentation=>'Object with invariant part of SHG calculation');
 has 'epsA1'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
@@ -224,7 +224,7 @@ has 'externalVecL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
          lazy=>1, builder=>'_build_externalVecL', 
          documentation=>
              'SH ext. longitudinal polarization proj. in real space'); 
-has 'HP' =>(is=>'ro', isa=>'Photonic::NonRetarded::AllH', init_arg=>undef,
+has 'HP' =>(is=>'ro', isa=>'Photonic::LE::NR2::AllH', init_arg=>undef,
          lazy=>1, builder=>'_build_HP',
          documentation=>
          'Structure to calculate Haydock basis for non linear polarization');
@@ -426,7 +426,7 @@ sub _build_HP { #build haydock states for P2
     my $ext=$self->externalL_G;
     my $normext=sqrt(Cabs2($ext)->sum);
     my $extnorm=$ext->complex/$normext;
-    my $hp=Photonic::NonRetarded::AllH->new(nh=>$self->nrf->nh, 
+    my $hp=Photonic::LE::NR2::AllH->new(nh=>$self->nrf->nh, 
 	geometry=>$self->nrf->nr->geometry, smallH=>$self->nrf->nr->smallH,
 		keepStates=>1, nextState=>$extnorm);
     $hp->run;

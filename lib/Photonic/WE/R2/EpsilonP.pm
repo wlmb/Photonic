@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::Retarded::EpsilonP
+Photonic::WE::R2::EpsilonP
 
 =head1 VERSION
 
@@ -8,14 +8,14 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::Retarded::EpsilonP;
-   my $eps=Photonic::Retarded::EpsilonP->new(haydock=>$h, nh=>$nh);
+   use Photonic::WE::R2::EpsilonP;
+   my $eps=Photonic::WE::R2::EpsilonP->new(haydock=>$h, nh=>$nh);
    my $EpsTensor=$W->evaluate($epsB);
 
 =head1 DESCRIPTION
 
 Calculates the macroscopic dielectric tensor component for a given fixed
-Photonic::Retarded::AllH structure as a function of the dielectric
+Photonic::WE::R2::AllH structure as a function of the dielectric
 functions of the components.
 
 NOTE: Only works for polarizations along principal directions.
@@ -28,7 +28,7 @@ NOTE: Only works for polarizations along principal directions.
 
 Initializes the structure.
 
-$h Photonic::Retarded::AllH describing the structure and some parametres.
+$h Photonic::WE::R2::AllH describing the structure and some parametres.
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -56,15 +56,15 @@ NOTE: Only works along principal directions.
 
 The macroscopic dielectric projection of the last operation
 
-=item * All accesors of Photonic::Retarded::Wave
+=item * All accesors of Photonic::WE::R2::Wave
 
 
 =back
 
 =cut
 
-package Photonic::Retarded::EpsilonP;
-$Photonic::Retarded::EpsilonP::VERSION = '0.010';
+package Photonic::WE::R2::EpsilonP;
+$Photonic::WE::R2::EpsilonP::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -72,11 +72,11 @@ use PDL::Complex;
 use PDL::MatrixOps;
 #use Storable qw(dclone);
 #use PDL::IO::Storable;
-#use Photonic::Retarded::AllH;
+#use Photonic::WE::R2::AllH;
 use Moose;
 use Photonic::Types;
 
-extends 'Photonic::Retarded::WaveP'; 
+extends 'Photonic::WE::R2::WaveP'; 
 
 has 'epsilon' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
              writer=>'_epsilon',   

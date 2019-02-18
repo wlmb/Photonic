@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::Retarded::WaveF
+Photonic::WE::R2::WaveF
 
 =head1 VERSION
 
@@ -8,14 +8,14 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::Retarded::WaveF;
-   my $W=Photonic::Retarded::WaveF->new(metric=>$m, nh=>$nh);
+   use Photonic::WE::R2::WaveF;
+   my $W=Photonic::WE::R2::WaveF->new(metric=>$m, nh=>$nh);
    my $WaveTensor=$W->evaluate($epsB);
 
 =head1 DESCRIPTION
 
 Calculates the asymmetric macroscopic wave operator for a given fixed
-Photonic::Retarded::Metric structure as a function of the dielectric
+Photonic::WE::R2::Metric structure as a function of the dielectric
 functions of the components.
 
 =head1 METHODS
@@ -26,7 +26,7 @@ functions of the components.
 
 Initializes the structure.
 
-$m Photonic::Retarded::Metric describing the structure and some parametres.
+$m Photonic::WE::R2::Metric describing the structure and some parametres.
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -51,15 +51,15 @@ response $epsA is taken from the metric.
 
 The macroscopic wave operator of the last operation
 
-=item * All accesors of Photonic::Retarded::Green
+=item * All accesors of Photonic::WE::R2::Green
 
 
 =back
 
 =cut
 
-package Photonic::Retarded::WaveF;
-$Photonic::Retarded::WaveF::VERSION = '0.010';
+package Photonic::WE::R2::WaveF;
+$Photonic::WE::R2::WaveF::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -67,11 +67,11 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-#use Photonic::Retarded::AllH;
+#use Photonic::WE::R2::AllH;
 use Moose;
 use Photonic::Types;
 
-extends 'Photonic::Retarded::GreenF'; 
+extends 'Photonic::WE::R2::GreenF'; 
 
 has 'waveOperator' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
              writer=>'_waveOperator',   

@@ -1,7 +1,6 @@
 package Photonic::Roles::ReorthogonalizeC;
 $Photonic::Roles::ReorthogonalizeC::VERSION = '0.010';
 use Moose::Role;
-use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::Complex;

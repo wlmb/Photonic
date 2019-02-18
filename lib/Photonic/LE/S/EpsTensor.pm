@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::NPS::EpsTensor
+Photonic::LE::S::EpsTensor
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::NPS::EpsTensor;
-   my $eps=Photonic::NonRetarded::NPS::EpsTensor->new(
+   use Photonic::LE::S::EpsTensor;
+   my $eps=Photonic::LE::S::EpsTensor->new(
                      epsilon=>$e, geometry=>$g);
    my $epsilonTensor=$epsTensor;
 
@@ -56,11 +56,11 @@ Value of flag to keep Haydock states
 
 =item * nr
 
-Array of Photonic::NonRetarded::NPS::AllH structures, one for each direction
+Array of Photonic::LE::S::AllH structures, one for each direction
 
 =item * epsL
 
-Array of Photonic::NonRetarded::NPS::EpsL structures, one for each direction.
+Array of Photonic::LE::S::EpsL structures, one for each direction.
 
 =item * epsTensor
 
@@ -85,8 +85,8 @@ don't check. From Photonic::Roles::EpsParams.
 
 =cut
 
-package Photonic::NonRetarded::NPS::EpsTensor;
-$Photonic::NonRetarded::NPS::EpsTensor::VERSION = '0.010';
+package Photonic::LE::S::EpsTensor;
+$Photonic::LE::S::EpsTensor::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -94,24 +94,24 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-use Photonic::NonRetarded::NPS::AllH;
-use Photonic::NonRetarded::NPS::EpsL;
+use Photonic::LE::S::AllH;
+use Photonic::LE::S::EpsL;
 use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::EpsParams';
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
-has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
+has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1
 );
 with 'Photonic::Roles::KeepStates';
 with 'Photonic::Roles::EpsParams';
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
-has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::NPS::AllH]',
+has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::S::AllH]',
             init_arg=>undef, lazy=>1, builder=>'_build_nr',
             documentation=>'Array of Haydock calculators');
-has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::NonRetarded::NPS::EpsL]',
+has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::LE::S::EpsL]',
              init_arg=>undef, lazy=>1, builder=>'_build_epsL',
              documentation=>'Array of epsilon calculators');
 has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
@@ -154,8 +154,8 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
     foreach(@{$self->geometry->unitPairs}){
 	my $g=dclone($self->geometry); #clone geometry
 	$g->Direction0($_); #add G0 direction
-	#Build a corresponding NonRetarded::NPS::AllH structure
-	my $nr=Photonic::NonRetarded::NPS::AllH->new(
+	#Build a corresponding LE::S::AllH structure
+	my $nr=Photonic::LE::S::AllH->new(
 	    epsilon=>$self->epsilon, geometry=>$g, smallH=>$self->smallH, 
 	    nh=>$self->nh, keepStates=>$self->keepStates,
 	    reorthogonalize=>$self->reorthogonalize);
@@ -168,7 +168,7 @@ sub _build_epsL {
     my $self=shift;
     my @eps;
     foreach(@{$self->nr}){
-	my $e=Photonic::NonRetarded::NPS::EpsL->
+	my $e=Photonic::LE::S::EpsL->
 	    new(nr=>$_, nh=>$self->nh, smallE=>$self->smallE);
 	push @eps, $e;
     }

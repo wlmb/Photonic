@@ -4,7 +4,7 @@ $Photonic::Utils::VERSION = '0.010';
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
-              HProd MHProd EProd SProd linearCombine);
+              HProd MHProd EProd SProd linearCombine lentzCF);
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
@@ -162,6 +162,41 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
     return $result;
 }
 
+sub lentzCF {
+    # continued fraction using lentz method Numerical Recipes
+    # p. 171. Arguments are as, bs, maximum number of iterations and
+    # smallness parameter
+    # a0+b1/a1+b2+... 
+    my $as=shift;
+    my $bs=shift;
+    my $max=shift;
+    my $small=shift;
+    my $tiny=1.e-30;
+    my $converged=0;
+    my $fn=$as->[0];
+    $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
+    my $n=1;
+    my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
+    my ($Cn, $Dn); #current coeffs.
+    my $Deltan;
+    while($n<$max){
+	$Dn=$as->[$n]+$bs->[$n]*$Dnm1;
+	$Dn=r2C($tiny) if $Dn->re==0 and $Dn->im==0;
+	$Cn=$as->[$n]+$bs->[$n]/$Cnm1;
+	$Cn=r2C($tiny) if $Cn->re==0 and $Cn->im==0;
+	$Dn=1/$Dn;
+	$Deltan=$Cn*$Dn;
+	$fn=$fnm1*$Deltan;
+	last if $converged=$Deltan->approx(1, $small)->all;
+	$fnm1=$fn;
+	$Dnm1=$Dn;
+	$Cnm1=$Cn;
+	$n++;
+    }
+    return wantarray? ($fn, $n): $fn;
+}
+
+    
 sub tile { # repeat field Nx X Ny X... times
     my $f=shift;
     my @n=@_; #number of repetitions along dimension

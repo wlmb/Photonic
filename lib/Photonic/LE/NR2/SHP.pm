@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::SHP
+Photonic::LE::NR2::SHP
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::SHP;
-   my $nrshp=Photonic::NonRetarded::SHP->
+   use Photonic::LE::NR2::SHP;
+   my $nrshp=Photonic::LE::NR2::SHP->
              new(nrf=>$nrf, densityA=>$dA, densityB=>$dB)); 
 
 
@@ -29,7 +29,7 @@ dipolium model.
 
 Initializes the structure
 
-$nrf Photonic::NonRetarded::FieldH is a Haydock field calculator for the
+$nrf Photonic::LE::NR2::Field is a Haydock field calculator for the
 structure. 
 
 $dA is the density of polarizable entities in medium A
@@ -44,7 +44,7 @@ $dB is the density of polarizable entities in medium B
 
 =item * nrf
 
-Photonic::NonRetarded::FieldH Haydock field calculator
+Photonic::LE::NR2::Field Haydock field calculator
 
 =item * densityA, densityB
 
@@ -68,8 +68,8 @@ Number of dimensions of the system
 
 =cut
 
-package Photonic::NonRetarded::SHP;
-$Photonic::NonRetarded::SHP::VERSION = '0.010';
+package Photonic::LE::NR2::SHP;
+$Photonic::LE::NR2::SHP::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -80,7 +80,7 @@ use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
 use PDL::Constants qw(PI);
 
-has 'nrf'=>(is=>'ro', isa=>'Photonic::NonRetarded::FieldH', required=>1,
+has 'nrf'=>(is=>'ro', isa=>'Photonic::LE::NR2::Field', required=>1,
          documentation=>'Haydock field calculator');
 has 'densityA'=>(is=>'ro', isa=>'Num', required=>1,
          documentation=>'Normalized dipole entities density in medium A');

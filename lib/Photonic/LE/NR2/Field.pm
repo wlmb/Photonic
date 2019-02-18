@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::NonRetarded::FieldH
+Photonic::LE::NR2::Field
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::NonRetarded::FieldH;
-   my $nrf=Photonic::NonRetarded::FieldH->new(...);
+   use Photonic::LE::NR2::Field;
+   my $nrf=Photonic::LE::NR2::Field->new(...);
    my $field=$nrf->evaluate($epsA, $epsB);
 
 =head1 DESCRIPTION
@@ -26,9 +26,9 @@ the components.
 
 Initializes the structure.
 
-$nr Photonic::NonRetarded::AllH is a Haydock calculator for the
+$nr Photonic::LE::NR2::AllH is a Haydock calculator for the
 structure, *initialized* with the flag keepStates=>1
-(Photonic::Types::NonRetarded::AllHSave, as defined in Photonic::Types).
+(Photonic::Types::LE::NR2::AllHSave, as defined in Photonic::Types).
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -48,7 +48,7 @@ dielectric functions of the host $epsA and the particle $epsB.
 
 =item * nr
 
-Photonic::NonRetarded::AllH structure
+Photonic::LE::NR2::AllH structure
 
 =item * nh 
 
@@ -97,21 +97,21 @@ evaluation of the field
 
 =cut
 
-package Photonic::NonRetarded::FieldH;
-$Photonic::NonRetarded::FieldH::VERSION = '0.010';
+package Photonic::LE::NR2::Field;
+$Photonic::LE::NR2::Field::VERSION = '0.010';
 
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
-use Photonic::NonRetarded::AllH;
+use Photonic::LE::NR2::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::EpsParams';
 
-has 'nr'=>(is=>'ro', isa=>'Photonic::Types::NonRetarded::AllHSave', required=>1,  
+has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,  
            documentation=>'Haydock recursion calculator');
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', init_arg=>undef, 
            writer=>'_Es', documentation=>'Field coefficients');

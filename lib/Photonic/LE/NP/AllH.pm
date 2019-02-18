@@ -30,13 +30,13 @@ them for later retrieval.
 
 Initializes an Ph::NR::NP::AllH object. $nh is the maximum number of desired
 coefficients, $k is a flag, non zero to save the Haydock states. All
-other arguments are as in Photonic::NonRetarded::NPhase::OneH.
+other arguments are as in Photonic::LE::NP::OneH.
 
 =item * run
 
 Runs the iteration to completion
 
-=item * All the Photonic::NonRetarded::NPhase::OneH methods
+=item * All the Photonic::LE::NP::OneH methods
 
 =back
 
@@ -69,7 +69,7 @@ Array of Haydock b coefficients
 
 Array of Haydock b coefficients squared
 
-=item * All the Photonic::NonRetarded::NPhase::OneH methods
+=item * All the Photonic::LE::NP::OneH methods
 
 =back
 

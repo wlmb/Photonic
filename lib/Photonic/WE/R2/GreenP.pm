@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::Retarded::GreenP
+Photonic::WE::R2::GreenP
 
 =head1 VERSION
 
@@ -8,14 +8,14 @@ version 0.010
 
 =head1 SYNOPSIS
 
-   use Photonic::Retarded::GreenP;
-   my $green=Photonic::Retarded::GreepP(haydock=>$h, nh=>$nh);
+   use Photonic::WE::R2::GreenP;
+   my $green=Photonic::WE::R2::GreepP(haydock=>$h, nh=>$nh);
    my $greenProjection=$green->evaluate($epsB);
 
 =head1 DESCRIPTION
 
 Calculates the dielectric function for a given fixed
-Photonic::Retarded::AllH structure as a function of the dielectric
+Photonic::WE::R2::AllH structure as a function of the dielectric
 functions of the components.
 
 =head1 METHODS
@@ -26,7 +26,7 @@ functions of the components.
 
 Initializes the structure.
 
-$h is a Photonic::Retarded::AllH structure (required).
+$h is a Photonic::WE::R2::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
@@ -45,7 +45,7 @@ value of the  dielectric functions of the particle $epsB.
 
 =item * haydock
 
-The Retarded::AllH structure
+The WE::R2::AllH structure
 
 =item * epsA epsB
 
@@ -86,18 +86,18 @@ Criteria of convergence. 0 means don't check. From Photonic::Roles::EpsParams.
 
 =cut
 
-package Photonic::Retarded::GreenP;
-$Photonic::Retarded::GreenP::VERSION = '0.010';
+package Photonic::WE::R2::GreenP;
+$Photonic::WE::R2::GreenP::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use Photonic::Retarded::AllH;
+use Photonic::WE::R2::AllH;
 use Moose;
 use Photonic::Types;
 
 with 'Photonic::Roles::EpsParams'; #nh, smallE, epsA, epsB, u
-has 'haydock' =>(is=>'ro', isa=>'Photonic::Retarded::AllH', required=>1);
+has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::R2::AllH', required=>1);
 has 'Gpp'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_Gpp');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
                  writer=>'_nhActual');

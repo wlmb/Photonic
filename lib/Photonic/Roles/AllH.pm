@@ -21,7 +21,7 @@ version 0.010
 
 =item (for developers)
 
-    package Photonic::LE::NR2::AllH.pm;
+    package Photonic::LE::NR2::AllH;
     $Photonic::LE::NR2::AllH::VERSION= '0.010';
     use namespace::autoclean;
     use Moose;
@@ -50,7 +50,7 @@ other arguments are as in Photonic::...::OneH.
 
 Runs the iteration to completion
 
-=item * All the Photonic::NonRetarded::OneH methods
+=item * All the Photonic::...::OneH methods
 
 =back
 
@@ -98,10 +98,10 @@ Array of Haydock b coefficients squared
 package Photonic::Roles::AllH;
 $Photonic::Roles::AllH::VERSION = '0.010';
 use Moose::Role;
-use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
+use Carp;
 
 has nh=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock coefficients');
@@ -142,7 +142,7 @@ requires qw(iterate _iterate_indeed magnitude innerProduct
 
 before 'states' => sub {
     my $self=shift;
-    die "Can't return states unless keepStates!=0" unless $self->keepStates;
+    confess "Can't return states unless keepStates!=0" unless $self->keepStates;
 };
 
 before '_iterate_indeed' => sub {
@@ -221,11 +221,5 @@ sub _pop { # undo the changes done after, in and before iteration, for
     $self->_previous_g($self->gs->[-2]);
     $self->_iteration($self->iteration-1); #decrement counter
 }    
-
-
-    
-
-
-
 
 1;
