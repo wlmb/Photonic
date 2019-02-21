@@ -50,8 +50,14 @@ my $builder = Module::Build::Pluggable->new(
 	'ExtUtils::F77'                      => '1.20',
 	'ExtUtils::CBuilder'                 => '0',
 	'File::Copy'                         => '0',
+	'PDL::Core::Dev'                     => '0',
     },
     add_to_cleanup  => [ 'Photonic-*', '.xs' ],
     create_makefile_pl => 'small',
+    meta_merge     => {
+        resources => {
+            repository  => 'https://github.com/wlmb/Photonic',
+        }
+    },
     );
 $builder->create_build_script();
