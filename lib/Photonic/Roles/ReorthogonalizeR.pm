@@ -57,6 +57,7 @@ sub _checkorthogonalize {
     my $a=PDL->pdl($self->as);
     my $b=PDL->pdl($self->bs);
     my $c=PDL->pdl($self->cs);
+    my $g=PDL->pdl($self->gs);
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
