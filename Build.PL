@@ -5,7 +5,7 @@ our $VERSION = '0.010';
 use strict;
 use warnings;
 use PDL::Core::Dev;
-use ExtUtils::F77 1.20;
+use ExtUtils::F77 1.23;
 use Module::Build::Pluggable ('PDL', 'Fortran');
 
 my $builder = Module::Build::Pluggable->new(
@@ -43,11 +43,11 @@ my $builder = Module::Build::Pluggable->new(
 	# "namespace::autoclean" => 0,
     },
     configure_requires => {
-	'Module::Build'                      => '0.4004',
-	'Module::Build::Pluggable'           => '0',
-	'Module::Build::Pluggable::Fortran'  => '0.20',
+	'Module::Build'                      => '0.4224',
+	'Module::Build::Pluggable'           => '0.10',
+	'Module::Build::Pluggable::Fortran'  => '0.27',
 	'Module::Build::Pluggable::PDL'      => '0.23',
-	'ExtUtils::F77'                      => '1.20',
+	'ExtUtils::F77'                      => '1.23',
 	'ExtUtils::CBuilder'                 => '0',
 	'File::Copy'                         => '0',
     },
