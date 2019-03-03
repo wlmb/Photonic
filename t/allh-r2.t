@@ -10,7 +10,7 @@ use Photonic::WE::R2::AllH;
 use Machine::Epsilon;
 use List::Util;
 
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 #my $pi=4*atan2(1,1);
 
@@ -51,6 +51,19 @@ ok($als->iteration <= 15*15, "No more iterations than dimensions");
 diag("Actual iterations: " . $als->iteration 
      . " Actual orthogonalizations: ", $als->orthogonalizations);
 my $st=$als->states;
+#check reorthogonalize again with square array
+my $B1s=zeroes(21,21)->rvals>2; #21,21, 2
+my $g1s=Photonic::Geometry::FromB->new(B=>$B1s, L=>pdl(1,1));
+my $m1s=Photonic::WE::R2::Metric->new(geometry=>$g1s, epsilon=>pdl(10),
+   wavenumber=>pdl(3.6), wavevector=>pdl([1.01*3.6,0]));
+my $al1s=Photonic::WE::R2::AllH
+    ->new(metric=>$m1s, polarization=>r2C(pdl([0,1])), nh=>3*21*21,
+    reorthogonalize=>1, accuracy=>machine_epsilon(),
+    noise=>1e3*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
+$al1s->run;
+ok($al1s->iteration <= 2*21*21, "No more iterations than dimensions");
+diag("Actual iterations: " . $al1s->iteration 
+     . " Actual orthogonalizations: ", $al1s->orthogonalizations);
 #foreach(@$st){
 #    my $pr=$als->innerProduct($_, $st->[0]);
 #    print "$pr\n";
