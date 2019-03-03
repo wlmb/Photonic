@@ -18,7 +18,8 @@ has 'current_W' =>(is=>'ro',
 );
 has 'next_W' =>(is=>'ro',
      writer=>'_next_W', lazy=>1, init_arg=>undef,
-     default=>sub {PDL->pdl([1])},
+     builder=>'_build_next_W',		
+     #default=>sub {PDL->pdl([1])},
      documentation=>"Next row of error matrix"
 );
 has 'accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
@@ -32,6 +33,12 @@ has fullorthogonalize_N=>(is=>'ro', init_arg=>undef, default=>0,
 			  documentation=>'# desired reorthogonalizations'); 
 has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 			   writer=>'_orthogonalizations');
+
+sub _build_next_W {
+    my $self=shift;
+    my $g_np1=$self->next_g;
+    return PDL->pdl([$g_np1]);
+}
 
 around '_fullorthogonalize_indeed' => sub {
     my $orig=shift; #won't use
@@ -70,15 +77,18 @@ sub _checkorthogonalize {
 	$next_W=$next_W/$self->next_b;
     }
     $next_W=$next_W->append($self->noise) if $n>=1;
-    $next_W=$next_W->append(1);
+    $next_W=$next_W->append($self->next_g);
     $self->_next_W($next_W);
     return unless $n>=2;
     my $max=$next_W->(0:-2)->maximum;
     if($max > sqrt($self->accuracy)){
 	#recalculate the las two states with full reorthogonalization
-	$self->_fullorthogonalize_N(3); #2 states, but check until 3d state
-	$self->_pop; #undoes stack 2 steps
-	$self->_pop;
+	$self->_fullorthogonalize_N(1); #2 states, but check until 3d state
+	$self->_pop; #undoes stack
+	if($n>3){ #usual case
+	    $self->_fullorthogonalize_N(3); #2 states, but check until 3d state
+	    $self->_pop; #undo stack again
+	}
 	$current_W(0:-2).=$self->noise;
 	$next_W(0:-2).=$self->noise;
     }
