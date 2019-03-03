@@ -51,7 +51,7 @@ lib/Photonic/WE/R2/AllH.pm
 lib/Photonic/WE/R2/EpsilonP.pm
 lib/Photonic/WE/R2/EpsilonTensor.pm
 lib/Photonic/WE/R2/EpsilonTensorF.pm
-lib/Photonic/WE/R2/FieldH.pm
+lib/Photonic/WE/R2/Field.pm
 lib/Photonic/WE/R2/Green.pm
 lib/Photonic/WE/R2/GreenF.pm
 lib/Photonic/WE/R2/GreenP.pm
@@ -92,3 +92,4 @@ t/pod.t
 t/version.t
 TODO
 xt/boilerplate.t
+Makefile.PL
