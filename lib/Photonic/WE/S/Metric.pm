@@ -86,7 +86,7 @@ sub _value {
     #cartesian matrix for each wavevector.
     my $gPGG=($k02*$id-$kPGkPG)/(($k02-$kPG2)->(*1,*1)); #xy:xy:nx:ny
     my $gMGG=($k02*$id-$kMGkMG)/(($k02-$kMG2)->(*1,*1)); #xy:xy:nx:ny
-    my $gGG=PDL->pdl($gPGG, $gMGG)->mv(-1,0); #pm:xy:xy:nx:ny
+    my $gGG=PDL->pdl($gPGG, $gMGG)->mv(-1,2); #xy:xy:pm:nx:ny
     return $gGG;
 }
     
