@@ -45,9 +45,9 @@ $gGG=Photonic::WE::R2::Metric->new(geometry=>$g, epsilon=>pdl(3),
    wavenumber=>pdl(1), wavevector=>pdl([1,1])); 
 $v=$gGG->value;
 
-ok(agree($vs->((0)), $v), "S and R2 metrics agree for k");
+ok(agree($vs->(:,:,(0)), $v), "S and R2 metrics agree for k");
 $gGG=Photonic::WE::R2::Metric->new(geometry=>$g, epsilon=>pdl(3),
    wavenumber=>pdl(1), wavevector=>-pdl([1,1])); 
 $v=$gGG->value;
 
-ok(agree($vs->((1)), $v), "S and R2 metrics agree for -k");
+ok(agree($vs->(:,:,(1)), $v), "S and R2 metrics agree for -k");
