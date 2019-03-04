@@ -143,6 +143,9 @@ sub applyOperator {
     #over the rest 
     my $Gpsi_G=($psi_G*$self->pmGNorm->mv(0,-1))->mv(1,-1); #^G |psi>
     #the result is complex ri:nx:ny...i:pmk
+    # Notice that I actually multiply by unit(k-G) instead of
+    # unit(-k+G) when I use pmGNorm; as I do it two times, the result
+    # is the same.
     #Take inverse Fourier transform over all space dimensions,
     #thread over cartesian and pmk indices
     #Notice that (i)fftn wants a real 2,nx,ny... piddle, not a complex
