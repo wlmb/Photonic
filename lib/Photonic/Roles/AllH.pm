@@ -97,11 +97,11 @@ Array of Haydock b coefficients squared
 
 package Photonic::Roles::AllH;
 $Photonic::Roles::AllH::VERSION = '0.010';
-use Moose::Role;
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Carp;
+use Moose::Role;
 
 has nh=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock coefficients');
@@ -126,6 +126,11 @@ has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag'); 
 
+#provided by OneH instance  
+requires qw(iterate _iterate_indeed magnitude innerProduct
+    _checkorthogonalize);
+
+
 sub BUILD {
     my $self=shift;
     # Can't reorthogonalize without previous states
@@ -135,10 +140,6 @@ sub BUILD {
 
 #I use before and after trick (below), as a[n] is calculated together
 #with b[n+1] in each iteration
-
-#provided by OneH instance  
-requires qw(iterate _iterate_indeed magnitude innerProduct
-    _checkorthogonalize);
 
 before 'states' => sub {
     my $self=shift;
