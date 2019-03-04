@@ -54,9 +54,9 @@ ok(Cagree(pdl($b2st)->complex, (pdl($bs)->complex)**2), "1D T b2==b^2");
 #check reorthogonalize with square array
 my $epss=$eb*(zeroes(15,15)->rvals<5)+$ea*(zeroes(15,15)->rvals>=5);
 my $gs=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$epss, Direction0=>pdl([1,0]));
+    ->new(epsilon=>$epss, Direction0=>pdl([1,0]), L=>pdl(1,1));
 my $als=Photonic::LE::S::AllH
-    ->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>0, 
+    ->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1, 
 	  accuracy=>machine_epsilon(), noise=>3*machine_epsilon(),
 	  normOp=>$eb->Cabs); 
 $als->run;
