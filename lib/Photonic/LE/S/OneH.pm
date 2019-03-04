@@ -135,9 +135,9 @@ sub applyOperator {
     my $psi_G=shift;
     confess "State should be complex" unless $psi_G->isa('PDL::Complex');
     #Each state is a spinor with two wavefunctions \psi_{k,G} and
-    #\psi_{-k,G}, thus the index plus or minus k, pmk.
-    #Notation ri=real or imaginary, pmk=+ or - k, i,j=cartesian
-    #state is ri:pmk:nx:ny... pmGnorm=i:pmk:nx:ny...
+    #\psi_{-k,G}, thus the index plus or minus k, pm.
+    #Notation ri=real or imaginary, pm=+ or - k, xy=cartesian
+    #state is ri:pmk:nx:ny... pmGnorm=xy:pmk:nx:ny...
     #Multiply by vectors ^G and ^(-G).
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest 
