@@ -15,8 +15,6 @@ use Photonic::Utils qw(MHProd);
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
     handles=>[qw(B ndims dims epsilon)],required=>1);
 has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
