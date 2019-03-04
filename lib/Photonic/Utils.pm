@@ -145,7 +145,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     my $sl=":,:" #slice to keep complex and vector dimension
 	. ", -1:0" #interchange spinor components +- to -+
 	. (", -1:0" x ($ndims-3)); #and reverse G indices
-    my $first_mG=$first->slice($sl); #ri:pm:nx:ny
+    my $first_mG=$first->slice($sl); #ri:xy:pm:nx:ny
     #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     foreach(3..$ndims-1){ # G indices start after ri:xy:pm
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
