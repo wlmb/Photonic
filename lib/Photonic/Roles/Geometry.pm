@@ -129,12 +129,12 @@ sub _build_GNorm { #origin set to zero here.
 }
 
 sub _build_mGNorm { #normalized negated reciprocal lattice. Leave
-    #direction 0 invariant
+    #direction 0 invariant. See _G0.
     my $self=shift;
     return -$self->GNorm;
 }
 sub _build_pmGNorm { #normalized +- reciprocal lattice. Leave
-    #direction 0 invariant
+    #direction 0 invariant. See _G0.
     #xory, +or-, nx, ny
     my $self=shift;
     return PDL->pdl($self->GNorm, $self->mGNorm)->mv(-1,1);
