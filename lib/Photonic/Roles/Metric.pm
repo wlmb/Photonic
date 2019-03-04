@@ -57,6 +57,7 @@ has 'geometry'  => (is=>'ro', isa=>'Photonic::Types::Geometry', required=>1,
                     required=>1,
                     documentation=>'Geometry');
 has 'epsilon'   => (is=>'ro', isa=>'PDL', required=>1,
+		    default=>sub{PDL->pdl(1)}, 
                    documentation=>'Real dielectric function "host" epsA');
 has 'wavenumber'=> (is=>'ro', isa=>'PDL', required=>1,
                    documentation=>'Vacuum wavenumber w/c');
