@@ -8,7 +8,6 @@ INSTALL
 lib/Photonic.pm
 lib/Photonic/AllH.pm
 lib/Photonic/CharacteristicFunctions.pm
-lib/Photonic/ExtraUtils.c
 lib/Photonic/ExtraUtils.pd
 lib/Photonic/Geometry.pm
 lib/Photonic/Geometry/FromB.pm
