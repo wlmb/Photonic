@@ -57,19 +57,11 @@ use Carp;
 use Moose;
 use Photonic::Types;
 
-has 'geometry'  => (is=>'ro', isa=>'Photonic::Types::Geometry', required=>1,
-                    handles=>[qw(B dims ndims r G GNorm L scale f)],
-                    required=>1,
-                    documentation=>'Geometry');
-has 'epsilon'   => (is=>'ro', isa=>'PDL', required=>1,
-                   documentation=>'Real dielectric function "host" epsA');
-has 'wavenumber'=> (is=>'ro', isa=>'PDL', required=>1,
-                   documentation=>'Vacuum wavenumber w/c');
-has 'wavevector'=> (is=>'ro', isa=>'PDL', required=>1,
-                   documentation=>'Wave vector');
 has 'value'     => (is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
                    builder=>'_value', 
                    documentation=>'Metric tensor');
+
+with 'Photonic::Roles::Metric';
 
 sub _value {
     # Evaluate the metric tensor. Eq. 4.37 of Samuel.
