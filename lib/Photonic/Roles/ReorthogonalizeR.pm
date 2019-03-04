@@ -83,7 +83,7 @@ sub _checkorthogonalize {
     my $max=$next_W->(0:-2)->maximum;
     if($max > sqrt($self->accuracy)){
 	#recalculate the las two states with full reorthogonalization
-	$self->_fullorthogonalize_N(1); #2 states, but check until 3d state
+	$self->_fullorthogonalize_N(2); #1 states, but check until 3d state
 	$self->_pop; #undoes stack
 	if($n>3){ #usual case
 	    $self->_fullorthogonalize_N(3); #2 states, but check until 3d state
