@@ -9,13 +9,13 @@ use List::Util;
 use Carp;
 use Moose;
 use Photonic::Types;
-use Photonic::Utils qw(SProd);
+use Photonic::Utils qw(VSProd);
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
 		builder=>'_epsilon');  
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::S::Metric',
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',
-			 epsilonR=>'epsilon'},
+			 geometry=>'geometry', epsilonR=>'epsilon'},
 	       required=>1);
 has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
 has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
@@ -83,7 +83,8 @@ sub _firstState { #\delta_{G0}
     my $v=PDL->zeroes(2,2,@{$self->dims})->complex; #ri:pm:nx:ny...
     my $arg="(0),:" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1/sqrt(2); 
-    my $e=$self->polarization; #RorI xyz
+    my $e=$self->polarization; #ri:xy
+    my $d=[$e->dims]->[1];
     croak "Polarization has wrong dimensions. " .
 	  " Should be $d-dimensional complex vector."
 	unless $e->isa('PDL::Complex') && $e->ndims==2 &&
@@ -91,11 +92,11 @@ sub _firstState { #\delta_{G0}
     my $modulus2=$e->Cabs2->sumover;
     croak "Polarization should be non null" unless
 	$modulus2 > 0;
-    $e=$e/sqrt(2*$modulus2);
+    $e=$e/sqrt($modulus2);
     $self->_normalizedPolarization($e);
     #I'm using the same polarization for k and for -k. Could be
     #different (for chiral systems, for example
-    my $phi=$e*$v(*1); #initial state ordinarily normalized 
+    my $phi=$e*$v(,*1); #initial state ordinarily normalized 
                        # ri:xy:pm:nx:ny
     return $phi;
 }
