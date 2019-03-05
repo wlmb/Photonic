@@ -45,7 +45,7 @@ my $ms=Photonic::WE::R2::Metric->new(geometry=>$gs, epsilon=>pdl(1),
 my $als=Photonic::WE::R2::AllH
     ->new(metric=>$ms, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
     reorthogonalize=>1, accuracy=>machine_epsilon(),
-    noise=>1e3*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
+    noise=>1e0*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
 $als->run;
 ok($als->iteration <= 15*15, "No more iterations than dimensions");
 diag("Actual iterations: " . $als->iteration 
