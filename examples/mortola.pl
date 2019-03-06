@@ -1,5 +1,5 @@
 #! /usr/bin/env perl
-# Proof of NP module using Mortola results
+# Proof of Spinor (S) module using Mortola results
 use strict;
 use warnings;
 use feature qw(say);
@@ -21,28 +21,35 @@ set_autopthread_targ(4);;
 set_autopthread_size(4);;
 
 
-my $nh=10;
-my $N=50;
+my $nh=20;
+my $seed=12345;
+srand $seed;
+my $N=100;
 my $l=1;
-my $epsA=r2C 2+3*i;
-my $epsB=r2C 3+4*i;
-my $epsC=r2C 2+3*i;
-my $epsD=r2C 3+4*i;
+my $epsA=pdl(sprintf("%.2f %.2f", rand(),rand()))->complex;
+my $epsB=pdl(sprintf("%.2f %.2f", rand(),rand()))->complex;
+my $epsC=pdl(sprintf("%.2f %.2f", rand(),rand()))->complex;
+my $epsD=pdl(sprintf("%.2f %.2f", rand(),rand()))->complex;
 my $e=FourPhases($N,$epsA,$epsB,$epsC,$epsD);
 
-my $filename="epsM_S_eA${epsA}_eB${epsB}_N${N}_Nh${nh}"; $filename=~s/\./_/g; $filename.=".dat";
+my %epsM=(
+xx=>sqrt($epsA*$epsB*$epsC*$epsD*(1/$epsA+1/$epsB+1/$epsC+1/$epsD)*($epsA+$epsB)*($epsC+$epsD)/(($epsA+$epsB+$epsC+$epsD)*($epsA+$epsD)*($epsC+$epsB))),
+yy=>sqrt($epsA*$epsB*$epsC*$epsD*(1/$epsA+1/$epsB+1/$epsC+1/$epsD)*($epsA+$epsD)*($epsC+$epsB)/(($epsA+$epsB+$epsC+$epsD)*($epsA+$epsB)*($epsC+$epsD)))
+);
+
+my $filename="epsM_S_${seed}_eA${epsA}_eB${epsB}_eC${epsC}_eD${epsD}_N${N}_Nh${nh}"; $filename=~s/\./_/g; $filename.=".dat";
 open(OUT, ">", "../data/$filename") or die "Couldn't open $filename for writing. $!";
-print OUT "#   hnu       epsNR-L_re  epsNR-L_im   epsR-T_re    epsR-T_im \n";  
+print OUT "#  dir epsM_re (Mortola)  epsM_im (Mortola)  epsM_re (Spinor)    epsM_im (Spinor) \n";  
+my ($g,$allh,$nr)=(PDL->null,PDL->null,PDL->null);
 
-my $gmtnr=Photonic::Geometry::FromEpsilon->new(epsilon=>$e,L=>pdl($l,$l),Direction0=>pdl(1,0));
-my $allh=Photonic::LE::S::AllH->new(geometry=>$gmtnr, nh=>$nh);
-my $nr=Photonic::LE::S::EpsL->new(nr=>$allh, nh=>$nh);
-    
-my $enr=$nr->epsL;
-    
-say OUT join " ", $enr->re, $enr->im; 
+my %dir=(xx=>pdl(1,0),yy=>pdl(0,1));
+foreach my $x (keys %dir){
+    $g=Photonic::Geometry::FromEpsilon->new(epsilon=>$e,L=>pdl($l,$l),Direction0=>$dir{$x});
+    $allh=Photonic::LE::S::AllH->new(geometry=>$g, nh=>$nh);
+    $nr=Photonic::LE::S::EpsL->new(nr=>$allh,nh=>$nh);
+    say OUT join " ", $x, $epsM{$x}->re, $epsM{$x}->im, $nr->epsL->re, $nr->epsL->im; 
 
-
+}
 
 sub checkerboard {
     my $N=shift;
@@ -75,7 +82,10 @@ sub FourPhases { #checkboard
     my $z=$eB->glue(1,($eA*ones($N,$N+1))->mv(0,-1));
     $eC=($eC*ones($N+1,$N))->mv(0,-1);
     $z=$z->glue(0,($eC->glue(1,($eD*ones($N+1,$N+1))->mv(0,-1))));
-    return $z->mv(-1,0);
+    $z=$z->mv(-1,0);
+    $z(,,$N).=($z(,,$N+1)+$z(,,$N-1))/2;
+    $z(,$N,).=($z(,$N+1,)+$z(,$N-1,))/2;
+    return $z;
 }
 
 
