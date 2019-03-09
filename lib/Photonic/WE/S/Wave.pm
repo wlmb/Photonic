@@ -74,13 +74,12 @@ use Photonic::Types;
 extends 'Photonic::WE::S::Green'; 
 
 has 'waveOperator' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-             writer=>'_waveOperator',   
-             documentation=>'Wave operator from last evaluation');
+			lazy=>1, builder=>'_build_waveOperator',   
+			documentation=>'Wave operator');
 
-around 'evaluate' => sub {
-    my $orig=shift;
+sub _build_waveOperator {
     my $self=shift;
-    my $green=$self->$orig(@_);
+    my $green=$self->greenTensor;
     #make a real matrix from [[R -I][I R]] to solve complex eq.
     my $greenreim=$green->re->append(-$green->im)
        ->glue(1,$green->im->append($green->re))->sever; #copy vs sever?
@@ -89,23 +88,9 @@ around 'evaluate' => sub {
     my $idreim=identity($d)->glue(1,PDL->zeroes($d,$d))->mv(0,-1);
     my $wavereim=lu_backsub($lu,$perm,$par,$idreim);
     my $wave=$wavereim->reshape($d,2,$d)->mv(1,0)->complex;
-    $self->_waveOperator($wave);
     return $wave;
 };
-
-# I guess having around and after evaluate might be wrong
-# Worries me as this is the old wave routine.
-after 'evaluate' => sub {
-    my $self=shift;
-    return unless $self->outputfilename;
-    my $hay=$self->haydock;
-    my $oname=$self->outputfilename;
-    store $hay, $oname;
-};
-
 
 __PACKAGE__->meta->make_immutable;
     
 1;
-
-__END__

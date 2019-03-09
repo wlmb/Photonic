@@ -76,13 +76,13 @@ use Photonic::Types;
 extends 'Photonic::WE::S::Wave'; 
 
 has 'epsilonTensor' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-             writer=>'_epsilonTensor',   
-             documentation=>'Wave operator from last evaluation');
+			 lazy=>1, builder=>'_build_epsilonTensor',   
+			 documentation=>'macroscopit response');
 
-around 'evaluate' => sub {
-    my $orig=shift;
+
+sub _build_epsilonTensor {
     my $self=shift;
-    my $wave=$self->$orig(@_);
+    my $wave=$self->waveOperator;
     my $q=$self->metric->wavenumber;
     my $q2=$q*$q;
     my $k=$self->metric->wavevector;
@@ -90,7 +90,6 @@ around 'evaluate' => sub {
     my $kk=$k->outer($k);
     my $id=identity($k);
     my $eps=$wave+$k2/$q2*$id - $kk/$q2;
-    $self->_epsilonTensor($eps);
     return $eps;
 };
 

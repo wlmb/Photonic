@@ -111,35 +111,37 @@ use Photonic::WE::S::GreenP;
 use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::KeepStates';
-with 'Photonic::Roles::EpsParams';
 
+has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepstates',
+         documentation=>'flag to save Haydock states');
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
+	    documentation=>'Desired no. of Haydock coefficients');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::S::Metric',
-       handles=>[qw(geometry B dims r G GNorm L scale f)],required=>1);
+       handles=>[qw(geometry)],required=>1);
+
 has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::S::AllH]',
             init_arg=>undef, lazy=>1, builder=>'_build_haydock',
 	    documentation=>'Array of Haydock calculators');
 has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::S::GreenP]',
              init_arg=>undef, lazy=>1, builder=>'_build_greenP',
              documentation=>'Array of projected G calculators');
-has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
-             writer=>'_greenTensor',   
-             documentation=>'Greens Tensor from last evaluation');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
-                  'All greenP evaluations converged in last evaluation'); 
+                  'All greenP evaluations converged'); 
+has 'greenTensor'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+	      lazy=>1, builder=>'_build_greenTensor',   
+             documentation=>'Greens Tensor');
 
-has 'outputfilename'=>(is=>'ro', default=>0, documentation=> 
-		 'Name for output file containing haydocks array');
-
-sub evaluate {
+sub _build_greenTensor {
     my $self=shift;
-    $self->_epsA(my $epsA=$self->metric->epsilon->r2C);
-    $self->_epsB(my $epsB=shift);
-    $self->_u(my $u=1/(1-$epsB/$epsA));
     my @greenP; #array of Green's projections along different directions.
     my $converged=1;
     foreach(@{$self->greenP}){
-	push @greenP, $_->evaluate($epsB);
+	push @greenP, $_->Gpp;
 	$converged &&=$_->converged;
     }
     $self->_converged($converged);
@@ -148,7 +150,7 @@ sub evaluate {
     my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
     my $reGreen=lu_backsub($lu, $perm, $parity, $reGreenP);
     my $imGreen=lu_backsub($lu, $perm, $parity, $imGreenP);
-    my $nd=$self->geometry->B->ndims;
+    my $nd=$self->geometry->ndims;
     my $greenTensor=PDL->zeroes(2, $nd, $nd)->complex;
     my $n=0;
     for my $i(0..$nd-1){
@@ -158,7 +160,6 @@ sub evaluate {
 	    ++$n;
 	}
     }
-    $self->_greenTensor($greenTensor);
     return $greenTensor;
 }
 

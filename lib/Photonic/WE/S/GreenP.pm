@@ -56,10 +56,6 @@ last calculation.
 
 The spectral variable used in the last calculation
 
-=item * Gpp
-
-The projected Green's function of the last calculation.
-
 =item * nh
 
 The maximum number of Haydock coefficients to use.
@@ -96,23 +92,24 @@ use Photonic::WE::S::AllH;
 use Moose;
 use Photonic::Types;
 
-with 'Photonic::Roles::EpsParams'; #nh, smallE, epsA, epsB, u
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
+	    documentation=>'Desired no. of Haydock coefficients');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::S::AllH', required=>1);
-has 'Gpp'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_Gpp');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
+has 'Gpp'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+	    lazy=>1, builder=>'_build_Gpp',
+	      documentation=>'Value of projected Greens function');
 
-sub BUILD {
+sub _build_Gpp {
     my $self=shift;
     $self->haydock->run unless $self->haydock->iteration;
-}
-
-sub evaluate {
-    my $self=shift;
-    $self->_epsA(my $epsA=$self->haydock->epsilon->r2C);
-    $self->_epsB(my $epsB=shift);
-    $self->_u(my $u=1/(1-$epsB/$epsA));
+    my $epsR=$self->haydock->epsilonR;
     my $as=$self->haydock->as;
     my $bcs=$self->haydock->bcs;
     # Continued fraction evaluation: Lentz method
@@ -121,18 +118,18 @@ sub evaluate {
     my $converged=0;
     #    b0+a1/b1+a2/...
     #	lo debo convertir a
-    #       u-a_0-g0g1b1^2/u-a1-g1g2b2^2/...
-    #   entonces bn->u-an y an->-g{n-1}gnbn^2 o -bc_n
-    my $fn=$u-$as->[0];
+    #       1-a_0-g0g1b1^2/1-a1-g1g2b2^2/...
+    #   entonces bn->1-an y an->-g{n-1}gnbn^2 o -bc_n
+    my $fn=1-$as->[0];
     $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
     my $n=1;
     my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
     my ($Cn, $Dn); #current coeffs.
     my $Deltan;
     while($n<$self->nh && $n<$self->haydock->iteration){
-	$Dn=$u-$as->[$n]-$bcs->[$n]*$Dnm1;
+	$Dn=1-$as->[$n]-$bcs->[$n]*$Dnm1;
 	$Dn=r2C($tiny) if $Dn->re==0 and $Dn->im==0;
-	$Cn=$u-$as->[$n]-$bcs->[$n]/$Cnm1;
+	$Cn=1-$as->[$n]-$bcs->[$n]/$Cnm1;
 	$Cn=r2C($tiny) if $Cn->re==0 and $Cn->im==0;
 	$Dn=1/$Dn;
 	$Deltan=$Cn*$Dn;
@@ -149,25 +146,8 @@ sub evaluate {
     $self->_converged($converged);
     $self->_nhActual($n);
     my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->[0];
-    $self->_Gpp($u*$g0b02/($epsA*$fn));
-    return $self->Gpp;
+    return $g0b02/($epsR*$fn);
 }
-
-#sub storeAllH {
-#    my $self=shift;
-#    my $nh=$self->nh;
-#    my $polr=$self->haydock->polarization->re;
-#    my $poli=$self->haydock->polarization->im;
-#    my $filename="nh_$nh-pol_$polr.i$poli";
-#    my @states=@{$self->haydock->states};
-#    open(OUT, ">", $filename) or die "Couldn't open $filename for writing. $!";
-#    print OUT "@states";
-#}
-
-#sub forgetstates {
-#        my $self=shift;
-#        undef @{$self->haydock->states} if  $self->haydock->reorthogonalize;
-#}
 
 
 __PACKAGE__->meta->make_immutable;
