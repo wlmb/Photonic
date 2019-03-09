@@ -4,7 +4,7 @@ Photonic::LE::NR2::SH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -156,7 +156,7 @@ polarization using the field (nrf) filter.
 =cut
 
 package Photonic::LE::NR2::SH;
-$Photonic::LE::NR2::SH::VERSION = '0.010';
+$Photonic::LE::NR2::SH::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromEpsilon;
-$Photonic::Geometry::FromEpsilon::VERSION = '0.010';
+$Photonic::Geometry::FromEpsilon::VERSION = '0.011';
 use namespace::autoclean;
 use Carp;
 use Moose;
@@ -34,7 +34,7 @@ Photonic::Geometry::FromB
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

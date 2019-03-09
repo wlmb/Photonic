@@ -4,7 +4,7 @@ Photonic::WE::R2::Metric
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -46,7 +46,7 @@ dimensions, the next d indices n1,n2...nd identify the wavevector G.
 =cut
 
 package Photonic::WE::R2::Metric;
-$Photonic::WE::R2::Metric::VERSION = '0.010';
+$Photonic::WE::R2::Metric::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::MatrixOps;

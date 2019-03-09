@@ -4,7 +4,7 @@ Photonic::Roles::AllH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -22,7 +22,7 @@ version 0.010
 =item (for developers)
 
     package Photonic::LE::NR2::AllH;
-    $Photonic::LE::NR2::AllH::VERSION= '0.010';
+    $Photonic::LE::NR2::AllH::VERSION= '0.011';
     use namespace::autoclean;
     use Moose;
     has...
@@ -96,7 +96,7 @@ Array of Haydock b coefficients squared
 =cut
 
 package Photonic::Roles::AllH;
-$Photonic::Roles::AllH::VERSION = '0.010';
+$Photonic::Roles::AllH::VERSION = '0.011';
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;

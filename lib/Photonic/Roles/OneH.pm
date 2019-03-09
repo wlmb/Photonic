@@ -4,7 +4,7 @@ Photonic::Roles::OneH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -21,7 +21,7 @@ version 0.010
 =item (for developers)
 
     package Photonic::LE::NR2::OneH.pm;
-    $Photonic::LE::NR2::OneH::VERSION= '0.010';
+    $Photonic::LE::NR2::OneH::VERSION= '0.011';
     use namespace::autoclean;
     use Moose;
     has...
@@ -98,7 +98,7 @@ next_b2, next_state, shifting the current values where necessary. Returns
 =cut
 
 package Photonic::Roles::OneH;
-$Photonic::Roles::OneH::VERSION = '0.010';
+$Photonic::Roles::OneH::VERSION = '0.011';
 use Moose::Role;
 
 use PDL::Lite;

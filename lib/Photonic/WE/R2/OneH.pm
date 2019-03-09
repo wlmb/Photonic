@@ -1,5 +1,5 @@
 package Photonic::WE::R2::OneH;
-$Photonic::WE::R2::OneH::VERSION = '0.010';
+$Photonic::WE::R2::OneH::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -109,7 +109,7 @@ Photonic::OneH::R2
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

@@ -1,5 +1,5 @@
 package Photonic::OneH;
-$Photonic::OneH::VERSION='0.010';
+$Photonic::OneH::VERSION='0.011';
 use warnings;
 use strict;
 use Carp;
@@ -17,7 +17,7 @@ Photonic::OneH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

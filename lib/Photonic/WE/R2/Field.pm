@@ -4,7 +4,7 @@ Photonic::WE::R2::Field
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -100,7 +100,7 @@ evaluation of the field
 =cut
 
 package Photonic::WE::R2::Field;
-$Photonic::WE::R2::Field::VERSION = '0.010';
+$Photonic::WE::R2::Field::VERSION = '0.011';
 
 use constant PI=>4*atan2(1,1);
 

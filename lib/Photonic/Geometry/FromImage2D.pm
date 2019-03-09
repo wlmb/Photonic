@@ -4,7 +4,7 @@ Photonic::Geometry::FromImage2D
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -64,7 +64,7 @@ L<Photonic::Roles::Geometry>
 =cut
 
 package Photonic::Geometry::FromImage2D;
-$Photonic::Geometry::FromImage2D::VERSION = '0.010';
+$Photonic::Geometry::FromImage2D::VERSION = '0.011';
 use namespace::autoclean;
 use Moose;
 

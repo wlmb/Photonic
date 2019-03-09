@@ -1,5 +1,5 @@
 package Photonic::Roles::Geometry;
-$Photonic::Roles::Geometry::VERSION = '0.010';
+$Photonic::Roles::Geometry::VERSION = '0.011';
 use Moose::Role;
 
 use PDL::Lite;
@@ -279,7 +279,7 @@ Photonic::Roles::Geometry
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -293,7 +293,7 @@ version 0.010
 =item (for developers)
 
     package Photonic::Geometry::FromB;
-    $Photonic::Geometry::Geometry::VERSION = '0.010';
+    $Photonic::Geometry::Geometry::VERSION = '0.011';
     use namespace::autoclean;
     use Moose;
     has 'B' =>(is=>'ro', isa=>'PDL', required=>1,

@@ -1,6 +1,6 @@
 #Longitudinal Epsilon
 package Photonic::LE;
-$Photonic::LE::VERSION='0.010';
+$Photonic::LE::VERSION='0.011';
 use warnings;
 use strict;
 use Carp;
@@ -17,7 +17,7 @@ Photonic::LE
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

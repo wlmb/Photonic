@@ -1,5 +1,5 @@
 package Photonic::Roles::ReorthogonalizeR;
-$Photonic::Roles::ReorthogonalizeR::VERSION = '0.010';
+$Photonic::Roles::ReorthogonalizeR::VERSION = '0.011';
 use Moose::Role;
 use Machine::Epsilon;
 use PDL::Lite;

@@ -4,7 +4,7 @@ Photonic::WE::S::AllH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -82,7 +82,7 @@ Array of Haydock b coefficients squared
 =cut
 
 package Photonic::WE::S::AllH;
-$Photonic::WE::S::AllH::VERSION = '0.010';
+$Photonic::WE::S::AllH::VERSION = '0.011';
 use namespace::autoclean;
 use Moose;
 extends 'Photonic::WE::S::OneH';
