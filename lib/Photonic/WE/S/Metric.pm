@@ -25,7 +25,7 @@ calculation of the retarded Haydock coefficients for the wave equation in a bina
 
 =item * new(geometry=>$g, epsilon=>$e, $wavenumber=>$q, $wavevector=>$k);
 
-Create a new Ph::WE::R2::Metric object with Geometry $g, dielectric
+Create a new Ph::WE::S::Metric object with Geometry $g, dielectric
 function of the host $e, vacuum wavenumber $q=omega/c  and wavevector
 $k. $q and $k are real.
 
@@ -46,7 +46,7 @@ dimensions, the next d indices n1,n2...nd identify the wavevector G.
 =cut
 
 package Photonic::WE::S::Metric;
-$Photonic::WE::R2::Metric::VERSION = '0.010';
+$Photonic::WE::S::Metric::VERSION = '0.010';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::MatrixOps;
