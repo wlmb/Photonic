@@ -87,7 +87,7 @@ ok(Cagree($epstm, $etv), "Epsilon agrees with transfer matrix");
 
 #Compare to epsilon from transfer matrix with complex metric.
 #Construct normal incidence transfer matrix
-($ea, $eb)=(r2C(1+0*i),r2C(2+.4*i));
+($ea, $eb)=(r2C(1+0*i),r2C(2+1*i));
 $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i; 
 $g=Photonic::Geometry::FromEpsilon
     ->new(epsilon=>$eps, L=>pdl(1,1)); 
