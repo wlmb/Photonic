@@ -79,25 +79,22 @@ use Photonic::Types;
 extends 'Photonic::WE::S::WaveP'; 
 
 has 'epsilon' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-             writer=>'_epsilon',   
-             documentation=>'Wave projection from last evaluation');
+		   lazy=>1, builder=>'_build_epsilon',   
+		   documentation=>'Projected dielectric function');
 
-around 'evaluate' => sub {
-    my $orig=shift;
+sub _build_epsilon {
     my $self=shift;
-    my $wave=$self->$orig(@_);
+    my $wave=$self->waveOperator;
     my $q=$self->haydock->metric->wavenumber;
     my $q2=$q*$q;
     my $k=$self->haydock->metric->wavevector;
-    my $k2=$k->inner($k);
-    #my $kk=$k->outer($k);
+    my $k2=($k*$k)->sumover; #inner. my $k2=$k->inner($k); only works on real
     my $p=$self->haydock->normalizedPolarization;
     #Note $p->inner($p) might be complex, so is not necessarily 1.
     my $p2=($p*$p)->sumover;
     my $pk=($p*$k)->sumover;
     my $proj=$p2*$k2/$q2 - $pk*$pk/$q2;
     my $eps=$wave+$proj;
-    $self->_epsilon($eps);
     return $eps;
 };
 

@@ -65,24 +65,19 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 #use PDL::MatrixOps;
-use Storable qw(dclone);
-use PDL::IO::Storable;
-#use Photonic::WE::S::AllH;
 use Moose;
 use Photonic::Types;
 
 extends 'Photonic::WE::S::GreenP'; 
 
 has 'waveOperator' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-             writer=>'_waveOperator',   
-             documentation=>'Wave operator from last evaluation');
+             lazy=>1, builder=>'_build_waveOperator',   
+             documentation=>'Wave operator');
 
-around 'evaluate' => sub {
-    my $orig=shift;
+sub _build_waveOperator {
     my $self=shift;
-    my $greenP=$self->$orig(@_);
+    my $greenP=$self->Gpp;
     my $wave=1/$greenP; #only works along principal directions!!
-    $self->_waveOperator($wave);
     return $wave;
 };
 

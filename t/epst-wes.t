@@ -6,12 +6,13 @@ use PDL::Complex;
 use Photonic::Geometry::FromEpsilon;
 use Photonic::WE::S::Metric;
 use Photonic::WE::S::AllH;
+use Photonic::WE::S::EpsilonP;
 use Photonic::WE::S::EpsilonTensor;
 
 use Machine::Epsilon;
 use List::Util;
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 sub agree {    
     my $a=shift;
@@ -89,8 +90,7 @@ ok(Cagree($epstm, $etv), "Epsilon agrees with transfer matrix");
 #Construct normal incidence transfer matrix
 ($ea, $eb)=(r2C(1+0*i),r2C(2+1*i));
 $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i; 
-$g=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$eps, L=>pdl(1,1)); 
+$g=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps, L=>pdl(1,1)); 
 ($na, $nb)=map {sqrt($_)} ($ea, $eb);
 $q=1.2;
 ($ka,$kb)=map {$q*$_} ((1-$f)*$na, $f*$nb); #Multiply by length also
@@ -111,5 +111,11 @@ $et=Photonic::WE::S::EpsilonTensor->new(nh=>1000, metric=>$m,
 						  reorthogonalize=>1);
 $etv=$et->epsilonTensor->(:,(1),(1));
 ok(Cagree($epstm, $etv), "Epsilon agrees with transfer matrix. Complex case.");
-diag($epstm);
-diag($etv);
+
+my $h=Photonic::WE::S::AllH->new(nh=>1000, metric=>$m,
+   polarization=>pdl([0,r2C(1)])->complex, reorthogonalize=>1); 
+$et=Photonic::WE::S::EpsilonP->new(nh=>1000, metric=>$m, haydock=>$h);
+$etv=$et->epsilon;
+ok(Cagree($epstm, $etv), "Projected eps agrees with trans mat. Complex case."); 
+
+#done_testing();
