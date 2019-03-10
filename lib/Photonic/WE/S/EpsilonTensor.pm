@@ -86,6 +86,15 @@ sub _build_epsilonTensor {
     my $q=$self->metric->wavenumber;
     my $q2=$q*$q;
     my $k=$self->metric->wavevector;
+    if($q->isa('PDL::Complex') || $k->isa('PDL::Complex')){
+	#Make both complex
+	map {$_=r2C($_) unless $_->isa('PDL::Complex')} $q, $k;
+	my $k2=($k*$k)->sumover; #inner
+	my $kk=$k->(:,:,*1)*$k->(:,*1,:); #outer
+	my $id=identity($k);
+	my $eps=$wave+$k2/$q2*$id - $kk/$q2;
+	return $eps;
+    }
     my $k2=$k->inner($k);
     my $kk=$k->outer($k);
     my $id=identity($k);

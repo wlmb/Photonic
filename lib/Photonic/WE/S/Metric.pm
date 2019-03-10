@@ -72,6 +72,27 @@ sub _value {
     my $q=$self->wavenumber;
     my $eps=$self->epsilon;
     my $k=$self->wavevector;
+    if($eps->isa('PDL::Complex') || $k->isa('PDL::Complex')
+       || $q->isa('PDL::Complex')) { #complex metric
+	#Make all complex
+	map {$_=r2C($_) unless $_->isa('PDL::Complex')} $q, $k, $eps;
+	croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
+	    [$k->dims]->[1]==$self->ndims and $k->ndims==2;
+	my ($kPG, $kMG) = ($k+$G, $k-$G); #ri:xy:nx:ny
+	# (k+G)(k+G) diad
+	my ($kPGkPG, $kMGkMG) = map {$_->(:,:,*1)*$_->(:,*1,:)}
+	   ($kPG, $kMG); #ri:xy:xy:nx:ny
+	# interior product
+	my ($kPG2,$kMG2) = map {($_*$_)->sumover}  ($kPG, $kMG); #ri:nx:ny;
+	my $id=identity($self->ndims);
+	my $k02=$eps*$q*$q; # squared wavenumber in 'host' ri
+	#xyz xyz nx ny nz
+	#cartesian matrix for each wavevector.
+	my $gPGG=($k02*$id-$kPGkPG)/(($k02-$kPG2)->(:,*1,*1)); #ri:xy:xy:nx:ny
+	my $gMGG=($k02*$id-$kMGkMG)/(($k02-$kMG2)->(:,*1,*1)); #ri:xy:xy:nx:ny
+	my $gGG=PDL->pdl($gPGG, $gMGG)->mv(-1,3)->complex; #ri:xy:xy:pm:nx:ny
+	return $gGG;
+    }
     croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
 	[$k->dims]->[0]==$self->ndims and $k->ndims==1;
     #might generalize to complex k

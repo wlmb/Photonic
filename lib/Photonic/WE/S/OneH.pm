@@ -53,8 +53,8 @@ sub applyMetric {
     my $psi=shift;
     #psi is ri:xy:pm:nx:ny
     my $g=$self->metric->value;
-    #$g is xy:xy:pm:nx:ny 
-    #real matrix times complex vector
+    #$g is xy:xy:pm:nx:ny  or ri:xy:xy:pm:nx:ny 
+    #real or complex matrix times complex vector
     my $gpsi=($g*$psi(:,:,*1)) #ri:xy:xy:pm:nx:ny
 	->sumover; #ri:xy:pm:nx:ny
     return $gpsi;
