@@ -102,7 +102,7 @@ $cospd=($mt->(:,(0),(0))+$mt->(:,(1),(1)))/2;
 $sinpd=sqrt(1-$cospd**2);
 $pd=log($cospd+i*$sinpd)/i;
 #epsilon from transfer matrix
-my $epstm=($pd/$q)**2;
+$epstm=($pd/$q)**2;
 #epsilon from photonic
 $m=Photonic::WE::S::Metric->new(
     geometry=>$g, epsilon=>pdl(1), wavenumber=>pdl($q),
