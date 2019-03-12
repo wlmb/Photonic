@@ -117,6 +117,8 @@ requires
     'magnitude', #magnitude of a state
     'complexCoeffs', #Haydock coefficients are complex
     'changesign'; #change sign of $b2
+has 'firstState' =>(is=>'ro', isa=>'PDL::Complex', lazy=>1,
+		    builder=>'_firstState');
 has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
     init_arg=>undef);
 has 'currentState' => (is=>'ro', isa=>'PDL::Complex', writer=>'_currentState',
@@ -199,7 +201,7 @@ sub _iterate_indeed {
 
 sub _firstRState {
     my $self=shift;
-    my $phi=$self->_firstState; #get state from implementation
+    my $phi=$self->firstState; #get state from implementation
     my $b2=$self->innerProduct($phi,$phi);
     my $g=1;
     $g=-1, $b2=-$b2 if $self->changesign($b2);
