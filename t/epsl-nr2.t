@@ -10,14 +10,15 @@ use Photonic::LE::NR2::EpsL;
 use Machine::Epsilon;
 use List::Util;
 
-use Test::More tests => 4;
+use Test::More tests => 6;
 
 #my $pi=4*atan2(1,1);
 
 sub Cagree {    
     my $a=shift;
     my $b=shift//0;
-    return (($a-$b)->Cabs2)->sum<=1e-7;
+    my $prec=shift//1e-4;
+    return (($a-$b)->Cabs2)->sum<=$prec;
 }
 
 my $ea=1+2*i;
@@ -41,3 +42,19 @@ my $etv=$eto->evaluate($ea, $eb);
 my $etx=(1-$gt->f)*$ea+$gt->f*$eb;
 ok(Cagree($etv, $etx), "1D trans epsilon");
 is($eto->converged,1, "Converged");
+
+#Test chess board
+my $N=5;
+my $Bc=zeroes(2*$N,2*$N);
+$Bc=((($Bc->xvals<$N) & ($Bc->yvals<$N))
+   | (($Bc->xvals>=$N) & ($Bc->yvals>=$N))); 
+my $gc=Photonic::Geometry::FromB->new(B=>$Bc, Direction0=>pdl([1,0]));
+my $ac=Photonic::LE::NR2::AllH->new(geometry=>$gc, nh=>200);
+my $eco=Photonic::LE::NR2::EpsL->new(nr=>$ac, nh=>10000, reorthogonalize=>1);
+my $ecv=$eco->evaluate($ea, $eb);
+my $ecx=sqrt($ea*$eb);
+ok(Cagree($ecv, $ecx, 1e-2), "Chess board");
+diag($ecv);
+diag($ecx);
+diag($ac->iteration);
+is($eco->converged,1, "Converged");

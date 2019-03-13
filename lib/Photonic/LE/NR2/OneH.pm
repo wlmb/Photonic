@@ -102,7 +102,8 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
-
+has 'mask'=>(is=>'ro', lazy=>1, builder=>'_build_mask',
+    documentation=>'Mask in reciprocal space');
 with 'Photonic::Roles::OneH';
 
 sub _firstState { #\delta_{G0}
@@ -116,7 +117,9 @@ sub _firstState { #\delta_{G0}
 sub applyOperator { 
     my $self=shift;
     my $psi_G=shift;
-    # ri=real or imaginary, i, j=cartesian
+    my $mask=$self->mask;
+    # ri:nx:ny
+    $psi_G=$psi_G*$mask if defined $mask; 
     #state is ri:nx:ny:... gnorm=i:nx:ny...
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest 
@@ -139,6 +142,7 @@ sub applyOperator {
 	->mv(-1,1)->sumover; #^G.B^G|psi>
     # Result is ri:nx:ny,...
     #Normalization should have been taken care of by fftw3
+    $GBGpsi_G=$GBGpsi_G*$mask if defined $mask;
     return $GBGpsi_G;
 }
 
@@ -153,6 +157,22 @@ sub magnitude { #magnitude of a state
 
 sub changesign { #don't change sign
     return 0;
+}
+
+sub _build_mask { #default mask kills G_max for even dims.
+    my $self=shift;
+    my $ndims=$self->ndims;
+    my $dims=$self->dims;
+    my $mask=PDL->ones(@$dims);
+    my $masked=0; 
+    foreach(0..$ndims-1){
+	my $N=$dims->[$_]; 
+	next unless $N%2==0; #ignore odd dimensions.
+	$mask->mv($_,0)->(($N/2)).=0; #zero terms corresponding to \pm G_max
+	$masked=1;
+    }
+    return $mask if $masked;
+    return undef;
 }
 
 __PACKAGE__->meta->make_immutable;

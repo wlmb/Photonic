@@ -17,7 +17,7 @@ has 'L' =>(is=>'ro', isa => 'PDL', lazy=>1, builder=>'_build_L',
 has 'units'=>(is=>'ro', isa=>'ArrayRef[PDL]', lazy=>1,
      builder=>'_build_units',
      documentation=>'Basis of unit vectors');
-has 'dims' =>(is=>'ro', isa=>'Photonic::Types::ArrayOfOddInts',
+has 'dims' =>(is=>'ro', #isa=>'Photonic::Types::ArrayOfOddInts',
            init_arg=>undef, lazy=>1, builder=>'_build_dims',
            documentation=>'list of dimensions of B');
 has 'ndims' =>(is=>'ro', isa=>'Int',
