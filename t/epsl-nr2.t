@@ -17,7 +17,7 @@ use Test::More tests => 6;
 sub Cagree {    
     my $a=shift;
     my $b=shift//0;
-    my $prec=shift//1e-4;
+    my $prec=shift//1e-7;
     return (($a-$b)->Cabs2)->sum<=$prec;
 }
 
@@ -44,7 +44,7 @@ ok(Cagree($etv, $etx), "1D trans epsilon");
 is($eto->converged,1, "Converged");
 
 #Test chess board
-my $N=5;
+my $N=3;
 my $Bc=zeroes(2*$N,2*$N);
 $Bc=((($Bc->xvals<$N) & ($Bc->yvals<$N))
    | (($Bc->xvals>=$N) & ($Bc->yvals>=$N))); 
@@ -53,7 +53,7 @@ my $ac=Photonic::LE::NR2::AllH->new(geometry=>$gc, nh=>200);
 my $eco=Photonic::LE::NR2::EpsL->new(nr=>$ac, nh=>10000, reorthogonalize=>1);
 my $ecv=$eco->evaluate($ea, $eb);
 my $ecx=sqrt($ea*$eb);
-ok(Cagree($ecv, $ecx, 1e-2), "Chess board");
+ok(Cagree($ecv, $ecx), "Chess board");
 diag($ecv);
 diag($ecx);
 diag($ac->iteration);

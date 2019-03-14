@@ -102,7 +102,8 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
-has 'mask'=>(is=>'ro', lazy=>1, builder=>'_build_mask',
+has 'use_mask'=>(is=>'ro', default=>0, documentation=>'Use mask if present');
+    has 'mask'=>(is=>'ro', lazy=>1, builder=>'_build_mask',
     documentation=>'Mask in reciprocal space');
 with 'Photonic::Roles::OneH';
 
@@ -117,9 +118,9 @@ sub _firstState { #\delta_{G0}
 sub applyOperator { 
     my $self=shift;
     my $psi_G=shift;
-    my $mask=$self->mask;
+    my $mask=undef;
+    $mask=$self->mask if $self->use_mask;
     # ri:nx:ny
-    $psi_G=$psi_G*$mask if defined $mask; 
     #state is ri:nx:ny:... gnorm=i:nx:ny...
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest 
