@@ -160,22 +160,6 @@ sub changesign { #don't change sign
     return 0;
 }
 
-sub _build_mask { #default mask kills G_max for even dims.
-    my $self=shift;
-    my $ndims=$self->ndims;
-    my $dims=$self->dims;
-    my $mask=PDL->ones(@$dims);
-    my $masked=0; 
-    foreach(0..$ndims-1){
-	my $N=$dims->[$_]; 
-	next unless $N%2==0; #ignore odd dimensions.
-	$mask->mv($_,0)->(($N/2)).=0; #zero terms corresponding to \pm G_max
-	$masked=1;
-    }
-    return $mask if $masked;
-    return undef;
-}
-
 __PACKAGE__->meta->make_immutable;
     
 1;
