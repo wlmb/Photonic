@@ -47,7 +47,7 @@ is($eto->converged,1, "Converged");
 my $N=3;
 my $Bc=zeroes(2*$N,2*$N);
 $Bc=((($Bc->xvals<$N) & ($Bc->yvals<$N))
-   | (($Bc->xvals>=$N) & ($Bc->yvals>=$N))); 
+   | (($Bc->xvals>=$N) & ($Bc->yvals>=$N)));
 my $gc=Photonic::Geometry::FromB->new(B=>$Bc, Direction0=>pdl([1,0]));
 my $ac=Photonic::LE::NR2::AllH->new(geometry=>$gc, nh=>200);
 my $eco=Photonic::LE::NR2::EpsL->new(nr=>$ac, nh=>10000, reorthogonalize=>1);

@@ -103,9 +103,9 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
 has 'use_mask'=>(is=>'ro', default=>0, documentation=>'Use mask if present');
-    has 'mask'=>(is=>'ro', lazy=>1, builder=>'_build_mask',
+has 'mask'=>(is=>'ro', lazy=>1, builder=>'_build_mask',
     documentation=>'Mask in reciprocal space');
-with 'Photonic::Roles::OneH';
+with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
