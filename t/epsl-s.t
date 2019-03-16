@@ -57,7 +57,7 @@ my $epsilonc=$ea*(1-$Bc)+$eb*$Bc;
 my $gc=Photonic::Geometry::FromEpsilon->new(epsilon=>$epsilonc,
    Direction0=>pdl([1,0]));  
 my $ac=Photonic::LE::S::AllH->new(geometry=>$gc, nh=>2000,
-   reorthogonalize=>1, use_mask=>1);
+   reorthogonalize=>1);
 my $eco=Photonic::LE::S::EpsL->new(nr=>$ac, nh=>2000);
 my $ecv=$eco->epsL;
 #warn("O: ".$ac->orthogonalizations." I: ". $ac->iteration);
@@ -68,4 +68,5 @@ ok(Cagree($ecv, $ecx, 1e-4), "Chess board");
 #diag($ac->iteration);
 #diag($ac->orthogonalizations);
 #diag(pdl($ac->as)->complex);
+#diag(pdl($ac->bs)->complex);
 is($eco->converged,1, "Converged");
