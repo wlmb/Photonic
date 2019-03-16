@@ -60,9 +60,9 @@ my $ac=Photonic::LE::S::AllH->new(geometry=>$gc, nh=>2000,
    reorthogonalize=>1);
 my $eco=Photonic::LE::S::EpsL->new(nr=>$ac, nh=>2000);
 my $ecv=$eco->epsL;
-#warn("O: ".$ac->orthogonalizations." I: ". $ac->iteration);
 my $ecx=sqrt($ea*$eb);
 ok(Cagree($ecv, $ecx, 1e-4), "Chess board");
+#diag("O: ".$ac->orthogonalizations." I: ". $ac->iteration);
 #diag($ecv);
 #diag($ecx);
 #diag($ac->iteration);
