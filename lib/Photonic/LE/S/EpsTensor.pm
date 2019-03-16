@@ -102,10 +102,8 @@ with 'Photonic::Roles::EpsParams';
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
-    handles=>[qw(B dims r G GNorm L scale f)],required=>1
+    handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
 );
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
-    'Photonic::Roles::UseMask';
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
 has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::S::AllH]',
@@ -120,6 +118,8 @@ has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All EpsL evaluations converged in last evaluation'); 
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
+    'Photonic::Roles::UseMask';
 
 sub _build_epsTensor {
     my $self=shift;
