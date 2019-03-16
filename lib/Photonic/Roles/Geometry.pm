@@ -112,7 +112,7 @@ sub _build_r {
 
 sub _build_G {
     my $self=shift;
-    my @N=map {($_-1)/2} @{$self->dims}; #N in 2N+1
+    my @N=map {($_-($_%2))/2} @{$self->dims}; #N
     my $G=($self->B->ndcoords)-(PDL->pdl(@N)); #vector from center.
     foreach(1..$G->ndims-1){
 	$G=$G->mv($_,0)->rotate(-$N[$_-1])->mv(0,$_); #move origin to 0,0
