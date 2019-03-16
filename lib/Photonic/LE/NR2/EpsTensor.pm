@@ -109,10 +109,8 @@ use Photonic::Types;
 with 'Photonic::Roles::EpsParams';
 
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
-    handles=>[qw(B dims r G GNorm L scale f)],required=>1
+    handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
 );
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
-    'Photonic::Roles::UseMask';
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
 has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::AllH]',
@@ -126,6 +124,8 @@ has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_epsTensor',
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All EpsL evaluations converged in last evaluation'); 
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
+    'Photonic::Roles::UseMask';
 
 sub evaluate {
     my $self=shift;
@@ -169,7 +169,8 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
 	    geometry=>$g, smallH=>$self->smallH, 
 	    nh=>$self->nh, keepStates=>$self->keepStates,
 	    reorthogonalize=>$self->reorthogonalize,
-	    use_mask=>$self->use_mask); 
+	    use_mask=>$self->use_mask,
+	    mask=>$self->mask); 
 	push @nr, $nr;
     }
     return [@nr]
