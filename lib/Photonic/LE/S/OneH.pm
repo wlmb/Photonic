@@ -112,7 +112,7 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     );
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH';
+with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 
 sub _epsilon {
     my $self=shift;
@@ -125,7 +125,7 @@ sub _epsilon {
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
-    my $v=PDL->zeroes(2,2,@{$self->dims})->complex; #RorI,pmk, nx, ny...
+    my $v=PDL->zeroes(2,2,@{$self->dims})->complex; #ri:pm:nx:ny
     my $arg="(0),:" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1/sqrt(2); 
     return $v;
@@ -133,6 +133,8 @@ sub _firstState { #\delta_{G0}
 sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
+    my $mask=undef;
+    $mask=$self->mask if $self->use_mask;
     confess "State should be complex" unless $psi_G->isa('PDL::Complex');
     #Each state is a spinor with two wavefunctions \psi_{k,G} and
     #\psi_{-k,G}, thus the index plus or minus k, pm.
@@ -167,6 +169,8 @@ sub applyOperator {
 	# ri:pmk:nx:ny...:i
 	# Move cartesian to front and sum over
 	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
+    # $GeGpsi_G is ri:pm:nx:ny. $mask=nx:ny
+    $GeGpsi_G=$GeGpsi_G*$mask->(*1) if defined $mask;
     return $GeGpsi_G;
 }
 sub innerProduct {
