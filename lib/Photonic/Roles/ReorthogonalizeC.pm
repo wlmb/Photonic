@@ -104,7 +104,7 @@ sub _checkorthogonalize {
 }
 
 sub _arg {
-    my $s=shift;
+    my $s=shift->copy;
     my $a=$s->Cabs;
     $s->re->where($a==0).=1;
     $a->where($a==0).=1;
