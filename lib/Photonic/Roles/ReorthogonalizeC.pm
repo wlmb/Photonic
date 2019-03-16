@@ -73,7 +73,7 @@ sub _checkorthogonalize {
 	    - $c->(:,($n-1))*$previous_W;
 	$next_W->(:,1:-1).=$next_W->(:,1:-1)+
 	    $c->(:,1:-2)*$current_W->(:,0:-3) if ($n>=3);
-	$next_W=$next_W+_sign($next_W)*2*$self->normOp*$self->noise;
+	$next_W=$next_W+_arg($next_W)*2*$self->normOp*$self->noise;
 	$next_W=$next_W/$self->next_b;
     }
     $next_W=($self->noise+0*i)->(:,*1) if $n==1;
@@ -103,11 +103,12 @@ sub _checkorthogonalize {
     $self->_next_W($next_W);
 }
 
-sub _sign {
+sub _arg {
     my $s=shift;
-    my $sa=$s->Cabs;
-    $sa=$sa|1; #turn 0 into 1
-    my $sign=$s/$sa;
+    my $a=$s->Cabs;
+    $s->re->where($a==0).=1;
+    $a->where($a==0).=1;
+    my $arg=$s/$a;
 }
 
 1;
