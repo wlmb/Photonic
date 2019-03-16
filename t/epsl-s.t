@@ -6,19 +6,19 @@ use PDL::Complex;
 use Photonic::Geometry::FromEpsilon;
 use Photonic::LE::S::AllH;
 use Photonic::LE::S::EpsL;
-use Photonic::Utils qw(HProd);
 
 use Machine::Epsilon;
 use List::Util;
 
-use Test::More tests => 4;
+use Test::More tests => 6;
 
 #my $pi=4*atan2(1,1);
 
 sub Cagree {    
     my $a=shift;
     my $b=shift//0;
-    return (($a-$b)->Cabs2)->sum<=1e-7;
+    my $prec=shift||1e-7;
+    return (($a-$b)->Cabs2)->sum<=$prec;
 }
 
 my $ea=1+2*i;
@@ -47,3 +47,25 @@ my $etv=$eto->epsL;
 my $etx=(1-$f)*$ea+$f*$eb;
 ok(Cagree($etv, $etx), "1D trans epsilon");
 is($eto->converged,1, "Converged");
+
+#Test chess board
+my $N=8;
+my $Bc=zeroes(2*$N,2*$N);
+$Bc=((($Bc->xvals<$N) & ($Bc->yvals<$N))
+   | (($Bc->xvals>=$N) & ($Bc->yvals>=$N)));
+my $epsilonc=$ea*(1-$Bc)+$eb*$Bc;
+my $gc=Photonic::Geometry::FromEpsilon->new(epsilon=>$epsilonc,
+   Direction0=>pdl([1,0]));  
+my $ac=Photonic::LE::S::AllH->new(geometry=>$gc, nh=>2000,
+   reorthogonalize=>1, use_mask=>1);
+my $eco=Photonic::LE::S::EpsL->new(nr=>$ac, nh=>2000);
+my $ecv=$eco->epsL;
+#warn("O: ".$ac->orthogonalizations." I: ". $ac->iteration);
+my $ecx=sqrt($ea*$eb);
+ok(Cagree($ecv, $ecx, 1e-4), "Chess board");
+#diag($ecv);
+#diag($ecx);
+#diag($ac->iteration);
+#diag($ac->orthogonalizations);
+#diag(pdl($ac->as)->complex);
+is($eco->converged,1, "Converged");
