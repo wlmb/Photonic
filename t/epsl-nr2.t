@@ -44,17 +44,14 @@ ok(Cagree($etv, $etx), "1D trans epsilon");
 is($eto->converged,1, "Converged");
 
 #Test chess board
-my $N=3;
+my $N=20;
 my $Bc=zeroes(2*$N,2*$N);
 $Bc=((($Bc->xvals<$N) & ($Bc->yvals<$N))
    | (($Bc->xvals>=$N) & ($Bc->yvals>=$N)));
 my $gc=Photonic::Geometry::FromB->new(B=>$Bc, Direction0=>pdl([1,0]));
-my $ac=Photonic::LE::NR2::AllH->new(geometry=>$gc, nh=>200);
-my $eco=Photonic::LE::NR2::EpsL->new(nr=>$ac, nh=>10000, reorthogonalize=>1);
+my $ac=Photonic::LE::NR2::AllH->new(geometry=>$gc, nh=>2000, reorthogonalize=>1);
+my $eco=Photonic::LE::NR2::EpsL->new(nr=>$ac, nh=>10000);
 my $ecv=$eco->evaluate($ea, $eb);
 my $ecx=sqrt($ea*$eb);
 ok(Cagree($ecv, $ecx), "Chess board");
-diag($ecv);
-diag($ecx);
-diag($ac->iteration);
 is($eco->converged,1, "Converged");
