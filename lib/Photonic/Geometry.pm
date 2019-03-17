@@ -1,5 +1,5 @@
 package Photonic::Geometry;
-$Photonic::Geometry::VERSION='0.010';
+$Photonic::Geometry::VERSION='0.011';
 use warnings;
 use strict;
 use Carp;
@@ -17,7 +17,7 @@ Photonic::Geometry
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

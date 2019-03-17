@@ -1,10 +1,10 @@
 package Photonic::Utils;
-$Photonic::Utils::VERSION = '0.010';
+$Photonic::Utils::VERSION = '0.011';
 # Collection of subroutines. Thus, no Moose
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
-              HProd MHProd EProd SProd linearCombine lentzCF);
+              HProd MHProd EProd VSProd SProd linearCombine lentzCF);
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
@@ -132,6 +132,35 @@ sub SProd { #Spinor product between two fields in reciprocal
     return $result;
 }
 
+sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
+             #space. Indices are ri:xy:pm:nx:ny...
+    my $first=shift; 
+    my $second=shift;
+    my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
+	'PDL::Complex');  
+    my $ndims=$first->ndims;
+    die "Dimensions should be equal" unless $ndims == $second->ndims;
+    #dimensions are like ri:xy:pm:nx:ny
+    #First reverse all reciprocal dimensions
+    my $sl=":,:" #slice to keep complex and vector dimension
+	. ", -1:0" #interchange spinor components +- to -+
+	. (", -1:0" x ($ndims-3)); #and reverse G indices
+    my $first_mG=$first->slice($sl); #ri:xy:pm:nx:ny
+    #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
+    foreach(3..$ndims-1){ # G indices start after ri:xy:pm
+	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
+    }
+    my $prod=$first_mG->complex*$second->complex; #ri:xy:pm:nx:ny
+    # clump all except ri:xy.
+    my $result=$prod #ri:xy:pm::nx:ny
+	->reorder(3..$ndims-1,1,2,0) #nx:ny:xy:pm:ri
+	->clump(-2)  #nx*ny*xy*pm:ri
+	->mv(-1,0) #ri:nx*ny*xy*pm
+	->sumover; #ri
+    $result=$result->real unless $iscomplex;
+    return $result;
+}
+
 
 
 sub RtoG { #transform a 'complex' scalar, vector or tensorial field
@@ -254,7 +283,7 @@ Photonic::Utils
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

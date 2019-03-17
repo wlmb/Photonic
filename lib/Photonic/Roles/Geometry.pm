@@ -1,5 +1,5 @@
 package Photonic::Roles::Geometry;
-$Photonic::Roles::Geometry::VERSION = '0.010';
+$Photonic::Roles::Geometry::VERSION = '0.011';
 use Moose::Role;
 
 use PDL::Lite;
@@ -17,7 +17,7 @@ has 'L' =>(is=>'ro', isa => 'PDL', lazy=>1, builder=>'_build_L',
 has 'units'=>(is=>'ro', isa=>'ArrayRef[PDL]', lazy=>1,
      builder=>'_build_units',
      documentation=>'Basis of unit vectors');
-has 'dims' =>(is=>'ro', isa=>'Photonic::Types::ArrayOfOddInts',
+has 'dims' =>(is=>'ro', #isa=>'Photonic::Types::ArrayOfOddInts',
            init_arg=>undef, lazy=>1, builder=>'_build_dims',
            documentation=>'list of dimensions of B');
 has 'ndims' =>(is=>'ro', isa=>'Int',
@@ -112,7 +112,7 @@ sub _build_r {
 
 sub _build_G {
     my $self=shift;
-    my @N=map {($_-1)/2} @{$self->dims}; #N in 2N+1
+    my @N=map {($_-($_%2))/2} @{$self->dims}; #N
     my $G=($self->B->ndcoords)-(PDL->pdl(@N)); #vector from center.
     foreach(1..$G->ndims-1){
 	$G=$G->mv($_,0)->rotate(-$N[$_-1])->mv(0,$_); #move origin to 0,0
@@ -129,12 +129,12 @@ sub _build_GNorm { #origin set to zero here.
 }
 
 sub _build_mGNorm { #normalized negated reciprocal lattice. Leave
-    #direction 0 invariant
+    #direction 0 invariant. See _G0.
     my $self=shift;
     return -$self->GNorm;
 }
 sub _build_pmGNorm { #normalized +- reciprocal lattice. Leave
-    #direction 0 invariant
+    #direction 0 invariant. See _G0.
     #xory, +or-, nx, ny
     my $self=shift;
     return PDL->pdl($self->GNorm, $self->mGNorm)->mv(-1,1);
@@ -279,7 +279,7 @@ Photonic::Roles::Geometry
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -293,7 +293,7 @@ version 0.010
 =item (for developers)
 
     package Photonic::Geometry::FromB;
-    $Photonic::Geometry::Geometry::VERSION = '0.010';
+    $Photonic::Geometry::Geometry::VERSION = '0.011';
     use namespace::autoclean;
     use Moose;
     has 'B' =>(is=>'ro', isa=>'PDL', required=>1,

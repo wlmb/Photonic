@@ -1,5 +1,5 @@
 package Photonic::Types;
-$Photonic::Types::VERSION = '0.010';
+$Photonic::Types::VERSION = '0.011';
 use Moose::Util::TypeConstraints;
 #use PDL::Lite;
 #use PDL::NiceSlice;

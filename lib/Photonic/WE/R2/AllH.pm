@@ -4,7 +4,7 @@ Photonic::WE::R2::AllH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -102,7 +102,7 @@ Array of Haydock g coefficients
 =cut
 
 package Photonic::WE::R2::AllH;
-$Photonic::WE::R2::AllH::VERSION = '0.010';
+$Photonic::WE::R2::AllH::VERSION = '0.011';
 use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;

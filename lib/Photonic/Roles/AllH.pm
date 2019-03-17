@@ -4,7 +4,7 @@ Photonic::Roles::AllH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -22,7 +22,7 @@ version 0.010
 =item (for developers)
 
     package Photonic::LE::NR2::AllH;
-    $Photonic::LE::NR2::AllH::VERSION= '0.010';
+    $Photonic::LE::NR2::AllH::VERSION= '0.011';
     use namespace::autoclean;
     use Moose;
     has...
@@ -96,17 +96,21 @@ Array of Haydock b coefficients squared
 =cut
 
 package Photonic::Roles::AllH;
-$Photonic::Roles::AllH::VERSION = '0.010';
-use Moose::Role;
+$Photonic::Roles::AllH::VERSION = '0.011';
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
+
+use IO::File;
+use Storable qw(store_fd);
+use PDL::IO::Storable;
 use Carp;
+use Moose::Role;
 
 has nh=>(is=>'ro', required=>1, 
          documentation=>'Maximum number of desired Haydock coefficients');
 has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepstates',
-         documentation=>'flag to save Haydock states');
+         documentation=>'flag to keep Haydock states');
 has states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', 
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
@@ -125,6 +129,16 @@ has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved g coefficients');
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag'); 
+has 'stateFN'=>(is=>'ro', required=>1, default=>undef, 
+		documentation=>'Filename to save Haydock states');
+has 'stateFD'=>(is=>'ro', init_arg=>undef, builder=>'_build_stateFD',
+		lazy=>1, documentation=>'Filedescriptor to save
+		Haydock states');  
+
+#provided by OneH instance  
+requires qw(iterate _iterate_indeed magnitude innerProduct
+    _checkorthogonalize);
+
 
 sub BUILD {
     my $self=shift;
@@ -132,13 +146,18 @@ sub BUILD {
     $self->_keepstates(1) if  $self->reorthogonalize;
 }
 
+sub _build_stateFD {
+    my $self=shift;
+    my $fn=$self->stateFN;
+    croak "You didn't provide a stateFN" unless defined $fn;
+    my $fh=IO::File->new($fn, "w+")
+	or croak "Couldn't open ".$self->stateFN.": $!";
+    return $fh;
+}
 
+    
 #I use before and after trick (below), as a[n] is calculated together
 #with b[n+1] in each iteration
-
-#provided by OneH instance  
-requires qw(iterate _iterate_indeed magnitude innerProduct
-    _checkorthogonalize);
 
 before 'states' => sub {
     my $self=shift;
@@ -168,8 +187,11 @@ sub run { #run the iteration
 
 sub _save_state {
     my $self=shift;
-    return unless $self->keepStates;
-    push @{$self->states}, $self->nextState;
+    push @{$self->states}, $self->nextState if $self->keepStates;
+    return unless defined $self->stateFN;
+    my $fh=$self->stateFD;
+    store_fd \$self->nextState, $fh or croak "Couldn't store state:
+    $!";
 }
 
 sub _save_b {

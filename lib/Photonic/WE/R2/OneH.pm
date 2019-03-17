@@ -1,5 +1,5 @@
 package Photonic::WE::R2::OneH;
-$Photonic::WE::R2::OneH::VERSION = '0.010';
+$Photonic::WE::R2::OneH::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -15,18 +15,18 @@ use Photonic::Utils qw(MHProd);
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
     handles=>[qw(B ndims dims epsilon)],required=>1);
 has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
-with 'Photonic::Roles::OneH';
+with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 
 
 sub applyOperator {
     my $self=shift;
     my $psi=shift;
+    my $mask=undef;
+    $mask=$self->mask if $self->use_mask;
     my $gpsi=$self->applyMetric($psi);
     # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
     # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
@@ -37,6 +37,9 @@ sub applyOperator {
     #Bpsi_r is RorI nx ny nz  xyz
     #Transform to reciprocal space, move xyz back and make complex, 
     my $psi_G=fftn($Bgpsi_r, $self->ndims)->mv(-1,1)->complex;
+    #Apply mask
+    #psi_G is ri:xy:nx:ny mask is nx:ny
+    $psi_G=$psi_G*$mask->(*1) if defined $mask; #use dummy for xy
     return $psi_G;
 }
 
@@ -111,7 +114,7 @@ Photonic::OneH::R2
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

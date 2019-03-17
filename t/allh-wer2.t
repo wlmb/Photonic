@@ -3,8 +3,6 @@ use warnings;
 use PDL;
 use PDL::NiceSlice;
 use PDL::Complex;
-
-use lib qw(/home/gortiz/Metas/Photonic/PhotonicWLM/lib);
 use Photonic::Geometry::FromB;
 use Photonic::WE::R2::Metric;
 use Photonic::WE::R2::AllH;
@@ -39,49 +37,43 @@ ok(agree(pdl($b2s->[1]), $g->f*(1-$g->f)), "1D L b_1^2");
 ok(agree(pdl($as->[0]), $g->f), "1D L a_0");
 ok(agree(pdl($as->[1]), 1-$g->f), "1D L a_1");
 ok(agree(pdl($b2s), pdl($bs)**2), "1D L b2==b^2");
-my @N=(10,20,30,40,50);
-foreach(@N){
-diag("check reorthogonalize with square array, N=" .($_+1)); 
-diag("Particle" . " ");
-my $Bs=zeroes(($_+1),($_+1))->rvals<($_+1)/3;
+#check reorthogonalize with square array
+my $Bs=zeroes(15,15)->rvals<5;
 my $gs=Photonic::Geometry::FromB->new(B=>$Bs);
-my $ms=Photonic::WE::R2::Metric->new(geometry=>$gs, epsilon=>pdl(2),
+my $ms=Photonic::WE::R2::Metric->new(geometry=>$gs, epsilon=>pdl(1),
    wavenumber=>pdl(.01), wavevector=>pdl([.001,0]));
 my $als=Photonic::WE::R2::AllH
-    ->new(metric=>$ms, polarization=>r2C(pdl([0,1])), nh=>2*($_+1)*($_+1),
+    ->new(metric=>$ms, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
     reorthogonalize=>1, accuracy=>machine_epsilon(),
     noise=>1e0*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
 $als->run;
-ok($als->iteration <= ($_+1)*($_+1), "No more iterations than dimensions");
+ok($als->iteration <= 15*15, "No more iterations than dimensions");
 diag("Actual iterations: " . $als->iteration 
      . " Actual orthogonalizations: ", $als->orthogonalizations);
-diag("Hole" . " ");
 #check reorthogonalize again with square array
-my $B1s=zeroes(($_+1),($_+1))->rvals>($_+1)/3; #($_+1),($_+1), 2
+my $B1s=zeroes(21,21)->rvals>2; #21,21, 2
 my $g1s=Photonic::Geometry::FromB->new(B=>$B1s, L=>pdl(1,1));
-my $m1s=Photonic::WE::R2::Metric->new(geometry=>$g1s, epsilon=>pdl(2),
-   wavenumber=>pdl(0.01), wavevector=>pdl([0.001,0]));
+my $m1s=Photonic::WE::R2::Metric->new(geometry=>$g1s, epsilon=>pdl(10),
+   wavenumber=>pdl(3.6), wavevector=>pdl([1.01*3.6,0]));
 my $al1s=Photonic::WE::R2::AllH
-    ->new(metric=>$m1s, polarization=>r2C(pdl([0,1])), nh=>2*($_+1)*($_+1),
+    ->new(metric=>$m1s, polarization=>r2C(pdl([0,1])), nh=>3*21*21,
     reorthogonalize=>1, accuracy=>machine_epsilon(),
-    noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
+    noise=>1e3*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
 $al1s->run;
-ok($al1s->iteration <= 2*($_+1)*($_+1), "No more iterations than dimensions");
+ok($al1s->iteration <= 2*21*21, "No more iterations than dimensions");
 diag("Actual iterations: " . $al1s->iteration 
      . " Actual orthogonalizations: ", $al1s->orthogonalizations);
 
-diag("check reorthogonalize again with square array even number, N=" . $_);
-my $B2s=zeroes($_,$_)->rvals>$_/2; 
+#check reorthogonalize again with square array even number
+my $B2s=zeroes(10,10)->rvals>4; 
 my $g2s=Photonic::Geometry::FromB->new(B=>$B2s, L=>pdl(1,1));
-my $m2s=Photonic::WE::R2::Metric->new(geometry=>$g2s, epsilon=>pdl(2),
+my $m2s=Photonic::WE::R2::Metric->new(geometry=>$g2s, epsilon=>pdl(10),
    wavenumber=>pdl(3.6), wavevector=>pdl([1.01*3.6,0]));
 my $al2s=Photonic::WE::R2::AllH
-    ->new(metric=>$m2s, polarization=>r2C(pdl([0,1])), nh=>2*$_*$_,
+    ->new(metric=>$m2s, polarization=>r2C(pdl([0,1])), nh=>3*10*10,
     reorthogonalize=>1, accuracy=>machine_epsilon(),
     noise=>1e0*machine_epsilon(), normOp=>1e0, smallH=>1e-7, use_mask=>1);   
 $al2s->run;
-ok($al2s->iteration <= 2*$_*$_, "No more iterations than dimensions");
+ok($al2s->iteration <= 2*10*10, "No more iterations than dimensions");
 diag("Actual iterations: " . $al2s->iteration 
      . " Actual orthogonalizations: ", $al2s->orthogonalizations);
-diag(" ");
-}

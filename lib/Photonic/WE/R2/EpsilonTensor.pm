@@ -4,7 +4,7 @@ Photonic::WE::R2::EpsilonTensor
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -61,7 +61,7 @@ The macroscopic dielectric tensor of the last operation
 =cut
 
 package Photonic::WE::R2::EpsilonTensor;
-$Photonic::WE::R2::EpsilonTensor::VERSION = '0.010';
+$Photonic::WE::R2::EpsilonTensor::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

@@ -1,5 +1,5 @@
 package Photonic::Roles::ReorthogonalizeR;
-$Photonic::Roles::ReorthogonalizeR::VERSION = '0.010';
+$Photonic::Roles::ReorthogonalizeR::VERSION = '0.011';
 use Moose::Role;
 use Machine::Epsilon;
 use PDL::Lite;
@@ -19,7 +19,6 @@ has 'current_W' =>(is=>'ro',
 has 'next_W' =>(is=>'ro',
      writer=>'_next_W', lazy=>1, init_arg=>undef,
      builder=>'_build_next_W',		
-     #default=>sub {PDL->pdl([1])},
      documentation=>"Next row of error matrix"
 );
 has 'accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
@@ -64,7 +63,6 @@ sub _checkorthogonalize {
     my $a=PDL->pdl($self->as);
     my $b=PDL->pdl($self->bs);
     my $c=PDL->pdl($self->cs);
-    my $g=PDL->pdl($self->gs);
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
@@ -82,11 +80,15 @@ sub _checkorthogonalize {
     return unless $n>=2;
     my $max=$next_W->(0:-2)->maximum;
     if($max > sqrt($self->accuracy)){
-	#recalculate the las two states with full reorthogonalization
-	$self->_fullorthogonalize_N(1); #2 states, but check until 3d state
+	#recalculate the last two states with full reorthogonalization
+	my $orthos=1; #number of reorthogonalizations
+	$self->_fullorthogonalize_N($orthos+1); #1 states, but check
+				#until 2nd state 
 	$self->_pop; #undoes stack
 	if($n>3){ #usual case
-	    $self->_fullorthogonalize_N(3); #2 states, but check until 3d state
+	    ++$orthos;
+	    $self->_fullorthogonalize_N($orthos+1); #2 states, but
+				#check until 3d state  
 	    $self->_pop; #undo stack again
 	}
 	$current_W(0:-2).=$self->noise;

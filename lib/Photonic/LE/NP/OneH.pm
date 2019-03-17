@@ -4,7 +4,7 @@ Photonic::LE::NP::OneH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -92,7 +92,7 @@ next_b2, next_b, shifting the current values where necessary. Returns
 =cut
 
 package Photonic::LE::NP::OneH;
-$Photonic::LE::NP::OneH::VERSION = '0.010';
+$Photonic::LE::NP::OneH::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

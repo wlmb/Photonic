@@ -4,7 +4,7 @@ Photonic::LE::S::EpsTensor
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -86,7 +86,7 @@ don't check. From Photonic::Roles::EpsParams.
 =cut
 
 package Photonic::LE::S::EpsTensor;
-$Photonic::LE::S::EpsTensor::VERSION = '0.010';
+$Photonic::LE::S::EpsTensor::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -100,12 +100,13 @@ use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::EpsParams';
 
-has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
+has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
+		builder=> '_build_epsilon');
+my $ghandles={map {$_=>$_} qw(B ndims dims r G GNorm L scale f)};
+$ghandles->{epsilonFromG}='epsilon';
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
-    handles=>[qw(B dims r G GNorm L scale f)],required=>1
+    handles=>$ghandles,required=>1
 );
-with 'Photonic::Roles::KeepStates';
-with 'Photonic::Roles::EpsParams';
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
 has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::S::AllH]',
@@ -120,6 +121,13 @@ has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All EpsL evaluations converged in last evaluation'); 
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
+    'Photonic::Roles::UseMask';
+
+sub _build_epsilon {
+    my $self=shift;
+    return $self->epsilonFromG;
+}
 
 sub _build_epsTensor {
     my $self=shift;
@@ -158,7 +166,9 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
 	my $nr=Photonic::LE::S::AllH->new(
 	    epsilon=>$self->epsilon, geometry=>$g, smallH=>$self->smallH, 
 	    nh=>$self->nh, keepStates=>$self->keepStates,
-	    reorthogonalize=>$self->reorthogonalize);
+	    reorthogonalize=>$self->reorthogonalize,
+	    use_mask=>$self->use_mask,
+	    mask=>$self->mask);
 	push @nr, $nr;
     }
     return [@nr]

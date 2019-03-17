@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromB;
-$Photonic::Geometry::FromB::VERSION = '0.010';
+$Photonic::Geometry::FromB::VERSION = '0.011';
 use namespace::autoclean;
 use Moose;
 
@@ -20,7 +20,7 @@ Photonic::Geometry::FromB
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

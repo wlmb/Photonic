@@ -5,7 +5,8 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::WE::R2::Metric;
-use Test::More tests => 7;
+use Photonic::WE::S::Metric;
+use Test::More tests => 9;
 
 #my $pi=4*atan2(1,1);
 
@@ -35,3 +36,18 @@ ok(agree($v->((1),(1)), ones(1,11)),
 			"Longitudinal component of metric in 2D");
 ok(agree($v->((0),(0)), 2/(2-((pdl([0,1])+$g->G)**2)->sumover)),
 			"Transverse component of metric in 2D");
+
+my $gsGG=Photonic::WE::S::Metric->new(geometry=>$g, epsilon=>pdl(3),
+   wavenumber=>pdl(1), wavevector=>pdl([1,1])); 
+my $vs=$gsGG->value;
+
+$gGG=Photonic::WE::R2::Metric->new(geometry=>$g, epsilon=>pdl(3),
+   wavenumber=>pdl(1), wavevector=>pdl([1,1])); 
+$v=$gGG->value;
+
+ok(agree($vs->(:,:,(0)), $v), "S and R2 metrics agree for k");
+$gGG=Photonic::WE::R2::Metric->new(geometry=>$g, epsilon=>pdl(3),
+   wavenumber=>pdl(1), wavevector=>-pdl([1,1])); 
+$v=$gGG->value;
+
+ok(agree($vs->(:,:,(1)), $v), "S and R2 metrics agree for -k");

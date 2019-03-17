@@ -4,7 +4,7 @@ Photonic::LE::NR2::OneH;
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -86,7 +86,7 @@ next_b2, next_state, shifting the current values where necessary. Returns
 =cut
 
 package Photonic::LE::NR2::OneH;
-$Photonic::LE::NR2::OneH::VERSION = '0.010';
+$Photonic::LE::NR2::OneH::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -102,8 +102,7 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
-
-with 'Photonic::Roles::OneH';
+with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
@@ -116,7 +115,9 @@ sub _firstState { #\delta_{G0}
 sub applyOperator { 
     my $self=shift;
     my $psi_G=shift;
-    # ri=real or imaginary, i, j=cartesian
+    my $mask=undef;
+    $mask=$self->mask if $self->use_mask;
+    # ri:nx:ny
     #state is ri:nx:ny:... gnorm=i:nx:ny...
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest 
@@ -139,6 +140,7 @@ sub applyOperator {
 	->mv(-1,1)->sumover; #^G.B^G|psi>
     # Result is ri:nx:ny,...
     #Normalization should have been taken care of by fftw3
+    $GBGpsi_G=$GBGpsi_G*$mask if defined $mask;
     return $GBGpsi_G;
 }
 

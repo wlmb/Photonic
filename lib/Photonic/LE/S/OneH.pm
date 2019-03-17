@@ -4,7 +4,7 @@ Photonic::LE::S::OneH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -93,7 +93,7 @@ next_b2, next_b, shifting the current values where necessary. Returns
 =cut
 
 package Photonic::LE::S::OneH;
-$Photonic::LE::S::OneH::VERSION = '0.010';
+$Photonic::LE::S::OneH::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -112,7 +112,7 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     );
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH';
+with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 
 sub _epsilon {
     my $self=shift;
@@ -125,7 +125,7 @@ sub _epsilon {
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
-    my $v=PDL->zeroes(2,2,@{$self->dims})->complex; #RorI,pmk, nx, ny...
+    my $v=PDL->zeroes(2,2,@{$self->dims})->complex; #ri:pm:nx:ny
     my $arg="(0),:" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1/sqrt(2); 
     return $v;
@@ -133,16 +133,21 @@ sub _firstState { #\delta_{G0}
 sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
+    my $mask=undef;
+    $mask=$self->mask if $self->use_mask;
     confess "State should be complex" unless $psi_G->isa('PDL::Complex');
     #Each state is a spinor with two wavefunctions \psi_{k,G} and
-    #\psi_{-k,G}, thus the index plus or minus k, pmk.
-    #Notation ri=real or imaginary, pmk=+ or - k, i,j=cartesian
-    #state is ri:pmk:nx:ny... pmGnorm=i:pmk:nx:ny...
+    #\psi_{-k,G}, thus the index plus or minus k, pm.
+    #Notation ri=real or imaginary, pm=+ or - k, xy=cartesian
+    #state is ri:pmk:nx:ny... pmGnorm=xy:pmk:nx:ny...
     #Multiply by vectors ^G and ^(-G).
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest 
     my $Gpsi_G=($psi_G*$self->pmGNorm->mv(0,-1))->mv(1,-1); #^G |psi>
     #the result is complex ri:nx:ny...i:pmk
+    # Notice that I actually multiply by unit(k-G) instead of
+    # unit(-k+G) when I use pmGNorm; as I do it two times, the result
+    # is the same.
     #Take inverse Fourier transform over all space dimensions,
     #thread over cartesian and pmk indices
     #Notice that (i)fftn wants a real 2,nx,ny... piddle, not a complex
@@ -164,6 +169,8 @@ sub applyOperator {
 	# ri:pmk:nx:ny...:i
 	# Move cartesian to front and sum over
 	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
+    # $GeGpsi_G is ri:pm:nx:ny. $mask=nx:ny
+    $GeGpsi_G=$GeGpsi_G*$mask->(*1) if defined $mask;
     return $GeGpsi_G;
 }
 sub innerProduct {

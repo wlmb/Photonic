@@ -4,7 +4,7 @@ Photonic::LE::NP::AllH
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -82,7 +82,7 @@ Array of Haydock b coefficients squared
 =cut
 
 package Photonic::LE::NP::AllH;
-$Photonic::LE::NP::AllH::VERSION = '0.010';
+$Photonic::LE::NP::AllH::VERSION = '0.011';
 use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;

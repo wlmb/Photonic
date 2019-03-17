@@ -4,7 +4,7 @@ Photonic::LE::NR2::Field
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -98,7 +98,7 @@ evaluation of the field
 =cut
 
 package Photonic::LE::NR2::Field;
-$Photonic::LE::NR2::Field::VERSION = '0.010';
+$Photonic::LE::NR2::Field::VERSION = '0.011';
 
 use namespace::autoclean;
 use PDL::Lite;

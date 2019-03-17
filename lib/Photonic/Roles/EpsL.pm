@@ -4,7 +4,7 @@ Photonic::Roles::EpsL
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -17,7 +17,7 @@ version 0.010
 =item (for developers)
 
     package Photonic::LE::NR2::EpsL;
-    $Photonic::LE::NR2::EpsL::VERSION= '0.010';
+    $Photonic::LE::NR2::EpsL::VERSION= '0.011';
     use namespace::autoclean;
     use Moose;
     with 'Photonic::Roles::EpsL';
@@ -101,7 +101,7 @@ check. From Photonic::Roles::EpsParams
 =cut
 
 package Photonic::Roles::EpsL;
-$Photonic::Roles::EpsL::VERSION = '0.010';
+$Photonic::Roles::EpsL::VERSION = '0.011';
 use Moose::Role;
 use PDL::Lite;
 use PDL::NiceSlice;

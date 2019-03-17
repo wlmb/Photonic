@@ -1,11 +1,14 @@
 # Build.PL
 # Use to build the package Photonic
-our $VERSION = '0.010';
+our $VERSION = '0.011';
     
 use strict;
 use warnings;
 use PDL::Core::Dev;
 use ExtUtils::F77 1.23;
+#use Module::Build::Pluggable ('PDL', 'Fortran');
+use Module::Build::Pluggable::PDL;
+use Module::Build::Pluggable::Fortran 0.27;
 use Module::Build::Pluggable ('PDL', 'Fortran');
 
 my $builder = Module::Build::Pluggable->new(

@@ -71,61 +71,72 @@ ok(Cagree($ecv, $ecx, 1e-4), "Chess board");
 #diag(pdl($ac->bs)->complex);
 is($eco->converged,1, "Converged");
 
-#Test mortola
-
-my $nh=300;
-$N=40;
-my $l=1;
-my $epsA=1+2*i;
-my $epsB=3+4*i;
-my $epsC=5+6*i;
-my $epsD=7+8*i;
-my $eimpar=FourPhasesImpar($N,$epsA,$epsB,$epsC,$epsD);
-my $epar=FourPhasesPar($N,$epsA,$epsB,$epsC,$epsD);
-
-my %epsM=(
-xx=>sqrt($epsA*$epsB*$epsC*$epsD*(1/$epsA+1/$epsB+1/$epsC+1/$epsD)*($epsA+$epsB)*($epsC+$epsD)/(($epsA+$epsB+$epsC+$epsD)*($epsA+$epsD)*($epsC+$epsB))),
-yy=>sqrt($epsA*$epsB*$epsC*$epsD*(1/$epsA+1/$epsB+1/$epsC+1/$epsD)*($epsA+$epsD)*($epsC+$epsB)/(($epsA+$epsB+$epsC+$epsD)*($epsA+$epsB)*($epsC+$epsD)))
-);
-
-my ($g,$allh,$nr)=(PDL->null,PDL->null,PDL->null);
-my %dir=(xx=>pdl(1,0),yy=>pdl(0,1));
-my %e=(npar => $epar,nimpar =>$eimpar);
-foreach my $np (keys %e){
-	foreach my $x (keys %dir){
-    	$g=Photonic::Geometry::FromEpsilon->new(epsilon=>$e{$np},L=>pdl($l,$l),Direction0=>$dir{$x});
-    	$allh=Photonic::LE::S::AllH->new(geometry=>$g, nh=>$nh,reorthogonalize=>1);
-    	$nr=Photonic::LE::S::EpsL->new(nr=>$allh,nh=>$nh);
-	ok(Cagree($epsM{$x},$nr->epsL,1e-3), "Mortola -dir: $x, -N: $np");
+#Test mortola. By Guille.
+{
+    my $nh=300;
+    $N=7;
+    my $l=1;
+    my $epsA=1+1.5*i;
+    my $epsB=2+2.5*i;
+    my $epsC=3+3.5*i;
+    my $epsD=4+4.5*i;
+    my $eimpar=FourPhasesImpar($N,$epsA,$epsB,$epsC,$epsD);
+    my $epar=FourPhasesPar($N,$epsA,$epsB,$epsC,$epsD);
+    
+    my %epsM=(
+	xx=>sqrt($epsA*$epsB*$epsC*$epsD
+		 * (1/$epsA + 1/$epsB +
+		    1/$epsC+1/$epsD)*($epsA+$epsB)*($epsC+$epsD) /
+		 (($epsA + $epsB + $epsC + $epsD) * ($epsA + $epsD) *
+		  ($epsC+$epsB))),  
+	yy=>sqrt($epsA*$epsB*$epsC*$epsD
+		 * (1/$epsA + 1/$epsB + 1/$epsC + 1/$epsD)
+		 * ($epsA+$epsD) * ($epsC+$epsB)
+		 / (($epsA + $epsB + $epsC + $epsD) * ($epsA+$epsB) *
+		    ($epsC+$epsD)))
+	); 
+    my ($g,$allh,$nr)=(PDL->null,PDL->null,PDL->null);
+    my %dir=(xx=>pdl(1,0),yy=>pdl(0,1));
+    my %e=(neven => $epar,nodd =>$eimpar);
+    foreach my $np (qw(neven nodd)){
+	foreach my $dir (qw(xx yy)){
+	    $g=Photonic::Geometry::FromEpsilon->new(
+		epsilon=>$e{$np},L=>pdl($l,$l),Direction0=>$dir{$dir});
+	    $allh=Photonic::LE::S::AllH->new(
+		geometry=>$g, nh=>$nh,reorthogonalize=>1);
+	    $nr=Photonic::LE::S::EpsL->new(nr=>$allh,nh=>$nh);
+	    ok(Cagree($epsM{$dir},$nr->epsL,1e-2),
+	       "Mortola -dir: $dir, -N: $np");
 	}
-}
-sub FourPhasesImpar { #checkerboard
-    my $N=shift;
-    my $eA=shift;
-    my $eB=shift;
-    my $eC=shift;
-    my $eD=shift;
-    $eB=($eB*ones($N,$N))->mv(0,-1);
-    my $z=$eB->glue(1,($eA*ones($N,$N+1))->mv(0,-1));
-    $eC=($eC*ones($N+1,$N))->mv(0,-1);
-    $z=$z->glue(0,($eC->glue(1,($eD*ones($N+1,$N+1))->mv(0,-1))));
-    $z=$z->mv(-1,0);
-    $z(,,$N).=($z(,,$N+1)+$z(,,$N-1))/2;
-    $z(,$N,).=($z(,$N+1,)+$z(,$N-1,))/2;
-    return $z;
-}
-sub FourPhasesPar { #checkerboard
-    my $N=shift;
-    my $eA=shift;
-    my $eB=shift;
-    my $eC=shift;
-    my $eD=shift;
-    $eB=($eB*ones($N,$N))->mv(0,-1);
-    my $z=$eB->glue(1,($eA*ones($N,$N))->mv(0,-1));
-    $eC=($eC*ones($N,$N))->mv(0,-1);
-    $z=$z->glue(0,($eC->glue(1,($eD*ones($N,$N))->mv(0,-1))));
-    $z=$z->mv(-1,0);
-    $z(,,$N).=($z(,,$N)+$z(,,$N-1))/2;
-    $z(,$N,).=($z(,$N,)+$z(,$N-1,))/2;
-    return $z;
+    }
+    sub FourPhasesImpar { #checkerboard
+	my $N=shift;
+	my $eA=shift;
+	my $eB=shift;
+	my $eC=shift;
+	my $eD=shift;
+	$eB=($eB*ones($N,$N))->mv(0,-1);
+	my $z=$eB->glue(1,($eA*ones($N,$N+1))->mv(0,-1));
+	$eC=($eC*ones($N+1,$N))->mv(0,-1);
+	$z=$z->glue(0,($eC->glue(1,($eD*ones($N+1,$N+1))->mv(0,-1))));
+	$z=$z->mv(-1,0);
+	$z(,,$N).=($z(,,$N+1)+$z(,,$N-1))/2;
+	$z(,$N,).=($z(,$N+1,)+$z(,$N-1,))/2;
+	return $z;
+    }
+    sub FourPhasesPar { #checkerboard
+	my $N=shift;
+	my $eA=shift;
+	my $eB=shift;
+	my $eC=shift;
+	my $eD=shift;
+	$eB=($eB*ones($N,$N))->mv(0,-1);
+	my $z=$eB->glue(1,($eA*ones($N,$N))->mv(0,-1));
+	$eC=($eC*ones($N,$N))->mv(0,-1);
+	$z=$z->glue(0,($eC->glue(1,($eD*ones($N,$N))->mv(0,-1))));
+	$z=$z->mv(-1,0);
+	$z(,,$N).=($z(,,$N)+$z(,,$N-1))/2;
+	$z(,$N,).=($z(,$N,)+$z(,$N-1,))/2;
+	return $z;
+    }
 }
