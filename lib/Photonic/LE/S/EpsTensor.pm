@@ -100,9 +100,12 @@ use Moose;
 use Photonic::Types;
 with 'Photonic::Roles::EpsParams';
 
-has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
+has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
+		builder=> '_build_epsilon');
+my $ghandles={map {$_=>$_} qw(B ndims dims r G GNorm L scale f)};
+$ghandles->{epsilonFromG}='epsilon';
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
-    handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
+    handles=>$ghandles,required=>1
 );
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
@@ -120,6 +123,11 @@ has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
                   'All EpsL evaluations converged in last evaluation'); 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
     'Photonic::Roles::UseMask';
+
+sub _build_epsilon {
+    my $self=shift;
+    return $self->epsilonFromG;
+}
 
 sub _build_epsTensor {
     my $self=shift;
