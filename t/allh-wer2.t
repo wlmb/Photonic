@@ -63,6 +63,7 @@ $al1s->run;
 ok($al1s->iteration <= 2*21*21, "No more iterations than dimensions");
 diag("Actual iterations: " . $al1s->iteration 
      . " Actual orthogonalizations: ", $al1s->orthogonalizations);
+
 #check reorthogonalize again with square array even number
 my $B2s=zeroes(10,10)->rvals>4; 
 my $g2s=Photonic::Geometry::FromB->new(B=>$B2s, L=>pdl(1,1));
