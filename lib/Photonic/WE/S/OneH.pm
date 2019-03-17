@@ -22,7 +22,7 @@ has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH';
+with 'Photonic::Roles::OneH',  'Photonic::Roles::UseMask';
 
 sub _epsilon {
     my $self=shift;
@@ -36,6 +36,8 @@ sub _epsilon {
 sub applyOperator {
     my $self=shift;
     my $psi=shift; #psi is ri:xy:pm:nx:ny
+    my $mask=undef;
+    $mask=$self->mask if $self->use_mask;
     my $gpsi=$self->applyMetric($psi);
     # gpsi is ri:xy:pm:nx:ny. Get cartesian and pm out of the way and
     # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
@@ -45,6 +47,11 @@ sub applyOperator {
     my $Hgpsi_r=$H*$gpsi_r; #ri:nx:ny:xy:pm
     #Transform to reciprocal space, move xy and pm back and make complex, 
     my $psi_G=fftn($Hgpsi_r->real, $self->ndims)->mv(-1,1)->mv(-1,1)->complex;
+    #Apply mask
+    #psi_G is ri:xy:pm:nx:ny mask is nx:ny
+    $psi_G=$psi_G*$mask->(*1,*1) if defined $mask; #use dummies for xy:pm
+    return $psi_G;
+
     return $psi_G;
 }
 

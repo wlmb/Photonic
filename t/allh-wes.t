@@ -10,7 +10,7 @@ use Photonic::WE::S::AllH;
 use Machine::Epsilon;
 use List::Util;
 
-use Test::More tests => 13;
+use Test::More tests => 14;
 
 #my $pi=4*atan2(1,1);
 
@@ -86,19 +86,34 @@ ok(Cagree(($b2st->[0]), 1), "1D L b_0^2");
 ok(Cagree(($ast->[0]), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
 
 #check reorthogonalize with square array
-my $Bs=zeroes(15,15)->rvals<5;
+my $Bs=zeroes(9,9)->rvals<4;
 my $epss=r2C((1-$Bs)+5*$Bs);
-my $gs=Photonic::Geometry::FromEpsilon->new(epsilon=>$epss);
+my $gs=Photonic::Geometry::FromEpsilon->new(epsilon=>$epss, L=>pdl(1,1));
 my $ms=Photonic::WE::S::Metric->new(geometry=>$gs, epsilon=>pdl(1),
    wavenumber=>pdl(.01), wavevector=>pdl([.001,0]));
 my $als=Photonic::WE::S::AllH
-    ->new(metric=>$ms, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
+    ->new(metric=>$ms, polarization=>r2C(pdl([0,1])), nh=>2*9*9,
     reorthogonalize=>1, accuracy=>machine_epsilon(),
     noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
 $als->run;
-ok($als->iteration < 2*15*15, "No more iterations than dimensions");
+ok($als->iteration < 2*9*9, "No more iterations than dimensions");
 diag("Actual iterations: " . $als->iteration 
      . " Actual orthogonalizations: ", $als->orthogonalizations);
+
+#check reorthogonalize with even numbers
+my $Be=zeroes(10,10)->rvals<4;
+my $epse=r2C((1-$Be)+5*$Be);
+my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$epse, L=>pdl(1,1));
+my $me=Photonic::WE::S::Metric->new(geometry=>$ge, epsilon=>pdl(1),
+   wavenumber=>pdl(.01), wavevector=>pdl([.001,0]));
+my $ale=Photonic::WE::S::AllH
+    ->new(metric=>$me, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
+    reorthogonalize=>1, accuracy=>machine_epsilon(),
+    noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7, use_mask=>1);   
+$ale->run;
+ok($ale->iteration < 2*10*10, "No more iterations than dimensions");
+diag("Actual iterations: " . $ale->iteration 
+     . " Actual orthogonalizations: ", $ale->orthogonalizations);
 
 __END__
 
@@ -116,6 +131,8 @@ $al1s->run;
 ok($al1s->iteration <= 2*21*21, "No more iterations than dimensions");
 diag("Actual iterations: " . $al1s->iteration 
      . " Actual orthogonalizations: ", $al1s->orthogonalizations);
+
+
 #foreach(@$st){
 #    my $pr=$als->innerProduct($_, $st->[0]);
 #    print "$pr\n";
