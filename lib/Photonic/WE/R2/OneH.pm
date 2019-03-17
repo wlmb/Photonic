@@ -19,12 +19,14 @@ has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
-with 'Photonic::Roles::OneH';
+with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 
 
 sub applyOperator {
     my $self=shift;
     my $psi=shift;
+    my $mask=undef;
+    $mask=$self->mask if $self->use_mask;
     my $gpsi=$self->applyMetric($psi);
     # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
     # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
@@ -35,6 +37,9 @@ sub applyOperator {
     #Bpsi_r is RorI nx ny nz  xyz
     #Transform to reciprocal space, move xyz back and make complex, 
     my $psi_G=fftn($Bgpsi_r, $self->ndims)->mv(-1,1)->complex;
+    #Apply mask
+    #psi_G is ri:xy:nx:ny mask is nx:ny
+    $psi_G=$psi_G*$mask->(*1) if defined $mask; #use dummy for xy
     return $psi_G;
 }
 
