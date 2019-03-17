@@ -43,6 +43,7 @@ lib/Photonic/Roles/Metric.pm
 lib/Photonic/Roles/OneH.pm
 lib/Photonic/Roles/ReorthogonalizeC.pm
 lib/Photonic/Roles/ReorthogonalizeR.pm
+lib/Photonic/Roles/UseMask.pm
 lib/Photonic/typemap.PL
 lib/Photonic/Types.pm
 lib/Photonic/Utils.pm
@@ -72,8 +73,6 @@ lib/Photonic/WE/S/Wave.pm
 lib/Photonic/WE/S/WaveP.pm
 LICENSE
 MANIFEST			This list of files
-META.json
-META.yml
 README
 t/00-load.t
 t/allh-np.t
@@ -81,6 +80,7 @@ t/allh-nr2.t
 t/allh-s.t
 t/allh-wer2.t
 t/allh-wes.t
+t/allh-writest.t
 t/author-critic.t
 t/author-pod-coverage.t
 t/author-pod-syntax.t
@@ -90,6 +90,7 @@ t/dgtsl.t
 t/epsl-nr2.t
 t/epsl-s.t
 t/epst-nr2.t
+t/epst-s.t
 t/epst-wes.t
 t/field-nr2.t
 t/geometry.t
@@ -107,4 +108,3 @@ t/pod.t
 t/version.t
 TODO
 xt/boilerplate.t
-Makefile.PL
