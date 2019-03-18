@@ -36,8 +36,10 @@ has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 
 sub _build_next_W {
     my $self=shift;
-    my $g_np1=$self->next_g;
-    return ($g_np1+0*i)->(:,*1);
+#    my $g_np1=$self->next_g;
+#    return ($g_np1+0*i)->(:,*1);
+    my $g_n=$self->current_g;
+    return ($g_n+0*i)->(:,*1);
 }
 
 around '_fullorthogonalize_indeed' => sub {
