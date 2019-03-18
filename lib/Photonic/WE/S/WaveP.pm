@@ -64,9 +64,9 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-#use PDL::MatrixOps;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 extends 'Photonic::WE::S::GreenP'; 
 

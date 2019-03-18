@@ -96,12 +96,14 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::LE::S::AllH;
 use Photonic::LE::S::EpsL;
-use Moose;
 use Photonic::Types;
-with 'Photonic::Roles::EpsParams';
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
 		builder=> '_build_epsilon');
+with 'Photonic::Roles::EpsParams';
+
 my $ghandles={map {$_=>$_} qw(B ndims dims r G GNorm L scale f)};
 $ghandles->{epsilonFromG}='epsilon';
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',

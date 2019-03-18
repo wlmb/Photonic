@@ -165,8 +165,9 @@ use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombine);
 use Photonic::ExtraUtils qw(cgtsl);
-use Moose;
 use PDL::Constants qw(PI);
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'shp'=>(is=>'ro', 'isa'=>'Photonic::LE::NR2::SHP', required=>1,
     handles=>[qw(ndims nrf densityA densityB density nr)],

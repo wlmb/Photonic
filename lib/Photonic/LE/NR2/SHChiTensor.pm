@@ -129,11 +129,12 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-use Moose;
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
 use Photonic::Utils qw(cmatmult);
-with 'Photonic::Roles::EpsParams';
+use Moose;
+with 'Photonic::Roles::EpsL';
+
 
 #required parameters
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
@@ -171,6 +172,7 @@ has 'epsTensor'=>(is=>'ro', isa=>'Photonic::LE::NR2::EpsTensor',
          documentation=>'diel. tensor at 2w');
 has 'chiTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_chiTensor', 
              documentation=>'SH Susceptibility from last evaluation');
+with 'Photonic::Roles::EpsParams';
 
 
 sub evaluate {

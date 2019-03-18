@@ -3,6 +3,7 @@ $Photonic::Geometry::FromEpsilon::VERSION = '0.011';
 use namespace::autoclean;
 use Carp;
 use Moose;
+use MooseX::StrictConstructor;
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
 		documentation=>'Dielectric function as function of position');

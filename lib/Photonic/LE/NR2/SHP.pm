@@ -75,10 +75,12 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
+use PDL::Constants qw(PI);
 use Photonic::Utils qw(RtoG HProd linearCombine);
 use Photonic::ExtraUtils qw(cgtsl);
 use Moose;
-use PDL::Constants qw(PI);
+use MooseX::StrictConstructor;
+
 
 has 'nrf'=>(is=>'ro', isa=>'Photonic::LE::NR2::Field', required=>1,
          documentation=>'Haydock field calculator');

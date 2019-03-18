@@ -111,9 +111,9 @@ use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::WE::R2::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
-use Moose;
 use Photonic::Types;
-with 'Photonic::Roles::EpsParams';
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,  
            documentation=>'Haydock recursion calculator');
@@ -126,6 +126,8 @@ has 'field'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
 has 'epsL' =>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
 		 writer=>'_epsL', 
 		 documentation=>'Longitudinal dielectric response');
+with 'Photonic::Roles::EpsParams';
+
 sub BUILD {
     my $self=shift;
     $self->nr->run unless $self->nr->iteration;

@@ -108,8 +108,9 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
        handles=>[qw(geometry B dims ndims r G GNorm L scale f)],required=>1);

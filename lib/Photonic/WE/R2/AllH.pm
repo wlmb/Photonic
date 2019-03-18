@@ -108,8 +108,9 @@ use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::Utils qw(MHProd);
-use Moose;
 use Carp;
+use Moose;
+use MooseX::StrictConstructor;
 
 extends 'Photonic::WE::R2::OneH';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeR';

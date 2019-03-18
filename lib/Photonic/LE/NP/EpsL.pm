@@ -81,8 +81,9 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::LE::NP::AllH;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 with 'Photonic::Roles::EpsParams';
 has 'nr' =>(is=>'ro', isa=>'Photonic::LE::NP::AllH', required=>1);

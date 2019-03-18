@@ -85,6 +85,7 @@ package Photonic::WE::S::AllH;
 $Photonic::WE::S::AllH::VERSION = '0.011';
 use namespace::autoclean;
 use Moose;
+use MooseX::StrictConstructor;
 extends 'Photonic::WE::S::OneH';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeC';
 

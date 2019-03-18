@@ -85,14 +85,15 @@ use Photonic::Types;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
 use Moose;
-
-with 'Photonic::Roles::EpsL';
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'nr' =>(is=>'ro', isa=>'Photonic::LE::S::AllH', required=>1);
 has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsL');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
+with 'Photonic::Roles::EpsL';
 
 after BUILD => sub {
     my $self=shift;

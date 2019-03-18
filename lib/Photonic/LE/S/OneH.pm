@@ -101,9 +101,10 @@ use PDL::FFTW3;
 use PDL::Complex;
 use List::Util;
 use Carp;
-use Moose;
 use Photonic::Types;
 use Photonic::Utils qw(SProd);
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
 		builder=>'_epsilon');  

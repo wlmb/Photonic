@@ -96,16 +96,16 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::LE::NP::AllH;
 use Photonic::LE::NP::EpsL;
-use Moose;
 use Photonic::Types;
-with 'Photonic::Roles::EpsParams';
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1
 );
-with 'Photonic::Roles::KeepStates';
-with 'Photonic::Roles::EpsParams';
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams';
+
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
 has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NP::AllH]',

@@ -108,8 +108,9 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::WE::S::AllH;
 use Photonic::WE::S::GreenP;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
 	    documentation=>'Desired no. of Haydock coefficients');

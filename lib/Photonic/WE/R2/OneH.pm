@@ -8,8 +8,7 @@ use PDL::Complex;
 use List::Util;
 use Carp;
 use Moose;
-#use Photonic::Types;
-#with 'Photonic::Roles::EpsParams';
+use MooseX::StrictConstructor;
 use Photonic::Utils qw(MHProd);
 
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',

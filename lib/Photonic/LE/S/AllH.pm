@@ -88,6 +88,9 @@ use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Moose;
+use Moose;
+use MooseX::StrictConstructor;
+
 extends 'Photonic::LE::S::OneH';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeC';
 

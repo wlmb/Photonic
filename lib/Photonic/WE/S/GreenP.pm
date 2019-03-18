@@ -89,8 +89,9 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::WE::S::AllH;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
 	    documentation=>'Desired no. of Haydock coefficients');

@@ -68,8 +68,9 @@ use PDL::MatrixOps;
 use Storable qw(dclone store);
 use PDL::IO::Storable;
 #use Photonic::WE::S::AllH;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 extends 'Photonic::WE::S::Green'; 
 

@@ -94,9 +94,10 @@ use PDL::FFTW3;
 use PDL::Complex;
 use List::Util;
 use Carp;
-use Moose;
 use Photonic::Types;
 use Photonic::Utils qw(HProd);
+use Moose;
+use MooseX::StrictConstructor;
 
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);

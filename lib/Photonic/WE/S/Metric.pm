@@ -54,8 +54,9 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use List::Util;
 use Carp;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 # Later make it complex
 has 'value'     => (is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,

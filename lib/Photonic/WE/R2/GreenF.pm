@@ -109,8 +109,9 @@ use PDL::IO::Storable;
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
 use Photonic::WE::R2::Green;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 
 extends 'Photonic::WE::R2::Green';

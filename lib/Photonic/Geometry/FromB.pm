@@ -2,6 +2,7 @@ package Photonic::Geometry::FromB;
 $Photonic::Geometry::FromB::VERSION = '0.011';
 use namespace::autoclean;
 use Moose;
+use MooseX::StrictConstructor;
 
 has 'B' =>(is=>'ro', isa=>'PDL', required=>1,
 	   documentation=>'charateristic function');

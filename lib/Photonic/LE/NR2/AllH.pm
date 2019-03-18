@@ -72,6 +72,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 #use Photonic::Utils qw(HProd);
 use Moose;
+use MooseX::StrictConstructor;
 extends 'Photonic::LE::NR2::OneH';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeR';
 

@@ -93,8 +93,9 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::WE::R2::AllH;
-use Moose;
 use Photonic::Types;
+use Moose;
+use MooseX::StrictConstructor;
 
 with 'Photonic::Roles::EpsParams'; #nh, smallE, epsA, epsB, u
 has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::R2::AllH', required=>1);

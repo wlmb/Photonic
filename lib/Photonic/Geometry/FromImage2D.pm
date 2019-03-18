@@ -67,6 +67,7 @@ package Photonic::Geometry::FromImage2D;
 $Photonic::Geometry::FromImage2D::VERSION = '0.011';
 use namespace::autoclean;
 use Moose;
+use MooseX::StrictConstructor;
 
 BEGIN {
 # Put inoffensive path. Or else, PDL::IO::Pic fails in taint mode. 

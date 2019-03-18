@@ -44,7 +44,7 @@ ok(Cagree($flv, $flx), "1D long field");
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
 my $nt=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10, keepStates=>1);
-my $fto=Photonic::LE::NR2::Field->new(geometry=>$gt, nr=>$nt, nh=>10);
+my $fto=Photonic::LE::NR2::Field->new(nr=>$nt, nh=>10);
 my $ftv=$fto->evaluate($ea, $eb);
 my $ftx=pdl(r2C(1), r2C(0))->complex;
 ok(Cagree($ftv, $ftx), "1D trans field");

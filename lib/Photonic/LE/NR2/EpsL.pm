@@ -101,8 +101,7 @@ use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
 
 use Moose;
-
-with 'Photonic::Roles::EpsL';
+use MooseX::StrictConstructor;
 
 has 'epsA'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA',
     documentation=>'Dielectric function of host');
@@ -110,6 +109,7 @@ has 'epsB'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB',
         documentation=>'Dielectric function of inclusions');
 has 'u'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
+with 'Photonic::Roles::EpsL';
 
 sub evaluate {
     my $self=shift;
