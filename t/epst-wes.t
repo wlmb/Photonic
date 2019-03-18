@@ -30,7 +30,7 @@ sub Cagree {
 #Non-retarded limit
 my ($ea, $eb)=(1+2*i,3+4*i);
 my $f=6/11;
-my $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i; 
+my $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5)+0*i; 
 my $g=Photonic::Geometry::FromEpsilon
     ->new(epsilon=>$eps); 
 my $m=Photonic::WE::S::Metric->new(

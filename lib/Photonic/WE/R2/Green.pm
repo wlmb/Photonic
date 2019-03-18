@@ -125,7 +125,10 @@ has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All greenP evaluations converged in last evaluation'); 
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams', 'Photonic::Roles::UseMask';
+has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
+         documentation=>'Reorthogonalize haydock flag');
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
+    'Photonic::Roles::UseMask';  
 
 sub evaluate {
     my $self=shift;

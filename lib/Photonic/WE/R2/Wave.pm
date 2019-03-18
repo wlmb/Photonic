@@ -93,19 +93,7 @@ around 'evaluate' => sub {
     return $wave;
 };
 
-# I guess having around and after evaluate might be wrong
-# Worries me as this is the old wave routine.
-after 'evaluate' => sub {
-    my $self=shift;
-    return unless $self->outputfilename;
-    my $hay=$self->haydock;
-    my $oname=$self->outputfilename;
-    store $hay, $oname;
-};
-
-
 __PACKAGE__->meta->make_immutable;
     
 1;
 
-__END__
