@@ -33,6 +33,10 @@ has fullorthogonalize_N=>(is=>'ro', init_arg=>undef, default=>0,
 			  documentation=>'# desired reorthogonalizations'); 
 has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 			   writer=>'_orthogonalizations');
+has '_justorthogonalized'=>(
+    is=>'ro', init_arg=>undef, default=>0,
+    writer=>'_write_justorthogonalized',
+    documentation=>'Flag I just orthogonnalized');
 
 sub _build_next_W {
     my $self=shift;
@@ -49,6 +53,7 @@ around '_fullorthogonalize_indeed' => sub {
     return $psi unless $self->fullorthogonalize_N;
     $self->_fullorthogonalize_N($self->fullorthogonalize_N-1);
     $self->_orthogonalizations($self->orthogonalizations+1);
+    $self->_write_justorthogonalized(1);
     foreach(pairwise {[$a, $b]} @{$self->states}, @{$self->gs}){
 	#for every saved state
 	my ($s, $g)=($_->[0], $_->[1]); #state, metric
@@ -66,6 +71,18 @@ sub _checkorthogonalize {
     my $a=PDL->pdl($self->as)->complex;
     my $b=PDL->pdl($self->bs)->complex;
     my $c=PDL->pdl($self->cs)->complex;
+    if($self->_justorthogonalized){
+	$self->_write_justorthogonalized(0);
+	my $current_W=PDL->ones($n)*r2C($self->noise);
+	my $next_W=PDL->ones($n+1)*r2C($self->noise);
+	$current_W->(:,-1).=r2C($self->current_g);
+	$next_W->(:,-1).=r2C($self->next_g);
+	$self->_current_W($current_W);
+	$self->_next_W($next_W);
+	return;
+    }
+
+
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W;
@@ -89,20 +106,16 @@ sub _checkorthogonalize {
     if($max > sqrt($self->accuracy)){
 	#recalculate the last two states with full reorthogonalization
 	my $orthos=1; #number of reorthogonalizations
-	$self->_fullorthogonalize_N($orthos+1); #1 states, but check
+	$self->_fullorthogonalize_N($orthos); #1 states, but check
 				#until 2nd state 
 	$self->_pop; #undoes stack
 	if($n>3){ #usual case
 	    ++$orthos;
-	    $self->_fullorthogonalize_N($orthos+1); #2 states, but
+	    $self->_fullorthogonalize_N($orthos); #2 states, but
 				#check until 3d state  
 	    $self->_pop; #undo stack again
 	}
-	$current_W(:,0:-2).=r2C($self->noise);
-	$next_W(:,0:-2).=r2C($self->noise);
     }
-    $self->_current_W($current_W);
-    $self->_next_W($next_W);
 }
 
 sub _arg {

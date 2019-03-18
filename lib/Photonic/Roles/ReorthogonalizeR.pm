@@ -32,10 +32,13 @@ has fullorthogonalize_N=>(is=>'ro', init_arg=>undef, default=>0,
 			  documentation=>'# desired reorthogonalizations'); 
 has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 			   writer=>'_orthogonalizations');
+has '_justorthogonalized'=>(
+    is=>'ro', init_arg=>undef, default=>0,
+    writer=>'_write_justorthogonalized',
+    documentation=>'Flag I just orthogonnalized');
 
 sub _build_next_W {
     my $self=shift;
-#    my $g_np1=$self->next_g;
 #    my $g_np1=$self->next_g;
 #    return PDL->pdl([$g_np1]);
     my $g_n=$self->current_g;
@@ -50,6 +53,7 @@ around '_fullorthogonalize_indeed' => sub {
     return $psi unless $self->fullorthogonalize_N;
     $self->_fullorthogonalize_N($self->fullorthogonalize_N-1);
     $self->_orthogonalizations($self->orthogonalizations+1);
+    $self->_write_justorthogonalized(1);
     foreach(pairwise {[$a, $b]} @{$self->states}, @{$self->gs}){
 	#for every saved state
 	my ($s, $g)=($_->[0], $_->[1]); #state, metric
@@ -67,6 +71,16 @@ sub _checkorthogonalize {
     my $a=PDL->pdl($self->as);
     my $b=PDL->pdl($self->bs);
     my $c=PDL->pdl($self->cs);
+    if($self->_justorthogonalized){
+	$self->_write_justorthogonalized(0);
+	my $current_W=PDL->ones($n)*$self->noise;
+	my $next_W=PDL->ones($n+1)*$self->noise;
+	$current_W->(-1).=$self->current_g;
+	$next_W->(-1).=$self->next_g;
+	$self->_current_W($current_W);
+	$self->_next_W($next_W);
+	return;
+    }
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
@@ -81,25 +95,21 @@ sub _checkorthogonalize {
     $next_W=$next_W->append($self->noise) if $n>=1;
     $next_W=$next_W->append($self->next_g);
     $self->_next_W($next_W);
-    return unless $n>=2;
+    return unless $n>=2; 
     my $max=$next_W->(0:-2)->maximum;
     if($max > sqrt($self->accuracy)){
 	#recalculate the last two states with full reorthogonalization
 	my $orthos=1; #number of reorthogonalizations
-	$self->_fullorthogonalize_N($orthos+1); #1 states, but check
+	$self->_fullorthogonalize_N($orthos); #1 states, but check
 				#until 2nd state 
 	$self->_pop; #undoes stack
 	if($n>3){ #usual case
 	    ++$orthos;
-	    $self->_fullorthogonalize_N($orthos+1); #2 states, but
+	    $self->_fullorthogonalize_N($orthos); #2 states, but
 				#check until 3d state  
 	    $self->_pop; #undo stack again
 	}
-	$current_W(0:-2).=$self->noise;
-	$next_W(0:-2).=$self->noise;
     }
-    $self->_current_W($current_W);
-    $self->_next_W($next_W);
 }
 
 sub _sign {

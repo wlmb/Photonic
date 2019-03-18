@@ -99,6 +99,7 @@ package Photonic::Roles::AllH;
 $Photonic::Roles::AllH::VERSION = '0.011';
 use Machine::Epsilon;
 use PDL::Lite;
+use PDL::Complex;
 use PDL::NiceSlice;
 
 use IO::File;
@@ -190,8 +191,7 @@ sub _save_state {
     push @{$self->states}, $self->nextState if $self->keepStates;
     return unless defined $self->stateFN;
     my $fh=$self->stateFD;
-    store_fd \$self->nextState, $fh or croak "Couldn't store state:
-    $!";
+    store_fd \$self->nextState, $fh or croak "Couldn't store state: $!";
 }
 
 sub _save_b {
@@ -229,7 +229,7 @@ sub _pop { # undo the changes done after, in and before iteration, for
     my $self=shift;
     $self->_nextState(pop @{$self->states});
     $self->_currentState($self->states->[-1]);
-    $self->_previousState($self->states->[-2]);
+    $self->_previousState($self->states->[-2]//r2C(0));
     $self->_current_a(pop @{$self->as});
     $self->_next_b2(pop @{$self->b2s});
     $self->_current_b2($self->b2s->[-1]);
