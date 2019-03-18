@@ -110,10 +110,7 @@ use Photonic::WE::S::AllH;
 use Photonic::WE::S::GreenP;
 use Moose;
 use Photonic::Types;
-with 'Photonic::Roles::KeepStates';
 
-has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepstates',
-         documentation=>'flag to save Haydock states');
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
@@ -121,7 +118,7 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::S::Metric',
-       handles=>[qw(geometry)],required=>1);
+       handles=>[qw(geometry ndims dims)],required=>1);
 
 has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::S::AllH]',
             init_arg=>undef, lazy=>1, builder=>'_build_haydock',
@@ -135,6 +132,9 @@ has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
 has 'greenTensor'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
 	      lazy=>1, builder=>'_build_greenTensor',   
              documentation=>'Greens Tensor');
+has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
+         documentation=>'Reorthogonalize haydock flag');
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 sub _build_greenTensor {
     my $self=shift;
@@ -173,7 +173,10 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
 	#Build a corresponding Photonic::WE::S::AllH structure
 	my $haydock=Photonic::WE::S::AllH->new(
 	    metric=>$m, polarization=>$e, nh=>$self->nh,
-	    keepStates=>$self->keepStates, smallH=>$self->smallH);
+	    keepStates=>$self->keepStates, smallH=>$self->smallH,
+	    reorthogonalize=>$self->reorthogonalize,
+	    use_mask=>$self->use_mask,
+	    mask=>$self->mask);
 	push @haydock, $haydock;
     }
     return [@haydock]

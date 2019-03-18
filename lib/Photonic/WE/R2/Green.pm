@@ -110,11 +110,9 @@ use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
 use Moose;
 use Photonic::Types;
-with 'Photonic::Roles::KeepStates';
-with 'Photonic::Roles::EpsParams';
 
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
-       handles=>[qw(geometry B dims r G GNorm L scale f)],required=>1);
+       handles=>[qw(geometry B dims ndims r G GNorm L scale f)],required=>1);
 has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::AllH]',
             init_arg=>undef, lazy=>1, builder=>'_build_haydock',
 	    documentation=>'Array of Haydock calculators');
@@ -127,9 +125,7 @@ has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All greenP evaluations converged in last evaluation'); 
-
-has 'outputfilename'=>(is=>'ro', default=>0, documentation=> 
-		 'Name for output file containing haydocks array');
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams', 'Photonic::Roles::UseMask';
 
 sub evaluate {
     my $self=shift;
@@ -148,7 +144,7 @@ sub evaluate {
     my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
     my $reGreen=lu_backsub($lu, $perm, $parity, $reGreenP);
     my $imGreen=lu_backsub($lu, $perm, $parity, $imGreenP);
-    my $nd=$self->geometry->B->ndims;
+    my $nd=$self->ndims;
     my $greenTensor=PDL->zeroes(2, $nd, $nd)->complex;
     my $n=0;
     for my $i(0..$nd-1){
@@ -172,7 +168,10 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
 	#Build a corresponding Photonic::WE::R2::AllH structure
 	my $haydock=Photonic::WE::R2::AllH->new(
 	    metric=>$m, polarization=>$e, nh=>$self->nh,
-	    keepStates=>$self->keepStates, smallH=>$self->smallH);
+	    keepStates=>$self->keepStates, smallH=>$self->smallH,
+	    reorthogonalize=>$self->reorthogonalize,
+	    use_mask=>$self->use_mask,
+	    mask=>$self->mask);
 	push @haydock, $haydock;
     }
     return [@haydock]
