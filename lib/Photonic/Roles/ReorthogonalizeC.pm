@@ -81,8 +81,6 @@ sub _checkorthogonalize {
 	$self->_next_W($next_W);
 	return;
     }
-
-
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W;
@@ -125,5 +123,7 @@ sub _arg {
     $a->where($a==0).=1;
     my $arg=$s/$a;
 }
+
+no Moose::Role;
 
 1;

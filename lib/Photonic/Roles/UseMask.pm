@@ -27,4 +27,6 @@ sub _build_mask { #default mask kills G_max for even dims.
     return undef;
 }
 
+no Moose::Role;
+
 1;

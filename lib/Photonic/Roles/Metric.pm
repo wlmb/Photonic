@@ -65,4 +65,6 @@ has 'wavevector'=> (is=>'ro', isa=>'PDL', required=>1,
                    documentation=>'Wave vector');
 requires qw(value); #provided by metric instances
 
+no Moose::Role;
+
 1;
