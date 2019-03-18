@@ -244,4 +244,6 @@ sub _pop { # undo the changes done after, in and before iteration, for
     $self->_iteration($self->iteration-1); #decrement counter
 }    
 
+no Moose::Role;
+
 1;

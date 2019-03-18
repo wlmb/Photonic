@@ -117,4 +117,6 @@ sub _sign {
     return 2*($s>=0)-1;
 }
 
+no Moose::Role;
+
 1;

@@ -225,4 +225,7 @@ sub _coerce {
     return $val->re;
 }
 
+no Moose::Role;
+
 1;
+
