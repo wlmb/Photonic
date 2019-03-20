@@ -5,31 +5,81 @@ use strict;
 use warnings;
 use Test::More;
 
-plan tests => 5;
+plan tests => 65;
 
 BEGIN {
-    use_ok( 'Photonic' ) || print "Bail out!\n";
-}
-
-BEGIN {
-    use_ok( 'Photonic::CharacteristicFunctions' ) || print "Bail out!\n";
-}
+    my @mods= qw(
+	     Photonic
+	     Photonic::Geometry
+	     Photonic::OneH
+	     Photonic::LE
+	     Photonic::Geometry::FromEpsilon
+	     Photonic::Geometry::FromB
+	     Photonic::Geometry::FromImage2D
+	     Photonic::Utils
+	     Photonic::CharacteristicFunctions
+	     Photonic::LE::NR2::OneH
+	     Photonic::LE::NR2::SHP
+	     Photonic::LE::NR2::EpsTensor
+	     Photonic::LE::NR2::Field
+	     Photonic::LE::NR2::EpsL
+	     Photonic::LE::NR2::SHChiTensor
+	     Photonic::LE::NR2::SH
+	     Photonic::LE::NR2::AllH
+	     Photonic::LE::S
+	     Photonic::LE::NP
+	     Photonic::LE::NR2
+	     Photonic::LE::NP::OneH
+	     Photonic::LE::NP::EpsTensor
+	     Photonic::LE::NP::EpsL
+	     Photonic::LE::NP::AllH
+	     Photonic::LE::S::OneH
+	     Photonic::LE::S::EpsTensor
+	     Photonic::LE::S::EpsL
+	     Photonic::LE::S::AllH
+	     Photonic::WE::R2::EpsilonTensor
+	     Photonic::WE::R2::OneH
+	     Photonic::WE::R2::GreenP
+	     Photonic::WE::R2::WaveP
+	     Photonic::WE::R2::EpsilonP
+	     Photonic::WE::R2::Green
+	     Photonic::WE::R2::WaveF
+	     Photonic::WE::R2::Field
+	     Photonic::WE::R2::GreenF
+	     Photonic::WE::R2::Wave
+	     Photonic::WE::R2::EpsilonTensorF
+	     Photonic::WE::R2::Metric
+	     Photonic::WE::R2::AllH
+	     Photonic::WE::S::EpsilonTensor
+	     Photonic::WE::S::OneH
+	     Photonic::WE::S::GreenP
+	     Photonic::WE::S::WaveP
+	     Photonic::WE::S::EpsilonP
+	     Photonic::WE::S::Green
+	     Photonic::WE::S::Field
+	     Photonic::WE::S::Wave
+	     Photonic::WE::S::Metric
+	     Photonic::WE::S::AllH
+	     Photonic::Roles::Geometry
+	     Photonic::Roles::OneH
+	     Photonic::Roles::KeepStates
+	     Photonic::Roles::ReorthogonalizeR
+	     Photonic::Roles::EpsL
+	     Photonic::Roles::ReorthogonalizeC
+	     Photonic::Roles::EpsParams
+	     Photonic::Roles::UseMask
+	     Photonic::Roles::Metric
+	     Photonic::Roles::AllH
+	     Photonic::ExtraUtils
+	     Photonic::WE
+	     Photonic::Types
+	     Photonic::AllH
+	);
+    foreach(@mods){
+	use_ok( 'Photonic' ) || print "Bail out!\n";
+    }
     
-#    BEGIN {
-#	 use_ok( 'Photonic::Geometry' ) || print "Bail out!\n";
-#    }
-     
-    
-BEGIN {
-    use_ok( 'Photonic::Geometry::FromB' ) || print "Bail out!\n";
-}
-
-BEGIN {
-    use_ok( 'Photonic::Geometry::FromImage2D' ) || print "Bail out!\n";
-}
-    
-BEGIN {
-    use_ok( 'Photonic::ExtraUtils' ) || print "Bail out!\n";
 }
 
 diag( "Testing Photonic $Photonic::VERSION, Perl $], $^X" );
+done_testing();
