@@ -1,11 +1,12 @@
 package Photonic::Roles::ReorthogonalizeC;
 $Photonic::Roles::ReorthogonalizeC::VERSION = '0.011';
-use Moose::Role;
+use Photonic::Iterator qw(nextval);
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::Complex;
 use PDL::NiceSlice;
 use List::MoreUtils qw(pairwise);
+use Moose::Role;
 
 has 'previous_W' =>(is=>'ro', 
      writer=>'_previous_W', lazy=>1, init_arg=>undef,
@@ -54,9 +55,12 @@ around '_fullorthogonalize_indeed' => sub {
     $self->_fullorthogonalize_N($self->fullorthogonalize_N-1);
     $self->_orthogonalizations($self->orthogonalizations+1);
     $self->_write_justorthogonalized(1);
-    foreach(pairwise {[$a, $b]} @{$self->states}, @{$self->gs}){
+    my $it=$self->state_iterator;
+    #foreach(pairwise {[$a, $b]} @{$self->states}, @{$self->gs}){
 	#for every saved state
-	my ($s, $g)=($_->[0], $_->[1]); #state, metric
+	#my ($s, $g)=($_->[0], $_->[1]); #state, metric
+    for my $g(@{$self->gs}){
+	my $s=nextval $it;
 	$psi=$psi-$g*$self->innerProduct($s, $psi)*$s;
     }
     return $psi;

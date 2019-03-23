@@ -98,6 +98,7 @@ Array of Haydock b coefficients squared
 package Photonic::Roles::AllH;
 $Photonic::Roles::AllH::VERSION = '0.011';
 use Machine::Epsilon;
+use Photonic::Iterator qw(:all);
 use PDL::Lite;
 use PDL::Complex;
 use PDL::NiceSlice;
@@ -112,9 +113,10 @@ has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
 has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepstates',
          documentation=>'flag to keep Haydock states');
-has states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', 
+has _states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', 
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
+
 # why not pdl?
 has as=>(is=>'ro', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved a coefficients');
@@ -147,6 +149,22 @@ sub BUILD {
     $self->_keepstates(1) if  $self->reorthogonalize;
 }
 
+sub state_iterator {
+    my $self=shift;
+    confess "Can't return states unless keepStates!=0"
+	unless $self->keepStates;
+    my $n=0;
+    my $s=$self->_states;
+    my $f=iterator { #closure
+	return $s->[$n++];
+    };
+    return $f;
+}
+
+sub states {
+    croak "Don't use 'states'. Use state_iterator instead";
+}
+
 sub _build_stateFD {
     my $self=shift;
     my $fn=$self->stateFN;
@@ -160,10 +178,10 @@ sub _build_stateFD {
 #I use before and after trick (below), as a[n] is calculated together
 #with b[n+1] in each iteration
 
-before 'states' => sub {
-    my $self=shift;
-    confess "Can't return states unless keepStates!=0" unless $self->keepStates;
-};
+#before 'states' => sub {
+#    my $self=shift;
+#    confess "Can't return states unless keepStates!=0" unless $self->keepStates;
+#};
 
 before '_iterate_indeed' => sub {
     my $self=shift;
@@ -188,7 +206,7 @@ sub run { #run the iteration
 
 sub _save_state {
     my $self=shift;
-    push @{$self->states}, $self->nextState if $self->keepStates;
+    push @{$self->_states}, $self->nextState if $self->keepStates;
     return unless defined $self->stateFN;
     my $fh=$self->stateFD;
     store_fd \$self->nextState, $fh or croak "Couldn't store state: $!";
@@ -227,9 +245,9 @@ sub _save_g {
 sub _pop { # undo the changes done after, in and before iteration, for
 	   # reorthogonalization, in reverse order
     my $self=shift;
-    $self->_nextState(pop @{$self->states});
-    $self->_currentState($self->states->[-1]);
-    $self->_previousState($self->states->[-2]//r2C(0));
+    $self->_nextState(pop @{$self->_states});
+    $self->_currentState($self->_states->[-1]);
+    $self->_previousState($self->_states->[-2]//r2C(0));
     $self->_current_a(pop @{$self->as});
     $self->_next_b2(pop @{$self->b2s});
     $self->_current_b2($self->b2s->[-1]);

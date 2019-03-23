@@ -137,7 +137,7 @@ sub evaluate {
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
     my $bs=$self->nr->bs;
-    my $states=$self->nr->states;
+    my $stateit=$self->nr->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->nr->iteration if $nh>=$self->nr->iteration;
@@ -165,7 +165,7 @@ sub evaluate {
     my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
-	my $GPsi_G=Cscale($states->[$n], 
+	my $GPsi_G=Cscale(&$stateit(), 
 			  $self->nr->GNorm->mv(0,-1))->mv(-1,1);#^G|psi_n>
 	#the result is RorI, cartesian, nx, ny,... 
 	my $EnGPsi_G=Cmul($GPsi_G,$Es[$n]); #En ^G|psi_n>
