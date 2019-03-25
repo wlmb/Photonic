@@ -21,66 +21,100 @@ set_autopthread_size(4);;
 
 # The macroscopic dielectric tensor components are calculated into the
 # polarization direction given by this code as an input parameter
-# (Direction0). This example are about 2 phase system defined by a
+# (Direction0). This example are about two phase system defined by a
 # square unit cell of size $l with 2*$N+1 points per side. Haydock
-# recursion method under two approximation are implemented for
+# recursion method under two formulations are implemented for
 # comparison. The number of Haydock coefficients will be no more than
 # $nh for both cases.
 my $nh=30;
 my $N=30;
-my $l=1;
+my $l=1; # in nm
 
-# Geometrical parameters that define the characteristic function B
-# for the 2 phases system. For this example it is a ring with radius r
-# such taht $r0 < r < $r1
+# Geometrical parameters that define the characteristic function B for
+# the two phases system are given as input parameters. For this
+# example it is a hole ring with radius r such that $r0 < r < $r1
 my $r0=0; # small radius 
 my $r1= 0.45; #large radius
 my $B=!ring($N,$r0,$r1);# negated of ring 
+# Further exploration for particle case would be to consider by removing "!"
+# 
 
 # Material of phase A has a real dielectric constant $epsA.  Material
 # of phase B has a complex dielectric function $epsBall that depends
-# on frequency $hnu_all in eV units.  Size of wavelength $a in units
-# of $l
-my $a=100; # Try with large value of $a to check non retarded vs retarded results
+# on the frequency $hnu_all in eV units. Units of the wavelength \lambda are nm
+# and in the VIS-NIR range (400, 1000) that will be compared against $l via $a
+my $a=10; # Such small $a (10 nm) compared with \lambda means that non retarded 
+# and retarded case should give equivalent results. Try with large value of 
+# $a to see retarded effects
 my $epsA=pdl(4); # used for host A and for metric
 my ($hnu_all,$epsBall)=eps("au"); # used for particle B, gold in this example. 
-my $k=0.1; # wave vector component used below in xx direction
-#my $q=2*PI/$a; # wave number normalized with $a for wavelength vs $l sizes
+my $k=0.01; # wave vector component used below in xx direction
+# Units of $k are nm^{-1}. In de middle of VIS-NIR range it is approx
+# 2*PI/\lambda
 my $c=197.32; # it is \h c in q=\hbar\omega/\hbar c
 my $elem=$epsBall->dim(1); # how many frequencies for calculation
 
-# If you have not Gnuplot and Gnuplot pdl module intalled, try to uncomment the lines below
-#my $filename="Au_cyl_r${r1}_k${k}_N${N}_Nh${nh}"; $filename=~s/\./_/g; $filename.=".dat";
-#open(OUT, ">", "$filename") or die "Couldn't open $filename for writing. $!";
-#print OUT "#   hnu       epsNR-L_re  epsNR-L_im   epsR-T_re    epsR-T_im \n";  
+# If you have not Gnuplot and Gnuplot pdl module intalled, the lines below
+# commnented with ## would be useful for writing output data to a file named $filename
+##my $filename="Au_cyl_r${r1}_k${k}_N${N}_Nh${nh}"; $filename=~s/\./_/g; $filename.=".dat";
+##open(OUT, ">", "$filename") or die "Couldn't open $filename for writing. $!";
+##print OUT "#   hnu       epsNR-L_re  epsNR-L_im   epsR-T_re    epsR-T_im \n";  
 
+#---------------------
+# Non Retarded Approx.
+#--------------------
 # One computation is performed in the Non Retarded
 # approximation. Longitudinal Epsilon (LE) is a Photonic::LE::NR2
-# perl-PDL module that heritates to the AllH and EpsL module that we will
-# use in this example.  The object $gmtnr has access to geometry (B),
-# cell size (L), and polarization direction (Direction0)
-my $gmtnr=Photonic::Geometry::FromB->new(B=>$B,L=>pdl($l,$l),Direction0=>pdl(0,1));
-# object $allh has access to haydock coefficientes
+# perl-PDL module that heritates to the AllH and EpsL module that 
+# it is implemented in this example.  The object $gmtnr has access to geometry (B),
+# cell size (L), and polarization direction (Direction0).
+# Note that in Non-Retarded (NR#) approximation wavelength size $a 
+# is very large compared with L
+my $gmtnr=Photonic::Geometry::FromB->new(B=>$B,L=>pdl($l*$a,$l*$a),Direction0=>pdl(0,1));
+# object $allh has access to Haydock's coefficientes
 my $allh=Photonic::LE::NR2::AllH->new(geometry=>$gmtnr, nh=>$nh);
 # object $nr has access to longitudinal components of macrsocopic
 # tensor via EpsL attribute
 my $nr=Photonic::LE::NR2::EpsL->new(nr=>$allh, nh=>$nh);
+# that will be used to evaluate $er for different frequency below
+# where $er is the macroscopic dielectric tensor component in Direction0
+# polarization direction
+#---------------------------
 
-
-# Another computation is performed in the Retarded approximation
+#---------------------
+# Retarded Calculation
+#--------------------
+# Another computation is performed for all wavelength sizes
 # object $gmtr has access to geometry (B), and cell size (L)
-my $gmtr=Photonic::Geometry::FromB->new(B=>$B,L=>pdl($l,$l));
+my $gmtr=Photonic::Geometry::FromB->new(B=>$B,L=>pdl($l*$a,$l*$a));
+#--------------------------------------------
 
+#--------------------------------------------
 my @out=(); # list for the output results
-    
+#--------------------------------------------    
+
+#------------------------------------------------------------
+# Begining of both Non Retarded (NR#) and Retarded (R#) caclulation 
+# for each frequency
+#------------------------------------------------------------
 for(my $j=0;$j<$elem;$j++){
     my $epsB=$epsBall(,($j),(0));
     my $hnu=$hnu_all(($j),(0));
-    my $q=$hnu/$c*$a;
+    my $q=$hnu/$c;
+#----------------------------------------------------------------------------------
+# Non Retarded calculation throw the $nr object of Photonic::LE::NR2::EpsL
+#----------------------------------------------------------------------------------
 # with the NR2 evaluate method the same Haydock coefficients are used
 # for all frequencies. The object $nr knows about it.
+# First argument is the host (epsA)
     my $enr=$nr->evaluate($epsA->r2C,$epsB); 
+# $enr is the macroscopic dielectric tensor (complex number) in \hat y=(0,1) Direction0 
+#----------------------------------------------------------------------------------
+    
 
+#----------------------------------------------------------------------------------
+# Retarded calculation throw $e object of Photonic::WE::R2::EpsilonP
+#----------------------------------------------------------------------------------
 # Photonic::WE::R2 perl-PDL module has implemented Metric, AllH, and EpsilonP modules
 # for the Retarded approximation case. 
     my $m=Photonic::WE::R2::Metric->new(geometry=>$gmtr, epsilon=>$epsA,
@@ -90,19 +124,23 @@ for(my $j=0;$j<$elem;$j++){
 					polarization=>pdl(0,1)->r2C, nh=>$nh);
     my $e=Photonic::WE::R2::EpsilonP->new(haydock=>$h, nh=>$nh);
     my $er=$e->evaluate($epsB);
-#    say OUT join " ", $hnu, $enr->re, $enr->im, $er->re, $er->im; 
+##    say OUT join " ", $hnu, $enr->re, $enr->im, $er->re, $er->im; 
     my $linea=pdl($hnu, $enr->re, $enr->im, $er->re, $er->im);
     push @out, $linea;
 }
+#----------------------------------------------------------------------------------
 
+#----------------------------------------------------------------------------------
+# Displays results to graphical terminal 'qt', try with other that you have installed
+#----------------------------------------------------------------------------------
 use PDL::Graphics::Gnuplot;
 my $o=pdl(@out)->mv(-1,0);
 print $o->info,"\n";
 my $x=$o(,0);
 my $y=$o->(:,1:-1);
 my $wgp=gpwin('qt');
-$wgp->plot(xr=>[1.2,3],with=>'lines',$x,$y);
-
+$wgp->plot(xr=>[1.2,3],with=>'lines',lw=>2,$x,$y);
+#------------------------------------------------------------
 
 sub ring {
     my $N=shift;
