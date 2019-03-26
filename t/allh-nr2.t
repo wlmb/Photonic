@@ -57,7 +57,8 @@ ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
 	      accuracy=>machine_epsilon(), noise=>machine_epsilon(),
 	      normOp=>1);  
     $als->run;
-    ok($als->iteration <= 15*15, "No more iterations than dimensions");
+    ok($als->iteration <= 15*15,
+       "No more iterations than dimensions. Square. States in mem.");
     diag("Actual iterations: " . $als->iteration 
 	 . " Actual orthogonalizations: ", $als->orthogonalizations);
 }
@@ -70,7 +71,8 @@ ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
 	      accuracy=>machine_epsilon(), noise=>machine_epsilon(),
 	      normOp=>1, stateFN=>"scratch/rem.dat");  
     $als->run;
-    ok($als->iteration <= 15*15, "No more iterations than dimensions");
+    ok($als->iteration <= 15*15,
+       "No more iterations than dimensions. Square. States in file");
     diag("Actual iterations: " . $als->iteration 
 	 . " Actual orthogonalizations: ", $als->orthogonalizations);
 }

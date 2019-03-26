@@ -10,7 +10,7 @@ use Photonic::WE::S::AllH;
 use Machine::Epsilon;
 use List::Util;
 
-use Test::More tests => 14;
+use Test::More tests => 16;
 
 #my $pi=4*atan2(1,1);
 
@@ -96,24 +96,70 @@ my $als=Photonic::WE::S::AllH
     reorthogonalize=>1, accuracy=>machine_epsilon(),
     noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
 $als->run;
-ok($als->iteration < 2*9*9, "No more iterations than dimensions");
+ok($als->iteration < 2*9*9,
+   "No more iterations than dimensions. Square. Long wavelength.");
 diag("Actual iterations: " . $als->iteration 
      . " Actual orthogonalizations: ", $als->orthogonalizations);
 
-#check reorthogonalize with even numbers
-my $Be=zeroes(10,10)->rvals<4;
-my $epse=r2C((1-$Be)+5*$Be);
-my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$epse, L=>pdl(1,1));
-my $me=Photonic::WE::S::Metric->new(geometry=>$ge, epsilon=>pdl(1),
-   wavenumber=>pdl(.01), wavevector=>pdl([.001,0]));
-my $ale=Photonic::WE::S::AllH
-    ->new(metric=>$me, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
-    reorthogonalize=>1, accuracy=>machine_epsilon(),
-    noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7, use_mask=>1);   
-$ale->run;
-ok($ale->iteration < 2*10*10, "No more iterations than dimensions");
-diag("Actual iterations: " . $ale->iteration 
-     . " Actual orthogonalizations: ", $ale->orthogonalizations);
+{
+    #check reorthogonalize with even numbers
+    my $Be=zeroes(10,10)->rvals<4;
+    my $epse=r2C((1-$Be)+5*$Be);
+    my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$epse, L=>pdl(1,1));
+    my $me=Photonic::WE::S::Metric->new(
+	geometry=>$ge, epsilon=>pdl(1),	wavenumber=>pdl(.01),
+	wavevector=>pdl([.001,0]));  
+    my $ale=Photonic::WE::S::AllH
+	->new(metric=>$me, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
+	      reorthogonalize=>1, accuracy=>machine_epsilon(),
+	      noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7,
+	      use_mask=>1);
+    $ale->run;
+    ok($ale->iteration < 2*10*10,
+       "No more iterations than dimensions. Square. Long wavelength. Even.");
+    diag("Actual iterations: " . $ale->iteration 
+	 . " Actual orthogonalizations: ", $ale->orthogonalizations);
+}
+
+{
+    #check reorthogonalize with even numbers
+    my $Be=zeroes(10,10)->rvals<4;
+    my $epse=r2C((1-$Be)+5*$Be);
+    my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$epse, L=>pdl(1,1));
+    my $me=Photonic::WE::S::Metric->new(
+	geometry=>$ge, epsilon=>pdl(1),	wavenumber=>pdl(3.6),
+	wavevector=>pdl([1.01*3.6,0]));  
+    my $ale=Photonic::WE::S::AllH
+	->new(metric=>$me, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
+	      reorthogonalize=>1, accuracy=>machine_epsilon(),
+	      noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7,
+	      use_mask=>1);
+    $ale->run;
+    ok($ale->iteration < 2*10*10,
+       "No more iterations than dimensions. Square. Short wavelength. Even.");
+    diag("Actual iterations: " . $ale->iteration 
+	 . " Actual orthogonalizations: ", $ale->orthogonalizations);
+}
+
+{
+    #check reorthogonalize with even numbers
+    my $Be=zeroes(10,10)->rvals<4;
+    my $epse=r2C((1-$Be)+5*$Be);
+    my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$epse, L=>pdl(1,1));
+    my $me=Photonic::WE::S::Metric->new(
+	geometry=>$ge, epsilon=>pdl(1),	wavenumber=>pdl(3.6),
+	wavevector=>pdl([1.01*3.6,0]));  
+    my $ale=Photonic::WE::S::AllH
+	->new(metric=>$me, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
+	      reorthogonalize=>1, accuracy=>machine_epsilon(),
+	      noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7,
+	      use_mask=>1, stateFN=>"scratch/rem.dat");
+    $ale->run;
+    ok($ale->iteration < 2*10*10,
+    "No more iterations than dimensions. Square. Short wavelength. Even. Disk");
+    diag("Actual iterations: " . $ale->iteration 
+	 . " Actual orthogonalizations: ", $ale->orthogonalizations);
+}
 
 __END__
 

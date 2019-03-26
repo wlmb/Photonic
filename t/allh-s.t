@@ -9,7 +9,7 @@ use Photonic::Utils qw(SProd);
 
 use List::Util;
 use Machine::Epsilon;
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 #my $pi=4*atan2(1,1);
 
@@ -51,15 +51,33 @@ ok(Cagree($b2st->[0], 1), "1D T b_0^2");
 ok(Cagree($ast->[0], $ea*(1-$f)+$eb*$f), "1D T a_0");
 ok(Cagree(pdl($b2st)->complex, (pdl($bs)->complex)**2), "1D T b2==b^2");
 
-#check reorthogonalize with square array
-my $epss=$eb*(zeroes(15,15)->rvals<5)+$ea*(zeroes(15,15)->rvals>=5);
-my $gs=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$epss, Direction0=>pdl([1,0]), L=>pdl(1,1));
-my $als=Photonic::LE::S::AllH
-    ->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1, 
-	  accuracy=>machine_epsilon(), noise=>3*machine_epsilon(),
-	  normOp=>$eb->Cabs); 
-$als->run;
-ok($als->iteration <= 15*15, "No more iterations than dimensions");
-diag("Actual iterations: " .$als->iteration
-     . " Actual orthogonalizations: " . $als->orthogonalizations);
+{
+    #check reorthogonalize with square array
+    my $epss=$eb*(zeroes(15,15)->rvals<5)+$ea*(zeroes(15,15)->rvals>=5);
+    my $gs=Photonic::Geometry::FromEpsilon
+	->new(epsilon=>$epss, Direction0=>pdl([1,0]), L=>pdl(1,1));
+    my $als=Photonic::LE::S::AllH
+	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1, 
+	      accuracy=>machine_epsilon(), noise=>3*machine_epsilon(),
+	      normOp=>$eb->Cabs); 
+    $als->run;
+    ok($als->iteration <= 15*15,
+       "No more iterations than dimensions. Square. States in mem.");
+    diag("Actual iterations: " .$als->iteration
+	 . " Actual orthogonalizations: " . $als->orthogonalizations);
+}
+{
+    #check reorthogonalize with square array. Data in file.
+    my $epss=$eb*(zeroes(15,15)->rvals<5)+$ea*(zeroes(15,15)->rvals>=5);
+    my $gs=Photonic::Geometry::FromEpsilon
+	->new(epsilon=>$epss, Direction0=>pdl([1,0]), L=>pdl(1,1));
+    my $als=Photonic::LE::S::AllH
+	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1, 
+	      accuracy=>machine_epsilon(), noise=>3*machine_epsilon(),
+	      normOp=>$eb->Cabs, stateFN=>"scratch/rem.dat"); 
+    $als->run;
+    ok($als->iteration <= 15*15,
+              "No more iterations than dimensions. Square. States in file");
+    diag("Actual iterations: " .$als->iteration
+	 . " Actual orthogonalizations: " . $als->orthogonalizations);
+}
