@@ -10,7 +10,7 @@ use Photonic::Utils qw(HProd);
 use Machine::Epsilon;
 use List::Util;
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 #my $pi=4*atan2(1,1);
 
@@ -48,13 +48,29 @@ ok(agree(pdl($b2st->[0]), 1), "1D T b_0^2");
 ok(agree(pdl($ast->[0]), $g->f), "1D T a_0");
 ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
 
-#check reorthogonalize with square array
-my $Bs=zeroes(15,15)->rvals<5;
-my $gs=Photonic::Geometry::FromB->new(B=>$Bs, Direction0=>pdl([1,0]));
-my $als=Photonic::LE::NR2::AllH
-    ->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
-	  accuracy=>machine_epsilon(), noise=>machine_epsilon(), normOp=>1);  
-$als->run;
-ok($als->iteration <= 15*15, "No more iterations than dimensions");
-diag("Actual iterations: " . $als->iteration 
-     . " Actual orthogonalizations: ", $als->orthogonalizations);
+{
+    #check reorthogonalize with square array
+    my $Bs=zeroes(15,15)->rvals<5;
+    my $gs=Photonic::Geometry::FromB->new(B=>$Bs, Direction0=>pdl([1,0]));
+    my $als=Photonic::LE::NR2::AllH
+	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
+	      accuracy=>machine_epsilon(), noise=>machine_epsilon(),
+	      normOp=>1);  
+    $als->run;
+    ok($als->iteration <= 15*15, "No more iterations than dimensions");
+    diag("Actual iterations: " . $als->iteration 
+	 . " Actual orthogonalizations: ", $als->orthogonalizations);
+}
+{
+    #check reorthogonalize with square array
+    my $Bs=zeroes(15,15)->rvals<5;
+    my $gs=Photonic::Geometry::FromB->new(B=>$Bs, Direction0=>pdl([1,0]));
+    my $als=Photonic::LE::NR2::AllH
+	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
+	      accuracy=>machine_epsilon(), noise=>machine_epsilon(),
+	      normOp=>1, stateFN=>"scratch/rem.dat");  
+    $als->run;
+    ok($als->iteration <= 15*15, "No more iterations than dimensions");
+    diag("Actual iterations: " . $als->iteration 
+	 . " Actual orthogonalizations: ", $als->orthogonalizations);
+}

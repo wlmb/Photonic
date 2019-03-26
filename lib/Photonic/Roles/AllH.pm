@@ -97,6 +97,7 @@ Array of Haydock b coefficients squared
 
 package Photonic::Roles::AllH;
 $Photonic::Roles::AllH::VERSION = '0.011';
+use Fcntl;
 use Machine::Epsilon;
 use Photonic::Iterator qw(:all);
 use PDL::Lite;
@@ -104,7 +105,7 @@ use PDL::Complex;
 use PDL::NiceSlice;
 
 use IO::File;
-use Storable qw(store_fd);
+use Storable qw(store_fd fd_retrieve);
 use PDL::IO::Storable;
 use Carp;
 use Moose::Role;
@@ -134,10 +135,11 @@ has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag'); 
 has 'stateFN'=>(is=>'ro', required=>1, default=>undef, 
 		documentation=>'Filename to save Haydock states');
-has 'stateFD'=>(is=>'ro', init_arg=>undef, builder=>'_build_stateFD',
+has '_stateFD'=>(is=>'ro', init_arg=>undef, builder=>'_build_stateFD',
 		lazy=>1, documentation=>'Filedescriptor to save
 		Haydock states');  
-
+has '_statePos'=>(is=>'ro', init_arg=>undef, default=>sub {[0]},
+		 lazy=>1, documentation=>'Position of each state in file');
 #provided by OneH instance  
 requires qw(iterate _iterate_indeed magnitude innerProduct
     _checkorthogonalize);
@@ -155,10 +157,18 @@ sub state_iterator {
 	unless $self->keepStates;
     my $n=0;
     my $s=$self->_states;
-    my $f=iterator { #closure
+    return iterator { #closure
 	return $s->[$n++];
+    } unless defined $self->stateFN;
+    my $fh=$self->_stateFD;
+    return iterator {
+	#return if $n>$self->iteration;
+	return if $n>=@{$self->_statePos}-1;
+	my $pos=$self->_statePos->[$n++];
+	seek($fh, $pos, SEEK_SET);
+	my $ref=fd_retrieve($fh);
+	return $$ref;
     };
-    return $f;
 }
 
 sub states {
@@ -206,10 +216,15 @@ sub run { #run the iteration
 
 sub _save_state {
     my $self=shift;
-    push @{$self->_states}, $self->nextState if $self->keepStates;
-    return unless defined $self->stateFN;
-    my $fh=$self->stateFD;
+    return unless $self->keepStates; #noop
+    push(@{$self->_states}, $self->nextState), return
+	unless defined $self->stateFN;  
+    my $fh=$self->_stateFD;
+    my $lastpos=$self->_statePos->[-1];
+    seek($fh, $lastpos, SEEK_SET);
     store_fd \$self->nextState, $fh or croak "Couldn't store state: $!";
+    my $pos=tell($fh);
+    push @{$self->_statePos}, $pos;
 }
 
 sub _save_b {
@@ -242,12 +257,30 @@ sub _save_g {
     push @{$self->gs}, $self->next_g;
 }
 
+sub _pop_state {
+    my $self=shift;
+    croak "Can't pop state without keepStates=>1" unless
+	$self->keepStates;
+    unless(defined $self->stateFN){
+	$self->_nextState(pop @{$self->_states});
+	$self->_currentState($self->_states->[-1]);
+	$self->_previousState($self->_states->[-2]//r2C(0));
+	return; 
+    }
+    pop @{$self->_statePos};
+    my ($snm3, $snm2, $snm1)=map {
+	seek($self->_stateFD, $self->_statePos->[-$_], SEEK_SET);
+	fd_retrieve($self->_stateFD);
+    } (3,2,1);
+    $self->_nextState($$snm1);
+    $self->_currentState($$snm2);
+    $self->_previousState($$snm3);
+}
+
 sub _pop { # undo the changes done after, in and before iteration, for
 	   # reorthogonalization, in reverse order
     my $self=shift;
-    $self->_nextState(pop @{$self->_states});
-    $self->_currentState($self->_states->[-1]);
-    $self->_previousState($self->_states->[-2]//r2C(0));
+    $self->_pop_state;
     $self->_current_a(pop @{$self->as});
     $self->_next_b2(pop @{$self->b2s});
     $self->_current_b2($self->b2s->[-1]);
