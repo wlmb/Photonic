@@ -13,6 +13,7 @@ lib/Photonic/Geometry.pm
 lib/Photonic/Geometry/FromB.pm
 lib/Photonic/Geometry/FromEpsilon.pm
 lib/Photonic/Geometry/FromImage2D.pm
+lib/Photonic/Iterator.pm
 lib/Photonic/LE.pm
 lib/Photonic/LE/NP.pm
 lib/Photonic/LE/NP/AllH.pm
@@ -91,6 +92,7 @@ t/epsl-nr2.t
 t/epsl-s.t
 t/epst-nr2.t
 t/epst-s.t
+t/epst-wer2.t
 t/epst-wes.t
 t/field-nr2.t
 t/geometry.t
