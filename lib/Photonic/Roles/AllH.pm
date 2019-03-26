@@ -157,13 +157,16 @@ sub state_iterator {
 	unless $self->keepStates;
     my $n=0;
     my $s=$self->_states;
+    #warn "statePos: " . scalar(@{$self->_statePos}) . " iteration: "
+    #. $self->iteration; 
     return iterator { #closure
+	return if $n>=$self->iteration;
 	return $s->[$n++];
     } unless defined $self->stateFN;
     my $fh=$self->_stateFD;
     return iterator {
-	#return if $n>$self->iteration;
-	return if $n>=@{$self->_statePos}-1;
+	return if $n>=$self->iteration;
+	#return if $n>=@{$self->_statePos}-1;
 	my $pos=$self->_statePos->[$n++];
 	seek($fh, $pos, SEEK_SET);
 	my $ref=fd_retrieve($fh);

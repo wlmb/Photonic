@@ -175,6 +175,8 @@ sub _iterate_indeed {
     $self->_current_c(my $c_n=$self->next_c);
     $self->_previous_g(my $g_nm1=$self->current_g);
     $self->_current_g(my $g_n=$self->next_g);
+    #Make sure to increment counter before orthogonalizing.
+    $self->_iteration($self->iteration+1); #increment counter
     my $opPsi=$self->applyOperator($psi_n); 
     my $a_n=$g_n*$self->innerProduct($psi_n, $opPsi);
     my $bpsi_np1=$opPsi-$a_n*$psi_n-$c_n*$psi_nm1;
@@ -195,7 +197,6 @@ sub _iterate_indeed {
     $self->_next_c($self->_coerce($c_np1));
     $self->_next_bc($self->_coerce($bc_np1));
     $self->_nextState($psi_np1);
-    $self->_iteration($self->iteration+1); #increment counter
     return 1;
 }
 

@@ -62,7 +62,7 @@ ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
 	 . " Actual orthogonalizations: ", $als->orthogonalizations);
 }
 {
-    #check reorthogonalize with square array
+    #check reorthogonalize with square array. Data in file.
     my $Bs=zeroes(15,15)->rvals<5;
     my $gs=Photonic::Geometry::FromB->new(B=>$Bs, Direction0=>pdl([1,0]));
     my $als=Photonic::LE::NR2::AllH
