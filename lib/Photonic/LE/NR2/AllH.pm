@@ -37,6 +37,7 @@ Runs the iteration to completion
 =item * All the Photonic::LE::NR2::OneH methods
 
 =item * All the Photonic::Roles::AllH methods
+
 =back
 
 =head1 ACCESORS (read only)
