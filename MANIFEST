@@ -2,6 +2,8 @@ Build.PL
 Changes
 data/black.png
 data/white.png
+examples/mortola.pl
+examples/Ring.pl
 fortran/cgtsl.f
 fortran/dgtsl.f
 INSTALL
@@ -75,6 +77,7 @@ lib/Photonic/WE/S/WaveP.pm
 LICENSE
 MANIFEST			This list of files
 README
+scratch/README
 t/00-load.t
 t/allh-np.t
 t/allh-nr2.t
