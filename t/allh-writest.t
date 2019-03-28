@@ -19,7 +19,7 @@ sub Cagree {
     my $B=zeroes(11,1)->xvals<5; #1D system
     my $g=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1,0])); #long
     my $ad=Photonic::LE::NR2::AllH->new(
-	geometry=>$g, nh=>10, stateFN=>"scratch/rem.txt", keepStates=>1); 
+	geometry=>$g, nh=>10, stateFN=>"scratch/rem.dat", keepStates=>1); 
     $ad->run;
     my $itd=$ad->state_iterator;
     my $am=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10, keepStates=>1);
@@ -40,7 +40,7 @@ sub Cagree {
     my $B=zeroes(11,1)->xvals<5; #1D system
     my $g=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([0,1])); #trans
     my $ad=Photonic::LE::NR2::AllH->new(
-	geometry=>$g, nh=>10, stateFN=>"scratch/rem.txt", keepStates=>1);
+	geometry=>$g, nh=>10, stateFN=>"scratch/rem.dat", keepStates=>1);
     $ad->run;
     my $itd=$ad->state_iterator;
     my $am=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10, keepStates=>1);
