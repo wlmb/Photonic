@@ -10,7 +10,7 @@ version 0.011
 
     use Photonic::LE::NP::OneH;
     my $nr=Photonic::LE::NP::OneH->new(epsilon=>$epsilon,
-           geometry=>$geometry);  
+           geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -39,12 +39,12 @@ function $e and optional smallness parameter  $s.
 
 =over 4
 
-=item * epsilon 
+=item * epsilon
 
 A PDL::Complex PDL giving the value of the dielectric function epsilon
 for each pixel of the system
 
-=item * geometry Photonic::Types::GeometryG0 
+=item * geometry Photonic::Types::GeometryG0
 
 A Photonic::Geometry object defining the geometry of the system,
 the charateristic function and the direction of the G=0 vector. Should
@@ -59,7 +59,7 @@ Accesors handled by geometry (see Photonic::Geometry)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero. Handled by Photonic::Roles::EpsParams
 
-=item * previousState currentState nextState 
+=item * previousState currentState nextState
 
 The n-1-th, n-th and n+1-th Haydock states; a complex number for each pixel
 
@@ -85,8 +85,8 @@ Number of completed iterations
 
 Performs a single Haydock iteration and updates current_a, next_state,
 next_b2, next_b, shifting the current values where necessary. Returns
-0 when unable to continue iterating. 
- 
+0 when unable to continue iterating.
+
 =back
 
 =cut
@@ -106,7 +106,7 @@ use Moose;
 use MooseX::StrictConstructor;
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
-		builder=>'_epsilon');  
+		builder=>'_epsilon');
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
 );
@@ -116,9 +116,9 @@ with 'Photonic::Roles::OneH';
 
 #don't allow intialization of enxt state, as this module is fragile
 #and depends on a particular initial state. Otherwise, use the
-#Roles::OneH attribute. 
+#Roles::OneH attribute.
 
-has '+nextState' =>(init_arg=>undef); 
+has '+nextState' =>(init_arg=>undef);
 
 sub _epsilon {
     my $self=shift;
@@ -144,14 +144,14 @@ sub applyOperator {
     #state is ri:nx:ny... gnorm=i:nx:ny...
     #Multiply by vector ^G.
     #Have to get cartesian out of the way, thread over it and iterate
-    #over the rest 
+    #over the rest
     my $Gpsi_G=$psi_G*$self->GNorm->mv(0,-1); #^G |psi>
     #the result is complex ri:nx:ny...:i cartesian
     #Take inverse Fourier transform over all space dimensions,
     #thread over cartesian indices
     #Notice that (i)fftn wants a real 2,nx,ny... piddle, not a complex
     #one. Thus, I have to convert complex to real and back here and
-    #downwards. 
+    #downwards.
     my $Gpsi_R=ifftn($Gpsi_G->real, $self->ndims)->complex;
     # $Gpsi_R is ri:nx:ny:...:i
     # Multiply by the dielectric function in Real Space. Thread
@@ -201,5 +201,5 @@ sub changesign { # change sign
 
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

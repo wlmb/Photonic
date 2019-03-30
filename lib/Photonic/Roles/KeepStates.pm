@@ -24,7 +24,7 @@ Photonic subpackages to calculate the electromagnetic field
 =head2 keepStates
 
 Flag to keep the states that make up a Haydock basis. Default: don't
-keep states (0).  
+keep states (0).
 
 =cut
 

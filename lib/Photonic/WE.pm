@@ -5,10 +5,10 @@ use strict;
 use Carp;
 
 my @implementations=qw(R2::OneH);
-croak "Dont use Photonic::OneH. Use a specific implementation. " 
+croak "Dont use Photonic::OneH. Use a specific implementation. "
     . "Choose from: "
     . join ", ", map {"Photonic::WE::" . $_} @implementations;
-    
+
 0;
 
 =head1 NAME
@@ -28,7 +28,7 @@ version 0.011
 
 Implements calculation of a Haydock coefficients and Haydock states for
 the wave operator in an arbitrary number of dimensions. One Haydock
-coefficient at a time.  
+coefficient at a time.
 
 =over 4
 

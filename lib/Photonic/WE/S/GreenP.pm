@@ -70,7 +70,7 @@ Flags that the last calculation converged before using up all coefficients
 
 =item * smallE
 
-Criteria of convergence. 0 means don't check. From Photonic::Roles::EpsParams. 
+Criteria of convergence. 0 means don't check. From Photonic::Roles::EpsParams.
 
 =back
 
@@ -93,14 +93,14 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::S::AllH', required=>1);
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
+has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
 has 'Gpp'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
@@ -142,7 +142,7 @@ sub _build_Gpp {
 	$n++;
     }
     #If there are less available coefficients than $self->nh and all
-    #of them were used, there is no remaining work to do, so, converged 
+    #of them were used, there is no remaining work to do, so, converged
     $converged=1 if $self->haydock->iteration < $self->nh;
     $self->_converged($converged);
     $self->_nhActual($n);
@@ -152,5 +152,5 @@ sub _build_Gpp {
 
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

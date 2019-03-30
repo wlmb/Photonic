@@ -11,7 +11,7 @@ use Test::More tests => 4;
 
 #my $pi=4*atan2(1,1);
 
-sub agree {    
+sub agree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)*($a-$b))->sum<=1e-7;

@@ -14,13 +14,13 @@ use Test::More tests => 16;
 
 #my $pi=4*atan2(1,1);
 
-sub agree {    
+sub agree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)*($a-$b))->sum<=1e-7;
 }
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)->Cabs2)->sum<=1e-7;
@@ -29,14 +29,14 @@ sub Cagree {
 #Check haydock coefficients for simple 1D system
 my ($ea, $eb)=(1+2*i, 3+4*i);
 my $f=6/11;
-my $eps=$ea*(zeroes(11)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i; 
+my $eps=$ea*(zeroes(11)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
 my $g=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$eps); 
+    ->new(epsilon=>$eps);
 my $m=Photonic::WE::S::Metric->new(
     geometry=>$g, epsilon=>pdl(1), wavenumber=>pdl(2), wavevector=>pdl([1])
     );
 my $a=Photonic::WE::S::AllH->new(metric=>$m,
-   polarization=>pdl([1])->r2C, nh=>10);  
+   polarization=>pdl([1])->r2C, nh=>10);
 $a->run;
 my $as=$a->as;
 my $bs=$a->bs;
@@ -50,15 +50,15 @@ ok(Cagree(pdl($b2s)->mv(-1,1)->complex, pdl($bs)->mv(-1,1)->complex**2),
 	"1D L b2==b^2");
 
 #Check haydock coefficients for simple 1D system other longitudinal y
-my $eps1l=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5)+0*i; 
+my $eps1l=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5)+0*i;
 my $g1l=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$eps1l); 
+    ->new(epsilon=>$eps1l);
 my $m1l=Photonic::WE::S::Metric->new(
     geometry=>$g1l, epsilon=>pdl(1), wavenumber=>pdl(.0002),
     wavevector=>pdl([0,.000001])
     );
 my $a1l=Photonic::WE::S::AllH->new(metric=>$m1l,
-   polarization=>pdl([0,1])->r2C, nh=>10, smallH=>1e-4);  
+   polarization=>pdl([0,1])->r2C, nh=>10, smallH=>1e-4);
 $a1l->run;
 my $as1l=$a1l->as;
 my $bs1l=$a1l->bs;
@@ -68,15 +68,15 @@ ok(Cagree(($b2s1l->[0]), 1), "1D L b_0^2");
 ok(Cagree(($as1l->[0]), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
 
 #Check haydock coefficients for simple 1D system transverse prop x pol y
-my $epst=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5)+0*i; 
+my $epst=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5)+0*i;
 my $gt=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$epst); 
+    ->new(epsilon=>$epst);
 my $mt=Photonic::WE::S::Metric->new(
     geometry=>$gt, epsilon=>pdl(1), wavenumber=>pdl(.0002),
     wavevector=>pdl([.000001,0])
     );
 my $at=Photonic::WE::S::AllH->new(metric=>$mt,
-   polarization=>pdl([0,1])->r2C, nh=>10, smallH=>1e-4);  
+   polarization=>pdl([0,1])->r2C, nh=>10, smallH=>1e-4);
 $at->run;
 my $ast=$at->as;
 my $bst=$at->bs;
@@ -94,11 +94,11 @@ my $ms=Photonic::WE::S::Metric->new(geometry=>$gs, epsilon=>pdl(1),
 my $als=Photonic::WE::S::AllH
     ->new(metric=>$ms, polarization=>r2C(pdl([0,1])), nh=>2*9*9,
     reorthogonalize=>1, accuracy=>machine_epsilon(),
-    noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
+    noise=>1e1*machine_epsilon(), normOp=>1e0, smallH=>1e-7);
 $als->run;
 ok($als->iteration < 2*9*9,
    "No more iterations than dimensions. Square. Long wavelength.");
-diag("Actual iterations: " . $als->iteration 
+diag("Actual iterations: " . $als->iteration
      . " Actual orthogonalizations: ", $als->orthogonalizations);
 
 {
@@ -108,7 +108,7 @@ diag("Actual iterations: " . $als->iteration
     my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$epse, L=>pdl(1,1));
     my $me=Photonic::WE::S::Metric->new(
 	geometry=>$ge, epsilon=>pdl(1),	wavenumber=>pdl(.01),
-	wavevector=>pdl([.001,0]));  
+	wavevector=>pdl([.001,0]));
     my $ale=Photonic::WE::S::AllH
 	->new(metric=>$me, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
 	      reorthogonalize=>1, accuracy=>machine_epsilon(),
@@ -117,7 +117,7 @@ diag("Actual iterations: " . $als->iteration
     $ale->run;
     ok($ale->iteration < 2*10*10,
        "No more iterations than dimensions. Square. Long wavelength. Even.");
-    diag("Actual iterations: " . $ale->iteration 
+    diag("Actual iterations: " . $ale->iteration
 	 . " Actual orthogonalizations: ", $ale->orthogonalizations);
 }
 
@@ -128,7 +128,7 @@ diag("Actual iterations: " . $als->iteration
     my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$epse, L=>pdl(1,1));
     my $me=Photonic::WE::S::Metric->new(
 	geometry=>$ge, epsilon=>pdl(1),	wavenumber=>pdl(3.6),
-	wavevector=>pdl([1.01*3.6,0]));  
+	wavevector=>pdl([1.01*3.6,0]));
     my $ale=Photonic::WE::S::AllH
 	->new(metric=>$me, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
 	      reorthogonalize=>1, accuracy=>machine_epsilon(),
@@ -137,7 +137,7 @@ diag("Actual iterations: " . $als->iteration
     $ale->run;
     ok($ale->iteration < 2*10*10,
        "No more iterations than dimensions. Square. Short wavelength. Even.");
-    diag("Actual iterations: " . $ale->iteration 
+    diag("Actual iterations: " . $ale->iteration
 	 . " Actual orthogonalizations: ", $ale->orthogonalizations);
 }
 
@@ -148,7 +148,7 @@ diag("Actual iterations: " . $als->iteration
     my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$epse, L=>pdl(1,1));
     my $me=Photonic::WE::S::Metric->new(
 	geometry=>$ge, epsilon=>pdl(1),	wavenumber=>pdl(3.6),
-	wavevector=>pdl([1.01*3.6,0]));  
+	wavevector=>pdl([1.01*3.6,0]));
     my $ale=Photonic::WE::S::AllH
 	->new(metric=>$me, polarization=>r2C(pdl([0,1])), nh=>2*15*15,
 	      reorthogonalize=>1, accuracy=>machine_epsilon(),
@@ -157,7 +157,7 @@ diag("Actual iterations: " . $als->iteration
     $ale->run;
     ok($ale->iteration < 2*10*10,
     "No more iterations than dimensions. Square. Short wavelength. Even. Disk");
-    diag("Actual iterations: " . $ale->iteration 
+    diag("Actual iterations: " . $ale->iteration
 	 . " Actual orthogonalizations: ", $ale->orthogonalizations);
 }
 
@@ -172,10 +172,10 @@ my $m1s=Photonic::WE::S::Metric->new(geometry=>$g1s, epsilon=>pdl(10),
 my $al1s=Photonic::WE::S::AllH
     ->new(metric=>$m1s, polarization=>r2C(pdl([0,1])), nh=>3*21*21,
     reorthogonalize=>1, accuracy=>machine_epsilon(),
-    noise=>1e3*machine_epsilon(), normOp=>1e0, smallH=>1e-7);   
+    noise=>1e3*machine_epsilon(), normOp=>1e0, smallH=>1e-7);
 $al1s->run;
 ok($al1s->iteration <= 2*21*21, "No more iterations than dimensions");
-diag("Actual iterations: " . $al1s->iteration 
+diag("Actual iterations: " . $al1s->iteration
      . " Actual orthogonalizations: ", $al1s->orthogonalizations);
 
 
@@ -183,4 +183,4 @@ diag("Actual iterations: " . $al1s->iteration
 #    my $pr=$als->innerProduct($_, $st->[0]);
 #    print "$pr\n";
 #}
-	
+

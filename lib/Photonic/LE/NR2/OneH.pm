@@ -38,7 +38,7 @@ smallness parameter  $s.
 
 =over 4
 
-=item * geometry Photonic::Types::GeometryG0 
+=item * geometry Photonic::Types::GeometryG0
 
 A Photonic::Geometry object defining the geometry of the system,
 the charateristic function and the direction of the G=0 vector. Should
@@ -53,7 +53,7 @@ Accesors handled by geometry (see Photonic::Roles::Geometry)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero. Handled by Photonic::Roles::EpsParams
 
-=item * previousState currentState nextState 
+=item * previousState currentState nextState
 
 The n-1-th, n-th and n+1-th Haydock states; a complex number for each pixel
 
@@ -78,9 +78,9 @@ Number of completed iterations
 =item * iterate
 
 Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_state, shifting the current values where necessary. Returns 
-0 when unable to continue iterating. 
- 
+next_b2, next_state, shifting the current values where necessary. Returns
+0 when unable to continue iterating.
+
 =back
 
 =cut
@@ -113,7 +113,7 @@ sub _firstState { #\delta_{G0}
     return $v;
 }
 
-sub applyOperator { 
+sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
     my $mask=undef;
@@ -121,7 +121,7 @@ sub applyOperator {
     # ri:nx:ny
     #state is ri:nx:ny:... gnorm=i:nx:ny...
     #Have to get cartesian out of the way, thread over it and iterate
-    #over the rest 
+    #over the rest
     my $Gpsi_G=$psi_G*$self->GNorm->mv(0,-1); #^G |psi>
     #Gpsi_G is ri:nx:ny...:i
     #Take inverse Fourier transform over all space dimensions,
@@ -159,5 +159,5 @@ sub changesign { #don't change sign
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

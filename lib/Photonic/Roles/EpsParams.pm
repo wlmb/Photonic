@@ -22,7 +22,7 @@ Photonic subpackages to calculate the macroscopic dielectric function
 =head1 ACCESORS (read only)
 
 =head2 nh
-   
+
 Desired no. of Haydock coefficients
 
 =head2 smallH
@@ -55,7 +55,7 @@ package Photonic::Roles::EpsParams;
 $Photonic::Roles::EpsParams::VERSION = '0.011';
 use Moose::Role;
 
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');

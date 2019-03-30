@@ -16,7 +16,7 @@ with 'Photonic::Roles::Geometry';
 #Filling fraction is meaningless in this case.
 before 'f' => sub {
     croak "Filling fraction is meaningless for "
-	. "Photonic::Geometry::FromEpsilon"; 
+	. "Photonic::Geometry::FromEpsilon";
 };
 
 sub _B {
@@ -47,7 +47,7 @@ version 0.011
 =head1 DESCRIPTION
 
 Create a geometry object to be used in a Photonic
-calculation from a characteristic function. 
+calculation from a characteristic function.
 
 =head1 METHODS
 
@@ -70,11 +70,11 @@ default, it is the number of pixels.
 
 =over 4
 
-=item * B 
+=item * B
 
 The characteristic function as PDL
 
-=item * L 
+=item * L
 
 Unit cell sizes as a B->ndims pdl.
 

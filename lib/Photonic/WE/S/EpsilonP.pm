@@ -24,7 +24,7 @@ NOTE: Only works for polarizations along principal directions.
 
 =over 4
 
-=item * new(haydock=>$h, nh=>$nh, smallE=>$smallE)  
+=item * new(haydock=>$h, nh=>$nh, smallE=>$smallE)
 
 Initializes the structure.
 
@@ -34,7 +34,7 @@ $nh is the maximum number of Haydock coefficients to use.
 
 $smallE is the criterium of convergence (default 1e-7) for
 Haydock coefficients and for the continued fraction. From
-Photonic::Roles::EpsParams.  
+Photonic::Roles::EpsParams.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
@@ -42,7 +42,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 Returns the macroscopic dielectric component for a given value of the
 dielectric function of the particle $epsB. The host's
-response $epsA is taken from the AllH structure.  
+response $epsA is taken from the AllH structure.
 
 NOTE: Only works along principal directions.
 
@@ -77,10 +77,10 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-extends 'Photonic::WE::S::WaveP'; 
+extends 'Photonic::WE::S::WaveP';
 
 has 'epsilon' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-		   lazy=>1, builder=>'_build_epsilon',   
+		   lazy=>1, builder=>'_build_epsilon',
 		   documentation=>'Projected dielectric function');
 
 sub _build_epsilon {
@@ -100,7 +100,7 @@ sub _build_epsilon {
 };
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

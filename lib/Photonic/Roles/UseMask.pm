@@ -16,9 +16,9 @@ sub _build_mask { #default mask kills G_max for even dims.
     my $ndims=$self->ndims;
     my $dims=$self->dims;
     my $mask=PDL->ones(@$dims);
-    my $masked=0; 
+    my $masked=0;
     foreach(0..$ndims-1){
-	my $N=$dims->[$_]; 
+	my $N=$dims->[$_];
 	next unless $N%2==0; #ignore odd dimensions.
 	$mask->mv($_,0)->(($N/2)).=0; #zero terms corresponding to \pm G_max
 	$masked=1;

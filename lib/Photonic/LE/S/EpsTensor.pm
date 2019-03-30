@@ -23,13 +23,13 @@ functions of the components.
 
 =over 4
 
-=item * new(epsilon=>$e, geometry=>$g, nh=>$nh, smallH=>$smallH, 
-            smallE=>$smallE, keepStates=>$k) 
+=item * new(epsilon=>$e, geometry=>$g, nh=>$nh, smallH=>$smallH,
+            smallE=>$smallE, keepStates=>$k)
 
 Initializes the structure.
 
 $e PDL::Complex is the dielectric function as a complex scalar field
- 
+
 $g Photonic::Geometry describing the structure
 
 $nh is the maximum number of Haydock coefficients to use.
@@ -45,7 +45,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 =over 4
 
-=item * epsilon 
+=item * epsilon
 
 A PDL::Complex PDL giving the value of the dielectric function epsilon
 for each pixel of the system
@@ -64,7 +64,7 @@ Array of Photonic::LE::S::EpsL structures, one for each direction.
 
 =item * epsTensor
 
-The valuated dielectric tensor 
+The valuated dielectric tensor
 
 =item * nh
 
@@ -79,7 +79,7 @@ Flags that the last calculation converged before using up all coefficients
 Criteria of convergence for Haydock and epsilon calculations. 0 means
 don't check. From Photonic::Roles::EpsParams.
 
-    *Check last remark* 
+    *Check last remark*
 
 =back
 
@@ -122,7 +122,7 @@ has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
 		  documentation=>'Dielectric Tensor');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
-                  'All EpsL evaluations converged in last evaluation'); 
+                  'All EpsL evaluations converged in last evaluation');
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
     'Photonic::Roles::UseMask';
 
@@ -166,7 +166,7 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
 	$g->Direction0($_); #add G0 direction
 	#Build a corresponding LE::S::AllH structure
 	my $nr=Photonic::LE::S::AllH->new(
-	    epsilon=>$self->epsilon, geometry=>$g, smallH=>$self->smallH, 
+	    epsilon=>$self->epsilon, geometry=>$g, smallH=>$self->smallH,
 	    nh=>$self->nh, keepStates=>$self->keepStates,
 	    reorthogonalize=>$self->reorthogonalize,
 	    use_mask=>$self->use_mask,
@@ -189,7 +189,7 @@ sub _build_epsL {
 
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

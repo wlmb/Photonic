@@ -10,7 +10,7 @@ version 0.011
 
     use Photonic::WE::S::Metric;
     my $gGG=Photonic::WE::S::Metric->new(
-            geometry=>$geometry, epsilon=>$eps, 
+            geometry=>$geometry, epsilon=>$eps,
             wavenumber => $q, $wavevector=>k);
     f($gGG->value);
 
@@ -35,7 +35,7 @@ $k. $q and $k are real.
 
 =over 4
 
-=item * value 
+=item * value
 
 The actual metric tensor as a complex PDL (d,d,n1,n2..nd)
 the first and second indices over cartesian indices for 0 to d-1 in d
@@ -60,7 +60,7 @@ use MooseX::StrictConstructor;
 
 # Later make it complex
 has 'value'     => (is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
-                   builder=>'_value', 
+                   builder=>'_value',
                    documentation=>'Metric tensor');
 
 with 'Photonic::Roles::Metric';
@@ -111,6 +111,6 @@ sub _value {
     my $gGG=PDL->pdl($gPGG, $gMGG)->mv(-1,2); #xy:xy:pm:nx:ny
     return $gGG;
 }
-    
+
 
 1;

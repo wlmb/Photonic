@@ -15,7 +15,7 @@ Photonic - A perl package for calculations on photonics and metamaterials.
 Version 0.011
 
 =cut
-    
+
 $Photonic::VERSION = '0.011';
 
 =head1 SYNOPSIS
@@ -30,7 +30,7 @@ $Photonic::VERSION = '0.011';
 Calculates the dielectric tensor of a metamaterial made up of two
 materials with dielectric functions $epsA and $epsB with a geometry $g
 corresponding to a characteristic funcion $b and using $N Haydock
-coefficients.  
+coefficients.
 
 =head1 DESCRIPTION
 
@@ -112,17 +112,17 @@ Object to calculate all Haydock coeffficients with retardation.
 =item L<Photonic::Retarded::EpsilonP>
 
 Object to calculate the retarded macroscopic dielectric response along
-a principal direction.  
+a principal direction.
 
 =item L<Photonic::Retarded::EpsilonTensorF>
 
 Object to calculate the retarded macroscopic dielectric tensor
-including girotropy. 
+including girotropy.
 
 =item L<Photonic::Retarded::EpsilonTensor>
 
 Object to calculate the retarded macroscopic dielectric tensor without
-girotropy. 
+girotropy.
 
 =item L<Photonic::Retarded::Field>
 
@@ -150,12 +150,12 @@ Object to provide a Metric tensor for Haydock's retarded calculations.
 =item L<Photonic::Retarded::WaveF>
 
 Objecto to calculate the macroscopic retarded wave operator including
-girotropy. 
+girotropy.
 
 =item L<Photonic::Retarded::Wave>
 
 Objecto to calculate the macroscopic retarded wave operator without
-girotropy. 
+girotropy.
 
 =item L<Photonic::Retarded::WaveP>
 
@@ -173,19 +173,19 @@ Flag that is factored as it is common in different packages.
 =back
 
 =cut
-    
+
 =head1 AUTHORS
 
 =over 4
 
 =item * W. Luis Mochán, Instituto de Ciencias Físicas, UNAM, México
-C<mochan@fis.unam.mx> 
+C<mochan@fis.unam.mx>
 
 =item * Guillermo Ortiz, Departamento de Física - FCENA, Universidad
 Nacional del Nordeste, Argentina C<gortiz@exa.unne.edu.ar>
 
 =item * Bernardo S. Mendoza, Department of Photonics, Centro de
-Investigaciones en Óptica, México C<bms@cio.mx>  
+Investigaciones en Óptica, México C<bms@cio.mx>
 
 =item * José Samuel Pérez-Huerta, Unidad Académica de Física,
 Universidad Autónoma de Zacatecas, México  C<jsperez@fisica.uaz.edu.mx>
@@ -196,8 +196,8 @@ Universidad Autónoma de Zacatecas, México  C<jsperez@fisica.uaz.edu.mx>
 =head1 ACKNOWLEDGMENTS
 
 This work was partially supported by DGAPA-UNAM under grants IN108413
-and IN113016.   
+and IN113016.
 
 =cut
-    
+
 1;

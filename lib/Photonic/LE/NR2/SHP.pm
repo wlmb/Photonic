@@ -10,7 +10,7 @@ version 0.011
 
    use Photonic::LE::NR2::SHP;
    my $nrshp=Photonic::LE::NR2::SHP->
-             new(nrf=>$nrf, densityA=>$dA, densityB=>$dB)); 
+             new(nrf=>$nrf, densityA=>$dA, densityB=>$dB));
 
 
 
@@ -19,7 +19,7 @@ version 0.011
 Prepares the data for the calculation of the non retarded SH
 polarization of an arbitrary periodic composite made up of
 centrosymmetric isotropic component materials, using the continuous
-dipolium model.  
+dipolium model.
 
 =head1 METHODS
 
@@ -30,7 +30,7 @@ dipolium model.
 Initializes the structure
 
 $nrf Photonic::LE::NR2::Field is a Haydock field calculator for the
-structure. 
+structure.
 
 $dA is the density of polarizable entities in medium A
 
@@ -91,7 +91,7 @@ has 'densityB'=>(is=>'ro', isa=>'Num', required=>1,
 has 'density'=>(is=>'ro', isa=>'PDL', writer=>'_density', init_arg=>undef,
          documentation=>'Normalized dipole entities density over unit cell');
 has 'ndims' =>(is=>'ro', isa=>'Int', init_arg=>undef, lazy=>1,
-         builder=>'_ndims', 
+         builder=>'_ndims',
          documentation=>'Number of dimensions of system');
 
 sub BUILD {
@@ -106,5 +106,5 @@ sub _ndims {
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

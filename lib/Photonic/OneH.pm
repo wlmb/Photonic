@@ -5,10 +5,10 @@ use strict;
 use Carp;
 
 my @implementations=qw(LE::NR2::OneH WE::R2::OneH);
-croak "Dont use Photonic::OneH. Use a specific implementation. " 
+croak "Dont use Photonic::OneH. Use a specific implementation. "
     . "Choose from: "
     . join ", ", map {"Photonic::OneH::" . $_} @implementations;
-    
+
 0;
 
 =head1 NAME
@@ -39,7 +39,7 @@ function of arbitrary  periodic two component systems in arbitrary
 =item L<Photonic::LE::NR2::OneH>
 
 Implementation for the longitudinal epsilon in a binary media in the
-non retarded approximation.  
+non retarded approximation.
 
 =item L<Photonic::WE::R2::OneH>
 

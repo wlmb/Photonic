@@ -9,12 +9,12 @@ use Photonic::Geometry::FromEpsilon;
 use Test::More tests => 40;
 my $pi=4*atan2(1,1);
 
-sub agree {    
+sub agree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)*($a-$b))->sum<=1e-7;
 }
-    
+
 my $B=zeroes(11,11)->rvals<=5;
 my $g=Photonic::Geometry::FromB->new(B=>$B);
 my $gl=Photonic::Geometry::FromB->new(B=>$B, L=>pdl(1,1));
@@ -25,7 +25,7 @@ ok(($g->L->dims)[0]==2, "L is a 2D vector");
 ok(($g->L->dims)[0]==2, "L is a 2D vector");
 ok(agree(pdl($g->L),pdl(11,11)), "correct L values");
 ok(agree(($g->units)->[0], pdl(1,0)) && agree(($g->units)->[1], pdl(0,1)),
-   "units"); 
+   "units");
 ok($g->npoints==11*11, "npoints");
 ok(agree($g->scale,pdl(1,1)), "Default scale");
 ok(agree($gl->scale, pdl(1/11,1/11)), "Scale");

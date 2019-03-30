@@ -6,10 +6,10 @@ use strict;
 use Carp;
 
 my @implementations=qw(NR2::OneH);
-croak "Dont use Photonic::LE. Use a specific implementation. " 
+croak "Dont use Photonic::LE. Use a specific implementation. "
     . "Choose from: "
     . join ", ", map {"Photonic::LE::" . $_} @implementations;
-    
+
 0;
 =head1 NAME
 

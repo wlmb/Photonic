@@ -30,7 +30,7 @@ $nr is a Photonic::LE::NR2::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
-$smallE is the criteria of convergence for the continued fraction 
+$smallE is the criteria of convergence for the continued fraction
 (defaults to 1e-7)
 
 =item * evaluate($epsA, $epsB)
@@ -118,9 +118,9 @@ sub evaluate {
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
-    my $min= min($self->nh, $self->nr->iteration);  
+    my $min= min($self->nh, $self->nr->iteration);
     my ($fn, $n)=lentzCF([map {$u-$_} @$as], [map {-$_} @$b2s],
-			 $min, $self->smallE);  
+			 $min, $self->smallE);
     # Check this logic:
     my $converged=$n<$min || $self->nr->iteration<=$self->nh;
     $self->_converged($converged);
@@ -130,5 +130,5 @@ sub evaluate {
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

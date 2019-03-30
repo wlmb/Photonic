@@ -14,12 +14,12 @@ use Test::More tests => 2;
 
 #my $pi=4*atan2(1,1);
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)->Cabs2)->sum<=1e-7;
 }
-sub Cdif {    
+sub Cdif {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)->Cabs2)->sum;

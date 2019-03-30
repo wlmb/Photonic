@@ -13,7 +13,7 @@ use Test::More tests => 5;
 
 #my $pi=4*atan2(1,1);
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     my $prec=shift//1e-7;
@@ -27,7 +27,7 @@ my $B=zeroes(11)->xvals<5; #1D system
 my $f=$B->sum/$B->nelem;
 my $epsilon=$ea*(1-$B)+$eb*$B;
 my $gl=Photonic::Geometry::FromEpsilon->new(epsilon=>$epsilon); #long
-my $elo=Photonic::LE::S::EpsTensor->new(geometry=>$gl, nh=>10); 
+my $elo=Photonic::LE::S::EpsTensor->new(geometry=>$gl, nh=>10);
 my $elv=$elo->epsTensor;
 my $elx=1/((1-$f)/$ea+$f/$eb);
 ok(Cagree($elv, $elx), "1D long epsilon");

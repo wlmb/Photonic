@@ -23,7 +23,7 @@ functions of the components.
 =over 4
 
 =item * new(metric=>$m, nh=>$nh, smallH=>$smallH, smallE=>$smallE,
-keepStates=>$k)  
+keepStates=>$k)
 
 Initializes the structure.
 
@@ -40,7 +40,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 Returns the macroscopic Green's operator for a given value of the
 dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.  
+response $epsA is taken from the metric.
 
 =back
 
@@ -60,7 +60,7 @@ Dielectric function of component A
 
 Dielectric function of componente B
 
-=item * u 
+=item * u
 
 Spectral variable
 
@@ -91,7 +91,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallH, smallE
 
 Criteria of convergence of Haydock coefficients and continued
-fraction. 0 means don't check. 
+fraction. 0 means don't check.
 
 =back
 
@@ -136,7 +136,7 @@ around 'evaluate' => sub {
     my $orig=shift;
     my $self=shift;
     my $epsB=shift;
-    $self->$orig($epsB);    
+    $self->$orig($epsB);
     my @greenPc; #array of Green's projections along complex directions.
     my @greenPcc; #array of Green's projections along complex-conjugate directions.
     my $converged=1;
@@ -147,7 +147,7 @@ around 'evaluate' => sub {
     foreach(@{$self->CCgreenP}){
         push @greenPcc, $_->evaluate($epsB);
         $converged &&=$_->converged;
-    } 
+    }
     $self->_converged($converged);
     my $nd=$self->geometry->B->ndims;
     my $greenTensor=$self->greenTensor;
@@ -161,7 +161,7 @@ around 'evaluate' => sub {
 	}
      }
     #print $asy, "\n";
-    $greenTensor= $greenTensor+$asy; 
+    $greenTensor= $greenTensor+$asy;
     $self->_greenTensor($greenTensor);
     return $greenTensor;
 };
@@ -224,7 +224,7 @@ sub _build_CCgreenP {
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

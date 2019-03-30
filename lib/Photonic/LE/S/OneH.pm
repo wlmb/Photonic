@@ -10,7 +10,7 @@ version 0.011
 
     use Photonic::LE::S::OneH;
     my $nr=Photonic::LE::S::OneH->new(epsilon=>$epsilon,
-           geometry=>$geometry);  
+           geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -39,12 +39,12 @@ function $e and optional smallness parameter  $s.
 
 =over 4
 
-=item * epsilon 
+=item * epsilon
 
 A PDL::Complex PDL giving the value of the dielectric function epsilon
 for each pixel of the system
 
-=item * geometry Photonic::Types::GeometryG0 
+=item * geometry Photonic::Types::GeometryG0
 
 A Photonic::Geometry object defining the geometry of the system,
 the charateristic function and the direction of the G=0 vector. Should
@@ -59,7 +59,7 @@ Accesors handled by geometry (see Photonic::Geometry)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero. Handled by Photonic::Roles::EpsParams
 
-=item * previousState currentState nextState 
+=item * previousState currentState nextState
 
 The n-1-th, n-th and n+1-th Haydock states; a complex 2-spinor for each
 reciprocal vector.
@@ -86,8 +86,8 @@ Number of completed iterations
 
 Performs a single Haydock iteration and updates current_a, next_state,
 next_b2, next_b, shifting the current values where necessary. Returns
-0 when unable to continue iterating. 
- 
+0 when unable to continue iterating.
+
 =back
 
 =cut
@@ -107,7 +107,7 @@ use Moose;
 use MooseX::StrictConstructor;
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
-		builder=>'_epsilon');  
+		builder=>'_epsilon');
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B ndims dims r G GNorm L scale f pmGNorm)],required=>1
     );
@@ -121,14 +121,14 @@ sub _epsilon {
 	$self->geometry->can('epsilon');
     return $self->geometry->epsilon;
 }
-    
+
 #Required by Photonic::Roles::OneH
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(2,2,@{$self->dims})->complex; #ri:pm:nx:ny
     my $arg="(0),:" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
-    $v->slice($arg).=1/sqrt(2); 
+    $v->slice($arg).=1/sqrt(2);
     return $v;
 }
 sub applyOperator {
@@ -143,7 +143,7 @@ sub applyOperator {
     #state is ri:pmk:nx:ny... pmGnorm=xy:pmk:nx:ny...
     #Multiply by vectors ^G and ^(-G).
     #Have to get cartesian out of the way, thread over it and iterate
-    #over the rest 
+    #over the rest
     my $Gpsi_G=($psi_G*$self->pmGNorm->mv(0,-1))->mv(1,-1); #^G |psi>
     #the result is complex ri:nx:ny...i:pmk
     # Notice that I actually multiply by unit(k-G) instead of
@@ -153,9 +153,9 @@ sub applyOperator {
     #thread over cartesian and pmk indices
     #Notice that (i)fftn wants a real 2,nx,ny... piddle, not a complex
     #one. Thus, I have to convert complex to real and back here and
-    #downwards. 
-    #real space ^G|psi> 
-    my $Gpsi_R=ifftn($Gpsi_G->real, $self->ndims)->complex; 
+    #downwards.
+    #real space ^G|psi>
+    my $Gpsi_R=ifftn($Gpsi_G->real, $self->ndims)->complex;
     # $Gpsi_R is ri:nx:ny...i:pmk
     # $self->epsilon is ri:nx:ny...
     #Multiply by the dielectric function in Real Space. Thread
@@ -163,7 +163,7 @@ sub applyOperator {
     my $eGpsi_R=$self->epsilon*$Gpsi_R; #Epsilon could be tensorial!
     #$eGpsi_R is ri:nx:ny,...i:pmk
     #Transform to reciprocal space
-    my $eGpsi_G=fftn($eGpsi_R->real, $self->ndims)->complex->mv(-1,1); 
+    my $eGpsi_G=fftn($eGpsi_R->real, $self->ndims)->complex->mv(-1,1);
     #$eGpsi_G is ri:pmk:nx:ny...:i
     #Scalar product with pmGnorm: i:pm:nx:ny...
     my $GeGpsi_G=($eGpsi_G*$self->pmGNorm->mv(0,-1)) #^Ge^G|psi>
@@ -188,5 +188,5 @@ sub changesign { #don't change sign
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

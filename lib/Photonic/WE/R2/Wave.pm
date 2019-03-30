@@ -22,7 +22,7 @@ functions of the components.
 
 =over 4
 
-=item * new(metric=>$m, nh=>$nh, smallH=>$smallH, smallE=>$smallE, keepStates=>$k)  
+=item * new(metric=>$m, nh=>$nh, smallH=>$smallH, smallE=>$smallE, keepStates=>$k)
 
 Initializes the structure.
 
@@ -39,7 +39,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 Returns the macroscopic wave operator for a given value of the
 dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.  
+response $epsA is taken from the metric.
 
 =back
 
@@ -72,10 +72,10 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-extends 'Photonic::WE::R2::Green'; 
+extends 'Photonic::WE::R2::Green';
 
 has 'waveOperator' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-             writer=>'_waveOperator',   
+             writer=>'_waveOperator',
              documentation=>'Wave operator from last evaluation');
 
 around 'evaluate' => sub {
@@ -95,6 +95,6 @@ around 'evaluate' => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 

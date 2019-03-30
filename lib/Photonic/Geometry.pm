@@ -5,10 +5,10 @@ use strict;
 use Carp;
 
 my @implementations=qw(FromB FromImage2D);
-croak "Dont use Photonic::Geometry. Use a specific implementation. " 
+croak "Dont use Photonic::Geometry. Use a specific implementation. "
     . "Choose from: "
     . join ", ", map {"Photonic::Geometry::" . $_} @implementations;
-    
+
 0;
 
 =head1 NAME
@@ -28,9 +28,9 @@ my $g2=Photonic::Geometry::FromImage2D->new(path=>$filename);
 
 =head1 DESCRIPTION
 
-Create a geometry object used in several modules of Photonic. 
+Create a geometry object used in several modules of Photonic.
 This is a stub. You should choose a specific implementation. Currently
-you could use 
+you could use
 
 =over 4
 

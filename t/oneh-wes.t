@@ -9,7 +9,7 @@ use Photonic::WE::S::OneH;
 
 use Test::More tests => 4;
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)->Cabs2)->sum<=1e-7;
@@ -19,9 +19,9 @@ sub Cagree {
 #1D system e=1 or 2
 my ($ea, $eb)=(1+2*i, 3+4*i);
 my $f=6/11;
-my $eps=$ea*(zeroes(11)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i; 
+my $eps=$ea*(zeroes(11)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
 my $g=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$eps, Direction0=>pdl([1])); 
+    ->new(epsilon=>$eps, Direction0=>pdl([1]));
 my $m=Photonic::WE::S::Metric->new(
     geometry=>$g, epsilon=>pdl(1), wavenumber=>pdl(2), wavevector=>pdl([1])
     );

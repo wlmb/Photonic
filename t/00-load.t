@@ -78,7 +78,7 @@ BEGIN {
     foreach(@mods){
 	use_ok( 'Photonic' ) || print "Bail out!\n";
     }
-    
+
 }
 
 diag( "Testing Photonic $Photonic::VERSION, Perl $], $^X" );

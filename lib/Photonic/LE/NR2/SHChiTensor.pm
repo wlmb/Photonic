@@ -11,7 +11,7 @@ version 0.011
    use Photonic::LE::NR2::SHChiTensor;
    my $chi=Photonic::LE::NR2::SHChiTensor->new(geometry=>$g,
            $densityA=>$dA, $densityB=>$dB, nh=>$nh, nhf=>$nhf,
-           filter=>$f, filterflag=>$ff); 
+           filter=>$f, filterflag=>$ff);
    my $chiTensor=$chi->evaluate($epsA1, $epsB1, $epsA2, $epsB2);
 
 =head1 DESCRIPTION
@@ -34,9 +34,9 @@ $da, $db number densities for material A and B (in which units?)
 
 $nh is the maximum number of Haydock coefficients to use.
 
-$nhf is the maximum number of Haydock coefficients for the field calculation. 
+$nhf is the maximum number of Haydock coefficients for the field calculation.
 
-$ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geometry. 
+$ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geometry.
 
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
 haydock coefficients and continued fraction. From Photonic::Roles::EpsParams.
@@ -45,12 +45,12 @@ haydock coefficients and continued fraction. From Photonic::Roles::EpsParams.
 
 Returns the macroscopic second Harmonic susceptibility function for a
 given value of the dielectric functions of the host $epsA and the
-particle $epsB at the fundamental 1 and second harmonic 2 frequency. 
+particle $epsB at the fundamental 1 and second harmonic 2 frequency.
 $kind is an optional letter for testing purposes with values 'd' for
 dipolar, 'q' for quadrupolar, 'e' for external and 'f' for full
 selfconsistent calculation (the default). Mask is a mask with ones and
 zeroes, to evaluate the contribution of certain regions to the
-susceptibility. 
+susceptibility.
 
 
 =back
@@ -72,13 +72,13 @@ Accesors handled by geometry.
 
 Dipole entities density in mediums A and B
 
-=item * nhf 
+=item * nhf
 
 Maximum number of Haydock coefficients for field calculation
 
 =item * filter
 
-Optional filter to multiply by in reciprocal space 
+Optional filter to multiply by in reciprocal space
 
 =item * epsA1, epsB1, epsA2, epsB2
 
@@ -104,7 +104,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallH smallE
 
 Criteria of convergence for Haydock coefficients and for fields. 0
-means don't check. 
+means don't check.
 
 =back
 
@@ -112,7 +112,7 @@ means don't check.
 
 =over 4
 
-=item * u1, u2 
+=item * u1, u2
 
 Spectral variables
 
@@ -144,13 +144,13 @@ has 'densityA'=>(is=>'ro', isa=>'Num', required=>1,
          documentation=>'Normalized dipole entities density in medium A');
 has 'densityB'=>(is=>'ro', isa=>'Num', required=>1,
          documentation=>'Normalized dipole entities density in medium B');
-has 'nhf'=>(is=>'ro', required=>1, 
+has 'nhf'=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock
                          coefficients for field calculation');
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
 
-#optional parameters 
+#optional parameters
 has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 
@@ -167,10 +167,10 @@ has 'nrshp' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::SHP]',
             init_arg=>undef, lazy=>1, builder=>'_build_nrshp',
             documentation=>'Array of Haydock SH polarization calculators');
 has 'epsTensor'=>(is=>'ro', isa=>'Photonic::LE::NR2::EpsTensor',
-         init_arg=>undef, 
+         init_arg=>undef,
          lazy=>1,  builder=>'_build_epsTensor',
          documentation=>'diel. tensor at 2w');
-has 'chiTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_chiTensor', 
+has 'chiTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_chiTensor',
              documentation=>'SH Susceptibility from last evaluation');
 with 'Photonic::Roles::EpsParams';
 
@@ -183,7 +183,7 @@ sub evaluate {
     $self->_epsB2(my $epsB2=shift);
     my %options=@_; #the rest are options. Currently, kind and mask.
     my $kind=lc($options{kind}); # Undocumented, for testing: Use full (f) P2 or
-		    # (d) dipolar or  (q) quadrupolar or (e) external  
+		    # (d) dipolar or  (q) quadrupolar or (e) external
     my $mask=$options{mask};
     my $nd=$self->geometry->B->ndims;
     my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
@@ -227,11 +227,11 @@ sub evaluate {
 	}
 	$P2Mmask = $P2Mmask + $f*$Dep2 if $kind eq 'f' or $kind eq 'l'
 	    or $kind eq 'a'; # substract masked macro depolarization field
-	push @P2M, $P2Mmask; 
+	push @P2M, $P2Mmask;
     }
     #NOTE. Maybe I have to correct response to D-> response to E
     #I have to convert from the array of polarizations for given
-    #directions to the actual cartesian chi's. 
+    #directions to the actual cartesian chi's.
     #$reP2M and $imP2M have cartesian, dyad indices
     my $reP2M=PDL->pdl([map {$_->re} @P2M]);
     my $imP2M=PDL->pdl([map {$_->im} @P2M]);
@@ -268,13 +268,13 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 	#Build a corresponding LE::NR2::AllH structure
 	my $nr=Photonic::LE::NR2::AllH->new(
 	    nh=>$self->nh, geometry=>$g, keepStates=>1,
-	    reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH);  
+	    reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH);
 	my @args=(nr=>$nr, nh=>$self->nhf, smallE=>$self->smallE);
 	push @args, filter=>$self->filter if $self->has_filter;
 	my $nrf=Photonic::LE::NR2::FieldH->new(@args);
 	my $nrshp=Photonic::LE::NR2::SHP->
-	    new(nrf=>$nrf, densityA=>$self->densityA, 
-		densityB=>$self->densityB); 
+	    new(nrf=>$nrf, densityA=>$self->densityA,
+		densityB=>$self->densityB);
 	push @nrshp, $nrshp;
     }
     return [@nrshp]
@@ -284,18 +284,18 @@ sub _build_epsTensor {
     my $self=shift;
     my $geometry=$self->geometry;
     my $nh=$self->nh; #desired number of Haydock terms
-    my $smallH=$self->smallH; #smallness 
-    my $smallE=$self->smallE; #smallness 
+    my $smallH=$self->smallH; #smallness
+    my $smallE=$self->smallE; #smallness
     my $eT=Photonic::LE::NR2::EpsTensor
 	->new(geometry=>$self->geometry, nh=>$self->nh,
-	      reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH, 
+	      reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH,
 	      smallE=>$self->smallE);
     return $eT;
 }
 
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

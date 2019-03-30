@@ -14,13 +14,13 @@ use List::Util;
 
 use Test::More tests => 11;
 
-sub agree {    
+sub agree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)*($a-$b))->sum<=1e-4;
 }
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)->Cabs2)->sum<=1e-4;
@@ -30,12 +30,12 @@ sub Cagree {
 #Non-retarded limit
 my ($ea, $eb)=(1+2*i,3+4*i);
 my $f=6/11;
-my $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5)+0*i; 
+my $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5)+0*i;
 my $g=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$eps); 
+    ->new(epsilon=>$eps);
 my $m=Photonic::WE::S::Metric->new(
     geometry=>$g, epsilon=>pdl(1), wavenumber=>pdl(2e-5),
-    wavevector=>pdl([1,0])*2.1e-5);  
+    wavevector=>pdl([1,0])*2.1e-5);
 my $et=Photonic::WE::S::EpsilonTensor->new(nh=>10, metric=>$m);
 my $etv=$et->epsilonTensor;
 ok(Cagree($etv->(:,(0),(0)), 1/((1-$f)/$ea+$f/$eb)),
@@ -47,7 +47,7 @@ ok(Cagree($etv->(:,(1),(0)), 0), "yx k perp");
 
 $m=Photonic::WE::S::Metric->new(
     geometry=>$g, epsilon=>pdl(1), wavenumber=>pdl(2e-5),
-    wavevector=>pdl([0,1])*2.1e-5);  
+    wavevector=>pdl([0,1])*2.1e-5);
 $et=Photonic::WE::S::EpsilonTensor->new(nh=>10, metric=>$m);
 $etv=$et->epsilonTensor;
 ok(Cagree($etv->(:,(0),(0)), 1/((1-$f)/$ea+$f/$eb)),
@@ -60,9 +60,9 @@ ok(Cagree($etv->(:,(1),(0)), 0), "yx k parallel");
 #Compare to epsilon from transfer matrix.
 #Construct normal incidence transfer matrix
 ($ea, $eb)=(r2C(1),r2C(2));
-$eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i; 
+$eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
 $g=Photonic::Geometry::FromEpsilon
-    ->new(epsilon=>$eps, L=>pdl(1,1)); 
+    ->new(epsilon=>$eps, L=>pdl(1,1));
 my ($na, $nb)=map {sqrt($_)} ($ea, $eb);
 my $q=1.2;
 my ($ka,$kb)=map {$q*$_} ((1-$f)*$na, $f*$nb); #Multiply by length also
@@ -80,7 +80,7 @@ my $epstm=($pd/$q)**2;
 #epsilon from photonic
 $m=Photonic::WE::S::Metric->new(
     geometry=>$g, epsilon=>pdl(1), wavenumber=>pdl($q),
-    wavevector=>pdl([$pd,0]));  
+    wavevector=>pdl([$pd,0]));
 $et=Photonic::WE::S::EpsilonTensor->new(nh=>1000, metric=>$m,
 						  reorthogonalize=>1);
 $etv=$et->epsilonTensor->(:,(1),(1));
@@ -89,8 +89,8 @@ ok(Cagree($epstm, $etv), "Epsilon agrees with transfer matrix");
 #Compare to epsilon from transfer matrix with complex metric.
 #Construct normal incidence transfer matrix
 ($ea, $eb)=(r2C(1+0*i),r2C(2+1*i));
-$eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i; 
-$g=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps, L=>pdl(1,1)); 
+$eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
+$g=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps, L=>pdl(1,1));
 ($na, $nb)=map {sqrt($_)} ($ea, $eb);
 $q=1.2;
 ($ka,$kb)=map {$q*$_} ((1-$f)*$na, $f*$nb); #Multiply by length also
@@ -106,16 +106,16 @@ $epstm=($pd/$q)**2;
 #epsilon from photonic
 $m=Photonic::WE::S::Metric->new(
     geometry=>$g, epsilon=>pdl(1), wavenumber=>pdl($q),
-    wavevector=>pdl([$pd,0])->complex);  
+    wavevector=>pdl([$pd,0])->complex);
 $et=Photonic::WE::S::EpsilonTensor->new(nh=>1000, metric=>$m,
 						  reorthogonalize=>1);
 $etv=$et->epsilonTensor->(:,(1),(1));
 ok(Cagree($epstm, $etv), "Epsilon agrees with transfer matrix. Complex case.");
 
 my $h=Photonic::WE::S::AllH->new(nh=>1000, metric=>$m,
-   polarization=>pdl([0,r2C(1)])->complex, reorthogonalize=>1); 
+   polarization=>pdl([0,r2C(1)])->complex, reorthogonalize=>1);
 $et=Photonic::WE::S::EpsilonP->new(nh=>1000, haydock=>$h);
 $etv=$et->epsilon;
-ok(Cagree($epstm, $etv), "Projected eps agrees with trans mat. Complex case."); 
+ok(Cagree($epstm, $etv), "Projected eps agrees with trans mat. Complex case.");
 
 #done_testing();

@@ -28,13 +28,13 @@ sub applyOperator {
     $mask=$self->mask if $self->use_mask;
     my $gpsi=$self->applyMetric($psi);
     # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
-    # transform to real space. Note FFFTW3 wants real PDL's[2,...] 
+    # transform to real space. Note FFFTW3 wants real PDL's[2,...]
     my $gpsi_r=ifftn($gpsi->real->mv(1,-1), $self->ndims);
     #$psi_r is RorI nx ny nz  xyz, B is nx ny nz
     # Multiply by characteristic function
     my $Bgpsi_r=Cscale($gpsi_r,$self->B);
     #Bpsi_r is RorI nx ny nz  xyz
-    #Transform to reciprocal space, move xyz back and make complex, 
+    #Transform to reciprocal space, move xyz back and make complex,
     my $psi_G=fftn($Bgpsi_r, $self->ndims)->mv(-1,1)->complex;
     #Apply mask
     #psi_G is ri:xy:nx:ny mask is nx:ny
@@ -47,7 +47,7 @@ sub applyMetric {
     my $psi=shift;
     #psi is RorI xy.. nx ny..
     my $g=$self->metric->value;
-    #$g is xyz xyz nx ny nz 
+    #$g is xyz xyz nx ny nz
     my $gpsi=($g*$psi(:,:,*1))->sumover; #matrix times vector
     #$gpsi is RorI xy.. nx ny..
     return $gpsi;
@@ -91,20 +91,20 @@ sub _firstState {
     croak "Polarization has wrong dimensions. " .
 	  " Should be $d-dimensional complex vector."
 	unless $e->isa('PDL::Complex') && $e->ndims==2 &&
-	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d; 
+	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d;
     my $modulus2=$e->Cabs2->sumover;
     croak "Polarization should be non null" unless
 	$modulus2 > 0;
     $e=$e/sqrt($modulus2);
     $self->_normalizedPolarization($e);
-    my $phi=$e*$v(*1); #initial state ordinarily normalized 
+    my $phi=$e*$v(*1); #initial state ordinarily normalized
                        # RorI xyz nx ny nz
     return $phi;
 }
 
-    
+
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 =head1 NAME
@@ -147,7 +147,7 @@ field along the complex direction $e and with smallness parameter  $s.
 
 =over 4
 
-=item * metric Photonic::Metric::R2 
+=item * metric Photonic::Metric::R2
 
 A Photonic::Metric::R2 object defining the geometry of the
 system, the charateristic function, the wavenumber, wavevector and
@@ -156,9 +156,9 @@ host dielectric function. Required in the initializer.
 =item * polarization PDL::Complex
 
 A non null vector defining the complex direction of the macroscopic
-field. 
+field.
 
-=item * smallH 
+=item * smallH
 
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero. From Photonic::Roles::EpsParams.
@@ -167,7 +167,7 @@ b^2 coefficients are taken to be zero. From Photonic::Roles::EpsParams.
 
 Accesors handled by metric (see Photonic::Metric::R2)
 
-=item * previousState currentState nextState 
+=item * previousState currentState nextState
 
 The n-1-th, n-th and n+1-th Haydock states; a complex vector for each
 reciprocal wavevector
@@ -184,7 +184,7 @@ The n-th and n+1-th b^2 and b Haydock coefficients
 
 The n+1-th c Haydock coefficient
 
-=item * previous_g current_g next_g 
+=item * previous_g current_g next_g
 
 The n-1-th n-th and n+1-th g Haydock coefficients
 
@@ -202,8 +202,8 @@ Number of completed iterations
 
 Performs a single Haydock iteration and updates current_a, next_b,
 next_b2, next_c, next_g, next_state, shifting the current values where
-necessary. Returns 0 when unable to continue iterating. 
- 
+necessary. Returns 0 when unable to continue iterating.
+
 =begin Pod::Coverage
 
 =head2 BUILD

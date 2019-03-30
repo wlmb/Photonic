@@ -14,13 +14,13 @@ use List::Util;
 
 use Test::More tests => 9;
 
-sub agree {    
+sub agree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)*($a-$b))->sum<=1e-4;
 }
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)->Cabs2)->sum<=1e-4;
@@ -30,12 +30,12 @@ sub Cagree {
 #Non-retarded limit
 my ($ea, $eb)=(pdl(1),3+4*i);
 my $f=6/11;
-my $B=zeroes(11,1)->xvals>=5; 
-#my $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i; 
-my $g=Photonic::Geometry::FromB->new(B=>$B); 
+my $B=zeroes(11,1)->xvals>=5;
+#my $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
+my $g=Photonic::Geometry::FromB->new(B=>$B);
 my $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea, wavenumber=>pdl(2e-5),
-    wavevector=>pdl([1,0])*2.1e-5); 
+    wavevector=>pdl([1,0])*2.1e-5);
 my $et=Photonic::WE::R2::EpsilonTensor->new(nh=>10, metric=>$m);
 my $etv=$et->evaluate($eb);
 ok(Cagree($etv->(:,(0),(0)), 1/((1-$f)/$ea+$f/$eb)),
@@ -47,7 +47,7 @@ ok(Cagree($etv->(:,(1),(0)), 0), "yx k perp");
 
 $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea, wavenumber=>pdl(2e-5),
-    wavevector=>pdl([0,1])*2.1e-5);  
+    wavevector=>pdl([0,1])*2.1e-5);
 $et=Photonic::WE::R2::EpsilonTensor->new(nh=>10, metric=>$m);
 $etv=$et->evaluate($eb);
 ok(Cagree($etv->(:,(0),(0)), 1/((1-$f)/$ea+$f/$eb)),
@@ -60,7 +60,7 @@ ok(Cagree($etv->(:,(1),(0)), 0), "yx k parallel");
 #Compare to epsilon from transfer matrix.
 #Construct normal incidence transfer matrix
 ($ea, $eb)=(r2C(1),r2C(2));
-$g=Photonic::Geometry::FromB->new(B=>$B, L=>pdl(1,1)); 
+$g=Photonic::Geometry::FromB->new(B=>$B, L=>pdl(1,1));
 my ($na, $nb)=map {sqrt($_)} ($ea, $eb);
 my $q=1.2;
 my ($ka,$kb)=map {$q*$_} ((1-$f)*$na, $f*$nb); #Multiply by length also
@@ -78,7 +78,7 @@ my $epstm=($pd/$q)**2;
 #epsilon from photonic
 $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea->re, wavenumber=>pdl($q),
-    wavevector=>pdl([$pd,0]));  
+    wavevector=>pdl([$pd,0]));
 $et=Photonic::WE::R2::EpsilonTensor->new(nh=>1000, metric=>$m,
 						  reorthogonalize=>1);
 $etv=$et->evaluate($eb)->(:,(1),(1));

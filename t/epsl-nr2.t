@@ -6,7 +6,7 @@ use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::AllH;
 use Photonic::LE::NR2::EpsL;
-    
+
 use Machine::Epsilon;
 use List::Util;
 
@@ -14,7 +14,7 @@ use Test::More tests => 6;
 
 #my $pi=4*atan2(1,1);
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     my $prec=shift//1e-7;

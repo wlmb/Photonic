@@ -10,7 +10,7 @@ version 0.011
 
    use Photonic::LE::NP::AllH;
    my $iter=Photonic::LE::NP::AllH->new(
-       epsilon=>$e, geometry=>$geometry,nh=>$Nh, keepStates=>$save); 
+       epsilon=>$e, geometry=>$geometry,nh=>$Nh, keepStates=>$save);
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
@@ -20,13 +20,13 @@ version 0.011
 =head1 DESCRIPTION
 
 Iterates the calculation of Haydock coefficients and states and saves
-them for later retrieval. 
+them for later retrieval.
 
 =head1 METHODS
 
 =over 4
 
-=item * new(epsilon=>$e, geometry=>$g, nh=>$nh, keepStates=>$k) 
+=item * new(epsilon=>$e, geometry=>$g, nh=>$nh, keepStates=>$k)
 
 Initializes an Ph::NR::NP::AllH object. $nh is the maximum number of desired
 coefficients, $k is a flag, non zero to save the Haydock states. All
@@ -95,5 +95,5 @@ extends 'Photonic::LE::NP::OneH';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeC';
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

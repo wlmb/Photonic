@@ -10,7 +10,7 @@ version 0.011
 
     use Photonic::WE::R2::Metric;
     my $gGG=Photonic::WE::R2::Metric->new(
-            geometry=>$geometry, epsilon=>$eps, 
+            geometry=>$geometry, epsilon=>$eps,
             wavenumber => $q, $wavevector=>k);
     f($gGG->value);
 
@@ -35,7 +35,7 @@ $k. $q and $k are real.
 
 =over 4
 
-=item * value 
+=item * value
 
 The actual metric tensor as a complex PDL (d,d,n1,n2..nd)
 the first and second indices over cartesian indices for 0 to d-1 in d
@@ -57,7 +57,7 @@ has 'geometry'  => (is=>'ro', isa=>'Photonic::Types::Geometry', required=>1,
                     required=>1,
                     documentation=>'Geometry');
 has 'epsilon'   => (is=>'ro', isa=>'PDL', required=>1,
-		    default=>sub{PDL->pdl(1)}, 
+		    default=>sub{PDL->pdl(1)},
                    documentation=>'Real reference dielectric function');
 has 'wavenumber'=> (is=>'ro', isa=>'PDL', required=>1,
                    documentation=>'Vacuum wavenumber w/c');

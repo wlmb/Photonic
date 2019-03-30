@@ -25,13 +25,13 @@ sub linearCombine { #complex linear combination of states
     }
     return $result;
 }
-    
+
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
-    my $first=shift; 
+    my $first=shift;
     my $second=shift;
     my $skip=shift//0;
     my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');  
+	'PDL::Complex');
     my $ndims=$first->ndims;
     confess "Dimensions should be equal" unless $ndims == $second->ndims;
     my $prod=$first->complex->Cconj*$second->complex;
@@ -45,14 +45,14 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
 }
 
 sub MHProd { #Hermitean product between two fields with metric. skip
-	     #first 'skip' dims  
-    my $first=shift; 
+	     #first 'skip' dims
+    my $first=shift;
     my $second=shift;
     my $metric=shift;
     # pass $metric->value  xyz xyz nx ny nz
     my $skip=shift//0;
     my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');  
+	'PDL::Complex');
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     carp "We don't trust the skip argument in MHProd yet" if $skip;
@@ -70,12 +70,12 @@ sub MHProd { #Hermitean product between two fields with metric. skip
 
 sub EProd { #Euclidean product between two fields in reciprocal
 	    #space. Have to map G->-G. skip
-	    #first 'skip' dims   
-    my $first=shift; 
+	    #first 'skip' dims
+    my $first=shift;
     my $second=shift;
     my $skip=shift//0;
     my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');  
+	'PDL::Complex');
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #First reverse all reciprocal dimensions
@@ -100,12 +100,12 @@ sub EProd { #Euclidean product between two fields in reciprocal
 
 sub SProd { #Spinor product between two fields in reciprocal
 	    #space. Have to map G->-G. skip first 'skip' dims (after
-	    #complex and spinor dimension    
-    my $first=shift; 
+	    #complex and spinor dimension
+    my $first=shift;
     my $second=shift;
     my $skip=shift//0;
     my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');  
+	'PDL::Complex');
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #dimensions are like rori, pmk, s1,s2, nx,ny
@@ -134,10 +134,10 @@ sub SProd { #Spinor product between two fields in reciprocal
 
 sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
              #space. Indices are ri:xy:pm:nx:ny...
-    my $first=shift; 
+    my $first=shift;
     my $second=shift;
     my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');  
+	'PDL::Complex');
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #dimensions are like ri:xy:pm:nx:ny
@@ -164,7 +164,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
 
 
 sub RtoG { #transform a 'complex' scalar, vector or tensorial field
-	   #from real to reciprocal space  
+	   #from real to reciprocal space
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
@@ -176,9 +176,9 @@ sub RtoG { #transform a 'complex' scalar, vector or tensorial field
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }
-    
+
 sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
-	   #reciprocal to real space  
+	   #reciprocal to real space
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
@@ -195,7 +195,7 @@ sub lentzCF {
     # continued fraction using lentz method Numerical Recipes
     # p. 171. Arguments are as, bs, maximum number of iterations and
     # smallness parameter
-    # a0+b1/a1+b2+... 
+    # a0+b1/a1+b2+...
     my $as=shift;
     my $bs=shift;
     my $max=shift;
@@ -225,7 +225,7 @@ sub lentzCF {
     return wantarray? ($fn, $n): $fn;
 }
 
-    
+
 sub tile { # repeat field Nx X Ny X... times
     my $f=shift;
     my @n=@_; #number of repetitions along dimension
@@ -252,11 +252,11 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
     my $f1=$s*$f->(:,0:-1:$d, 0:-1:$d); #decimate two dimensions
     my $coords=$d*PDL::ndcoords(@{[$f1->dims]}[1,2]);
     return ( #basex, basey, vectorx vectory
-	($coords((0))-.5*$f1((0)))->flat, 
-	($coords((1))-.5*$f1((1)))->flat, 
+	($coords((0))-.5*$f1((0)))->flat,
+	($coords((1))-.5*$f1((1)))->flat,
 	$f1((0))->flat, $f1((1))->flat);
 }
-    
+
 
 sub cmatmult {
     my $a=shift;
@@ -302,7 +302,7 @@ Utility functions that may be useful.
 
 Complex linear combination of states. $c is an arrayref of 'complex' pdl
 scalars and $s is an arrayref of 'complex' states ('complex'
-multidimensional pdl). 
+multidimensional pdl).
 
 =item * $p=HProd($a, $b, $skip)
 
@@ -321,14 +321,14 @@ is RorI) before adding up. (Might not be functional yet, or might be wrong)
 
 Euclidean product <a|b> of two 2x.... 'complex' multidimensional
 pdls $a and $b in reciprocal space. If $skip is present, preserve the
-first 1+$skip dimensions (the first dimension is RorI) before adding up. 
+first 1+$skip dimensions (the first dimension is RorI) before adding up.
 
 =item * $p=SProd($a, $b, $skip)
 
 Spinor product <a|b> of two 2x.... 'complex' multidimensional
 pdls $a and $b in reciprocal space. If $skip is present, preserve the
 first 2+$skip dimensions (the first dimension is RorI and the second
-the spinor dimension) before adding up. 
+the spinor dimension) before adding up.
 
 =item * $psiG = RtoG($psiR, $ndims, $skip)
 
@@ -338,12 +338,12 @@ complex field $psiG that is a function of the reciprocal vectors. The
 first dimension must be 2, as the values are complex. The next $skip
 dimensions are skiped (0 for a scalar, 1 for a vector, 2 for a
 2-tensor field). The Fourier transform is performed over the
-following $ndims dimensions. 
+following $ndims dimensions.
 
 =item * $psiR = GtoR($psiG, $ndims, $skip)
 
 The opposite transformation to RtoG. Transform a 'complex' scalara,
-vector or tensorial field from reciprocal to real space. 
+vector or tensorial field from reciprocal to real space.
 
 =item * $b=tile($a, $nx, $ny,...)
 

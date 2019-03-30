@@ -5,10 +5,10 @@ use strict;
 use Carp;
 
 my @implementations=qw(OneH);
-croak "Dont use Photonic::EL::S. Use a specific implementation. " 
+croak "Dont use Photonic::EL::S. Use a specific implementation. "
     . "Choose from: "
     . join ", ", map {"Photonic::EL::S::" . $_} @implementations;
-    
+
 0;
 =head1 NAME
 
@@ -33,7 +33,7 @@ the longitudinal dielectric function.
 =item L<Photonic::EL::S::OneH>
 
 Implementation for arbitrary numbers of arbitrary media in the non
-retarded approximation.  
+retarded approximation.
 
 =back
 

@@ -10,7 +10,7 @@ version 0.011
 
     use Photonic::WE::R2::Metric;
     my $gGG=Photonic::WE::R2::Metric->new(
-            geometry=>$geometry, epsilon=>$eps, 
+            geometry=>$geometry, epsilon=>$eps,
             wavenumber => $q, $wavevector=>k);
     f($gGG->value);
 
@@ -35,7 +35,7 @@ $k. $q and $k are real.
 
 =over 4
 
-=item * value 
+=item * value
 
 The actual metric tensor as a complex PDL (d,d,n1,n2..nd)
 the first and second indices over cartesian indices for 0 to d-1 in d
@@ -59,7 +59,7 @@ use Moose;
 use MooseX::StrictConstructor;
 
 has 'value'     => (is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
-                   builder=>'_value', 
+                   builder=>'_value',
                    documentation=>'Metric tensor');
 
 with 'Photonic::Roles::Metric';
@@ -78,7 +78,7 @@ sub _value {
     # (k+G)(k+G) diad
     my $kPGkPG = $kPG->outer($kPG); #xyz xyz nx ny nz
     # interior product
-    my $kPG2 = $kPG->inner($kPG); #nx ny nz 
+    my $kPG2 = $kPG->inner($kPG); #nx ny nz
     my $id=identity($self->ndims);
     my $k02=$eps*$q*$q; # squared wavenumber in 'host'
     #xyz xyz nx ny nz
@@ -86,6 +86,6 @@ sub _value {
     my $gGG=($k02*$id-$kPGkPG)/(($k02-$kPG2)->(*1,*1)); #xyz xyz nx ny nz
     return $gGG;
 }
-    
+
 
 1;

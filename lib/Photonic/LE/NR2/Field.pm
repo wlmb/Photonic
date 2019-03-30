@@ -33,11 +33,11 @@ structure, *initialized* with the flag keepStates=>1
 $nh is the maximum number of Haydock coefficients to use.
 
 $smallE is the criteria of convergence (default 1e-7) for
-Field calculations  
+Field calculations
 
 =item * evaluate($epsA, $epsB...)
 
-Returns the microscopic electric field for given 
+Returns the microscopic electric field for given
 dielectric functions of the host $epsA and the particle $epsB.
 
 =back
@@ -50,7 +50,7 @@ dielectric functions of the host $epsA and the particle $epsB.
 
 Photonic::LE::NR2::AllH structure
 
-=item * nh 
+=item * nh
 
 Maximum number of Haydock coefficients to use.
 
@@ -66,7 +66,7 @@ Dielectric function of component A
 
 Dielectric function of componente B
 
-=item * u 
+=item * u
 
 Spectral variable
 
@@ -76,13 +76,13 @@ Array of field coefficients
 
 =item * filter
 
-optional reciprocal space filter 
+optional reciprocal space filter
 
 =item * field
 
 real space field in format RorI, cartesian, nx, ny,...
 
-=item * epsL 
+=item * epsL
 
 Longitudinal dielectric response, obtained colateraly from last
 evaluation of the field
@@ -111,16 +111,16 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,  
+has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
            documentation=>'Haydock recursion calculator');
-has 'Es'=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', init_arg=>undef, 
+has 'Es'=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', init_arg=>undef,
            writer=>'_Es', documentation=>'Field coefficients');
 has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 has 'field'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
            writer=>'_field', documentation=>'Calculated real space field');
 has 'epsL' =>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-		 writer=>'_epsL', 
+		 writer=>'_epsL',
 		 documentation=>'Longitudinal dielectric response');
 with 'Photonic::Roles::EpsParams';
 
@@ -151,7 +151,7 @@ sub evaluate {
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
-    my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs); 
+    my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
     # Obtain longitudinal macroscopic response from result
     $self->_epsL(my $epsL=1/$result->(:,(0)));
@@ -165,25 +165,25 @@ sub evaluate {
     my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
-	my $GPsi_G=Cscale(&$stateit(), 
+	my $GPsi_G=Cscale(&$stateit(),
 			  $self->nr->GNorm->mv(0,-1))->mv(-1,1);#^G|psi_n>
-	#the result is RorI, cartesian, nx, ny,... 
+	#the result is RorI, cartesian, nx, ny,...
 	my $EnGPsi_G=Cmul($GPsi_G,$Es[$n]); #En ^G|psi_n>
 	$field_G+=$EnGPsi_G;
     }
     #filter RandI for each cartesian
     $field_G *= $self->filter->(*1) if $self->has_filter;
     #get cartesian out of the way, fourier transform, put cartesian.
-    my $field_R=ifftn($field_G->mv(1,-1)->real, $ndims)->mv(-1,1)->complex; 
+    my $field_R=ifftn($field_G->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
     #result is RorI, cartesian, nx, ny,...
     $self->_field($field_R);
-    #my $EM=$field_R->mv(0,-1)->mv(0,-1)->clump(-3)->mv(-2,0)->sumover->mv(-1,1)/$self->nr->B->nelem; 
+    #my $EM=$field_R->mv(0,-1)->mv(0,-1)->clump(-3)->mv(-2,0)->sumover->mv(-1,1)/$self->nr->B->nelem;
     #print "EM=$EM\n";
     return $field_R;
 }
 
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

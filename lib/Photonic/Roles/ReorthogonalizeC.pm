@@ -8,7 +8,7 @@ use PDL::NiceSlice;
 use List::MoreUtils qw(pairwise);
 use Moose::Role;
 
-has 'previous_W' =>(is=>'ro', 
+has 'previous_W' =>(is=>'ro',
      writer=>'_previous_W', lazy=>1, init_arg=>undef,
      default=>sub{(0+0*i)->(:,*1)},
      documentation=>"Row of error matrix"
@@ -20,7 +20,7 @@ has 'current_W' =>(is=>'ro',
 );
 has 'next_W' =>(is=>'ro',
      writer=>'_next_W', lazy=>1, init_arg=>undef,
-     builder=>'_build_next_W',		
+     builder=>'_build_next_W',
      documentation=>"Next row of error matrix"
 );
 has 'accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
@@ -28,10 +28,10 @@ has 'accuracy'=>(is=>'ro', default=>sub{machine_epsilon()},
 has 'noise'=>(is=>'ro', default=>sub{machine_epsilon()},
     documentation=>'Noise introduced each iteration to overlap matrix');
 has 'normOp'=>(is=>'ro', required=>1, default=>1,
-	       documentation=>'Estimate of operator norm'); 
+	       documentation=>'Estimate of operator norm');
 has fullorthogonalize_N=>(is=>'ro', init_arg=>undef, default=>0,
 			  writer=>'_fullorthogonalize_N',
-			  documentation=>'# desired reorthogonalizations'); 
+			  documentation=>'# desired reorthogonalizations');
 has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 			   writer=>'_orthogonalizations');
 has '_justorthogonalized'=>(
@@ -89,7 +89,7 @@ sub _checkorthogonalize {
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W;
     if($n>=2){
-	$next_W= $b->(:,1:-1)*$current_W->(:,1:-1) 
+	$next_W= $b->(:,1:-1)*$current_W->(:,1:-1)
 	    + ($a->(:,0:-2)-$a->(:,($n-1)))*$current_W->(:,0:-2)
 	    - $c->(:,($n-1))*$previous_W;
 	$next_W->(:,1:-1).=$next_W->(:,1:-1)+
@@ -109,12 +109,12 @@ sub _checkorthogonalize {
 	#recalculate the last two states with full reorthogonalization
 	my $orthos=1; #number of reorthogonalizations
 	$self->_fullorthogonalize_N($orthos); #1 states, but check
-				#until 2nd state 
+				#until 2nd state
 	$self->_pop; #undoes stack
 	if($n>3){ #usual case
 	    ++$orthos;
 	    $self->_fullorthogonalize_N($orthos); #2 states, but
-				#check until 3d state  
+				#check until 3d state
 	    $self->_pop; #undo stack again
 	}
     }

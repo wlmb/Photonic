@@ -30,7 +30,7 @@ $nr is a Photonic::LE::NP::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
-$smallE is the criteria of convergence for the continued fraction 
+$smallE is the criteria of convergence for the continued fraction
 (defaults to 1e-7)
 
 =back
@@ -88,7 +88,7 @@ use MooseX::StrictConstructor;
 with 'Photonic::Roles::EpsParams';
 has 'nr' =>(is=>'ro', isa=>'Photonic::LE::NP::AllH', required=>1);
 has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsL');
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
+has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
 
@@ -126,7 +126,7 @@ sub BUILD {
 	$n++;
     }
     #If there are less available coefficients than $self->nh and all
-    #of them were used, there is no remaining work to do, so, converged 
+    #of them were used, there is no remaining work to do, so, converged
     $converged=1 if $self->nr->iteration < $self->nh;
     $self->_converged($converged);
     $self->_nhActual($n);
@@ -134,5 +134,5 @@ sub BUILD {
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

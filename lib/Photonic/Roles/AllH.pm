@@ -10,7 +10,7 @@ version 0.011
 
    use Photonic::LE::NR2::AllH;
    my $iter=Photonic::LE;;NR2::AllH->new(geometry=>$geometry,nh=>$Nh,
-            keepStates=>$save); 
+            keepStates=>$save);
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
@@ -34,13 +34,13 @@ version 0.011
 
 Roles consumed by AllH objects to be used in a Photonic
 calculation. See also specific implementations. Iterates the
-calculation of Haydock coefficients and states. 
+calculation of Haydock coefficients and states.
 
 =head1 METHODS
 
 =over 4
 
-=item * new(nh=>$nh, geometry=>$g, keepStates=>$k) 
+=item * new(nh=>$nh, geometry=>$g, keepStates=>$k)
 
 Initializes an Ph::...::AllH object. $nh is the maximum number of desired
 coefficients, $k is a flag, non zero to save the Haydock states. All
@@ -110,11 +110,11 @@ use PDL::IO::Storable;
 use Carp;
 use Moose::Role;
 
-has nh=>(is=>'ro', required=>1, 
+has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
 has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepstates',
          documentation=>'flag to keep Haydock states');
-has _states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', 
+has _states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]',
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
 
@@ -132,15 +132,15 @@ has bcs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
 has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved g coefficients');
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
-         documentation=>'Reorthogonalize flag'); 
-has 'stateFN'=>(is=>'ro', required=>1, default=>undef, 
+         documentation=>'Reorthogonalize flag');
+has 'stateFN'=>(is=>'ro', required=>1, default=>undef,
 		documentation=>'Filename to save Haydock states');
 has '_stateFD'=>(is=>'ro', init_arg=>undef, builder=>'_build_stateFD',
 		lazy=>1, documentation=>'Filedescriptor to save
-		Haydock states');  
+		Haydock states');
 has '_statePos'=>(is=>'ro', init_arg=>undef, default=>sub {[0]},
 		 lazy=>1, documentation=>'Position of each state in file');
-#provided by OneH instance  
+#provided by OneH instance
 requires qw(iterate _iterate_indeed magnitude innerProduct
     _checkorthogonalize);
 
@@ -158,7 +158,7 @@ sub state_iterator {
     my $n=0;
     my $s=$self->_states;
     #warn "statePos: " . scalar(@{$self->_statePos}) . " iteration: "
-    #. $self->iteration; 
+    #. $self->iteration;
     return iterator { #closure
 	return if $n>=$self->iteration;
 	return $s->[$n++];
@@ -187,7 +187,7 @@ sub _build_stateFD {
     return $fh;
 }
 
-    
+
 #I use before and after trick (below), as a[n] is calculated together
 #with b[n+1] in each iteration
 
@@ -221,7 +221,7 @@ sub _save_state {
     my $self=shift;
     return unless $self->keepStates; #noop
     push(@{$self->_states}, $self->nextState), return
-	unless defined $self->stateFN;  
+	unless defined $self->stateFN;
     my $fh=$self->_stateFD;
     my $lastpos=$self->_statePos->[-1];
     seek($fh, $lastpos, SEEK_SET);
@@ -268,7 +268,7 @@ sub _pop_state {
 	$self->_nextState(pop @{$self->_states});
 	$self->_currentState($self->_states->[-1]);
 	$self->_previousState($self->_states->[-2]//r2C(0));
-	return; 
+	return;
     }
     pop @{$self->_statePos};
     my ($snm3, $snm2, $snm1)=map {
@@ -296,7 +296,7 @@ sub _pop { # undo the changes done after, in and before iteration, for
     $self->_current_g($self->gs->[-1]);
     $self->_previous_g($self->gs->[-2]);
     $self->_iteration($self->iteration-1); #decrement counter
-}    
+}
 
 no Moose::Role;
 

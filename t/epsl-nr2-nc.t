@@ -8,7 +8,7 @@ use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::AllH;
 use Photonic::LE::NR2::EpsL;
-    
+
 use Machine::Epsilon;
 use List::Util;
 
@@ -16,7 +16,7 @@ use Test::More tests => 6;
 
 #my $pi=4*atan2(1,1);
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     my $prec=shift//1e-7;
@@ -28,7 +28,7 @@ my $eb=3+4*i;
 #Check haydock coefficients for simple 1D system
 my $B=zeroes(1,11)->yvals<5; #1D system
 my $gl=Photonic::Geometry::FromB->new(B=>$B,
-   primitive=>pdl([1,1],[1,-1]), Direction0=>pdl([1,-1])); #long  
+   primitive=>pdl([1,1],[1,-1]), Direction0=>pdl([1,-1])); #long
 my $al=Photonic::LE::NR2::AllH->new(geometry=>$gl, nh=>10);
 my $elo=Photonic::LE::NR2::EpsL->new(nr=>$al, nh=>10);
 my $elv=$elo->evaluate($ea, $eb);
@@ -55,11 +55,11 @@ is($eto->converged,1, "Converged");
 my $N=10;
 my $Bc=zeroes(2*$N,2*$N);
 #use (1,0) and (1,1) as primitive vectors.
-$Bc=((((($Bc->xvals+$Bc->yvals) % (2*$N)) <$N) & ($Bc->yvals<$N)) 
+$Bc=((((($Bc->xvals+$Bc->yvals) % (2*$N)) <$N) & ($Bc->yvals<$N))
      | (((($Bc->xvals+$Bc->yvals) % (2*$N)) >= $N) & ($Bc->yvals>=$N)));
 my $gc=Photonic::Geometry::FromB->new(
     B=>$Bc, L=>pdl(1, sqrt(2)), primitive=>pdl([1,0],[1,1]),
-    Direction0=>pdl([1,0])); 
+    Direction0=>pdl([1,0]));
 my $ac=Photonic::LE::NR2::AllH->new(geometry=>$gc, nh=>2000,
 				    reorthogonalize=>1);
 my $eco=Photonic::LE::NR2::EpsL->new(nr=>$ac, nh=>10000);
@@ -67,7 +67,7 @@ my $ecv=$eco->evaluate($ea, $eb);
 my $ecx=sqrt($ea*$eb);
 #diag($ecv);
 #diag($ecx);
-diag($Bc);
+#diag($Bc);
 ok(Cagree($ecv, $ecx, 1e-4), "Chess board");
 #diag("O: ". $ac->orthogonalizations. " I: ".$ac->iteration);
 is($eco->converged,1, "Converged");

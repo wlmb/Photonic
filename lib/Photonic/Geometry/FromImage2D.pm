@@ -16,14 +16,14 @@ version 0.011
 =head1 DESCRIPTION
 
 Create a geometry object to be used in a Homogeneization
-calculation using as input a monochromatic 2D image. 
+calculation using as input a monochromatic 2D image.
 
 =head1 METHODS
 
 =over 4
 
 =item * new(path=>$f, L=>$L, inverted=>$i)
-        
+
 Creates a new H::G::F object
 
 $f is the filename of a 2D monochromatic image with white regions
@@ -70,7 +70,7 @@ use Moose;
 use MooseX::StrictConstructor;
 
 BEGIN {
-# Put inoffensive path. Or else, PDL::IO::Pic fails in taint mode. 
+# Put inoffensive path. Or else, PDL::IO::Pic fails in taint mode.
     $ENV{'PATH'} = '/bin:/usr/bin';
 }
 
@@ -91,12 +91,12 @@ sub _build_B {
     my $path=$self->path;
     ( $path ) = ($path =~ m|^([A-Z0-9_.-\\/]+)$|ig);
     ($ENV{PATH})=($ENV{PATH}=~m|^([A-Z0-9_.-\\/]+)$|ig);
-    croak 
-	"Only letters, numbers, underscores, dots, slashes and hyphens " . 
+    croak
+	"Only letters, numbers, underscores, dots, slashes and hyphens " .
 	"allowed in file names"
 	unless $path;
     my $B=PDL->rpic($path);
-    croak "Please convert image $self->path to 2D monochrome B/W first" 
+    croak "Please convert image $self->path to 2D monochrome B/W first"
 	if $B->ndims != 2 || (($B|!$B)!=1)->any;
     $B=!$B if $self->inverted;
     return $B;

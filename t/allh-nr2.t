@@ -14,7 +14,7 @@ use Test::More tests => 12;
 
 #my $pi=4*atan2(1,1);
 
-sub agree {    
+sub agree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)*($a-$b))->sum<=1e-7;
@@ -55,11 +55,11 @@ ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
     my $als=Photonic::LE::NR2::AllH
 	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
 	      accuracy=>machine_epsilon(), noise=>machine_epsilon(),
-	      normOp=>1);  
+	      normOp=>1);
     $als->run;
     ok($als->iteration <= 15*15,
        "No more iterations than dimensions. Square. States in mem.");
-    diag("Actual iterations: " . $als->iteration 
+    diag("Actual iterations: " . $als->iteration
 	 . " Actual orthogonalizations: ", $als->orthogonalizations);
 }
 {
@@ -69,10 +69,10 @@ ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
     my $als=Photonic::LE::NR2::AllH
 	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
 	      accuracy=>machine_epsilon(), noise=>machine_epsilon(),
-	      normOp=>1, stateFN=>"scratch/rem.dat");  
+	      normOp=>1, stateFN=>"scratch/rem.dat");
     $als->run;
     ok($als->iteration <= 15*15,
        "No more iterations than dimensions. Square. States in file");
-    diag("Actual iterations: " . $als->iteration 
+    diag("Actual iterations: " . $als->iteration
 	 . " Actual orthogonalizations: ", $als->orthogonalizations);
 }

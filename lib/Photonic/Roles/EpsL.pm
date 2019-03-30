@@ -42,7 +42,7 @@ $nr is a Photonic::...::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
-$smallE is the criteria of convergence for the continued fraction 
+$smallE is the criteria of convergence for the continued fraction
 (defaults to 1e-7)
 
 =item * evaluate($epsA, $epsB)

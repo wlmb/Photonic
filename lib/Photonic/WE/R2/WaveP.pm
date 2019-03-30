@@ -16,16 +16,16 @@ version 0.011
 
 Calculates the macroscopic projected wave operator for a given fixed
 Photonic::WE::R2::AllH structure as a function of the dielectric
-functions of the components. 
+functions of the components.
 
 NOTE: Only works along principal directions, as it treats Green's
-function as scalar.  
+function as scalar.
 
 =head1 METHODS
 
 =over 4
 
-=item * new(haydock=>$h, nh=>$nh, smallE=>$smallE)  
+=item * new(haydock=>$h, nh=>$nh, smallE=>$smallE)
 
 Initializes the structure.
 
@@ -39,7 +39,7 @@ $smallE is the criteria of convergence (default 1e-7).
 
 Returns the macroscopic wave operator for a given value of the
 dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.  
+response $epsA is taken from the metric.
 
 =back
 
@@ -72,10 +72,10 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-extends 'Photonic::WE::R2::GreenP'; 
+extends 'Photonic::WE::R2::GreenP';
 
 has 'waveOperator' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-             writer=>'_waveOperator',   
+             writer=>'_waveOperator',
              documentation=>'Wave operator from last evaluation');
 
 around 'evaluate' => sub {
@@ -88,7 +88,7 @@ around 'evaluate' => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

@@ -9,7 +9,7 @@ version 0.011
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::AllH;
-   my $iter=Photonic::LE::NR2::AllH->new(geometry=>$geometry,nh=>$Nh); 
+   my $iter=Photonic::LE::NR2::AllH->new(geometry=>$geometry,nh=>$Nh);
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
@@ -25,7 +25,7 @@ calculation in a binary metamaterial.
 
 =over 4
 
-=item * new(geometry=>$g, nh=>$nh) 
+=item * new(geometry=>$g, nh=>$nh)
 
 Initializes an Ph::LE::NR2::AllH object. $nh is the maximum number of desired
 coefficients. All other arguments are as in Photonic::LE::NR2::OneH.
@@ -78,5 +78,5 @@ extends 'Photonic::LE::NR2::OneH';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeR';
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

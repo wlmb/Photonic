@@ -22,7 +22,7 @@ functions of the components.
 
 =over 4
 
-=item * new(geometry=>$g, nh=>$nh, smallH=>$smallH, smallE=>$smallE, keepStates=>$k) 
+=item * new(geometry=>$g, nh=>$nh, smallH=>$smallH, smallE=>$smallE, keepStates=>$k)
 
 Initializes the structure.
 
@@ -58,7 +58,7 @@ Dielectric function of component A
 
 Dielectric function of componente B
 
-=item * u 
+=item * u
 
 Spectral variable
 
@@ -87,7 +87,7 @@ Flags that the last calculation converged before using up all coefficients
 Criteria of convergence for Haydock and epsilon calculations. 0 means
 don't check. From Photonic::Roles::EpsParams.
 
-    *Check last remark* 
+    *Check last remark*
 
 =back
 
@@ -119,11 +119,11 @@ has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::AllH]',
 has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::EpsL]',
              init_arg=>undef, lazy=>1, builder=>'_build_epsL',
              documentation=>'Array of epsilon calculators');
-has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_epsTensor', 
+has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_epsTensor',
              documentation=>'Dielectric Tensor from last evaluation');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
-                  'All EpsL evaluations converged in last evaluation'); 
+                  'All EpsL evaluations converged in last evaluation');
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
     'Photonic::Roles::UseMask';
 
@@ -166,11 +166,11 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
 	$g->Direction0($_); #add G0 direction
 	#Build a corresponding LE::NR2::AllH structure
 	my $nr=Photonic::LE::NR2::AllH->new(
-	    geometry=>$g, smallH=>$self->smallH, 
+	    geometry=>$g, smallH=>$self->smallH,
 	    nh=>$self->nh, keepStates=>$self->keepStates,
 	    reorthogonalize=>$self->reorthogonalize,
 	    use_mask=>$self->use_mask,
-	    mask=>$self->mask); 
+	    mask=>$self->mask);
 	push @nr, $nr;
     }
     return [@nr]
@@ -189,7 +189,7 @@ sub _build_epsL {
 
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

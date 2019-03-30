@@ -30,7 +30,7 @@ $nr is a Photonic::LE::S::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
-$smallE is the criteria of convergence for the continued fraction 
+$smallE is the criteria of convergence for the continued fraction
 (defaults to 1e-7)
 
 =back
@@ -90,7 +90,7 @@ use MooseX::StrictConstructor;
 
 has 'nr' =>(is=>'ro', isa=>'Photonic::LE::S::AllH', required=>1);
 has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsL');
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
+has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
 with 'Photonic::Roles::EpsL';
@@ -99,8 +99,8 @@ after BUILD => sub {
     my $self=shift;
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
-    my $min= min($self->nh, $self->nr->iteration);  
-    my ($fn, $n)=lentzCF($as, [map {-$_} @$b2s], $min, $self->smallE);  
+    my $min= min($self->nh, $self->nr->iteration);
+    my ($fn, $n)=lentzCF($as, [map {-$_} @$b2s], $min, $self->smallE);
     # Check this logic:
     my $converged=$n<$min || $self->nr->iteration<=$self->nh;
     $self->_converged($converged);
@@ -110,5 +110,5 @@ after BUILD => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

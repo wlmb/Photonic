@@ -5,10 +5,10 @@ use strict;
 use Carp;
 
 my @implementations=qw(OneH);
-croak "Dont use Photonic::EL::NP. Use a specific implementation. " 
+croak "Dont use Photonic::EL::NP. Use a specific implementation. "
     . "Choose from: "
     . join ", ", map {"Photonic::EL::NP::" . $_} @implementations;
-    
+
 0;
 =head1 NAME
 
@@ -27,7 +27,7 @@ version 0.011
 
 Implements calculation of a Haydock coefficients and Haydock states for
 the longitudinal dielectric function for N media and a macroscopic
-initial state.  
+initial state.
 
 =over 4
 
@@ -35,7 +35,7 @@ initial state.
 
 Implementation for arbitrary numbers of arbitrary media in the non
 retarded approximation assuming the initial state is the macroscopic
-=state.  
+=state.
 
 =back
 

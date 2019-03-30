@@ -23,7 +23,7 @@ functions of the components.
 =over 4
 
 =item * new(metric=>$m, nh=>$nh, smallE=>$smallE, smallH=>$smallH,
-keepStates=>$k)  
+keepStates=>$k)
 
 Initializes the structure.
 
@@ -33,7 +33,7 @@ $nh is the maximum number of Haydock coefficients to use.
 
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
 Haydock coefficients and for the continued fraction. From
-Photonic::Roles::EpsParams.  
+Photonic::Roles::EpsParams.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
@@ -41,7 +41,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 Returns the macroscopic dielectric tensor for a given value of the
 dielectric function of the particle $epsB. The host's
-response $epsA is taken from the metric.  
+response $epsA is taken from the metric.
 
 =back
 
@@ -73,10 +73,10 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-extends 'Photonic::WE::S::Wave'; 
+extends 'Photonic::WE::S::Wave';
 
 has 'epsilonTensor' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-			 lazy=>1, builder=>'_build_epsilonTensor',   
+			 lazy=>1, builder=>'_build_epsilonTensor',
 			 documentation=>'macroscopit response');
 
 
@@ -103,7 +103,7 @@ sub _build_epsilonTensor {
 };
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

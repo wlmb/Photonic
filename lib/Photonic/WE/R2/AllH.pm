@@ -10,7 +10,7 @@ version 0.011
 
    use Photonic::WE::R2::AllH;
    my $iter=Photonic::WE::R2::AllH->new(metric=>$metric,
-            nh=>$Nh, polarization=>$p, keepStates=>$save); 
+            nh=>$Nh, polarization=>$p, keepStates=>$save);
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
@@ -25,13 +25,13 @@ version 0.011
 =head1 DESCRIPTION
 
 Iterates the calculation of Haydock coefficients and states in the
-retarded regime and saves them for later retrieval. 
+retarded regime and saves them for later retrieval.
 
 =head1 METHODS
 
 =over 4
 
-=item * new(metric=>$m, polarization=>$p, nh=>$nh[, keepStates=>$k, smallH=>$s]) 
+=item * new(metric=>$m, polarization=>$p, nh=>$nh[, keepStates=>$k, smallH=>$s])
 
 Initializes an Ph::WE::R2::AllH object. $m is the retarded metric to use,
 $p is the polarization of the field, $nh is the maximum number of desired
@@ -78,7 +78,7 @@ Array of Haydock b coefficients squared
 
 =item * cs
 
-Array of Haydock c coefficients 
+Array of Haydock c coefficients
 
 =item * bcs
 
@@ -86,7 +86,7 @@ Array of Haydock b times c coefficients
 
 =item * gs
 
-Array of Haydock g coefficients 
+Array of Haydock g coefficients
 
 =item * All the Photonic::WE::R2::OneH methods
 
@@ -116,5 +116,5 @@ extends 'Photonic::WE::R2::OneH';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeR';
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

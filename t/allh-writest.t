@@ -8,7 +8,7 @@ use Photonic::LE::NR2::AllH;
 use Photonic::Iterator qw(nextval);
 use Test::More; # tests => 11;
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)->Cabs2)->sum<=1e-7;
@@ -19,19 +19,19 @@ sub Cagree {
     my $B=zeroes(11,1)->xvals<5; #1D system
     my $g=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1,0])); #long
     my $ad=Photonic::LE::NR2::AllH->new(
-	geometry=>$g, nh=>10, stateFN=>"scratch/rem.dat", keepStates=>1); 
+	geometry=>$g, nh=>10, stateFN=>"scratch/rem.dat", keepStates=>1);
     $ad->run;
     my $itd=$ad->state_iterator;
     my $am=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10, keepStates=>1);
     $am->run;
     my $itm=$am->state_iterator;
     my $n=0;
-    while(defined(my $d=nextval($itd))){	
+    while(defined(my $d=nextval($itd))){
 	ok(defined(my $m=nextval($itm)),
-	   "State $n defined in memory and disk. 1D long."); 
+	   "State $n defined in memory and disk. 1D long.");
 	ok(Cagree($d, $m), "State $n in memory agree with disk. 1D long.");
 	++$n;
-    }			
+    }
     ok(!defined(my $m=nextval($itm)),
 	"Same num. of states in memory and disk. 1D long");
 }
@@ -47,12 +47,12 @@ sub Cagree {
     $am->run;
     my $itm=$am->state_iterator;
     my $n=0;
-    while(defined(my $d=nextval($itd))){	
+    while(defined(my $d=nextval($itd))){
 	ok(defined(my $m=nextval($itm)),
-	   "State $n defined in memory and disk. 1D trans."); 
+	   "State $n defined in memory and disk. 1D trans.");
 	ok(Cagree($d, $m), "State $n in memory agree with disk. 1D trans.");
 	++$n;
-    }			
+    }
     ok(!defined(my $m=nextval($itm)),
 	"Same num. of states in memory and disk. 1D trans.");
 }
