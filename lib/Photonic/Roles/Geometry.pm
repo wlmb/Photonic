@@ -17,7 +17,16 @@ has 'L' =>(is=>'ro', isa => 'PDL', lazy=>1, builder=>'_build_L',
 has 'units'=>(is=>'ro', isa=>'ArrayRef[PDL]', lazy=>1,
      builder=>'_build_units',
      documentation=>'Basis of unit vectors');
-has 'dims' =>(is=>'ro', #isa=>'Photonic::Types::ArrayOfOddInts',
+has 'primitive'=>(is=>'ro', isa=>'PDL', required=>1, lazy=>1,
+		  builder=>'_build_primitive',
+		  documentation=>'Primitive directions');
+has 'primitiveNorm'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+		  builder=>'_build_primitiveNorm',
+		  documentation=>'Normalized primitive vectors');
+has 'dualNorm'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+		 builder=>'_build_dualNorm',
+		 documentation=>'Normalized reciprocal primitive vectors');
+has 'dims' =>(is=>'ro', isa=>'ArrayRef[Int]',
            init_arg=>undef, lazy=>1, builder=>'_build_dims',
            documentation=>'list of dimensions of B');
 has 'ndims' =>(is=>'ro', isa=>'Int',
@@ -84,6 +93,22 @@ sub _build_units {
     return [@units];
 }
 
+sub _build_primitive {
+    my $self=shift;
+    return PDL->pdl($self->units); #xy:n
+}
+    
+sub _build_primitiveNorm {
+    my $self=shift;
+    return $self->primitive->norm;
+}
+
+sub _build_dualNorm {
+    my $self=shift;
+    my $pn=$self->primitiveNorm; #xy:n
+    my $dual=$pn->inv->transpose->norm; #xy:n
+}
+
 sub _build_dims {
     my $self=shift;
     return [$self->B->dims];
@@ -106,18 +131,29 @@ sub _build_scale {
 
 sub _build_r {
     my $self=shift;
-    my $scale=$self->scale;
-    return $self->scale*$self->B->ndcoords;
+    my $coords=$self->B->ndcoords; #i:nx:ny
+    my $pr=$self->scale->(*1)*$self->primitiveNorm; #xy:i
+    my $r=(
+	$coords->(:,*1) #i:*:nx:ny
+	*$pr->transpose #i:xy
+	)->sumover; #xy:nx:ny
+    return $r;
 }
 
 sub _build_G {
     my $self=shift;
     my @N=map {($_-($_%2))/2} @{$self->dims}; #N
-    my $G=($self->B->ndcoords)-(PDL->pdl(@N)); #vector from center.
+    my $coords=($self->B->ndcoords)-(PDL->pdl(@N)); #vector from center.
+    my $rec=(2*PI/$self->L)->(*1)*$self->dualNorm;
+    my $G=(
+	$coords->(:,*1) #i:*:nx:ny
+	*$rec->transpose #i:xy
+	)->sumover; #xy:nx:ny
     foreach(1..$G->ndims-1){
-	$G=$G->mv($_,0)->rotate(-$N[$_-1])->mv(0,$_); #move origin to 0,0
+	$G=$G->mv($_,0)
+	    ->rotate(-$N[$_-1])->mv(0,$_); #move origin to 0,0
     }
-    return 2*PI/$self->L*$G; #reciprocal vectors.
+    return $G;
 }
 
 
