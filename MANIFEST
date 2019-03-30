@@ -2,6 +2,7 @@ Build.PL
 Changes
 data/black.png
 data/white.png
+examples/LE/epsM-L.pl
 examples/mortola.pl
 examples/Ring.pl
 fortran/cgtsl.f
@@ -91,6 +92,7 @@ t/author-pod-syntax.t
 t/cgtsl.t
 t/characteristic-functions.t
 t/dgtsl.t
+t/epsl-nr2-nc.t
 t/epsl-nr2.t
 t/epsl-s.t
 t/epst-nr2.t
