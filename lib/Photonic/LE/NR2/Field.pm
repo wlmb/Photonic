@@ -108,6 +108,7 @@ use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
 use Photonic::Types;
+use Photonic::Iterator qw(nextval);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -165,7 +166,7 @@ sub evaluate {
     my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
-	my $GPsi_G=Cscale(&$stateit(),
+	my $GPsi_G=Cscale(nextval($stateit),
 			  $self->nr->GNorm->mv(0,-1))->mv(-1,1);#^G|psi_n>
 	#the result is RorI, cartesian, nx, ny,...
 	my $EnGPsi_G=Cmul($GPsi_G,$Es[$n]); #En ^G|psi_n>
