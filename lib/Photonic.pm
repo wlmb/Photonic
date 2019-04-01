@@ -190,6 +190,7 @@ Investigaciones en Óptica, México C<bms@cio.mx>
 =item * Lucila Juárez-Reyes, Centro de Investigaciones en Óptica ,
 México, C<lucilajr@icf.unam.mx> 
 
+
 =item * José Samuel Pérez-Huerta, Unidad Académica de Física,
 Universidad Autónoma de Zacatecas, México  C<jsperez@fisica.uaz.edu.mx>
 
