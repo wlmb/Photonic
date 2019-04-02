@@ -111,6 +111,7 @@ use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::WE::R2::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
+use Photonic::Iterator qw(nextval);
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
@@ -135,15 +136,16 @@ sub BUILD {
 
 sub evaluate {
     my $self=shift;
-    $self->_epsA(my $epsA=shift);
     $self->_epsB(my $epsB=shift);
+    $self->_epsA(my $epsA=$self->nr->epsilon->r2C);
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my $g=$self->nr->metric->value;
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
     my $bs=$self->nr->bs;
     my $gs=$self->nr->gs;
-    my $states=$self->nr->states;
+    #my $states=$self->nr->states;
+    my $stateit=$self->nr->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->nr->iteration if $nh>=$self->nr->iteration;
@@ -151,13 +153,16 @@ sub evaluate {
     my $diag=$u->complex - PDL->pdl([@$as])->(0:$nh-1);
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
-    my $supdiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
-    my $gsup0=PDL->pdl(@$gs)->(0:$nh-1)->r2C;
-    my $gsup1=$gsup0->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
-    my $supradiag=($supdiag*$gsup0*$gsup1);
+    #my $supdiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
+    #my $gsup0=PDL->pdl(@$gs)->(0:$nh-1)->r2C;
+    #my $gsup1=$gsup0->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
+    #my $supradiag=($supdiag*$gsup0*$gsup1);
+    my $cs=$self->nr->cs;
+    my $supradiag=PDL->pdl(@$cs)->(0:$nh-1)->rotate(-1)->r2C;
     my $rhs=PDL->zeroes($nh); #build a nx ny nz pdl
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;
+    #coefficients of g^{-1}E
     my ($giEs_coeff, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
     #
@@ -170,17 +175,17 @@ sub evaluate {
     #print $field_G->info, "\n";
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
-	#my $GPsi_G=Cscale($states->[$n],
+	#my $GPsi_G=Cscale(nextval($stateit),
 			  #$self->nr->GNorm->mv(0,-1))->mv(-1,1);#^G|psi_n>
 	#the result is RorI, cartesian, nx, ny,...
-	my $giE_G=Cmul($states->[$n],$giEs[$n]); #En ^G|psi_n>
+	my $giE_G=Cmul(nextval($stateit), $giEs[$n]); #En ^G|psi_n>
 	$field_G+=$giE_G;
     }
     #
-    my $Es=($g*$field_G(:,:,*1))->sumover; #apply the metric operator
-    #my $e_0=1/$Es(:,:,(0),(0))->Cabs2->sumover->sqrt;
+    my $Es=$self->nr->applyMetric($field_G);
+    my $e_0=1/($Es(:,:,(0),(0))*$self->nr->polarization->Cconj)->sumover;
     # Normalize result so macroscopic field is 1.
-    #$Es*=$e_0;
+    $Es*=$e_0;
     ##filter RandI for each cartesian
     #$field_G *= $self->filter->(*1) if $self->has_filter;
     ##get cartesian out of the way, fourier transform, put cartesian.
