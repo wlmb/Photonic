@@ -183,7 +183,7 @@ sub evaluate {
     }
     #
     my $Es=$self->nr->applyMetric($field_G);
-    my $e_0=1/($Es(:,:,(0),(0))*$self->nr->polarization->Cconj)->sumover;
+    my $e_0=1/($Es->slice(":,:".",(0)" x $ndims)*$self->nr->polarization->Cconj)->sumover;
     # Normalize result so macroscopic field is 1.
     $Es*=$e_0;
     ##filter RandI for each cartesian
