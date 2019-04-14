@@ -111,8 +111,8 @@ use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::WE::R2::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
-use Photonic::Iterator qw(nextval);
 use Photonic::Types;
+use Photonic::Iterator qw(nextval);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -143,8 +143,6 @@ sub evaluate {
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
     my $bs=$self->nr->bs;
-    my $gs=$self->nr->gs;
-    #my $states=$self->nr->states;
     my $stateit=$self->nr->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
@@ -153,10 +151,6 @@ sub evaluate {
     my $diag=$u->complex - PDL->pdl([@$as])->(0:$nh-1);
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
-    #my $supdiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
-    #my $gsup0=PDL->pdl(@$gs)->(0:$nh-1)->r2C;
-    #my $gsup1=$gsup0->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
-    #my $supradiag=($supdiag*$gsup0*$gsup1);
     my $cs=$self->nr->cs;
     my $supradiag=PDL->pdl(@$cs)->(0:$nh-1)->rotate(-1)->r2C;
     my $rhs=PDL->zeroes($nh); #build a nx ny nz pdl
@@ -175,15 +169,13 @@ sub evaluate {
     #print $field_G->info, "\n";
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
-	#my $GPsi_G=Cscale(nextval($stateit),
-			  #$self->nr->GNorm->mv(0,-1))->mv(-1,1);#^G|psi_n>
-	#the result is RorI, cartesian, nx, ny,...
 	my $giE_G=Cmul(nextval($stateit), $giEs[$n]); #En ^G|psi_n>
 	$field_G+=$giE_G;
     }
     #
     my $Es=$self->nr->applyMetric($field_G);
-    my $e_0=1/($Es(:,:,(0),(0))*$self->nr->polarization->Cconj)->sumover;
+    my $e_0=1/($Es->slice(":,:" . ",(0)" x $ndims)
+	       *$self->nr->polarization->Cconj)->sumover;
     # Normalize result so macroscopic field is 1.
     $Es*=$e_0;
     ##filter RandI for each cartesian
