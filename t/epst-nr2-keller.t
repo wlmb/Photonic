@@ -1,3 +1,33 @@
+=head1 COPYRIGHT NOTICE 
+
+Photonic - A perl package for calculations on photonics and
+metamaterials. 
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 use strict;
 use warnings;
 use PDL;
@@ -30,7 +60,7 @@ my $gk=Photonic::Geometry::FromB->new(B=>$Bk); #trans
 my $eko=Photonic::LE::NR2::EpsTensor->new(geometry=>$gk, nh=>1000, reorthogonalize=>1);
 my $etva=$eko->evaluate($ea, $eb);
 my $etvb=$eko->evaluate($eb, $ea); 
-warn($etva); warn($etvb);
+#warn($etva); warn($etvb);
 my $R=pdl(pdl(0,1),pdl(-1,0));
 my $mt=(($R(*1)*$etvb(:,:,:,*1))->mv(2,1))->sumover;
 my $Rt=$R->mv(1,0);

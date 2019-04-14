@@ -2,9 +2,11 @@ Build.PL
 Changes
 data/black.png
 data/white.png
-examples/LE/epsM-L.pl
+examples/LE/NR2/epsM-L.pl
+examples/LE/NR2/field.pl
 examples/mortola.pl
 examples/Ring.pl
+examples/WE/R2/field.pl
 fortran/cgtsl.f
 fortran/dgtsl.f
 INSTALL
@@ -95,6 +97,7 @@ t/dgtsl.t
 t/epsl-nr2-nc.t
 t/epsl-nr2.t
 t/epsl-s.t
+t/epst-nr2-keller.t
 t/epst-nr2.t
 t/epst-s.t
 t/epst-wer2.t
