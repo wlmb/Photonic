@@ -72,5 +72,10 @@ my $builder = Module::Build::Pluggable->new(
     },
     add_to_cleanup  => [ 'Photonic-*', '.xs' ],
     create_makefile_pl => 'small',
+    meta_merge     => {
+        resources => {
+            repository  => 'https://github.com/wlmb/Photonic',
+        }
+    },
     );
 $builder->create_build_script();
