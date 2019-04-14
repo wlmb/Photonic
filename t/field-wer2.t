@@ -54,5 +54,5 @@ my $nt=Photonic::WE::R2::AllH->new(metric=>$mt, nh=>10, keepStates=>1,
 				   polarization=>pdl([1,0])->r2C);
 my $fto=Photonic::WE::R2::Field->new(nr=>$nt, nh=>10);
 my $ftv=$fto->evaluate($eb);
-my $ftx=pdl(r2C(1), r2C(0))->complex->(:,:,*1);
+my $ftx=pdl(r2C(1), r2C(0))->complex;
 ok(Cagree($ftv, $ftx), "1D trans field");
