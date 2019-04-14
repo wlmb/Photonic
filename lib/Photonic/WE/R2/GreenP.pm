@@ -130,7 +130,7 @@ sub evaluate {
     my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
     my ($Cn, $Dn); #current coeffs.
     my $Deltan;
-    while($n<$self->nh && $n<$self->haydock->iteration){
+    while($n<$self->nh && $n<=$self->haydock->iteration){
 	$Dn=$u-$as->[$n]-$bcs->[$n]*$Dnm1;
 	$Dn=r2C($tiny) if $Dn->re==0 and $Dn->im==0;
 	$Cn=$u-$as->[$n]-$bcs->[$n]/$Cnm1;
