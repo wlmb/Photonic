@@ -83,13 +83,15 @@
 # Avoid some particular files
 # travis (hasn't worked)
 ^\.travis\.yml$
+^rem\..*
 # compiled objects
 ^.*\.o$
 #ignored files
 ^ignore\.txt$
-#automatically built pm and xs files
+#automatically built pm, xs and c files
 \bExtraUtils\.pm$
 \bExtraUtils\.xs$
+\bExtraUtils\.c$
 #Automaticall built makefile (using Build)
 ^Makefile.PL$
 # others
