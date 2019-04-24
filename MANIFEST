@@ -79,6 +79,8 @@ lib/Photonic/WE/S/Wave.pm
 lib/Photonic/WE/S/WaveP.pm
 LICENSE
 MANIFEST			This list of files
+META.json
+META.yml
 README
 scratch/README
 t/00-load.t
@@ -119,3 +121,4 @@ t/pod.t
 t/version.t
 TODO
 xt/boilerplate.t
+Makefile.PL
