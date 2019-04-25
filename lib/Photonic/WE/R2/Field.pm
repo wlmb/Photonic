@@ -123,16 +123,12 @@ evaluation of the field
 
 =head2 BUILD
 
-=head2 PI
-
 =end Pod::Coverage
 
 =cut
 
 package Photonic::WE::R2::Field;
 $Photonic::WE::R2::Field::VERSION = '0.011';
-
-use constant PI=>4*atan2(1,1);
 
 use namespace::autoclean;
 use PDL::Lite;
@@ -176,14 +172,14 @@ sub evaluate {
     my $stateit=$self->nr->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
-    $nh=$self->nr->iteration if $nh>=$self->nr->iteration;
+    $nh=$self->nr->iteration if $nh>$self->nr->iteration;
     # calculate using linpack for tridiag system
-    my $diag=$u->complex - PDL->pdl([@$as])->(0:$nh-1);
-    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
+    my $diag=$u->complex - PDL->pdl($as)->(0:$nh-1);
+    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
     my $cs=$self->nr->cs;
-    my $supradiag=PDL->pdl(@$cs)->(0:$nh-1)->rotate(-1)->r2C;
-    my $rhs=PDL->zeroes($nh); #build a nx ny nz pdl
+    my $supradiag=-PDL->pdl($cs)->(0:$nh-1)->rotate(-1)->r2C;
+    my $rhs=PDL->zeroes($nh); #build a nh pdl
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;
     #coefficients of g^{-1}E
