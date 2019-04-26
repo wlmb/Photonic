@@ -43,6 +43,7 @@ lib/Photonic/OneH.pm
 lib/Photonic/Roles/AllH.pm
 lib/Photonic/Roles/EpsL.pm
 lib/Photonic/Roles/EpsParams.pm
+lib/Photonic/Roles/Field.pm
 lib/Photonic/Roles/Geometry.pm
 lib/Photonic/Roles/KeepStates.pm
 lib/Photonic/Roles/Metric.pm
@@ -59,6 +60,7 @@ lib/Photonic/WE/R2/EpsilonP.pm
 lib/Photonic/WE/R2/EpsilonTensor.pm
 lib/Photonic/WE/R2/EpsilonTensorF.pm
 lib/Photonic/WE/R2/Field.pm
+lib/Photonic/WE/R2/FieldNew.pm
 lib/Photonic/WE/R2/Green.pm
 lib/Photonic/WE/R2/GreenF.pm
 lib/Photonic/WE/R2/GreenP.pm
@@ -78,6 +80,7 @@ lib/Photonic/WE/S/OneH.pm
 lib/Photonic/WE/S/Wave.pm
 lib/Photonic/WE/S/WaveP.pm
 LICENSE
+Makefile.PL
 MANIFEST			This list of files
 META.json
 META.yml
@@ -121,4 +124,3 @@ t/pod.t
 t/version.t
 TODO
 xt/boilerplate.t
-Makefile.PL
