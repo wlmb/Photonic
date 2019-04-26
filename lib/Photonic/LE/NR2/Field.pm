@@ -142,7 +142,7 @@ use Photonic::Iterator qw(nextval);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
+has 'nr'=>(is=>'ro', isa=>'Photonic::Types::LE::NR2::AllHSave', required=>1,
            documentation=>'Haydock recursion calculator');
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', init_arg=>undef,
            writer=>'_Es', documentation=>'Field coefficients');
