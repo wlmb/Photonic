@@ -175,8 +175,8 @@ sub evaluate {
     # calculate using linpack for tridiag system
     # solve \epsilon^LL \vec E^L=D^L.
     # At first take D=|0>
-    my $diag=$u->complex - PDL->pdl([@$as])->(0:$nh-1);
-    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
+    my $diag=$u->complex - PDL->pdl($as)->(0:$nh-1);
+    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
     my $supradiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
     my $rhs=PDL->zeroes($nh);
