@@ -71,6 +71,11 @@ subtype 'Photonic::Types::WE::R2::AllHSave' =>
   where { $_->keepStates == 1 },
     message { "Can't calculate fields if you don't keepStates" };
 
+subtype 'Photonic::Types::WE::S::AllHSave' =>
+  as 'Photonic::WE::S::AllH',
+  where { $_->keepStates == 1 },
+    message { "Can't calculate fields if you don't keepStates" };
+
 no Moose::Util::TypeConstraints;
 
 __END__
