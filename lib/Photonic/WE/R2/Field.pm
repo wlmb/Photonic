@@ -204,7 +204,7 @@ sub evaluate {
     # Normalize result so macroscopic field is 1.
     $Es*=$e_0;
     ##filter RandI for each cartesian
-    $field_G *= $self->filter->(*1) if $self->has_filter;
+    $Es *= $self->filter->(*1) if $self->has_filter;
     ##get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=ifftn($Es->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
