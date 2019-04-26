@@ -92,7 +92,11 @@
 \bExtraUtils\.pm$
 \bExtraUtils\.xs$
 \bExtraUtils\.c$
+#The copied typefile
+\btypemap$
 #Automaticall built makefile (using Build)
-^Makefile.PL$
+#^Makefile.PL$ #Better leave it so perl Makefile.PL works
+#rem whatever
+\brem\.dat$
 # others
 ^dist\.ini$
