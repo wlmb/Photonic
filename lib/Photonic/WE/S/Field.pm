@@ -199,6 +199,8 @@ sub evaluate {
     }
     #
     my $Es=$self->nr->applyMetric($field_G);
+    #Comment as normalization below makes it useless
+    #$Es*=$bs->(:,(0))/$self->nr->metric->epsilon;
     my $Esp=$Es(:,:,(0)); # choose +k spinor component.
     my $e_0=1/($Esp->slice(":,:" . ",(0)" x $ndims)
 	       *$self->nr->polarization->Cconj)->sumover;
