@@ -74,18 +74,18 @@ has 'r' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
            builder=>'_build_r',
 	   documentation=>'array of positions x_or_y, nx, ny');
 has 'G' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1, builder=>'_build_G',
-	   documentation=>'array of reciprocal vectors x_or_y, nx, ny');
+	   documentation=>'array of reciprocal vectors xy,nx,ny...');
 has 'GNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
      builder=>'_build_GNorm',
-     documentation=>'array of unit norm reciprocal vectors x_or_y, nx, ny');
+     documentation=>'array of unit norm reciprocal vectors xy,nx,ny...');
 has 'mGNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
      builder=>'_build_mGNorm',
      documentation=>
-	  'array of negated unit norm reciprocal vectors x_or_y, nx, ny');
+	  'array of negated unit norm reciprocal vectors xy,nx,ny...');
 has 'pmGNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
      builder=>'_build_pmGNorm',
      documentation=>
-       'array of spinors of +- unit norm reciprocal vectors x_or_y, nx, ny');
+       'array of spinors of +- unit norm reciprocal vectors xy,pm,nx,ny');
 has 'f'=>(is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_f',
      documentation=>'filling fraction of B region');
 has 'unitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
@@ -203,7 +203,7 @@ sub _build_mGNorm { #normalized negated reciprocal lattice. Leave
 }
 sub _build_pmGNorm { #normalized +- reciprocal lattice. Leave
     #direction 0 invariant. See _G0.
-    #xory, +or-, nx, ny
+    #xy,pm,nx,ny
     my $self=shift;
     return PDL->pdl($self->GNorm, $self->mGNorm)->mv(-1,1);
 }
