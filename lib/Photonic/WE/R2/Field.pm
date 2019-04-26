@@ -112,11 +112,6 @@ optional reciprocal space filter
 
 real space field in format RorI, cartesian, nx, ny,...
 
-=item * epsL
-
-Longitudinal dielectric response, obtained colateraly from last
-evaluation of the field
-
 =back
 
 =begin Pod::Coverage
@@ -150,9 +145,7 @@ has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 has 'field'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
            writer=>'_field', documentation=>'Calculated real space field');
-has 'epsL' =>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-		 writer=>'_epsL',
-		 documentation=>'Longitudinal dielectric response');
+
 with 'Photonic::Roles::EpsParams';
 
 sub BUILD {

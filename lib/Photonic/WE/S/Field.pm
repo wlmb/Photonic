@@ -151,9 +151,6 @@ has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 has 'field'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
            writer=>'_field', documentation=>'Calculated real space field');
-has 'epsL' =>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-		 writer=>'_epsL',
-		 documentation=>'Longitudinal dielectric response');
 with 'Photonic::Roles::EpsParams';
 
 sub BUILD {
