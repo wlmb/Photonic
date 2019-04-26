@@ -111,7 +111,6 @@ t/field-lenr2.t
 t/field-les.t
 t/field-wer2.t
 t/field-wes.t
-t/fieldnew-wer2.t
 t/geometry.t
 t/green.t
 t/greenp.t
