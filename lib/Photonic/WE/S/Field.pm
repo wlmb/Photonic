@@ -58,7 +58,7 @@ Initializes the structure.
 
 $nr Photonic::WE::S::AllH is a Haydock calculator for the
 structure, *initialized* with the flag keepStates=>1
-(Photonic::Types::AllHSave, as defined in Photonic::Types).
+(Photonic::Types::WE::S::AllHSave, as defined in Photonic::Types).
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -123,8 +123,6 @@ evaluation of the field
 
 =head2 BUILD
 
-=head2 PI
-
 =end Pod::Coverage
 
 =cut
@@ -132,7 +130,6 @@ evaluation of the field
 package Photonic::WE::S::Field;
 $Photonic::WE::S::Field::VERSION = '0.011';
 
-use constant PI=>4*atan2(1,1);
 
 use namespace::autoclean;
 use PDL::Lite;
@@ -142,10 +139,11 @@ use PDL::FFTW3;
 use Photonic::WE::S::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
 use Photonic::Types;
+use Photonic::Iterator qw(nextval);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
+has 'nr'=>(is=>'ro', isa=>'Photonic::Types::WE::S::AllHSave', required=>1,
            documentation=>'Haydock recursion calculator');
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', init_arg=>undef,
            writer=>'_Es', documentation=>'Field coefficients');
@@ -165,58 +163,53 @@ sub BUILD {
 
 sub evaluate {
     my $self=shift;
-    $self->_epsA(my $epsA=shift);
-    $self->_epsB(my $epsB=shift);
-    $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $g=$self->nr->metric->value;
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
     my $bs=$self->nr->bs;
-    my $gs=$self->nr->gs;
-    my $states=$self->nr->states;
+    my $cs=$self->nr->cs;
+    my $stateit=$self->nr->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
-    $nh=$self->nr->iteration if $nh>=$self->nr->iteration;
+    $nh=$self->nr->iteration if $nh>$self->nr->iteration;
     # calculate using linpack for tridiag system
-    my $diag=$u->complex - PDL->pdl([@$as])->(0:$nh-1);
-    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
+    my $diag = 1-PDL->pdl($as)->(:,0:$nh-1)->complex;
+    my $subdiag = -PDL->pdl($bs)->(:,0:$nh-1)->complex;
     # rotate complex zero from first to last element.
-    my $supdiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
-    my $gsup0=PDL->pdl(@$gs)->(0:$nh-1)->r2C;
-    my $gsup1=$gsup0->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
-    my $supradiag=($supdiag*$gsup0*$gsup1);
-    my $rhs=PDL->zeroes($nh); #build a nx ny nz pdl
+    my $supradiag =-PDL->pdl($cs)->(:,0:$nh-1)
+	->mv(0,-1)->rotate(-1)->mv(-1,0)
+	->complex; 
+    my $rhs=PDL->zeroes($nh); #build a nh pdl
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;
+    #coefficients of g^{-1}E
     my ($giEs_coeff, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
     #
     my @giEs= map {PDL->pdl($_)->complex} @{$giEs_coeff->unpdl};
-    #states are RorI,nx,ny...
-    #field is RorY,cartesian,nx,ny...
+    #states are ri,xy,pm,nx,ny...
     my $ndims=$self->nr->B->ndims; # num. of dims of space
     my @dims=$self->nr->B->dims; # actual dims of space
-    my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
+    #field is ri,xy,pm,nx,ny...
+    my $field_G=PDL->zeroes(2, $ndims, 2, @dims)->complex;
     #print $field_G->info, "\n";
-    #field is RorI, cartesian, nx, ny...
+    #field is ri,xy,pm,nx,ny...
     for(my $n=0; $n<$nh; ++$n){
-	#my $GPsi_G=Cscale($states->[$n],
-			  #$self->nr->GNorm->mv(0,-1))->mv(-1,1);#^G|psi_n>
-	#the result is RorI, cartesian, nx, ny,...
-	my $giE_G=Cmul($states->[$n],$giEs[$n]); #En ^G|psi_n>
+	my $giE_G=$giEs[$n]*nextval($stateit); #En ^G|psi_n>
 	$field_G+=$giE_G;
     }
     #
-    my $Es=($g*$field_G(:,:,*1))->sumover; #apply the metric operator
-    #my $e_0=1/$Es(:,:,(0),(0))->Cabs2->sumover->sqrt;
+    my $Es=$self->nr->applyMetric($field_G);
+    my $Esp=$Es(:,:,(0)); # choose +k spinor component.
+    my $e_0=1/($Esp->slice(":,:" . ",(0)" x $ndims)
+	       *$self->nr->polarization->Cconj)->sumover;
     # Normalize result so macroscopic field is 1.
-    #$Es*=$e_0;
+    $Esp*=$e_0;
     ##filter RandI for each cartesian
-    #$field_G *= $self->filter->(*1) if $self->has_filter;
+    $Esp *= $self->filter->(*1) if $self->has_filter;
     ##get cartesian out of the way, fourier transform, put cartesian.
-    my $field_R=ifftn($Es->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
+    my $field_R=ifftn($Esp->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
-    #result is RorI, cartesian, nx, ny,...
+    #result is ri,xy,nx,ny...
     $self->_field($field_R);
     return $field_R;
 }
