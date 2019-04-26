@@ -59,7 +59,7 @@ sub Cdif {
 my $ea=1+0*i;
 my $eb=3+4*i;
 
-#Check haydock coefficients for simple 1D system. Longitudinal case
+#Check field for simple 1D system. Longitudinal case
 my $B=zeroes(11)->xvals<5; #1D system
 my $epsilon=$ea*(1-$B)+$eb*$B;
 my $gl=Photonic::Geometry::FromB->new(B=>$B); #long

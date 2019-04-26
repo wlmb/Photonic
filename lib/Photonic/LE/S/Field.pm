@@ -181,7 +181,8 @@ sub evaluate {
     my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
     # Obtain longitudinal macroscopic response from result
-    $self->_epsL(my $epsL=1/$result->(:,(0))); #Not sure of this.
+    # Add spinor normalization.
+    $self->_epsL(my $epsL=sqrt(2)/$result->(:,(0))); 
     # Normalize result so macroscopic field is 1.
     $result*=$epsL;
     my @Es= map {PDL->pdl($_)->complex} @{$result->unpdl};
