@@ -58,6 +58,19 @@ sub linearCombine { #complex linear combination of states
     return $result;
 }
 
+sub linearCombineIt { #complex linear combination of states from iterator
+    my $coefficients=shift; #arrayref of complex coefficients
+    my $stateit=shift; #iterator of complex states
+    my $numCoeff=@$coefficients;
+    my $result=0+0*i;
+    foreach(0..$numCoeff-1){
+	my $s=$stateit->nextval;
+	croak "More coefficients than states in basis" unless defined $s; 
+	$result = $result + $coefficients->[$_]*$s;
+    }
+    return $result;
+}
+
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $first=shift;
     my $second=shift;
