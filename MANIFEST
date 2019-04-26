@@ -38,6 +38,7 @@ lib/Photonic/LE/S.pm
 lib/Photonic/LE/S/AllH.pm
 lib/Photonic/LE/S/EpsL.pm
 lib/Photonic/LE/S/EpsTensor.pm
+lib/Photonic/LE/S/Field.pm
 lib/Photonic/LE/S/OneH.pm
 lib/Photonic/OneH.pm
 lib/Photonic/Roles/AllH.pm
@@ -60,7 +61,6 @@ lib/Photonic/WE/R2/EpsilonP.pm
 lib/Photonic/WE/R2/EpsilonTensor.pm
 lib/Photonic/WE/R2/EpsilonTensorF.pm
 lib/Photonic/WE/R2/Field.pm
-lib/Photonic/WE/R2/FieldNew.pm
 lib/Photonic/WE/R2/Green.pm
 lib/Photonic/WE/R2/GreenF.pm
 lib/Photonic/WE/R2/GreenP.pm
@@ -107,8 +107,11 @@ t/epst-nr2.t
 t/epst-s.t
 t/epst-wer2.t
 t/epst-wes.t
-t/field-nr2.t
+t/field-lenr2.t
+t/field-les.t
 t/field-wer2.t
+t/field-wes.t
+t/fieldnew-wer2.t
 t/geometry.t
 t/green.t
 t/greenp.t
