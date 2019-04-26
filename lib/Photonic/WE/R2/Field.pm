@@ -58,7 +58,7 @@ Initializes the structure.
 
 $nr Photonic::WE::R2::AllH is a Haydock calculator for the
 structure, *initialized* with the flag keepStates=>1
-(Photonic::Types::AllHSave, as defined in Photonic::Types).
+(Photonic::Types::WE::R2::AllHSave, as defined in Photonic::Types).
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -142,7 +142,7 @@ use Photonic::Iterator qw(nextval);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
+has 'nr'=>(is=>'ro', isa=>'Photonic::Types::WE::R2::AllHSave', required=>1,
            documentation=>'Haydock recursion calculator');
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]', init_arg=>undef,
            writer=>'_Es', documentation=>'Field coefficients');
@@ -165,10 +165,10 @@ sub evaluate {
     $self->_epsB(my $epsB=shift);
     $self->_epsA(my $epsA=$self->nr->epsilon->r2C);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $g=$self->nr->metric->value;
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
     my $bs=$self->nr->bs;
+    my $cs=$self->nr->cs;
     my $stateit=$self->nr->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
@@ -177,7 +177,6 @@ sub evaluate {
     my $diag=$u->complex - PDL->pdl($as)->(0:$nh-1);
     my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
-    my $cs=$self->nr->cs;
     my $supradiag=-PDL->pdl($cs)->(0:$nh-1)->rotate(-1)->r2C;
     my $rhs=PDL->zeroes($nh); #build a nh pdl
     $rhs->slice((0)).=1;
@@ -187,15 +186,15 @@ sub evaluate {
     die "Error solving tridiag system" unless $info == 0;
     #
     my @giEs= map {PDL->pdl($_)->complex} @{$giEs_coeff->unpdl};
-    #states are RorI,nx,ny...
-    #field is RorY,cartesian,nx,ny...
+    #states are ri,xy,nx,ny...
+    #field is ri,xy,nx,ny...
     my $ndims=$self->nr->B->ndims; # num. of dims of space
     my @dims=$self->nr->B->dims; # actual dims of space
     my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
     #print $field_G->info, "\n";
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
-	my $giE_G=Cmul(nextval($stateit), $giEs[$n]); #En ^G|psi_n>
+	my $giE_G=$giEs[$n]*nextval($stateit); #En ^G|psi_n>
 	$field_G+=$giE_G;
     }
     #
@@ -205,7 +204,7 @@ sub evaluate {
     # Normalize result so macroscopic field is 1.
     $Es*=$e_0;
     ##filter RandI for each cartesian
-    #$field_G *= $self->filter->(*1) if $self->has_filter;
+    $field_G *= $self->filter->(*1) if $self->has_filter;
     ##get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=ifftn($Es->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
