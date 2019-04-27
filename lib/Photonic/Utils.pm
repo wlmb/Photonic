@@ -36,11 +36,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
-              HProd MHProd EProd VSProd SProd linearCombine lentzCF);
+    HProd MHProd EProd VSProd SProd linearCombine 
+    linearCombineIt lentzCF);
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
 use PDL::Complex;
+use Photonic::Iterator qw(nextval);
 use Carp;
 use warnings;
 use strict;
@@ -64,7 +66,7 @@ sub linearCombineIt { #complex linear combination of states from iterator
     my $numCoeff=@$coefficients;
     my $result=0+0*i;
     foreach(0..$numCoeff-1){
-	my $s=$stateit->nextval;
+	my $s=nextval($stateit);
 	croak "More coefficients than states in basis" unless defined $s; 
 	$result = $result + $coefficients->[$_]*$s;
     }
