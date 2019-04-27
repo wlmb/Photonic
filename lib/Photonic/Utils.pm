@@ -1,10 +1,10 @@
 package Photonic::Utils;
 $Photonic::Utils::VERSION = '0.011';
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
-    HProd MHProd EProd VSProd SProd linearCombine 
+    HProd MHProd EProd VSProd SProd linearCombine
     linearCombineIt lentzCF);
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -67,7 +67,7 @@ sub linearCombineIt { #complex linear combination of states from iterator
     my $result=0+0*i;
     foreach(0..$numCoeff-1){
 	my $s=nextval($stateit);
-	croak "More coefficients than states in basis" unless defined $s; 
+	croak "More coefficients than states in basis" unless defined $s;
 	$result = $result + $coefficients->[$_]*$s;
     }
     return $result;

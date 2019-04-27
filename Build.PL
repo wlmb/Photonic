@@ -2,10 +2,10 @@
 # Use to build the package Photonic
 our $VERSION = '0.011';
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -54,7 +54,7 @@ my $builder = Module::Build::Pluggable->new(
     license    => 'perl',
     release_status => 'stable', #stable, testing or unstable
     f_source   => [ 'fortran' ],
-    requires   => { 
+    requires   => {
 	'Inline'                         => '0',
 	'Carp'                           => '0',
 	'Cwd'                            => '0',
@@ -69,9 +69,9 @@ my $builder = Module::Build::Pluggable->new(
 	'Moose::Role'                    => '0',
 	'Moose::Util::TypeConstraints'   => '0',
 	'MooseX::StrictConstructor'      => '0',
-	'perl'                           => '5.10.0',    
+	'perl'                           => '5.10.0',
 	'PDL'                            => '0',
-	'PDL::Complex'                   => '2.009', 
+	'PDL::Complex'                   => '2.009',
 	'PDL::Constants'                 => '0',
 	'PDL::Core'                      => '0',
 	'PDL::Core::Dev'                 => '0',

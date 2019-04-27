@@ -76,7 +76,7 @@
   - Removed META files
 
 0.009 2017-09-24
-  - Changed slightly the code for second harmonic calculations. 
+  - Changed slightly the code for second harmonic calculations.
   - Corrected SHG
      - Cleaned code to run slatec routines cgtsl and dgtsl. Now they
        can be used with 4 or 6 arguments and may use inplace

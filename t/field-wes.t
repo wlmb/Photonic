@@ -1,7 +1,7 @@
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -85,7 +85,7 @@ my $mt=Photonic::WE::S::Metric->new(geometry=>$gt, epsilon=>pdl(1),
    wavenumber=>pdl(0.001), wavevector=>pdl([0,0.0001]));
 my $nt=Photonic::WE::S::AllH->new(
    metric=>$mt, nh=>10, keepStates=>1, polarization=>pdl([1,0])->r2C,
-   epsilon=>$epsilont); 
+   epsilon=>$epsilont);
 my $fto=Photonic::WE::S::Field->new(nr=>$nt, nh=>10);
 my $ftv=$fto->evaluate();
 my $ftx=pdl(r2C(1), r2C(0))->complex;

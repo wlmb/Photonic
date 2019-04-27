@@ -1,7 +1,7 @@
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -44,7 +44,7 @@ use Test::More tests => 1;
 
 #my $pi=4*atan2(1,1);
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)->Cabs2)->sum<=1e-7;
@@ -59,7 +59,7 @@ $Bk=((($Bk->xvals<$Nk) & ($Bk->yvals<$Nk))
 my $gk=Photonic::Geometry::FromB->new(B=>$Bk); #trans
 my $eko=Photonic::LE::NR2::EpsTensor->new(geometry=>$gk, nh=>1000, reorthogonalize=>1);
 my $etva=$eko->evaluate($ea, $eb);
-my $etvb=$eko->evaluate($eb, $ea); 
+my $etvb=$eko->evaluate($eb, $ea);
 #warn($etva); warn($etvb);
 my $R=pdl(pdl(0,1),pdl(-1,0));
 my $mt=(($R(*1)*$etvb(:,:,:,*1))->mv(2,1))->sumover;

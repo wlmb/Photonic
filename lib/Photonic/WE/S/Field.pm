@@ -6,10 +6,10 @@ Photonic::WE::S::Field
 
 version 0.011
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -174,7 +174,7 @@ sub evaluate {
     # rotate complex zero from first to last element.
     my $supradiag =-PDL->pdl($cs)->(:,0:$nh-1)
 	->mv(0,-1)->rotate(-1)->mv(-1,0)
-	->complex; 
+	->complex;
     my $rhs=PDL->zeroes($nh); #build a nh pdl
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;

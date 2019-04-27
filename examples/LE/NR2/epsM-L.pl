@@ -1,10 +1,10 @@
 #! /usr/bin/env perl
 # run this code form the command line: perl -Mlib=<path-to>lib epsM-L.pl
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -46,10 +46,10 @@ use PDL::Complex;
 
 # It is a M-dimensional problem where the macroscopic dielectric
 # tensor components are calculated into the polarization direction
-# (Direction0) given by this code as the input parameter $pdir. 
+# (Direction0) given by this code as the input parameter $pdir.
 
-# This example is about two phase system defined by a square unit cell 
-# of size $l with 2*$N+1 points per side. Haydock recursion method 
+# This example is about two phase system defined by a square unit cell
+# of size $l with 2*$N+1 points per side. Haydock recursion method
 # is used. The number of Haydock coefficients will be no more than $nh.
 my $nh=30;
 my $N=30;
@@ -60,7 +60,7 @@ my $l=10; # in nm
 # example to consider:
 
 my $B=pdl();
-# uncomment only one of the next three lines for M=1,2 or 3 
+# uncomment only one of the next three lines for M=1,2 or 3
 #$B=zeroes(2*$N+1); #M=1
 $B=zeroes(2*$N+1,2*$N+1); #M=2
 #$B=zeroes(2*$N+1,2*$N+1,2*$N+1); #M=3
@@ -70,7 +70,7 @@ $B=$B->rvals < $r;
 
 # Further, by negating of $B, it allow us to explore a hole in
 # metal case, then uncomment the next line
-#$B=!$B; 
+#$B=!$B;
 
 # Material of phase A has a real dielectric constant $epsA.  Material
 # of phase B has a complex dielectric function $epsBall that depends
@@ -78,16 +78,16 @@ $B=$B->rvals < $r;
 # the wavelength of the probing light is very large compared with $l.
 
 my $epsA=pdl(4); # used for host A and for metric
-my ($hnu_all,$epsBall)=eps("au"); # used for particle B, gold in this example. 
+my ($hnu_all,$epsBall)=eps("au"); # used for particle B, gold in this example.
 # in DATA below this file end
 my $elem=$epsBall->dim(1); # how many frequencies for calculation
 
 # In this example the Longitudinal Epsilon (LE) is a Photonic::LE::NR2
-# perl-PDL module that heritates to the AllH and EpsL module that 
+# perl-PDL module that heritates to the AllH and EpsL module that
 # it is implemented.  The object $gmtnr has access to geometry (B),
 # cell size (L), and polarization direction (Direction0) $pdir.
 my $pdir=();
-# uncomment only one of the next three lines for M=1,2 or 3 
+# uncomment only one of the next three lines for M=1,2 or 3
 #$pdir=pdl([1]); #M=1 [] to force one dimensional vector
 $pdir=pdl(0,1); #M=2
 #$pdir=pdl(0,0,1); #M=3
@@ -108,11 +108,11 @@ my $allh=Photonic::LE::NR2::AllH->new(geometry=>$gmtnr, nh=>$nh);
 my $epsM_L=Photonic::LE::NR2::EpsL->new(nr=>$allh, nh=>$nh);
 # where $epsM_L is a EpsL object that will be used to calculate the
 # macroscopic dielectric tensor component in Direction0 polarization
-# direction for different frequency 
+# direction for different frequency
 
 #--------------------------------------------
 my @out=(); # list for the output results
-#--------------------------------------------    
+#--------------------------------------------
 
 #------------------------------------------------------------
 for(my $j=0;$j<$elem;$j++){
@@ -124,10 +124,10 @@ for(my $j=0;$j<$elem;$j++){
 # with the NR2 evaluate method the same Haydock coefficients are used
 # for all frequencies. The object $epsM_L knows about it.
 # First argument is the host (epsA)
-    my $epsM_pdir=$epsM_L->evaluate($epsA->r2C,$epsB); 
-# $epsM_L is the macroscopic dielectric tensor (complex number) in \hat y=(0,1) Direction0 
+    my $epsM_pdir=$epsM_L->evaluate($epsA->r2C,$epsB);
+# $epsM_L is the macroscopic dielectric tensor (complex number) in \hat y=(0,1) Direction0
 #----------------------------------------------------------------------------------
-    
+
     my $linea=pdl($hnu, $epsM_pdir->re, $epsM_pdir->im);
     push @out, $linea;
 }

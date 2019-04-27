@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -69,7 +69,7 @@ plotfield($titulo, $field);
 sub plotfield {
     my $titulo=shift;
     my $field=shift;
-    my $fieldt=tile($field->mv(0,-1)->mv(0,-1),	3,3)->mv(-1,0)->mv(-1,0); 
+    my $fieldt=tile($field->mv(0,-1)->mv(0,-1),	3,3)->mv(-1,0)->mv(-1,0);
     my $fieldabs=$fieldt->Cabs2->sumover->sqrt;
 #    my $fieldR=$fieldt->((0))->real/$fieldabs->(*1); #real part
 #    my $fieldI=$fieldt->((1))->real/$fieldabs->(*1); #imaginary part
@@ -79,7 +79,7 @@ sub plotfield {
 	{
 	    cbrange=>[0,100],square=>1,
 	    xr=>[$N,5*$N+2], yr=>[$N,5*$N+2], title=>"$titulo",
-	xtics=>0, ytics=>0}, 
+	xtics=>0, ytics=>0},
 	with=>'image',$fieldabs,
 	#{lt=> 1, lc=>2,lw=>1.5},
 	#with=>'vectors',

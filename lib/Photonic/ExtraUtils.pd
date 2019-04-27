@@ -10,10 +10,10 @@ Photonic::ExtraUtils - Glue for utility Fortran routines
 
 version 0.011
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -46,11 +46,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
        dgtsl($c, $d, $e, $b, $info=PDL->null);
        cgtsl($c, $d, $e, $b, $info=PDL->null);
-      
+
 
 =head1 DESCRIPTION
 
-Call some fortran routines from perl code.       
+Call some fortran routines from perl code.
 
 =cut
 
@@ -115,8 +115,8 @@ pp_addhdr(qq{
 	void cgtsl$underscore(int *N, double *c, double *d, double *e, double
 		*b, int *info);
 });
-          
-pp_def('dgtsl', 
+
+pp_def('dgtsl',
        Pars=>'[phys] c(n); [phys] d(n); [phys] e(n); [phys] y(n); [o] b(n); int [o] info();',
        GenericTypes=>['D'],
        PMCode => q{
@@ -128,8 +128,8 @@ pp_def('dgtsl',
 	      $i=PDL->null unless defined $i;
 	      map {
 		  $_=$_->copy unless $_->is_inplace;
-	          $_->set_inplace(0); 
-              }  ($c, $d, $e);  
+	          $_->set_inplace(0);
+              }  ($c, $d, $e);
 	      if($y->is_inplace){$b=$y}
 	      elsif(not defined $b and not $y->is_inplace){
 		  $b=$y->copy;
@@ -145,7 +145,7 @@ pp_def('dgtsl',
 	  dgtsl$underscore(&N, \$P(c), \$P(d), \$P(e),\$P(b), \$P(info));
        },
     );
-pp_def('cgtsl', 
+pp_def('cgtsl',
        Pars=>'[phys]c(2,n); [phys]d(2,n); [phys]e(2,n); [phys]y(2,n); [o] b(2,n); int [o] info();',
        GenericTypes=>['D'],
        PMCode => q{
@@ -159,8 +159,8 @@ pp_def('cgtsl',
 	      $i=PDL->null unless defined $i;
 	      map {
 		  $_=$_->copy unless $_->is_inplace;
-	          $_->set_inplace(0); 
-              }  ($c, $d, $e);  
+	          $_->set_inplace(0);
+              }  ($c, $d, $e);
 	      if($y->is_inplace){$b=$y}
 	      elsif(not defined $b and not $y->is_inplace){
 		  $b=$y->copy;
@@ -178,7 +178,7 @@ pp_def('cgtsl',
           cgtsl$underscore(&N, \$P(c), \$P(d), \$P(e),\$P(b), \$P(info));
        },
     );
-#pp_def('test', 
+#pp_def('test',
 #       Pars=>'a(); [o] b();',
 # 	#       GenericTypes=>['D'],
 #       PMCode => q{

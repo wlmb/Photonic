@@ -19,10 +19,10 @@ Version 0.011
 
 $Photonic::VERSION = '0.011';
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -219,7 +219,7 @@ Nacional del Nordeste, Argentina C<gortiz@exa.unne.edu.ar>
 Investigaciones en Óptica, México C<bms@cio.mx>
 
 =item * Lucila Juárez-Reyes, Centro de Investigaciones en Óptica ,
-México, C<lucilajr@icf.unam.mx> 
+México, C<lucilajr@icf.unam.mx>
 
 
 =item * José Samuel Pérez-Huerta, Unidad Académica de Física,
@@ -468,21 +468,21 @@ Definitions:
 
   - "Package" refers to the collection of files distributed by the Copyright
     Holder, and derivatives of that collection of files created through
-    textual modification. 
+    textual modification.
   - "Standard Version" refers to such a Package if it has not been modified,
     or has been modified in accordance with the wishes of the Copyright
-    Holder. 
+    Holder.
   - "Copyright Holder" is whoever is named in the copyright or copyrights for
-    the package. 
+    the package.
   - "You" is you, if you're thinking about copying or distributing this Package.
   - "Reasonable copying fee" is whatever you can justify on the basis of media
     cost, duplication charges, time of people involved, and so on. (You will
     not be required to justify it to the Copyright Holder, but only to the
-    computing community at large as a market that must bear the fee.) 
+    computing community at large as a market that must bear the fee.)
   - "Freely Available" means that no fee is charged for the item itself, though
     there may be fees involved in handling the item. It also means that
     recipients of the item may redistribute it under the same conditions they
-    received it. 
+    received it.
 
 1. You may make and give away verbatim copies of the source form of the
 Standard Version of this Package without restriction, provided that you

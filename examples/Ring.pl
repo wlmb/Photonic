@@ -1,10 +1,10 @@
 #! /usr/bin/env perl
 # run this code form the command line: perl -Mlib=<path-to>lib Ring.pl
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -67,19 +67,19 @@ my $l=1; # in nm
 # example it is a hole ring with radius r such that $r0 < r < $r1
 my $r0=0; # small radius in units of $l
 my $r1= 0.45; #large radius in units of $l
-my $B=!ring($N,$r0,$r1);# negated of ring 
+my $B=!ring($N,$r0,$r1);# negated of ring
 # Further exploration for particle case would be to consider by removing "!"
-# 
+#
 
 # Material of phase A has a real dielectric constant $epsA.  Material
 # of phase B has a complex dielectric function $epsBall that depends
 # on the frequency $hnu_all in eV units. Units of the wavelength \lambda are nm
 # and in the VIS-NIR range (400, 1000) that will be compared against $l via $a
-my $a=10; # Such small $a (10 nm) compared with \lambda means that non retarded 
-# and retarded case should give equivalent results. Try with large value of 
+my $a=10; # Such small $a (10 nm) compared with \lambda means that non retarded
+# and retarded case should give equivalent results. Try with large value of
 # $a to see retarded effects
 my $epsA=pdl(4); # used for host A and for metric
-my ($hnu_all,$epsBall)=eps("au"); # used for particle B, gold in this example. 
+my ($hnu_all,$epsBall)=eps("au"); # used for particle B, gold in this example.
 my $k=0.01; # wave vector component used below in xx direction
 # Units of $k are nm^{-1}. In de middle of VIS-NIR range it is approx
 # 2*PI/\lambda
@@ -90,17 +90,17 @@ my $elem=$epsBall->dim(1); # how many frequencies for calculation
 # commnented with ## would be useful for writing output data to a file named $filename
 ##my $filename="Au_cyl_r${r1}_k${k}_N${N}_Nh${nh}"; $filename=~s/\./_/g; $filename.=".dat";
 ##open(OUT, ">", "$filename") or die "Couldn't open $filename for writing. $!";
-##print OUT "#   hnu       epsNR-L_re  epsNR-L_im   epsR-T_re    epsR-T_im \n";  
+##print OUT "#   hnu       epsNR-L_re  epsNR-L_im   epsR-T_re    epsR-T_im \n";
 
 #---------------------
 # Non Retarded Approx.
 #--------------------
 # One computation is performed in the Non Retarded
 # approximation. Longitudinal Epsilon (LE) is a Photonic::LE::NR2
-# perl-PDL module that heritates to the AllH and EpsL module that 
+# perl-PDL module that heritates to the AllH and EpsL module that
 # it is implemented in this example.  The object $gmtnr has access to geometry (B),
 # cell size (L), and polarization direction (Direction0).
-# Note that in Non-Retarded (NR#) approximation wavelength size $a 
+# Note that in Non-Retarded (NR#) approximation wavelength size $a
 # is very large compared with L
 my $gmtnr=Photonic::Geometry::FromB->new(B=>$B,L=>pdl($l*$a,$l*$a),Direction0=>pdl(0,1));
 # object $allh has access to Haydock's coefficientes
@@ -123,10 +123,10 @@ my $gmtr=Photonic::Geometry::FromB->new(B=>$B,L=>pdl($l*$a,$l*$a));
 
 #--------------------------------------------
 my @out=(); # list for the output results
-#--------------------------------------------    
+#--------------------------------------------
 
 #------------------------------------------------------------
-# Begining of both Non Retarded (NR#) and Retarded (R#) caclulation 
+# Begining of both Non Retarded (NR#) and Retarded (R#) caclulation
 # for each frequency
 #------------------------------------------------------------
 for(my $j=0;$j<$elem;$j++){
@@ -139,16 +139,16 @@ for(my $j=0;$j<$elem;$j++){
 # with the NR2 evaluate method the same Haydock coefficients are used
 # for all frequencies. The object $nr knows about it.
 # First argument is the host (epsA)
-    my $enr=$nr->evaluate($epsA->r2C,$epsB); 
-# $enr is the macroscopic dielectric tensor (complex number) in \hat y=(0,1) Direction0 
+    my $enr=$nr->evaluate($epsA->r2C,$epsB);
+# $enr is the macroscopic dielectric tensor (complex number) in \hat y=(0,1) Direction0
 #----------------------------------------------------------------------------------
-    
+
 
 #----------------------------------------------------------------------------------
 # Retarded calculation throw $e object of Photonic::WE::R2::EpsilonP
 #----------------------------------------------------------------------------------
 # Photonic::WE::R2 perl-PDL module has implemented Metric, AllH, and EpsilonP modules
-# for the Retarded approximation case. 
+# for the Retarded approximation case.
     my $m=Photonic::WE::R2::Metric->new(geometry=>$gmtr, epsilon=>$epsA,
 					  wavenumber=>pdl($q),
 					  wavevector=>pdl([$k,0]));
@@ -156,7 +156,7 @@ for(my $j=0;$j<$elem;$j++){
 					polarization=>pdl(0,1)->r2C, nh=>$nh);
     my $e=Photonic::WE::R2::EpsilonP->new(haydock=>$h, nh=>$nh);
     my $er=$e->evaluate($epsB);
-##    say OUT join " ", $hnu, $enr->re, $enr->im, $er->re, $er->im; 
+##    say OUT join " ", $hnu, $enr->re, $enr->im, $er->re, $er->im;
     my $linea=pdl($hnu, $enr->re, $enr->im, $er->re, $er->im);
     push @out, $linea;
 }

@@ -6,10 +6,10 @@ Photonic::Iterator
 
 version 0.011
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -60,9 +60,9 @@ produce data items, one at a time, until depleted. They are
 implemented as functions (closures) that have state (implemented as
 lexical variables) to know which is the next item. The example above
 creates an iterator for walking over the elements of an array
-reference. 
+reference.
 
-=head1 EXPORTABLE FUNCTIONS 
+=head1 EXPORTABLE FUNCTIONS
 
 =over 4
 

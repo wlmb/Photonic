@@ -6,10 +6,10 @@ Photonic::LE::S::Field
 
 version 0.011
 
-=head1 COPYRIGHT NOTICE 
+=head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
-metamaterials. 
+metamaterials.
 
 Copyright (C) 1916 by W. Luis Mochán
 
@@ -182,7 +182,7 @@ sub evaluate {
     die "Error solving tridiag system" unless $info == 0;
     # Obtain longitudinal macroscopic response from result
     # Add spinor normalization.
-    $self->_epsL(my $epsL=sqrt(2)/$result->(:,(0))); 
+    $self->_epsL(my $epsL=sqrt(2)/$result->(:,(0)));
     # Normalize result so macroscopic field is 1.
     $result*=$epsL;
     my @Es= map {PDL->pdl($_)->complex} @{$result->unpdl};
