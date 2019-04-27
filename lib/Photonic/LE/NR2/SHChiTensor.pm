@@ -162,12 +162,32 @@ use PDL::IO::Storable;
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
 use Photonic::Utils qw(cmatmult);
+
 use Moose;
-with 'Photonic::Roles::EpsL';
+
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1, lazy=>1, builder=>'_nh',
+	    documentation=>'Desired no. of Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
+has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+	     writer=>'_epsL',
+	     documentation=>'Value of dielectric function'  );
+has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
+		 writer=>'_nhActual',
+		 documentation=>'Actual number of coefficients used' );
+has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef,
+		  writer=>'_converged',
+		  documentation=>'The calculation did converge');
+
+sub _nh { #build desired number of Haydock coeffs to use.
+    my $self=shift;
+    return $self->nr->nh; #defaults to coefficients desired
+}
+
 
 
 #required parameters
-has 'geometry'=>(is=>'ro', isa => 'Photonic::Geometry',
+has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1
 );
 has 'densityA'=>(is=>'ro', isa=>'Num', required=>1,
@@ -202,8 +222,11 @@ has 'epsTensor'=>(is=>'ro', isa=>'Photonic::LE::NR2::EpsTensor',
          documentation=>'diel. tensor at 2w');
 has 'chiTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_chiTensor',
              documentation=>'SH Susceptibility from last evaluation');
-with 'Photonic::Roles::EpsParams';
 
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
 
 sub evaluate {
     my $self=shift;
@@ -301,7 +324,7 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 	    reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH);
 	my @args=(nr=>$nr, nh=>$self->nhf, smallE=>$self->smallE);
 	push @args, filter=>$self->filter if $self->has_filter;
-	my $nrf=Photonic::LE::NR2::FieldH->new(@args);
+	my $nrf=Photonic::LE::NR2::Field->new(@args);
 	my $nrshp=Photonic::LE::NR2::SHP->
 	    new(nrf=>$nrf, densityA=>$self->densityA,
 		densityB=>$self->densityB);
