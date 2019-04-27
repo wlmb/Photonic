@@ -193,8 +193,9 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
-use Photonic::Utils qw(RtoG GtoR HProd linearCombine);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt);
 use Photonic::ExtraUtils qw(cgtsl);
+use Photonic::Iterator qw(nextval);
 use PDL::Constants qw(PI);
 use Moose;
 use MooseX::StrictConstructor;
@@ -459,7 +460,7 @@ sub _build_HP { #build haydock states for P2
     my $extnorm=$ext->complex/$normext;
     my $hp=Photonic::LE::NR2::AllH->new(nh=>$self->nrf->nh,
 	geometry=>$self->nrf->nr->geometry, smallH=>$self->nrf->nr->smallH,
-		keepStates=>1, nextState=>$extnorm);
+		keepStates=>1, firstState=>$extnorm);
     $hp->run;
     return $hp;
 }
@@ -467,13 +468,13 @@ sub _build_HP { #build haydock states for P2
 sub _build_externalL_n {
     my $self=shift;
     my $pol=$self->externalL_G;
-    my $states=$self->HP->states;
+    my $stateit=$self->HP->state_iterator;
     my $nh=$self->HP->iteration;
     # innecesario: \propto \delta_{n0}
     #my @Pn=map HProd($states->[$_],$pol), 0..$nh-1;
     my @Pn=map {0+0*i} 0..$nh-1;
     #$Pn[0]=$pol->(:,(0),(0));
-    $Pn[0]=HProd($states->[0],$pol);
+    $Pn[0]=HProd(nextval($stateit),$pol);
     #print join " Pn ", @Pn[0..3], "\n";
     return PDL->pdl([@Pn])->complex;
 }
@@ -501,8 +502,8 @@ sub _build_selfConsistentL_G {
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
     my $PLn=[$self->selfConsistentL_n->dog];
-    my $states=$self->HP->states;
-    my $result=linearCombine($PLn, $states);
+    my $stateit=$self->HP->state_iterator;
+    my $result=linearCombineIt($PLn, $stateit);
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0)  if $filterflag;
     return $result;
