@@ -1,0 +1,93 @@
+\documentclass[12pt]{report}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\bibliographystyle{unsrt}
+\begin{document}
+\section*{Hotspots: A naive Photonics modules consistency validation}
+System is a 2D adapted version of the original particle in cavity
+(PIC) architecture~\cite{Huang(2011)}. Particle is a cylinder made of
+Ag~\cite{Johnson(1972)} with radius $r_p=0.12(2N+1)$ where $N=200$ is
+a useful parameter to defining points per side in the square unit cell
+used here for 2D periodic system representation. Thus, cylinder's
+diameter is defined by 96/401 points. Cavity has a truncated
+cylindrical shape with radius $r_v=0.42(2N+1)$, it is a void in Ag
+also with a transverse cut at height $h=1.5r_v$. Host is air. Test was
+made by means of calculating $\epsilon^M$ and microscopic electric
+field using Photonic modules WE/R2, WE/S, LE/NR2, and LE/S. To compare
+results between Longitudinal (LE) and Wave Equation (WE)
+homogenization methods, the long wavelength approximation was
+introduced for the PIC configuration. We scale unit cell size to
+$L=50$ nm, then $r_v\equiv a=21.07$ nm and $r_p\equiv b=6.11$ nm. The
+wavenumber is defined by $q=\hbar\omega/1239.8$ and wavevector $\vec
+k=1.2q \hat e$, with $\hat e$ the polarization direction. Differences
+between results obtained by all of such methods are not meaningful. In
+all cases $Nh=200$ Haydock coefficients were used. Fig.\ref{fig:fig1}
+displays at the
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{fig1}\includegraphics[width=0.7\textwidth]{../figures/000}
+    \caption{\label{fig:fig1} Left panel: The real and the imaginary
+      parts of the macroscopic dielectric function $\epsilon^M_{yy}$
+      component versus photon energy $\hbar\omega$. Points on curve
+      indicates $\hbar\omega_0=2.88$. Right panel: Microscopic
+      electric field modulus in false color according to scale at the
+      right side. Title indicates dimensionless $qL$ and $\vec kL$,
+      particle (b) and cavity (a) radius in nm, wave vector direction
+      (wk\_dir), and $\hbar\omega_0$. Arrows represents direction of
+      the real part of the microscopic field, vertical direction is
+      defined by $\hat y$.}
+  \end{center}
+\end{figure}
+left panel, the real and the imaginary parts of $\epsilon^M_{yy}$
+component versus photon energy $\hbar\omega$. The right panel of
+Fig.\ref{fig:fig1} displays the self consistent microscopic field
+modulus in false color with the scale bar at the figure right
+side. Arrows represent real part of the microscopic field convenient
+scaled and decimated for a clear representations of the field
+directions. The particle is just touching the cavity and the indicated
+point on the curves at the left part of Fig.\ref{fig:fig1} corresponds
+to $\hbar\omega_0=2.88$ eV. The microscopic field are obtained when a
+probe field with $\hat e =\hat y$ polarization direction and frequency
+$\hbar\omega_0$ excite the system.
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{fig2}\href{run:totem
+      una\_L\_50\_d\_0\_dir\_0.mp4}{\includegraphics[width=0.7\textwidth]{../figures/001}}
+    \caption{\label{fig:fig2} Idem as Fig. \ref{fig:fig1}. Now it is
+      indicated $\hbar\omega_1=2.63$ eV on the curve at left panel and
+      the microscopic field for such frequency at the right
+      panel. Note that $qL$ and $kL$ modifies accordingly.}
+  \end{center}
+\end{figure}
+Note that Fig.\ref{fig:fig2} it is similar to Fig.\ref{fig:fig1} but
+now for $\hbar\omega_1=2.63$ eV tuning also a resonance with a large
+but localizaed microscopic field intensity (hotspot).
+\begin{figure}[htb]
+  \begin{center}
+      \includegraphics[width=0.6\textwidth]{fig3}
+    \caption{\label{fig:fig3} The real and the imaginary parts of
+      macroscopic dielectric function $\epsilon^M_{xx}$ component
+      versus photon energy $\hbar\omega$. Two points are indicated on
+      curves at $\hbar\omega_2=2.42$ and $\hbar\omega_3=2.94$}.
+  \end{center}
+\end{figure}
+Fig.\ref{fig:fig3} displays the real and the imaginary part of $\hat
+x\hat x$ component of the macroscopic dielectric function.
+\begin{figure}[htb]
+  \begin{center}
+    \href{run:totem una\_d\_0\_dir\_m90.mp4}{%
+      \includegraphics[width=0.6\textwidth]{../figures/002}\includegraphics[width=0.6\textwidth]{../figures/003}}
+    \caption{\label{fig:fig4}. Image for the microscopic electric
+      fields at the two reference points of Fig.\ref{fig:fig3} for
+      $\hbar\omega_2=2.42$ (left panel) and $\hbar\omega_3=2.94$
+      (right panel). The microscopic electric field video coded in
+      {\tt mp4} format can be visualized with a click on figure.}
+  \end{center}
+\end{figure}
+Fig.\ref{fig:fig4} displays the microscopic field for $\hbar\omega_2$
+and $\hbar\omega_3$.  The corresponding microscopic electric field for
+all frequencies can be visualized via {\em totem} codes or many other
+used for to manage {\tt mp4} format.
+
+\bibliography{referencias}
+\end{document}
