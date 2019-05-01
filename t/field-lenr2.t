@@ -57,7 +57,7 @@ sub Cdif {
 
 my $ea=1+2*i;
 my $eb=3+4*i;
-#Check haydock coefficients for simple 1D system
+#Check field for simple 1D system
 my $B=zeroes(11)->xvals<5; #1D system
 my $gl=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
 my $nr=Photonic::LE::NR2::AllH->new(geometry=>$gl, nh=>10, keepStates=>1);
