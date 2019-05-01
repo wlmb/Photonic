@@ -99,18 +99,8 @@ sub magnitude {
     return $self->innerProduct($psi, $psi)->abs->sqrt;
 }
 
-sub more { #check if I should continue
-    my $self=shift;
-    my $b2=shift;
-    return $b2->re > $self->smallH;
-}
-
 sub changesign { #flag change sign required if b^2 negative
     return $_[1]->re < 0;
-}
-
-sub coerce { #Ignore $self. Take real part
-    return $_[1]->re;
 }
 
 sub _firstState {
