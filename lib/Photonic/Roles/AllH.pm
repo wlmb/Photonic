@@ -170,6 +170,9 @@ has '_stateFD'=>(is=>'ro', init_arg=>undef, builder=>'_build_stateFD',
 		Haydock states');
 has '_statePos'=>(is=>'ro', init_arg=>undef, default=>sub {[0]},
 		 lazy=>1, documentation=>'Position of each state in file');
+has 'storeAllFN' =>(is=>'ro', default=>undef,
+		    documentation=>'Name of file to store everything');
+
 #provided by OneH instance
 requires qw(iterate _iterate_indeed magnitude innerProduct
     _checkorthogonalize);
@@ -178,7 +181,7 @@ requires qw(iterate _iterate_indeed magnitude innerProduct
 sub BUILD {
     my $self=shift;
     # Can't reorthogonalize without previous states
-    $self->_keepstates(1) if  $self->reorthogonalize;
+    $self->_keepstates(1) if  $self->reorthogonalize || $self->storeAllFN;
 }
 
 sub state_iterator {
@@ -244,6 +247,22 @@ after '_iterate_indeed' => sub {
 sub run { #run the iteration
     my $self=shift;
     while($self->iteration < $self->nh && $self->iterate){
+    }
+    $self->storeall; 
+}
+
+sub storeall {
+    my $self=shift;
+    my $fn=$self->storeAllFN;
+    return unless defined $fn; # unless you actually want to store everything
+    my $fh=IO::File->new($fn, "w")
+	or croak "Couldn't open $fn: $!";
+    #save all results but states
+    my %all=  map {($_=>$self->$_)} qw(iteration as bs b2s cs bcs gs);
+    store_fd \%all, $fh or croak "Couldn't store all info; $!";
+    my $si=$self->state_iterator;
+    while(defined (my $s=nextval($si))){
+	store_fd $s, $fh or croak "Couldn't store a state: $!";
     }
 }
 
