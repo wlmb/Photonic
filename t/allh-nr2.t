@@ -76,7 +76,7 @@ my $b2st=$a->b2s;
 ok(agree(pdl($at->iteration), 1), "Number of iterations 1D trans");
 ok(agree(pdl($b2st->[0]), 1), "1D T b_0^2");
 ok(agree(pdl($ast->[0]), $g->f), "1D T a_0");
-ok(agree(pdl($b2st), pdl($bs)**2), "1D T b2==b^2");
+ok(agree(pdl($b2st), pdl($bst)**2), "1D T b2==b^2");
 
 {
     #check reorthogonalize with square array
