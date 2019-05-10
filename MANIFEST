@@ -58,15 +58,13 @@ lib/Photonic/WE.pm
 lib/Photonic/WE/R2/AllH.pm
 lib/Photonic/WE/R2/EpsilonP.pm
 lib/Photonic/WE/R2/EpsilonTensor.pm
-lib/Photonic/WE/R2/EpsilonTensorF.pm
 lib/Photonic/WE/R2/Field.pm
 lib/Photonic/WE/R2/Green.pm
-lib/Photonic/WE/R2/GreenF.pm
 lib/Photonic/WE/R2/GreenP.pm
+lib/Photonic/WE/R2/GreenS.pm
 lib/Photonic/WE/R2/Metric.pm
 lib/Photonic/WE/R2/OneH.pm
 lib/Photonic/WE/R2/Wave.pm
-lib/Photonic/WE/R2/WaveF.pm
 lib/Photonic/WE/R2/WaveP.pm
 lib/Photonic/WE/S/AllH.pm
 lib/Photonic/WE/S/EpsilonP.pm
