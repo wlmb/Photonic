@@ -142,24 +142,27 @@ use Moose::Role;
 
 has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
-has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepstates',
+has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepStates',
          documentation=>'flag to keep Haydock states');
 has _states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]',
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
 
 # why not pdl?
-has as=>(is=>'ro', default=>sub{[]}, init_arg=>undef,
+has as=>(is=>'ro', default=>sub{[]}, init_arg=>undef, writer=>'_as',
          documentation=>'Saved a coefficients');
-has bs=>(is=>'ro', default=>sub{[]}, init_arg=>undef,
+has bs=>(is=>'ro', default=>sub{[]}, init_arg=>undef,  writer=>'_bs',
          documentation=>'Saved b coefficients');
-has b2s=>(is=>'ro', default=>sub{[]}, init_arg=>undef,
+has b2s=>(is=>'ro', default=>sub{[]}, init_arg=>undef,  writer=>'_b2s',
          documentation=>'Saved b^2 coefficients');
-has cs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
+has cs=>(is=>'ro', default=>sub{[]},
+	 init_arg=>undef,  writer=>'_cs',
          documentation=>'Saved c coefficients');
-has bcs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
+has bcs=>(is=>'ro', default=>sub{[]},
+	  init_arg=>undef, writer=>'_bcs',
          documentation=>'Saved b*c coefficients');
-has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]}, init_arg=>undef,
+has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]},
+	 init_arg=>undef,  writer=>'_gs',
          documentation=>'Saved g coefficients');
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag');
@@ -170,18 +173,24 @@ has '_stateFD'=>(is=>'ro', init_arg=>undef, builder=>'_build_stateFD',
 		Haydock states');
 has '_statePos'=>(is=>'ro', init_arg=>undef, default=>sub {[0]},
 		 lazy=>1, documentation=>'Position of each state in file');
-has 'storeAllFN' =>(is=>'ro', default=>undef,
+has 'storeAllFN' =>(is=>'ro', required=>1, default=>undef,
 		    documentation=>'Name of file to store everything');
+has 'loadAllFN' =>(is=>'ro', required=>1, default=>undef,
+		    documentation=>'Name of file to load everything from');
 
 #provided by OneH instance
 requires qw(iterate _iterate_indeed magnitude innerProduct
     _checkorthogonalize);
 
+my @allfields= qw(iteration keepStates as bs b2s cs bcs gs current_a next_b
+    next_b2 next_bc next_c current_g next_g previousState currentState
+    nextState);  # Fields to store and restore
+
 
 sub BUILD {
     my $self=shift;
     # Can't reorthogonalize without previous states
-    $self->_keepstates(1) if  $self->reorthogonalize || $self->storeAllFN;
+    $self->_keepStates(1) if  $self->reorthogonalize;
 }
 
 sub state_iterator {
@@ -231,12 +240,12 @@ sub _build_stateFD {
 
 before '_iterate_indeed' => sub {
     my $self=shift;
-    $self->_save_state;
-    $self->_save_b2;
     $self->_save_b;
-    $self->_save_c;
+    $self->_save_b2;
     $self->_save_bc;
+    $self->_save_c;
     $self->_save_g;
+    $self->_save_state;
 };
 after '_iterate_indeed' => sub {
     my $self=shift;
@@ -246,9 +255,26 @@ after '_iterate_indeed' => sub {
 
 sub run { #run the iteration
     my $self=shift;
+    $self->loadall;
     while($self->iteration < $self->nh && $self->iterate){
     }
     $self->storeall; 
+}
+
+sub loadall {
+    my $self=shift;
+    my $fn=$self->loadAllFN;
+    return unless defined $fn; #nothing to load
+    my $fh=IO::File->new($fn, "r")
+	or croak "Couldn't open $fn for reading: $!";
+    my $all=fd_retrieve($fh);
+    map {my $k="_".$_;$self->$k($all->{$_})} @allfields;
+    return unless $self->keepStates;
+    foreach(0..$self->iteration-1){
+	$self->_nextState(fd_retrieve($fh)); #note: clobber nextState
+	$self->_save_state;
+    }
+    $self->_nextState($all->{nextState}); #restore nextState
 }
 
 sub storeall {
@@ -256,27 +282,20 @@ sub storeall {
     my $fn=$self->storeAllFN;
     return unless defined $fn; # unless you actually want to store everything
     my $fh=IO::File->new($fn, "w")
-	or croak "Couldn't open $fn: $!";
+	or croak "Couldn't open $fn for writting: $!";
     #save all results but states
-    my %all=  map {($_=>$self->$_)} qw(iteration as bs b2s cs bcs gs);
+    my %all=  map {($_=>$self->$_)} @allfields;
     store_fd \%all, $fh or croak "Couldn't store all info; $!";
+    return unless $self->keepStates;
     my $si=$self->state_iterator;
     while(defined (my $s=nextval($si))){
 	store_fd $s, $fh or croak "Couldn't store a state: $!";
     }
 }
 
-sub _save_state {
+sub _save_a {
     my $self=shift;
-    return unless $self->keepStates; #noop
-    push(@{$self->_states}, $self->nextState), return
-	unless defined $self->stateFN;
-    my $fh=$self->_stateFD;
-    my $lastpos=$self->_statePos->[-1];
-    seek($fh, $lastpos, SEEK_SET);
-    store_fd \$self->nextState, $fh or croak "Couldn't store state: $!";
-    my $pos=tell($fh);
-    push @{$self->_statePos}, $pos;
+    push @{$self->as}, $self->current_a;
 }
 
 sub _save_b {
@@ -287,11 +306,6 @@ sub _save_b {
 sub _save_b2 {
     my $self=shift;
     push @{$self->b2s}, $self->next_b2;
-}
-
-sub _save_a {
-    my $self=shift;
-    push @{$self->as}, $self->current_a;
 }
 
 sub _save_bc {
@@ -307,6 +321,19 @@ sub _save_c {
 sub _save_g {
     my $self=shift;
     push @{$self->gs}, $self->next_g;
+}
+
+sub _save_state {
+    my $self=shift;
+    return unless $self->keepStates; #noop
+    push(@{$self->_states}, $self->nextState), return
+	unless defined $self->stateFN;
+    my $fh=$self->_stateFD;
+    my $lastpos=$self->_statePos->[-1];
+    seek($fh, $lastpos, SEEK_SET);
+    store_fd \$self->nextState, $fh or croak "Couldn't store state: $!";
+    my $pos=tell($fh);
+    push @{$self->_statePos}, $pos;
 }
 
 sub _pop_state {

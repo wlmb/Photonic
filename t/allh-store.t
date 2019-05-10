@@ -62,7 +62,8 @@ sub agree {
     my $fn="scratch/remStore.dat"; #output file name
     my $B=zeroes(11)->xvals<5; #1D system
     my $g=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
-    my $a=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10, storeAllFN=>$fn);
+    my $a=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10,
+				       keepStates=>1, storeAllFN=>$fn);
     $a->run;
     my $fh=IO::File->new($fn, "r") or die "Couldn't open $fn: $!";
     my $all=fd_retrieve($fh);
@@ -81,12 +82,63 @@ sub agree {
 }
 
 {
+    #full restore allh from previous calculation
+    my $fn="scratch/remStore.dat"; #output file name
+    my $B=zeroes(11)->xvals<5; #1D system
+    my $g=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
+    my $a=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10, loadAllFN=>$fn);
+    $a->run;
+    my $fh=IO::File->new($fn, "r") or die "Couldn't open $fn: $!";
+    my $all=fd_retrieve($fh);
+    is($all->{iteration}, $a->iteration,
+       "Number of iterations 1D longitudinal");
+    foreach(qw(as bs b2s cs bcs gs)){
+	ok(agree(pdl($all->{$_}), pdl($a->$_)), "1D L restored $_");
+    }
+    my $si=$a->state_iterator;
+    my (@readstates, @savedstates);
+    foreach(0..$all->{iteration}-1){
+	push @readstates, fd_retrieve($fh);
+	push @savedstates, nextval($si);
+    }
+    ok(agree(pdl(@readstates), pdl(@savedstates)), "1D L restored states");
+}
+
+{
+    #partial restore allh from previous calculation
+    my $fn="scratch/remStore.dat"; #output file name
+    my $B=zeroes(11)->xvals<5; #1D system
+    my $g=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
+    my $a=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>1,
+				       keepStates=>1, storeAllFN=>$fn);
+    $a->run;
+    is($a->iteration, 1, "Can stop before exhausting coefficients 1D L");
+    my $a2=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10,
+					keepStates=>1, loadAllFN=>$fn); 
+    $a2->run;
+    my $a3=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10, keepStates=>1);
+    $a3->run;
+    foreach(qw(iteration as bs b2s cs bcs gs)){
+	ok(agree(pdl($a2->$_), pdl($a3->$_)), "1D L retarted $_");
+    }
+    my $si2=$a2->state_iterator;
+    my $si3=$a3->state_iterator;
+    my (@states2, @states3);
+    foreach(0..$a3->iteration-1){
+	push @states2, nextval($si2);
+	push @states3, nextval($si3);
+    }
+    ok(agree(pdl(@states2), pdl(@states3)), "1D L restored states");
+}
+
+{
     #View 1D system as 2D. Transverse direction
     my $fn="scratch/remStore.dat"; #output file name
     my $Bt=zeroes(1,11)->yvals<5; #2D flat system
     my $gt=Photonic::Geometry::FromB->new(B=>$Bt,
 					  Direction0=>pdl([1,0])); #trans
-    my $at=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10, storeAllFN=>$fn);
+    my $at=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10,
+					keepStates=>1, storeAllFN=>$fn);
     $at->run;
     my $fh=IO::File->new($fn, "r") or die "Couldn't open $fn: $!";
     my $all=fd_retrieve($fh);
