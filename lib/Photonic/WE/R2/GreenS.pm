@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::WE::R2::GreenF
+Photonic::WE::R2::GreenS
 
 =head1 VERSION
 
@@ -38,13 +38,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-   use Photonic::WE::R2::GreenF;
-   my $G=Photonic::WE::R2::GreenF->new(metric=>$m, nh=>$nh);
+   use Photonic::WE::R2::GreenS;
+   my $G=Photonic::WE::R2::GreenS->new(metric=>$m, nh=>$nh);
    my $GreenTensor=$G->evaluate($epsB);
 
 =head1 DESCRIPTION
 
-Calculates the asymetric part of the retarded green's tensor for a given fixed
+Calculates the retarded green's tensor for a given fixed
 Photonic::WE::R2::Metric structure as a function of the dielectric
 functions of the components.
 
@@ -70,7 +70,8 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 Returns the macroscopic Green's operator for a given value of the
 dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.
+response $epsA is taken from the metric. It is assumed the tensor is
+symmetric.  
 
 =back
 
@@ -127,8 +128,8 @@ fraction. 0 means don't check.
 
 =cut
 
-package Photonic::WE::R2::GreenF;
-$Photonic::WE::R2::GreenF::VERSION = '0.011';
+package Photonic::WE::R2::GreenS;
+$Photonic::WE::R2::GreenS::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -138,119 +139,88 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
-use Photonic::WE::R2::Green;
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
+has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
+       handles=>[qw(geometry B dims ndims r G GNorm L scale f)],required=>1);
+has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::AllH]',
+            init_arg=>undef, lazy=>1, builder=>'_build_haydock',
+	    documentation=>'Array of Haydock calculators');
+has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::GreenP]',
+             init_arg=>undef, lazy=>1, builder=>'_build_greenP',
+             documentation=>'Array of projected G calculators');
+has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
+             writer=>'_greenTensor',
+             documentation=>"Green's Tensor from last evaluation");
+has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
+             documentation=>
+                  'All greenP evaluations converged in last evaluation');
+has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
+         documentation=>'Reorthogonalize haydock flag');
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
+    'Photonic::Roles::UseMask';
 
-extends 'Photonic::WE::R2::Green';
-
-has 'Chaydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::AllH]',
-            init_arg=>undef, lazy=>1, builder=>'_build_Chaydock',
-            documentation=>'Array of Haydock calculators for complex projection');
-
-has 'CgreenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::GreenP]',
-             init_arg=>undef, lazy=>1, builder=>'_build_CgreenP',
-             documentation=>'Array of projected G calculators for complex projection');
-
-has 'CChaydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::AllH]',
-            init_arg=>undef, lazy=>1, builder=>'_build_CChaydock',
-            documentation=>'Array of Haydock calculators for complex-conjugate projection');
-
-has 'CCgreenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::GreenP]',
-             init_arg=>undef, lazy=>1, builder=>'_build_CCgreenP',
-             documentation=>'Array of projected G calculators for complex-conjugate projection');
-
-around 'evaluate' => sub {
-    my $orig=shift;
+sub evaluate {
     my $self=shift;
-    my $epsB=shift;
-    $self->$orig($epsB);
-    my @greenPc; #array of Green's projections along complex directions.
-    my @greenPcc; #array of Green's projections along complex-conjugate directions.
+    $self->_epsA(my $epsA=$self->metric->epsilon->r2C);
+    $self->_epsB(my $epsB=shift);
+    $self->_u(my $u=1/(1-$epsB/$epsA));
+    my @greenP; #array of Green's projections along different directions.
     my $converged=1;
-    foreach(@{$self->CgreenP}){
-	push @greenPc, $_->evaluate($epsB);
+    foreach(@{$self->greenP}){
+	push @greenP, $_->evaluate($epsB);
 	$converged &&=$_->converged;
     }
-    foreach(@{$self->CCgreenP}){
-        push @greenPcc, $_->evaluate($epsB);
-        $converged &&=$_->converged;
-    }
     $self->_converged($converged);
-    my $nd=$self->geometry->B->ndims;
-    my $greenTensor=$self->greenTensor;
-    my $asy=$greenTensor->zeroes->complex;
-    my $m=0;
-    for my $i(0..$nd-2){
-	for my $j($i+1..$nd-1){
-	    $asy->(:,($i),($j)).= i*($greenPcc[$m]-$greenPc[$m])/2;
-	    $asy->(:,($j),($i)).= i*($greenPc[$m]-$greenPcc[$m])/2;
-	    $m++
+    my $reGreenP=PDL->pdl([map {$_->re} @greenP]);
+    my $imGreenP=PDL->pdl([map {$_->im} @greenP]);
+    my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
+    my $reGreen=lu_backsub($lu, $perm, $parity, $reGreenP);
+    my $imGreen=lu_backsub($lu, $perm, $parity, $imGreenP);
+    my $nd=$self->ndims;
+    my $greenTensor=PDL->zeroes(2, $nd, $nd)->complex;
+    my $n=0;
+    for my $i(0..$nd-1){
+	for my $j($i..$nd-1){
+	    $greenTensor->(:,($i),($j)).=$reGreen->($n)+i*$imGreen->($n);
+	    $greenTensor->(:,($j),($i)).=$reGreen->($n)+i*$imGreen->($n);
+	    ++$n;
 	}
-     }
-    #print $asy, "\n";
-    $greenTensor= $greenTensor+$asy;
+    }
     $self->_greenTensor($greenTensor);
     return $greenTensor;
-};
-
-
-sub _build_Chaydock { # One Haydock coefficients calculator per direction0
-    my $self=shift;
-    my @Chaydock;
-    # This must change if G is not symmetric
-    foreach(@{$self->geometry->CunitPairs}){
-	my $m=dclone($self->metric); #clone metric, to be safe
-	my $e=$_; #polarization
-	#Build a corresponding Photonic::WE::R2::AllH structure
-	my $chaydock=Photonic::WE::R2::AllH->new(
-	    metric=>$m, polarization=>$e, nh=>$self->nh,
-	    keepStates=>$self->keepStates, smallH=>$self->smallH);
-	push @Chaydock, $chaydock;
-    }
-    return [@Chaydock]
 }
 
-sub _build_CChaydock { # One Haydock coefficients calculator per direction0
+sub _build_haydock { # One Haydock coefficients calculator per direction0
     my $self=shift;
-    my @CChaydock;
+    my @haydock;
     # This must change if G is not symmetric
-    foreach(@{$self->geometry->CCunitPairs}){
+    foreach(@{$self->geometry->unitPairs}){
 	my $m=dclone($self->metric); #clone metric, to be safe
-	my $e=$_; #polarization
+	my $e=$_->r2C; #polarization
 	#Build a corresponding Photonic::WE::R2::AllH structure
-	my $cchaydock=Photonic::WE::R2::AllH->new(
+	my $haydock=Photonic::WE::R2::AllH->new(
 	    metric=>$m, polarization=>$e, nh=>$self->nh,
-	    keepStates=>$self->keepStates, smallH=>$self->smallH);
-	push @CChaydock, $cchaydock;
+	    keepStates=>$self->keepStates, smallH=>$self->smallH,
+	    reorthogonalize=>$self->reorthogonalize,
+	    use_mask=>$self->use_mask,
+	    mask=>$self->mask);
+	push @haydock, $haydock;
     }
-    return [@CChaydock]
+    return [@haydock]
 }
 
-
-sub _build_CgreenP {
+sub _build_greenP {
     my $self=shift;
-    my @CgreenP;
-    foreach(@{$self->Chaydock}){
+    my @greenP;
+    foreach(@{$self->haydock}){
 	my $g=Photonic::WE::R2::GreenP->new(
 	    haydock=>$_, nh=>$self->nh, smallE=>$self->smallE);
-	push @CgreenP, $g;
+	push @greenP, $g;
     }
-    return [@CgreenP]
-}
-
-
-sub _build_CCgreenP {
-    my $self=shift;
-    my @CCgreenP;
-    foreach(@{$self->CChaydock}){
-	my $g=Photonic::WE::R2::GreenP->new(
-	    haydock=>$_, nh=>$self->nh, smallE=>$self->smallE);
-	push @CCgreenP, $g;
-    }
-    return [@CCgreenP]
+    return [@greenP]
 }
 
 __PACKAGE__->meta->make_immutable;
