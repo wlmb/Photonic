@@ -147,14 +147,14 @@ use MooseX::StrictConstructor;
 
 extends 'Photonic::WE::R2::GreenS';
 
-has 'Chaydock' =>(
+has 'cHaydock' =>(
     is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::AllH]',
-    init_arg=>undef, lazy=>1, builder=>'_build_Chaydock',
+    init_arg=>undef, lazy=>1, builder=>'_build_cHaydock',
     documentation=>'Array of Haydock calculators for complex projection');
 
-has 'CgreenP'=>(
+has 'cGreenP'=>(
     is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::GreenP]',
-    init_arg=>undef, lazy=>1, builder=>'_build_CgreenP',
+    init_arg=>undef, lazy=>1, builder=>'_build_cGreenP',
     documentation=>'Array of projected G calculators for complex projection');
 
 has 'symmetric' => (
@@ -170,14 +170,14 @@ around 'evaluate' => sub {
     return $sym if $self->symmetric; 
     my @greenPc; #array of Green's projections along complex directions.
     my $converged=$self->converged;
-    foreach(@{$self->CgreenP}){
+    foreach(@{$self->cGreenP}){
 	push @greenPc, $_->evaluate($epsB);
 	$converged &&=$_->converged;
     }
     $self->_converged($converged);
     my $nd=$self->geometry->B->ndims;
     my $asy=$sym->zeroes->complex; #ri,xy,xy, 2x$ndx$nd
-    my @cpairs=@{$self->geometry->CunitPairs};
+    my @cpairs=@{$self->geometry->cUnitPairs};
     my $m=0;
     for my $i(0..$nd-2){
 	for my $j($i+1..$nd-1){
@@ -200,31 +200,31 @@ around 'evaluate' => sub {
 };
 
 
-sub _build_Chaydock {
+sub _build_cHaydock {
     # One Haydock coefficients calculator per complex polarization
     my $self=shift;
-    my @Chaydock;
-    foreach(@{$self->geometry->CunitPairs}){
+    my @cHaydock;
+    foreach(@{$self->geometry->cUnitPairs}){
 	my $m=dclone($self->metric); #clone metric, to be safe
 	my $e=$_; #polarization
 	#Build a corresponding Photonic::WE::R2::AllH structure
 	my $chaydock=Photonic::WE::R2::AllH->new(
 	    metric=>$m, polarization=>$e, nh=>$self->nh,
 	    keepStates=>$self->keepStates, smallH=>$self->smallH);
-	push @Chaydock, $chaydock;
+	push @cHaydock, $chaydock;
     }
-    return [@Chaydock]
+    return [@cHaydock]
 }
 
-sub _build_CgreenP {
+sub _build_cGreenP {
     my $self=shift;
-    my @CgreenP;
-    foreach(@{$self->Chaydock}){
+    my @cGreenP;
+    foreach(@{$self->cHaydock}){
 	my $g=Photonic::WE::R2::GreenP->new(
 	    haydock=>$_, nh=>$self->nh, smallE=>$self->smallE);
-	push @CgreenP, $g;
+	push @cGreenP, $g;
     }
-    return [@CgreenP]
+    return [@cGreenP]
 }
 
 

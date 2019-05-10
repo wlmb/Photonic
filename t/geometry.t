@@ -36,7 +36,7 @@ use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::Geometry::FromImage2D;
 use Photonic::Geometry::FromEpsilon;
-use Test::More tests => 40;
+use Test::More tests => 39;
 my $pi=4*atan2(1,1);
 
 sub agree {
@@ -87,12 +87,9 @@ ok($g->f==$B->sum/(11*11), "filling fraction");
 ok(agree($g->unitPairs->[0], pdl(1,0))
    && agree($g->unitPairs->[1], pdl(1,1)/sqrt(2))
    && agree($g->unitPairs->[2], pdl(0,1)), "unitpairs");
-ok(agree($g->CunitPairs->[0]->re, pdl(1,0)/sqrt(2))
-   && agree($g->CunitPairs->[0]->im, pdl(0,1)/sqrt(2)),
+ok(agree($g->cUnitPairs->[0]->re, pdl(1,0)/sqrt(2))
+   && agree($g->cUnitPairs->[0]->im, pdl(0,1)/sqrt(2)),
    "cunitpairs");
-ok(agree($g->CCunitPairs->[0]->re, pdl(1,0)/sqrt(2))
-   && agree($g->CCunitPairs->[0]->im, -pdl(0,1)/sqrt(2)),
-   "ccunitpairs");
 ok(agree($g->unitDyads, pdl([1,0,0],[.5,1,.5],[0,0,1])), "unitDyads");
 ok(agree(lu_backsub(@{$g->unitDyadsLU}, $g->unitDyads->transpose),
 	 identity(3)), "unitDyadsLU");
