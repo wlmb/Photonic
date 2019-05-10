@@ -89,6 +89,7 @@ t/00-load.t
 t/allh-np.t
 t/allh-nr2.t
 t/allh-s.t
+t/allh-store.t
 t/allh-wer2.t
 t/allh-wes.t
 t/allh-writest.t
