@@ -61,8 +61,6 @@
 # Avoid prove files
 \B\.prove$
 
-# Avoid MYMETA files
-^MYMETA\.
 #!end included /home/mochan/perl5/perlbrew/perls/perl-5.28.0/lib/5.28.0/ExtUtils/MANIFEST.SKIP
 
 # Avoid configuration metadata file
