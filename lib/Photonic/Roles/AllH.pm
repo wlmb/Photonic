@@ -142,12 +142,12 @@ use Moose::Role;
 
 has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
-has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepStates',
-         documentation=>'flag to keep Haydock states');
+# Moved to Role below
+#has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepStates',
+#         documentation=>'flag to keep Haydock states');
 has _states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]',
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
-
 # why not pdl?
 has as=>(is=>'ro', default=>sub{[]}, init_arg=>undef, writer=>'_as',
          documentation=>'Saved a coefficients');
@@ -177,7 +177,7 @@ has 'storeAllFN' =>(is=>'ro', required=>1, default=>undef,
 		    documentation=>'Name of file to store everything');
 has 'loadAllFN' =>(is=>'ro', required=>1, default=>undef,
 		    documentation=>'Name of file to load everything from');
-
+with 'Photonic::Roles::KeepStates';
 #provided by OneH instance
 requires qw(iterate _iterate_indeed magnitude innerProduct
     _checkorthogonalize);
