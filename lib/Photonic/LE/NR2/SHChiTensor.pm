@@ -69,7 +69,7 @@ $nhf is the maximum number of Haydock coefficients for the field calculation.
 $ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geometry.
 
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
-haydock coefficients and continued fraction. From Photonic::Roles::EpsParams.
+haydock coefficients and continued fraction.
 
 =item * evaluate($epsA1, $epsB1, $epsA2, $epsB2, [kind=>$kind,] [mask=>$mask] )
 

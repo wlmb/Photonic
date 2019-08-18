@@ -92,7 +92,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallE
 
 Criteria of convergence for continued fraction. 0 means don't
-check. From Photonic::Roles::EpsParams
+check.
 
 =back
 
@@ -115,7 +115,19 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-with 'Photonic::Roles::EpsParams';
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+	    documentation=>'Desired no. of Haydock coefficients');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
+has 'epsA'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA',
+    documentation=>'Dielectric function of host');
+has 'epsB'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB',
+        documentation=>'Dielectric function of inclusions');
+has 'u'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_u',
+    documentation=>'Spectral variable');
+
 has 'nr' =>(is=>'ro', isa=>'Photonic::LE::NP::AllH', required=>1);
 has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsL');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,

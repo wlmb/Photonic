@@ -107,7 +107,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallH smallE
 
 Criteria of convergence for Haydock and epsilon calculations. 0 means
-don't check. From Photonic::Roles::EpsParams.
+don't check.
 
     *Check last remark*
 
@@ -132,7 +132,6 @@ use MooseX::StrictConstructor;
 
 has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
 		builder=> '_build_epsilon');
-with 'Photonic::Roles::EpsParams';
 
 my $ghandles={map {$_=>$_} qw(B ndims dims r G GNorm L scale f)};
 $ghandles->{epsilonFromG}='epsilon';
@@ -153,8 +152,20 @@ has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All EpsL evaluations converged in last evaluation');
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams',
-    'Photonic::Roles::UseMask';
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+	    documentation=>'Desired no. of Haydock coefficients');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
+has 'epsA'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA',
+    documentation=>'Dielectric function of host');
+has 'epsB'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB',
+        documentation=>'Dielectric function of inclusions');
+has 'u'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_u',
+    documentation=>'Spectral variable');
+
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 sub _build_epsilon {
     my $self=shift;

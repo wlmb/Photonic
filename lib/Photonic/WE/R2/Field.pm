@@ -86,7 +86,7 @@ Maximum number of Haydock coefficients to use.
 
 =item * smallE
 
-Criteria of convergence. 0 means don't check. From Photonic::Roles::EpsParams
+Criteria of convergence. 0 means don't check.
 
 =item * epsA
 
@@ -145,8 +145,18 @@ has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 has 'field'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
            writer=>'_field', documentation=>'Calculated real space field');
-
-with 'Photonic::Roles::EpsParams';
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+	    documentation=>'Desired no. of Haydock coefficients');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
+has 'epsA'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA',
+    documentation=>'Dielectric function of host');
+has 'epsB'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB',
+        documentation=>'Dielectric function of inclusions');
+has 'u'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_u',
+    documentation=>'Spectral variable');
 
 sub BUILD {
     my $self=shift;

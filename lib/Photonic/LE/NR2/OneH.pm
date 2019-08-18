@@ -81,7 +81,7 @@ Accesors handled by geometry (see Photonic::Roles::Geometry)
 =item * smallH
 
 A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero. Handled by Photonic::Roles::EpsParams
+b^2 coefficients are taken to be zero.
 
 =item * previousState currentState nextState
 

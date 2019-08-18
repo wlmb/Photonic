@@ -63,8 +63,7 @@ $h Photonic::WE::R2::AllH describing the structure and some parametres.
 $nh is the maximum number of Haydock coefficients to use.
 
 $smallE is the criterium of convergence (default 1e-7) for
-Haydock coefficients and for the continued fraction. From
-Photonic::Roles::EpsParams.
+Haydock coefficients and for the continued fraction.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 

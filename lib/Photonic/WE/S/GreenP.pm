@@ -100,7 +100,7 @@ Flags that the last calculation converged before using up all coefficients
 
 =item * smallE
 
-Criteria of convergence. 0 means don't check. From Photonic::Roles::EpsParams.
+Criteria of convergence. 0 means don't check.
 
 =back
 

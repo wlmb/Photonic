@@ -107,7 +107,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallH smallE
 
 Criteria of convergence for Haydock and epsilon calculations. 0 means
-don't check. From Photonic::Roles::EpsParams.
+don't check.
 
     *Check last remark*
 
@@ -134,7 +134,7 @@ has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1
 );
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsParams';
+with 'Photonic::Roles::KeepStates';
 
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');

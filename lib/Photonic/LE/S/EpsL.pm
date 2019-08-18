@@ -92,7 +92,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallE
 
 Criteria of convergence for continued fraction. 0 means don't
-check. From Photonic::Roles::EpsParams
+check.
 
 =back
 
