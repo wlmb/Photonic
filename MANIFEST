@@ -122,3 +122,5 @@ t/pod.t
 t/version.t
 TODO
 xt/boilerplate.t
+META.yml
+META.json
