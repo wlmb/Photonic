@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Calculates the non retarded electric field for a given fixed
+Calculates the retarded electric field for a given fixed
 Photonic::Geometry structure and given dielectric functions of
 the components.
 
