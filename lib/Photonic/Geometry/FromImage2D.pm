@@ -53,11 +53,11 @@ calculation using as input a monochromatic 2D image.
 
 =over 4
 
-=item * new(path=>$f, L=>$L, inverted=>$i)
+=item * new(path=>$p, L=>$L, inverted=>$i)
 
 Creates a new H::G::F object
 
-$f is the filename of a 2D monochromatic image with white regions
+$p is the filename of a 2D monochromatic image with white regions
 corresponding to the B region and black corresponding to A, unless
 inverted. Its size must be odd along both directions.
 
