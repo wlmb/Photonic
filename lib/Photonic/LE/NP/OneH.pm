@@ -50,7 +50,7 @@ A Photonic::Geometry object defining the geometry of the system,
 the charateristic function and the direction of the G=0 vector. Should
 be given in the initializer.
 
-=item * B dims r G GNorm L scale f
+=item * B ndims dims r G GNorm L scale f
 
 Accesors handled by geometry (see Photonic::Geometry)
 
@@ -86,6 +86,26 @@ Number of completed iterations
 Performs a single Haydock iteration and updates current_a, next_state,
 next_b2, next_b, shifting the current values where necessary. Returns
 0 when unable to continue iterating. 
+
+=item * $s= _firstState($self)
+
+Returns the fisrt state $v.
+
+=item * $s=applyOperator($self, $psi_G)
+
+Apply the Hamiltonian operator to state. State is ri:nx:ny... gnorm=i:nx:ny...
+
+=item * $s=innerProduct($self, $left, $right)
+
+Returns the inner product (Hermitian product) between states.
+
+=item * $s=magnitude($self, $psi)
+
+Returns the magnitude of a state gotten by taking the square root of the inner product of the state with itself, $self->innerProduct($psi, $psi)->abs->sqrt;.
+
+=item * $c=changesign
+
+Change sign to
  
 =back
 
@@ -134,7 +154,7 @@ sub _firstState { #\delta_{G0}
     my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
     my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1; #i*delta_{G0}
-    return $v;
+    return $;
 }
 
 sub applyOperator {

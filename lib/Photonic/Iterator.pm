@@ -6,3 +6,17 @@ use base Exporter;
 
 sub nextval ($) { $_[0]->(); }
 sub iterator(&) { return $_[0] }
+
+
+=head1 NAME
+
+Photonic::Iterator
+
+=head1 VERSION
+
+version 0.011
+
+=head1 SYNOPSIS
+
+    use Photonic::Iterator qw(iterator nextval);
+    

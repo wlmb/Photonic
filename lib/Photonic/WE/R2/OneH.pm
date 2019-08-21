@@ -203,7 +203,36 @@ Number of completed iterations
 Performs a single Haydock iteration and updates current_a, next_b,
 next_b2, next_c, next_g, next_state, shifting the current values where
 necessary. Returns 0 when unable to continue iterating. 
- 
+
+=item * $s=applymetric($g, $psi)
+
+Returns the matrix of applying a  metric to the state; $g*psi.
+
+=item * $s= _firstState($self)
+
+Returns the fisrt state $v.
+
+=item * $s=applyOperator($self, $psi_G)
+
+Apply the Hamiltonian operator to state. State is ri:nx:ny... gnorm=i:nx:ny...
+
+=item * $s=innerProduct($self, $left, $right)
+
+Returns the inner product (Hamiltonian product) between states.
+
+=item * $s=magnitude($self, $psi)
+
+Returns the magnitude of a state gotten by taking the square root of the inner product of the state with itself, $self->innerProduct($psi, $psi)->abs->sqrt;.
+
+=item * $s=more
+
+=item * $c=changesign
+
+Change sign to
+
+=item * $s=coerce 
+
+
 =begin Pod::Coverage
 
 =head2 BUILD

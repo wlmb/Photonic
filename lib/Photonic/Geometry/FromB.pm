@@ -5,7 +5,7 @@ use Moose;
 use MooseX::StrictConstructor;
 
 has 'B' =>(is=>'ro', isa=>'PDL', required=>1,
-	   documentation=>'charateristic function');
+	   documentation=>'Charateristic function');
 
 with 'Photonic::Roles::Geometry';
 
@@ -28,12 +28,14 @@ version 0.011
      use Photonic::Geometry::FromB;
      $g=Photonic::Geometry::FromB->new(B=>$pdl);
      $B=$g->B;
-     $G=$g->G;
+     
 
 =head1 DESCRIPTION
 
 Create a geometry object to be used in a Photonic
-calculation from a characteristic function. 
+calculation from a characteristic function B that specifies 
+the regions where each kind of material is in the unit cell, 
+with ones for material b and ceroes for material a.  
 
 =head1 METHODS
 

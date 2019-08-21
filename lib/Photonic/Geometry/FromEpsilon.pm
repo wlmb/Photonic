@@ -9,7 +9,7 @@ has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
 		documentation=>'Dielectric function as function of position');
 
 has 'B' =>(is=>'ro', isa=>'PDL', init_arg=>undef, builder=>'_B', lazy=>1,
-	   documentation=>'charateristic function');
+	   documentation=>'Charateristic function');
 
 with 'Photonic::Roles::Geometry';
 
@@ -19,9 +19,9 @@ before 'f' => sub {
 	. "Photonic::Geometry::FromEpsilon"; 
 };
 
-sub _B {
+sub _Bdims {
     my $self=shift;
-    my $B=return $self->epsilon->re; #value is irrelevant. Only shape counts.
+    my $Bdims=return $self->epsilon->re; #value is irrelevant. Only shape counts.
 }
 
 __PACKAGE__->meta->make_immutable; #faster execution
@@ -31,7 +31,7 @@ __PACKAGE__->meta->make_immutable; #faster execution
 
 =head1 NAME
 
-Photonic::Geometry::FromB
+Photonic::Geometry::FromEpsilon
 
 =head1 VERSION
 
@@ -39,27 +39,28 @@ version 0.011
 
 =head1 SYNOPSIS
 
-     use Photonic::Geometry::FromB;
-     $g=Photonic::Geometry::FromB->new(B=>$pdl);
-     $B=$g->B;
-     $G=$g->G;
+     use Photonic::Geometry::FromEpsilon;
+     $g=Photonic::Geometry::FromEpsilon->new(epsilon=>$pdl);
+     $epsilon=$g->epsilon;
+     
 
 =head1 DESCRIPTION
 
-Create a geometry object to be used in a Photonic
-calculation from a characteristic function. 
+Creates a geometry object to be used in a Photonic
+calculation from a dielectric function which specifies
+the dielectric function for each media in the unit cell. 
 
 =head1 METHODS
 
 =over 4
 
-=item * new(B=>$pdl[, L=>$L])
+=item * new(epsilon=>$pdl[, L=>$L])
 
-Creates a new Ph::G::FromB object
+Creates a new Ph::G::FromEpsilon object
 
-$pdl is a boolean array with 1's and 0's representing the characteriztic
+$pdl is a boolean array with epsilon's representing the dielectric
 function within the unit cell. Its dimensions must be odd. Its number
-of dimensions is the dimension of space
+of dimensions of the real part is the dimension of space
 
 $L is the size of the unit cell along the cartesian axes. By
 default, it is the number of pixels.
@@ -70,13 +71,13 @@ default, it is the number of pixels.
 
 =over 4
 
-=item * B 
+=item * epsilon
 
-The characteristic function as PDL
+The dielectric function as PDL
 
 =item * L 
 
-Unit cell sizes as a B->ndims pdl.
+Unit cell sizes as a Bdims->ndims pdl.
 
 =back
 
