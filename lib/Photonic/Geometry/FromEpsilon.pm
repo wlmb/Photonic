@@ -13,7 +13,7 @@ has 'B' =>(is=>'ro', isa=>'PDL', init_arg=>undef, builder=>'_B', lazy=>1,
 
 with 'Photonic::Roles::Geometry';
 
-#Filling fraction is meaningless in this case.
+#Filling fraction is meaningless in this case (filling fraction is the ratio between volumes of b material and the unit cell, tells how much b material we have within the unit cell) .
 before 'f' => sub {
     croak "Filling fraction is meaningless for "
 	. "Photonic::Geometry::FromEpsilon"; 
