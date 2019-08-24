@@ -32,9 +32,9 @@ version 0.011
 
 =head1 DESCRIPTION
 
-Create a geometry object to be used in a Photonic
+Creates a geometry object to be used in a Photonic
 calculation from a characteristic function B that specifies 
-the regions where each kind of material is in the unit cell, 
+the regions where each kind of material is within the unit cell, 
 with ones for material b and ceroes for material a.  
 
 =head1 METHODS

@@ -32,13 +32,11 @@ Iterates the calculation of Haydock coefficients and states.
 
 =item L<Photonic::LE::NR2::AllH>
 
-Implementation for the longitudinal epsilon in a binary media in the
-non retarded approximation.  
+Implementation for the longitudinal epsilon in a binary media in the non retarded approximation.  
 
 =item L<Photonic::WE::R2::AllH>
 
-Implementation for the wave equation in a binary media, particles
-within a non-dissipative host with retardation, using a metric.
+Implementation for the wave equation in a binary media, particles within a non-dissipative host with retardation, using a metric.
 
 =back
 

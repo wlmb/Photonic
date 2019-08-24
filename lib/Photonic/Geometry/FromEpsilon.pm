@@ -23,6 +23,7 @@ sub _Bdims {
     my $self=shift;
     my $Bdims=return $self->epsilon->re; #value is irrelevant. Only shape counts.
 }
+#Bdims gets from real part of epsilon the dimensions of the geometry, it isn't the characteristic function
 
 __PACKAGE__->meta->make_immutable; #faster execution
 
@@ -48,7 +49,7 @@ version 0.011
 
 Creates a geometry object to be used in a Photonic
 calculation from a dielectric function which specifies
-the dielectric function for each media in the unit cell. 
+the dielectric function for each media within the unit cell. 
 
 =head1 METHODS
 
