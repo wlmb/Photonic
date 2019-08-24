@@ -19,4 +19,18 @@ version 0.011
 =head1 SYNOPSIS
 
     use Photonic::Iterator qw(iterator nextval);
-    
+
+=head1 DESCRIPTION
+
+Iterator is an object interface to a list. Generates elements of a list as are solicited so that just a little part of the list will need to be in memory.
+Uses nextval to replace the current element for the next one.
+
+=back
+
+=begin Pod::Coverage
+
+=head2 BUILD
+   
+=end Pod::Coverage
+
+=cut
