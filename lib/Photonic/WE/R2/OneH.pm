@@ -226,11 +226,14 @@ Returns the magnitude of a state gotten by taking the square root of the inner p
 
 =item * $s=more
 
+Checks if $b2->re > $self->smallH and tells if the calculation should cotinue.
+
 =item * $c=changesign
 
-Change sign to
+Change sign to inner product of the estates to ensure b^2 is positive.
 
 =item * $s=coerce 
+
 
 
 =begin Pod::Coverage

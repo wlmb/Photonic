@@ -14,7 +14,7 @@ version 0.011
 
 =head1 DESCRIPTION
 
-Calculates the dielectric function for a given fixed
+Calculates the macroscopic dielectric function for a given fixed
 Photonic::WE::R2::AllH structure as a function of the dielectric
 functions of the components.
 

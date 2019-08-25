@@ -24,8 +24,7 @@ version 0.011
 
 =head1 DESCRIPTION
 
-Iterates the calculation of Haydock coefficients and states in the
-retarded regime and saves them for later retrieval. 
+Uses Iterator to iterate the calculation of Haydock coefficients and states in the retarded regime and saves them for later retrieval. 
 
 =head1 METHODS
 
@@ -41,7 +40,7 @@ are as in Photonic::WE::R2::OneH.
 
 =item * run
 
-Runs the iteration to completion
+Runs the iteration to completion  
 
 =item * All the Photonic::WE::R2::OneH methods
 
