@@ -26,9 +26,7 @@ version 0.011
 
 =head1 DESCRIPTION
 
-Calculates the longitudinal dielectric function for a given fixed
-Photonic::...::AllH structure as a function of the dielectric
-functions of the components.
+Calculates the macroscopic longitudinal dielectric function for a given fixed Photonic::...::AllH structure as a function of the dielectric functions of the components.
 
 =head1 METHODS
 

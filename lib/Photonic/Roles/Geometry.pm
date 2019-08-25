@@ -398,11 +398,11 @@ directions given by unitPairs
 =item * Vec2LC_G($v_G)
 
 Returns the longitudinal component of a 'complex' vector field $v_G in
-reciprocal space 
+reciprocal space.
 
 =item * LC2Vec_G($s_G)
 
-longitudinal vector field from its longitudinal components in
+Longitudinal vector field from its longitudinal components in
 reciprocal space. Scalar field to vector field.
 
 =back
@@ -419,7 +419,7 @@ Test if Direction0 has been set.
 
 =begin Pod::Coverage
 
-=head2    PI
+=head2 PI
 
 =end  Pod::Coverage
 

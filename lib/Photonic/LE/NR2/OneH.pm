@@ -99,7 +99,7 @@ Returns the magnitude of a state gotten by taking the square root of the inner p
 
 =item * $c=changesign
 
-Change sign to
+Change sign to 
 
  
 =back

@@ -15,7 +15,7 @@ version 0.011
 
 =head1 DESCRIPTION
 
-Calculates the dielectric tensor for a given fixed
+Calculates the macroscopic dielectric tensor for a given fixed
 Photonic::Geometry structure as a function of the dielectric
 functions of the components.
 

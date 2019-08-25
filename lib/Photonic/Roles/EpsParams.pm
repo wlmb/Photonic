@@ -17,7 +17,7 @@ version 0.011
 =head1 DESCRIPTION
 
 Fields that have been factored as they are common in different
-Photonic subpackages to calculate the macroscopic dielectric function
+Photonic subpackages to calculate the macroscopic dielectric function.
 
 =head1 ACCESORS (read only)
 
@@ -31,7 +31,7 @@ Convergence criterium for Haydock coefficient calculations. Default is 1e-7.
 
 =head2 smallE
 
-Convergence criterium for Haydock coefficient use. Default is 1e-7.
+Convergence criterium for electric Haydock coefficient use. Default is 1e-7.
 
 =head2 epsA
 

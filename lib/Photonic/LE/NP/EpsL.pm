@@ -14,7 +14,7 @@ version 0.011
 
 =head1 DESCRIPTION
 
-Calculates the longitudinal dielectric function for a given fixed
+Calculates the macroscopic longitudinal dielectric function for a given fixed
 Photonic::LE::NP::AllH structure as a function of the dielectric
 functions of the components.
 
@@ -30,8 +30,7 @@ $nr is a Photonic::LE::NP::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
-$smallE is the criteria of convergence for the continued fraction 
-(defaults to 1e-7)
+$smallE is the criteria of convergence for the continued fraction (presition of results, defaults to 1e-7)
 
 =back
 

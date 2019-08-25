@@ -32,8 +32,7 @@ structure, *initialized* with the flag keepStates=>1
 
 $nh is the maximum number of Haydock coefficients to use.
 
-$smallE is the criteria of convergence (default 1e-7) for
-Field calculations  
+$smallE is the criteria of convergence (default 1e-7) for Field calculations  
 
 =item * evaluate($epsA, $epsB...)
 
@@ -76,11 +75,11 @@ Array of field coefficients
 
 =item * filter
 
-optional reciprocal space filter 
+Optional reciprocal space filter 
 
 =item * field
 
-real space field in format RorI, cartesian, nx, ny,...
+Real space field in format RorI, cartesian, nx, ny,...
 
 =item * epsL 
 
