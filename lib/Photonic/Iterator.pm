@@ -47,9 +47,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
          };
          return $it;
      }
+     sub makebiterator { #blessed version
+         my $a=shift;
+         my $n=0;
+         my $it=Photonic::Iterator->new(sub {
+              return $a->[$n++];
+         });
+         return $it;
+     }
      my @a=(1..100);
      my $it=makeiterator(\@a);
+     my $bit=makebiterator(\@a);
      while(my $x=nextval($it)){
+        #do something with $x
+     }
+     while(my $x=$bit->nextval){
         #do something with $x
      }
 
@@ -72,12 +84,19 @@ reference.
 
 creates an iterator from the function {...}
 
+=item new
+
+   my $it=Photonic::Iterator->new(sub {...});
+
+creates a blessed iterator from the function sub {...}
+
 =item nextval
 
    my $x=nextval($i)
+   my $x=$i->nextval
 
-returns the next value from iterator $i.
-
+returns the next value from iterator $i. The second form works for
+blessed iterators, so you don't have to import the function nextval. 
 
 =back
 
@@ -95,3 +114,4 @@ our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
 sub nextval ($) { $_[0]->(); }
 sub iterator(&) { return $_[0] }
+sub new(&) { return bless $_[1]=>$_[0] }

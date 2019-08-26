@@ -35,7 +35,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::AllH;
-use Photonic::Iterator qw(nextval);
+use Photonic::Iterator;
 use Test::More; # tests => 11;
 
 sub Cagree {
@@ -56,13 +56,13 @@ sub Cagree {
     $am->run;
     my $itm=$am->state_iterator;
     my $n=0;
-    while(defined(my $d=nextval($itd))){
-	ok(defined(my $m=nextval($itm)),
+    while(defined(my $d=$itd->nextval)){
+	ok(defined(my $m=$itm->nextval),
 	   "State $n defined in memory and disk. 1D long.");
 	ok(Cagree($d, $m), "State $n in memory agree with disk. 1D long.");
 	++$n;
     }
-    ok(!defined(my $m=nextval($itm)),
+    ok(!defined(my $m=$itm->nextval),
 	"Same num. of states in memory and disk. 1D long");
 }
 {
@@ -77,13 +77,13 @@ sub Cagree {
     $am->run;
     my $itm=$am->state_iterator;
     my $n=0;
-    while(defined(my $d=nextval($itd))){
-	ok(defined(my $m=nextval($itm)),
+    while(defined(my $d=$itd->nextval)){
+	ok(defined(my $m=$itm->nextval),
 	   "State $n defined in memory and disk. 1D trans.");
 	ok(Cagree($d, $m), "State $n in memory agree with disk. 1D trans.");
 	++$n;
     }
-    ok(!defined(my $m=nextval($itm)),
+    ok(!defined(my $m=$itm->nextval),
 	"Same num. of states in memory and disk. 1D trans.");
 }
 done_testing;

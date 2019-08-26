@@ -201,19 +201,19 @@ sub state_iterator {
     my $s=$self->_states;
     #warn "statePos: " . scalar(@{$self->_statePos}) . " iteration: "
     #. $self->iteration;
-    return iterator { #closure
+    return Photonic::Iterator->new(sub { #closure
 	return if $n>=$self->iteration;
 	return $s->[$n++];
-    } unless defined $self->stateFN;
+    }) unless defined $self->stateFN;
     my $fh=$self->_stateFD;
-    return iterator {
+    return Photonic::Iterator->new(sub {
 	return if $n>=$self->iteration;
 	#return if $n>=@{$self->_statePos}-1;
 	my $pos=$self->_statePos->[$n++];
 	seek($fh, $pos, SEEK_SET);
 	my $ref=fd_retrieve($fh);
 	return $$ref;
-    };
+    });
 }
 
 sub states {
@@ -288,7 +288,7 @@ sub storeall {
     store_fd \%all, $fh or croak "Couldn't store all info; $!";
     return unless $self->keepStates;
     my $si=$self->state_iterator;
-    while(defined (my $s=nextval($si))){
+    while(defined (my $s=$si->nextval)){
 	store_fd $s, $fh or croak "Couldn't store a state: $!";
     }
 }

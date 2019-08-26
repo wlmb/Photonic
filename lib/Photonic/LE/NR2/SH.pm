@@ -195,7 +195,7 @@ use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt);
 use Photonic::ExtraUtils qw(cgtsl);
-use Photonic::Iterator qw(nextval);
+use Photonic::Iterator;
 use PDL::Constants qw(PI);
 use Moose;
 use MooseX::StrictConstructor;
@@ -474,7 +474,7 @@ sub _build_externalL_n {
     #my @Pn=map HProd($states->[$_],$pol), 0..$nh-1;
     my @Pn=map {0+0*i} 0..$nh-1;
     #$Pn[0]=$pol->(:,(0),(0));
-    $Pn[0]=HProd(nextval($stateit),$pol);
+    $Pn[0]=HProd($stateit->nextval,$pol);
     #print join " Pn ", @Pn[0..3], "\n";
     return PDL->pdl([@Pn])->complex;
 }

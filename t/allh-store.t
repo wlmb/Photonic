@@ -42,7 +42,7 @@ use Data::Dumper;
 use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(HProd);
-use Photonic::Iterator qw(nextval);
+use Photonic::Iterator;
 
 use Machine::Epsilon;
 use List::Util;
@@ -76,7 +76,7 @@ sub agree {
     my (@readstates, @savedstates);
     foreach(0..$all->{iteration}-1){
 	push @readstates, fd_retrieve($fh);
-	push @savedstates, nextval($si);
+	push @savedstates, $si->nextval;
     }
     ok(agree(pdl(@readstates), pdl(@savedstates)), "1D L states");
 }
@@ -99,7 +99,7 @@ sub agree {
     my (@readstates, @savedstates);
     foreach(0..$all->{iteration}-1){
 	push @readstates, fd_retrieve($fh);
-	push @savedstates, nextval($si);
+	push @savedstates, $si->nextval;
     }
     ok(agree(pdl(@readstates), pdl(@savedstates)), "1D L restored states");
 }
@@ -125,8 +125,8 @@ sub agree {
     my $si3=$a3->state_iterator;
     my (@states2, @states3);
     foreach(0..$a3->iteration-1){
-	push @states2, nextval($si2);
-	push @states3, nextval($si3);
+	push @states2, $si2->nextval;
+	push @states3, $si3->nextval;
     }
     ok(agree(pdl(@states2), pdl(@states3)), "1D L restored states");
 }
@@ -150,7 +150,7 @@ sub agree {
     my (@readstates, @savedstates);
     foreach(0..$all->{iteration}-1){
 	push @readstates, fd_retrieve($fh);
-	push @savedstates, nextval($si);
+	push @savedstates, $si->nextval;
     }
     ok(agree(pdl(@readstates)->real, pdl(@savedstates)->real), "1D T states");
 }

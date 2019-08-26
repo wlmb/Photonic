@@ -139,7 +139,7 @@ use PDL::FFTW3;
 use Photonic::WE::S::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
 use Photonic::Types;
-use Photonic::Iterator qw(nextval);
+use Photonic::Iterator;
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -202,7 +202,7 @@ sub evaluate {
     #print $field_G->info, "\n";
     #field is ri,xy,pm,nx,ny...
     for(my $n=0; $n<$nh; ++$n){
-	my $giE_G=$giEs[$n]*nextval($stateit); #En ^G|psi_n>
+	my $giE_G=$giEs[$n]*$stateit->nextval; #En ^G|psi_n>
 	$field_G+=$giE_G;
     }
     #

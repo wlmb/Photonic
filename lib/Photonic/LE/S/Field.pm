@@ -137,7 +137,7 @@ use PDL::FFTW3;
 use Photonic::LE::S::AllH;
 use Photonic::ExtraUtils qw(cgtsl);
 use Photonic::Types;
-use Photonic::Iterator qw(nextval);
+use Photonic::Iterator;
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -207,7 +207,7 @@ sub evaluate {
 	#state is ri,pm,nx,ny...
 	#pmGnorm is xy,pm,nx,ny...
 	#$Gpsi_G is ri,xy,pm,nx,ny
-	my $GPsi_G=($self->nr->pmGNorm->mv(0,-1)*nextval($stateit))
+	my $GPsi_G=($self->nr->pmGNorm->mv(0,-1)*$stateit->nextval)
 	    ->mv(-1,1); #^G|psi_n>
 	my $EnGPsi_G=$Es[$n]*$GPsi_G; #En ^G|psi_n>
 	$field_G+=$EnGPsi_G; #ri,xy,pm,nx,ny...

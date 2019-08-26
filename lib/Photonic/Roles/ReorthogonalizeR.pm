@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =cut
 
 
-use Photonic::Iterator qw(nextval);
+use Photonic::Iterator;
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -93,7 +93,7 @@ around '_fullorthogonalize_indeed' => sub {
     my $it=$self->state_iterator;
     for my $g(@{$self->gs}){
 	#for every saved state
-	my $s=nextval $it;
+	my $s=$it->nextval;
 	$psi=$psi-$g*$self->innerProduct($s, $psi)*$s;
     }
     return $psi;
