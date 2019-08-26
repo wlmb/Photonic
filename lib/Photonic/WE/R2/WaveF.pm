@@ -54,6 +54,14 @@ The macroscopic wave operator of the last operation
 =item * All accesors of Photonic::WE::R2::Green
 
 
+=begin Pod::Coverage
+
+=head2 BUILD
+
+=end Pod::Coverage
+
+=back
+
 =back
 
 =cut
