@@ -233,7 +233,7 @@ Checks if $b2->re > $self->smallH and tells if the calculation should cotinue.
 Change sign to inner product of the estates to ensure b^2 is positive.
 
 =item * $s=coerce 
-
+Takes an argument (Haydock coefficient) and makes it real to no to save the imaginary part when the result is real.
 
 
 =begin Pod::Coverage
