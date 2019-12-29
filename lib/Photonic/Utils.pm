@@ -397,7 +397,7 @@ vector or tensorial field from reciprocal to real space.
 returns $a repeated periodically $nx times along the x direction, $ny
 along the y direction, etc. Useful for making plots.
 
-=item * $l=vectors2Dlist($f, $s, $d)
+=item * @l=vectors2Dlist($f, $s, $d)
 
 Returns a 2D vector field ready for gnuplotting from a vector field $f
 scaling the result by $s and decimating the field by $d. The vectors
