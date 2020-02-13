@@ -107,11 +107,11 @@ Array of field coefficients
 
 =item * filter
 
-Optional reciprocal space filter 
+Optional reciprocal space filter
 
 =item * field
 
-Real space field in format RorI, cartesian, nx, ny,...
+Real space field in format ri,xy,nx,ny,...
 
 =item * epsL
 

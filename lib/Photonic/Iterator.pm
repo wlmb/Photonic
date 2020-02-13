@@ -72,7 +72,10 @@ produce data items, one at a time, until depleted. They are
 implemented as functions (closures) that have state (implemented as
 lexical variables) to know which is the next item. The example above
 creates an iterator for walking over the elements of an array
-reference.
+reference. The method or function nextval produces the next element if
+available or undef when there is no more data. Used in Photonic to
+=iterate over Haydock states without caring whether they are stored in
+=an array or in an external file.
 
 =head1 EXPORTABLE FUNCTIONS
 
@@ -96,7 +99,7 @@ creates a blessed iterator from the function sub {...}
    my $x=$i->nextval
 
 returns the next value from iterator $i. The second form works for
-blessed iterators, so you don't have to import the function nextval. 
+blessed iterators, so you don't have to import the function nextval.
 
 =back
 
@@ -114,33 +117,4 @@ our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
 sub nextval ($) { $_[0]->(); }
 sub iterator(&) { return $_[0] }
-
-
-=head1 NAME
-
-Photonic::Iterator
-
-=head1 VERSION
-
-version 0.011
-
-=head1 SYNOPSIS
-
-    use Photonic::Iterator qw(iterator nextval);
-
-=head1 DESCRIPTION
-
-Iterator is an object interface to a list. Generates elements of a
-list as are solicited so that just a little part of the list will need
-to be in memory.  Uses nextval to replace the current element for the
-next one.
-
-=back
-
-=begin Pod::Coverage
-
-=head2 BUILD
-   
-=end Pod::Coverage
-
-=cut
+sub new(&) { return bless $_[1]=>$_[0] }

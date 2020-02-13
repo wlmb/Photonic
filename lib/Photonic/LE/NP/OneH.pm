@@ -82,7 +82,7 @@ be given in the initializer.
 
 =item * B ndims dims r G GNorm L scale f
 
-Accesors handled by geometry (see Photonic::Geometry)
+Accesors handled by geometry (see L<Photonic::Geometry>)
 
 =item * smallH
 
@@ -115,29 +115,39 @@ Number of completed iterations
 
 Performs a single Haydock iteration and updates current_a, next_state,
 next_b2, next_b, shifting the current values where necessary. Returns
-0 when unable to continue iterating. 
+0 when unable to continue iterating.
 
-=item * $s= _firstState($self)
+=item * applyOperator($psi_G)
 
-Returns the fisrt state $v.
+Apply the 'Hamiltonian' operator to state $psi_G in reciprocal
+=space. State is ri:nx:ny...  The operator is the
+longitudinal projection of the dielectric function
 
-=item * $s=applyOperator($self, $psi_G)
+=item * innerProduct($left, $right)
 
-Apply the Hamiltonian operator to state. State is ri:nx:ny... gnorm=i:nx:ny...
+Returns the inner (Euclidean) product between states $left and $right.
 
-=item * $s=innerProduct($self, $left, $right)
+=item * magnitude($psi_G)
 
-Returns the inner product (Hermitian product) between states.
-
-=item * $s=magnitude($self, $psi)
-
-Returns the magnitude of a state gotten by taking the square root of the inner product of the state with itself, $self->innerProduct($psi, $psi)->abs->sqrt;.
+Returns the magnitude of state $psi_G in reciprocal space by taking the square root of
+the inner product of the state with itself.
 
 =item * $c=changesign
 
-Change sign to
- 
+Returns zero, as there is no need to change sign.
+
 =back
+
+=head1 INTERNAL METHODS
+
+=over 4
+
+=item * _firstState
+
+Returns the fisrt state.
+
+=back
+
 
 =cut
 
@@ -184,7 +194,7 @@ sub _firstState { #\delta_{G0}
     my $v=PDL->zeroes(2,@{$self->dims})->complex; #RorI, nx, ny...
     my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1; #i*delta_{G0}
-    return $;
+    return $v;
 }
 
 sub applyOperator {

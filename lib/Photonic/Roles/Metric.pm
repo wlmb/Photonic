@@ -46,8 +46,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Calculates the retarded metric tensor g_{GG'}^{ij} to use it in the
-calculation of the retarded Haydock coefficients for the wave equation in a binary medium where the host has no dissipation.
+Calculates the retarded metric tensor g_{GG'}^{ij} for use in the
+calculation of the retarded Haydock coefficients for the wave
+equation.
 
 =head1 METHODS
 
@@ -65,11 +66,26 @@ $k. $q and $k are real.
 
 =over 4
 
+=item * geometry
+
+The L<Photonic::Types::Geometry> object that describes the geometry of
+the system.
+
+=item * epsilon
+
+A reference real dielectric function.
+
+=item * wavenumber
+
+The vacuum wavenumber, w/c, 2PI/lambda.
+
+=item * wavevector
+
+The wavevector.
+
 =item * value
 
-The actual metric tensor as a complex PDL (d,d,n1,n2..nd)
-the first and second indices over cartesian indices for 0 to d-1 in d
-dimensions, the next d indices n1,n2...nd identify the wavevector G.
+The actual metric tensor as a complex PDL. Provided by implementation.
 
 =back
 

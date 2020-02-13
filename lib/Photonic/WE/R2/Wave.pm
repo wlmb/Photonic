@@ -81,9 +81,7 @@ response $epsA is taken from the metric.
 
 The macroscopic wave operator of the last operation
 
-=item * All accesors of Photonic::WE::R2::Green
-
-
+=item * All accesors of L<Photonic::WE::R2::Green>
 
 =back
 
@@ -128,4 +126,3 @@ around 'evaluate' => sub {
 __PACKAGE__->meta->make_immutable;
 
 1;
-

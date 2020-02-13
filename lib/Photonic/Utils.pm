@@ -147,8 +147,8 @@ sub EProd { #Euclidean product between two fields in reciprocal
 
 sub SProd { #Spinor product between two fields in reciprocal
 	    #space. Have to map G->-G. skip first 'skip' dims (after
-	    #complex and spinor dimension)   
-    my $first=shift; 
+	    #complex and spinor dimension)
+    my $first=shift;
     my $second=shift;
     my $skip=shift//0;
     my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
@@ -379,7 +379,9 @@ the spinor dimension) before adding up.
 
 =item * $p=VSProd($a, $b)
 
-Vector-Spinor product <a|b> of two 2x...'complex' multidimensional pdls $a and $b in reciprocal space.For the vector field spinor dimensions are like ri:xy:pm:nx:ny. 
+Vector-Spinor product <a|b> of two 2x...'complex' multidimensional
+pdls $a and $b in reciprocal space. For the vector-spinor field
+dimensions are like ri:xy:pm:nx:ny.
 
 =item * $psiG = RtoG($psiR, $ndims, $skip)
 
@@ -394,13 +396,13 @@ following $ndims dimensions.
 =item * $psiR = GtoR($psiG, $ndims, $skip)
 
 The opposite transformation to RtoG. Transform a 'complex' scalar,
-vector or tensorial field from reciprocal to real space. 
+vector or tensorial field from reciprocal to real space.
 
 =item * $c=lentzCF($as, $bs, $max, $small)
 
-Compute the continued fraction using the Lentz algorithm, wich assumes that 
-you can terminate the evaluation of the contunnued fraction when
- |f_(j) - f_(j-1)| is small enough.
+Compute a continued fraction a0+b1/a1+b2+... using the Lentz
+algorithm. $as and $bs are given in a PDL. $max is maximum number of
+iterations. $small is a small convergence criterium.
 
 =item * $b=tile($a, $nx, $ny,...)
 

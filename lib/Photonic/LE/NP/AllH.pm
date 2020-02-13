@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::LE::NP::AllH;
    my $iter=Photonic::LE::NP::AllH->new(
-       epsilon=>$e, geometry=>$geometry, nh=>$Nh, keepStates=>$save); 
+       epsilon=>$e, geometry=>$geometry, nh=>$Nh, keepStates=>$save);
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
@@ -49,8 +49,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Iterates the calculation of Haydock coefficients and states and saves
-them for later retrieval.
+Iterates the calculation of Haydock coefficients and (optionally) states and saves
+them for later retrieval. This class corresponds to the nonretarded longitudinal
+dielectric function calculation for possibly more than two phases.
+
+=head2 WARNING
+
+This class only works for the default macroscopic initial
+state. firstState should not be modified.
 
 =head1 METHODS
 
@@ -58,11 +64,13 @@ them for later retrieval.
 
 =item * new(epsilon=>$e, geometry=>$g, nh=>$nh, keepStates=>$k)
 
-Initializes an Ph::NR::NP::AllH object. $nh is the maximum numberof desired coefficients, $k is a flag, non zero to save the Haydock states. All other arguments are as in Photonic::LE::NP::OneH.
+Initializes an Ph::NR::NP::AllH object. $nh is the maximum number of
+desired coefficients, $k is a flag, non zero to save the Haydock
+states. All other arguments are as in Photonic::LE::NP::OneH.
 
 =item * run
 
-Runs the iteration to completion, tells $iter to start the calculation and get values of variables you search.
+Runs the iteration to completion.
 
 =item * All the Photonic::LE::NP::OneH methods
 
@@ -70,7 +78,8 @@ Implements calculation of Haydock coefficients and states. See implementation do
 
 =item * All the Photonic::Roles::AllH methods
 
-Iterates the calculation of one Haydock coefficient and state for non-retarded system at a time and saves them to later retrival.
+Iterates the calculation of one Haydock coefficient and state for
+non-retarded system at a time and saves them to later retrival.
 
 =back
 
@@ -80,7 +89,8 @@ Iterates the calculation of one Haydock coefficient and state for non-retarded s
 
 =item * nh
 
-Maximum number of desired Haydock 'a' coefficients and states. The number of b coefficients is one less.
+Maximum number of desired Haydock 'a' coefficients and states. The
+number of b coefficients is one less.
 
 =item * keepStates
 

@@ -108,30 +108,38 @@ Number of completed iterations
 =item * iterate
 
 Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_state, shifting the current values where necessary. Returns 
-0 when unable to continue iterating. 
+next_b2, next_state, shifting the current values where necessary. Returns
+0 when unable to continue iterating.
 
-=item * $s= _firstState($self)
+=item * applyOperator($psi_G)
 
-Returns the fisrt state $v.
+Apply the 'Hamiltonian' operator to state. State is
+ri:nx:ny... gnorm=i:nx:ny... The operator is the longitudinal
+=component of the characteristic function.
 
-=item * $s=applyOperator($self, $psi_G)
+=item * innerProduct($left, $right)
 
-Apply the Hamiltonian operator to state. State is ri:nx:ny... gnorm=i:nx:ny...
+Returns the inner (Hermitian) product between states.
 
-=item * $s=innerProduct($self, $left, $right)
+=item * magnitude($psi)
 
-Returns the inner product (Hamiltonian product) between states.
-
-=item * $s=magnitude($self, $psi)
-
-Returns the magnitude of a state gotten by taking the square root of the inner product of the state with itself, $self->innerProduct($psi, $psi)->abs->sqrt;.
+Returns the magnitude of a state as the square root of the inner
+=product of the state with itself.
 
 =item * $c=changesign
 
-Change sign to 
+Return 0, as there is no need to change sign.
 
- 
+=back
+
+=head1 INTERNAL METHODS
+
+=over 4
+
+item * _firstState
+
+Returns the fisrt state $v.
+
 =back
 
 =cut

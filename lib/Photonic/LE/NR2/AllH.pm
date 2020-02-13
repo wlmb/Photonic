@@ -48,8 +48,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Implements the calculation of Haydock coefficients and saves them for
-later retrieval for the macroscopy longitudinal dielectric function non retarded
-calculation in a binary metamaterial.
+later retrieval for the nonretarded calculation of the macroscopic longitudinal
+in a binary metamaterial.
 
 =head1 METHODS
 
@@ -57,21 +57,23 @@ calculation in a binary metamaterial.
 
 =item * new(geometry=>$g, nh=>$nh)
 
-Initializes an Ph::LE::NR2::AllH object. 
-$nh is the maximum number of desired coefficients. 
+Initializes an Ph::LE::NR2::AllH object.
+$nh is the maximum number of desired coefficients.
 All other arguments are as in Photonic::LE::NR2::OneH.
 
 =item * run
 
-Runs the iteration to completion, tells $iter to start the calculation and get values of variables you search.
+Runs the iteration to completion. Calculates and saves Haydock
+coefficients and states (if desired).
 
 =item * All the Photonic::LE::NR2::OneH methods
 
-Implements calculation of one Haydock coefficient and state for non-retarded system at a time. See implementation documentation.
+They implement the calculation of one Haydock coefficient and state at
+a time. See L<Photonic::LE::NR2::OneH> methods.
 
 =item * All the Photonic::Roles::AllH methods
 
-Iterates the calculation of one Haydock coefficient and state for non-retarded system at a time and save them to later retrival.
+Iterate the calculation of Haydock coefficients and states. See L<Photonic::Roles::AllH>
 
 =back
 

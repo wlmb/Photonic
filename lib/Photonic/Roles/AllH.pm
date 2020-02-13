@@ -64,7 +64,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 Roles consumed by AllH objects to be used in a Photonic
 calculation. See also specific implementations. Iterates the
-calculation of Haydock coefficients and states and saves them for later retrieval..
+calculation of Haydock coefficients and states and saves them for later retrieval.
 
 =head1 METHODS
 
@@ -73,11 +73,12 @@ calculation of Haydock coefficients and states and saves them for later retrieva
 =item * new(nh=>$nh, geometry=>$g, keepStates=>$k)
 
 Initializes an Ph::...::AllH object. $nh is the maximum number of desired
-coefficients, $k is keepstates non zero flag to save the Haydock states. All other arguments are as in Photonic::...::OneH.
+coefficients, $k is a flag, non zero to save the Haydock
+states. All other arguments are as in Photonic::...::OneH.
 
 =item * run
 
-Runs the iteration to completion, tells $iter to start the calculation and get values of variables you search.
+Runs the iteration to completion.
 
 =item * All the Photonic::...::OneH methods
 
@@ -256,7 +257,7 @@ sub run { #run the iteration
     $self->loadall;
     while($self->iteration < $self->nh && $self->iterate){
     }
-    $self->storeall; 
+    $self->storeall;
 }
 
 sub loadall {

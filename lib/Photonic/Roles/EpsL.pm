@@ -56,7 +56,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Calculates the macroscopic longitudinal dielectric function for a given fixed Photonic::...::AllH structure as a function of the dielectric functions of the components.
+Calculates the macroscopic longitudinal dielectric function for a
+given fixed Photonic::...::AllH structure as a function of the
+dielectric functions of the components.
 
 =head1 METHODS
 
@@ -116,7 +118,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallE
 
 Criteria of convergence for continued fraction. 0 means don't
-check. 
+check.
 
 =back
 

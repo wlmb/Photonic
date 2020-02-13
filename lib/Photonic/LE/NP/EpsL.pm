@@ -60,7 +60,8 @@ $nr is a Photonic::LE::NP::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
-$smallE is the criteria of convergence for the continued fraction (precision of results, defaults to 1e-7)
+$smallE is the criteria of convergence for the continued fraction and
+determines the precision of the results. It defaults to 1e-7.
 
 =back
 

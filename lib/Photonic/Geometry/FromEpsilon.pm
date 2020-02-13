@@ -53,11 +53,14 @@ before 'f' => sub {
 	. "Photonic::Geometry::FromEpsilon";
 };
 
-sub _Bdims {
+sub _B {
     my $self=shift;
-    my $Bdims=return $self->epsilon->re; #value is irrelevant. Only shape counts.
+    return $self->epsilon->re; #value is irrelevant. Only
+				#shape of pdl counts.
 }
-#Bdims gets from real part of epsilon the dimensions of the geometry, it isn't the characteristic function
+#Warning: B has the same shape as the characteristic function, but its
+#values are not those of the characteristic function (1 and
+#0). Nevertheless, some functions depend on its shape.
 
 __PACKAGE__->meta->make_immutable; #faster execution
 
@@ -77,13 +80,14 @@ version 0.011
      use Photonic::Geometry::FromEpsilon;
      $g=Photonic::Geometry::FromEpsilon->new(epsilon=>$pdl);
      $epsilon=$g->epsilon;
-     
+
 
 =head1 DESCRIPTION
 
 Creates a geometry object to be used in a Photonic
 calculation from a dielectric function which specifies
-the dielectric function for each media within the unit cell. 
+a complex dielectric function for each pixel or voxel within the unit
+cell.
 
 =head1 METHODS
 
@@ -93,12 +97,14 @@ the dielectric function for each media within the unit cell.
 
 Creates a new Ph::G::FromEpsilon object
 
-$pdl is a boolean array with epsilon's representing the dielectric
-function within the unit cell. Its dimensions must be odd. Its number
-of dimensions of the real part is the dimension of space
+$pdl is a 2:nx,ny,nz complex pdl whose value is the complex dielectric function for
+each point (nx,ny,nz) within the unit cell. The number
+of dimensions of its real and imaginary parts are the dimension of
+space, and each dimension is the number of voxels of the unit cell along the
+corresponding direction.
 
 $L is the size of the unit cell along the cartesian axes. By
-default, it is the number of pixels.
+default, it is the number of voxels or pixels.
 
 =back
 
@@ -106,13 +112,18 @@ default, it is the number of pixels.
 
 =over 4
 
+=item * B
+
+The characteristic function as a PDL. Note: this is not the true
+characteristic function, but just a PDL with the appropriate shape.
+
 =item * epsilon
 
 The dielectric function as PDL
 
 =item * L
 
-Unit cell sizes as a Bdims->ndims pdl.
+Unit cell sizes as a B->ndims pdl.
 
 =back
 

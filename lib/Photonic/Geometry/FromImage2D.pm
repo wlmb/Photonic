@@ -41,13 +41,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::Geometry::FromImage2D;
    my $g=Photonic::Geometry::FromImage2D->new(path=>$filename);
-   $path=$g->path;
-   
+   my $path=$g->path;
+   my $B=$g->B;
+   my $G=$g->G;
 
 =head1 DESCRIPTION
 
 Creates a geometry object to be used in a Homogeneization
-calculation using as input a monochromatic 2D image. 
+calculation using as input a monochromatic 2D image.
 
 =head1 METHODS
 

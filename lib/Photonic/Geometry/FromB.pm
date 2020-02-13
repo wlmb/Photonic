@@ -58,16 +58,16 @@ version 0.011
 =head1 SYNOPSIS
 
      use Photonic::Geometry::FromB;
-     $g=Photonic::Geometry::FromB->new(B=>$pdl);
-     $B=$g->B;
-     
+     my $g=Photonic::Geometry::FromB->new(B=>$pdl);
+     my $B=$g->B;
+     my $G=$g->G;
 
 =head1 DESCRIPTION
 
 Creates a geometry object to be used in a Photonic
-calculation from a characteristic function B that specifies 
-the regions where each kind of material is within the unit cell, 
-with ones for material b and ceroes for material a.  
+calculation from a characteristic function B. B is a pdl that takes
+the values 0 for each pixel or voxel within material A and 1 within
+=material B.
 
 =head1 METHODS
 

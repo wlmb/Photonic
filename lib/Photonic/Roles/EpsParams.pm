@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Fields that have been factored as they are common in different
+Object fields that have been factored as they are common in different
 Photonic subpackages to calculate the macroscopic dielectric function.
 
 =head1 ACCESORS (read only)
@@ -57,11 +57,11 @@ Desired no. of Haydock coefficients
 
 =head2 smallH
 
-Convergence criterium for Haydock coefficient calculations. Default is 1e-7.
+Convergence criterium for calculations of Haydock coefficients. Default is 1e-7.
 
 =head2 smallE
 
-Convergence criterium for electric Haydock coefficient use. Default is 1e-7.
+Convergence criterium for field calculations using Haydock coefficient use. Default is 1e-7.
 
 =head2 epsA
 

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Photonic::OneH::R2
+Photonic::WE::S::OneH
 
 =head1 VERSION
 
@@ -8,8 +8,8 @@ version 0.011
 
 =head1 SYNOPSIS
 
-    use Photonic::OneH::R2;
-    my $nr=Photonic::OneH::R2->new(metric=>$g, polarization=>$p);
+    use Photonic::WE::S::OneH;
+    my $nr=Photonic::WE::S::OneH->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -20,8 +20,8 @@ version 0.011
 
 Implements calculation of Haydock coefficients and Haydock states for
 the calculation of the retarded dielectric function of arbitrary
-periodic two component systems in arbitrary number of dimentions. One
-Haydock coefficient at a time.
+periodic systems in arbitrary number of dimensions,  one
+Haydock coefficient at a time. It uses the wave equation and the spinor representation.
 
 =head1 METHODS
 
@@ -30,7 +30,7 @@ Haydock coefficient at a time.
 =item * new(metric=>$m, polarization=>$e, [, smallH=>$s])
 
 Create a new Ph::OneH::R2 object with PDL::Metric::R2 $m, with a
-field along the complex direction $e and with smallness parameter  $s.
+field along the complex direction $e and with small convergence parameter $s.
 
 =back
 
@@ -38,30 +38,30 @@ field along the complex direction $e and with smallness parameter  $s.
 
 =over 4
 
-=item * metric Photonic::Metric::R2 
+=item * metric Photonic::WE::S::Metric
 
-A Photonic::Metric::R2 object defining the geometry of the
+A L<Photonic::WE::S::Metric> object defining the geometry of the
 system, the charateristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
 
 =item * polarization PDL::Complex
 
 A non null vector defining the complex direction of the macroscopic
-field. 
+field.
 
-=item * smallH 
+=item * smallH
 
-A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero. From Photonic::Roles::EpsParams.
+A small number used as tolerance to end the iteration. Small enough
+b^2 coefficients are taken to be zero. From L<Photonic::Roles::EpsParams>.
 
 =item * B ndims dims epsilon
 
-Accesors handled by metric (see Photonic::Metric::R2)
+Accesors handled by metric (see L<Photonic::WE::S::Metric>)
 
-=item * previousState currentState nextState 
+=item * previousState currentState nextState
 
-The n-1-th, n-th and n+1-th Haydock states; a complex vector for each
-reciprocal wavevector
+The n-1-th, n-th and n+1-th Haydock states at the n-th iteration; a complex vector-spinor for each
+reciprocal wavevector. Dimensions ri,xy,pm,nx,ny...
 
 =item * current_a
 
@@ -75,13 +75,13 @@ The n-th and n+1-th b^2 and b Haydock coefficients
 
 The n+1-th c Haydock coefficient
 
-=item * previous_g current_g next_g 
+=item * previous_g current_g next_g
 
 The n-1-th n-th and n+1-th g Haydock coefficients
 
 =item * iteration
 
-Number of completed iterations
+Number n of completed iterations
 
 =back
 
@@ -93,31 +93,40 @@ Number of completed iterations
 
 Performs a single Haydock iteration and updates current_a, next_b,
 next_b2, next_c, next_g, next_state, shifting the current values where
-necessary. Returns 0 when unable to continue iterating. 
+necessary. Returns 0 when unable to continue iterating.
 
-=item * $s=applymetric($g, $psi)
+=item * applymetric($psi)
 
-Returns the matrix of applying a  metric to the state; $g*psi.
+Returns the result of applying the metric to the state $psi.
+
+=item * applyOperator($psi_G)
+
+Apply the 'Hamiltonian' operator to state $psi_G. State is
+ri,xy,pn,nx,ny... The Hamiltonian is the metric followed by the
+dielectric esponse relative to the reference response.
+
+=item * innerProduct($left, $right)
+
+Returns the inner Euclidean product between states with the metric.
+
+=item * magnitude($psi)
+
+Returns the magnitude of a state as the square root of
+the magnitude of inner product of the state with itself.
+
+=item * changesign
+
+Returns 0, as there is no need to change sign.
+
+=back
+
+=head1 INTERNAL METHODS
+
+=over 4
 
 =item * $s= _firstState($self)
 
 Returns the fisrt state $v.
-
-=item * $s=applyOperator($self, $psi_G)
-
-Apply the Hamiltonian operator to state. State is ri:nx:ny... gnorm=i:nx:ny...
-
-=item * $s=innerProduct($self, $left, $right)
-
-Returns the inner product (Hamiltonian product) between states.
-
-=item * $s=magnitude($self, $psi)
-
-Returns the magnitude of a state gotten by taking the square root of the inner product of the state with itself, $self->innerProduct($psi, $psi)->abs->sqrt;.
-
-=item * $c=changesign
-
-Change sign to
 
 =back
 

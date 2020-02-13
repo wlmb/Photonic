@@ -46,7 +46,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 Calculates the macroscopic dielectric function for a given fixed
 Photonic::WE::R2::AllH structure as a function of the dielectric
-functions of the components.
+functions of the components. Based on the wave equation for a binary
+metamaterial, with a non-dissipative host.
 
 =head1 METHODS
 

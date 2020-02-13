@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 Calculates the macroscopic longitudinal dielectric function for a given fixed
 Photonic::LE::NR2::AllH structure as a function of the dielectric
-functions of the components.
+functions of the components. Nonretarded calculation for binary metamaterials.
 
 =head1 METHODS
 

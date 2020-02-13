@@ -87,7 +87,7 @@ Accesors handled by geometry (see Photonic::Geometry)
 =item * smallH
 
 A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero. 
+b^2 coefficients are taken to be zero.
 
 =item * previousState currentState nextState
 
@@ -116,28 +116,38 @@ Number of completed iterations
 
 Performs a single Haydock iteration and updates current_a, next_state,
 next_b2, next_b, shifting the current values where necessary. Returns
-0 when unable to continue iterating. 
+0 when unable to continue iterating.
 
-=item * $s= _firstState($self)
+=item * applyOperator($psi_G)
 
-Returns the fisrt state $v.
+Apply the Hamiltonian operator to state in reciprocal space. State is
+ri:pm:nx:ny... The operator is the longitudinal dielectric response in
+reciprocal-spinor space.
 
-=item * $s=applyOperator($self, $psi_G)
+=item * innerProduct($left, $right)
 
-Apply the Hamiltonian operator to state. State is ri:nx:ny... gnorm=i:nx:ny...
+Returns the inner (Euclidean) product between states in reciprocal and
+spinor space.
 
-=item * $s=innerProduct($self, $left, $right)
+=item * magnitude($psi_G)
 
-Returns the inner product (Hamiltonian product) between states.
-
-=item * $s=magnitude($self, $psi)
-
-Returns the magnitude of a state gotten by taking the square root of the inner product of the state with itself, $self->innerProduct($psi, $psi)->abs->sqrt;.
+Returns the magnitude of a state by taking the square root of the
+inner product of the state with itself.
 
 =item * $c=changesign
 
-Change sign to
- 
+Returns 0, as there is no need to change sign.
+
+=back
+
+=head1 INTERNAL METHODS
+
+=over 4
+
+=item * _firstState
+
+Returns the fisrt state.
+
 =back
 
 =cut

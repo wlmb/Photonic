@@ -62,8 +62,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Roles consumed by OneH objects to be used in a Photonic
-calculation. Calculation of Haydock coefficients and Haydock 
-states, one Haydock coefficient at a time.
+calculation. Basic scheme for the calculation of one Haydock
+coefficient and one Haydock state at a time.
 See also the specific implementations.
 
 =head1 METHODS
@@ -261,4 +261,3 @@ sub _coerce {
 no Moose::Role;
 
 1;
-

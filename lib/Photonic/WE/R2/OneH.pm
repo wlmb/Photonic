@@ -224,47 +224,41 @@ Number of completed iterations
 
 Performs a single Haydock iteration and updates current_a, next_b,
 next_b2, next_c, next_g, next_state, shifting the current values where
-necessary. Returns 0 when unable to continue iterating. 
+necessary. Returns 0 when unable to continue iterating.
 
-=item * $s=applymetric($g, $psi)
+=item * applymetric($psi)
 
-Returns the matrix of applying a  metric to the state; $g*psi.
+Returns the result of applying the metric 'g' to the state; $psi.
 
-=item * $s= _firstState($self)
+=item * applyOperator($psi_G)
 
-Returns the fisrt state $v.
+Apply the Hamiltonian operator to state. The Hamiltonian is Bg, with g
+the metric and B the characteriztic function. Also applies an optional
+mask in reciprocal space.
 
-=item * $s=applyOperator($self, $psi_G)
+=item * innerProduct($left, $right)
 
-Apply the Hamiltonian operator to state. State is ri:nx:ny... gnorm=i:nx:ny...
-
-=item * $s=innerProduct($self, $left, $right)
-
-Returns the inner product (Hamiltonian product) between states.
+Returns the inner Hermitian product between states using the metric.
 
 =item * $s=magnitude($self, $psi)
 
-Returns the magnitude of a state gotten by taking the square root of the inner product of the state with itself, $self->innerProduct($psi, $psi)->abs->sqrt;.
-
-=item * $s=more
-
-Checks if $b2->re > $self->smallH and tells if the calculation should cotinue.
+Returns the magnitude of a state as the square root of
+the inner product of the state with itself.
 
 =item * $c=changesign
 
-Change sign to inner product of the estates to ensure b^2 is positive.
+Returns 1 if sign change is required to ensure b^2 is positive.
 
-=item * $s=coerce 
-Takes an argument (Haydock coefficient) and makes it real to no to save the imaginary part when the result is real.
+=back
 
+=INTERNAL METHODS
 
-=begin Pod::Coverage
+=over 4
 
-=head2 BUILD
+=item *  _firstState
 
-=end Pod::Coverage
+Returns the fisrt state $v.
 
 =back
 
 =cut
-
