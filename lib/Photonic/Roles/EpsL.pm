@@ -56,9 +56,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Calculates the longitudinal dielectric function for a given fixed
-Photonic::...::AllH structure as a function of the dielectric
-functions of the components.
+Calculates the macroscopic longitudinal dielectric function for a given fixed Photonic::...::AllH structure as a function of the dielectric functions of the components.
 
 =head1 METHODS
 

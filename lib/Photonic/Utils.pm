@@ -147,8 +147,8 @@ sub EProd { #Euclidean product between two fields in reciprocal
 
 sub SProd { #Spinor product between two fields in reciprocal
 	    #space. Have to map G->-G. skip first 'skip' dims (after
-	    #complex and spinor dimension
-    my $first=shift;
+	    #complex and spinor dimension)   
+    my $first=shift; 
     my $second=shift;
     my $skip=shift//0;
     my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
@@ -377,6 +377,10 @@ pdls $a and $b in reciprocal space. If $skip is present, preserve the
 first 2+$skip dimensions (the first dimension is RorI and the second
 the spinor dimension) before adding up.
 
+=item * $p=VSProd($a, $b)
+
+Vector-Spinor product <a|b> of two 2x...'complex' multidimensional pdls $a and $b in reciprocal space.For the vector field spinor dimensions are like ri:xy:pm:nx:ny. 
+
 =item * $psiG = RtoG($psiR, $ndims, $skip)
 
 Transforms a $ndims-dimensional 'complex' scalar, vector or tensor
@@ -389,12 +393,18 @@ following $ndims dimensions.
 
 =item * $psiR = GtoR($psiG, $ndims, $skip)
 
-The opposite transformation to RtoG. Transform a 'complex' scalara,
-vector or tensorial field from reciprocal to real space.
+The opposite transformation to RtoG. Transform a 'complex' scalar,
+vector or tensorial field from reciprocal to real space. 
+
+=item * $c=lentzCF($as, $bs, $max, $small)
+
+Compute the continued fraction using the Lentz algorithm, wich assumes that 
+you can terminate the evaluation of the contunnued fraction when
+ |f_(j) - f_(j-1)| is small enough.
 
 =item * $b=tile($a, $nx, $ny,...)
 
-returns $a repeated periodically $nx times along the x direction, $ny
+Returns $a repeated periodically $nx times along the x direction, $ny
 along the y direction, etc. Useful for making plots.
 
 =item * @l=vectors2Dlist($f, $s, $d)

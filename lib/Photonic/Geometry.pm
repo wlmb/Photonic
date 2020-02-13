@@ -36,8 +36,8 @@ use warnings;
 use strict;
 use Carp;
 
-my @implementations=qw(FromB FromImage2D);
-croak "Dont use Photonic::Geometry. Use a specific implementation. "
+my @implementations=qw(FromB FromImage2D );
+croak "Dont use Photonic::Geometry. Use a specific implementation. " 
     . "Choose from: "
     . join ", ", map {"Photonic::Geometry::" . $_} @implementations;
 
@@ -57,6 +57,8 @@ use Photonic::Geometry::FromB;
 my $g1=Photonic::Geometry::FromB->new(B=>$pdl);
 use Photonic::Geometry::FromImage2D;
 my $g2=Photonic::Geometry::FromImage2D->new(path=>$filename);
+use Photonic::Geometry::FromEpsilon;
+my $g3=Photonic::Geometry::FromEpsilon
 
 =head1 DESCRIPTION
 

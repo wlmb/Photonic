@@ -57,7 +57,7 @@ version 0.011
 =head1 DESCRIPTION
 
 Implements calculation of a Haydock coefficients and Haydock states for
-the longitudinal dielectric function.
+the macroscopic longitudinal dielectric function.
 
 =over 4
 

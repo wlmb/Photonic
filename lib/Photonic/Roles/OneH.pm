@@ -62,8 +62,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Roles consumed by OneH objects to be used in a Photonic
-calculation. See also the specific implementations. Calculation of
-Haydock coefficients and Haydock states, one Haydock coefficient at a time.
+calculation. Calculation of Haydock coefficients and Haydock 
+states, one Haydock coefficient at a time.
+See also the specific implementations.
 
 =head1 METHODS
 

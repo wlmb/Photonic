@@ -71,7 +71,7 @@ are as in Photonic::WE::R2::OneH.
 
 =item * run
 
-Runs the iteration to completion
+Runs the iteration to completion  
 
 =item * All the Photonic::WE::R2::OneH methods
 

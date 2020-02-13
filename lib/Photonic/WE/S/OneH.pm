@@ -1,3 +1,130 @@
+=head1 NAME
+
+Photonic::OneH::R2
+
+=head1 VERSION
+
+version 0.011
+
+=head1 SYNOPSIS
+
+    use Photonic::OneH::R2;
+    my $nr=Photonic::OneH::R2->new(metric=>$g, polarization=>$p);
+    $nr->iterate;
+    say $nr->iteration;
+    say $nr->current_a;
+    say $nr->next_b2;
+    my $state=$nr->nextState;
+
+=head1 DESCRIPTION
+
+Implements calculation of Haydock coefficients and Haydock states for
+the calculation of the retarded dielectric function of arbitrary
+periodic two component systems in arbitrary number of dimentions. One
+Haydock coefficient at a time.
+
+=head1 METHODS
+
+=over 4
+
+=item * new(metric=>$m, polarization=>$e, [, smallH=>$s])
+
+Create a new Ph::OneH::R2 object with PDL::Metric::R2 $m, with a
+field along the complex direction $e and with smallness parameter  $s.
+
+=back
+
+=head1 ACCESORS (read only)
+
+=over 4
+
+=item * metric Photonic::Metric::R2 
+
+A Photonic::Metric::R2 object defining the geometry of the
+system, the charateristic function, the wavenumber, wavevector and
+host dielectric function. Required in the initializer.
+
+=item * polarization PDL::Complex
+
+A non null vector defining the complex direction of the macroscopic
+field. 
+
+=item * smallH 
+
+A small number used as tolerance to end the iteration. Small negative
+b^2 coefficients are taken to be zero. From Photonic::Roles::EpsParams.
+
+=item * B ndims dims epsilon
+
+Accesors handled by metric (see Photonic::Metric::R2)
+
+=item * previousState currentState nextState 
+
+The n-1-th, n-th and n+1-th Haydock states; a complex vector for each
+reciprocal wavevector
+
+=item * current_a
+
+The n-th Haydock coefficient a
+
+=item * current_b2 next_b2 current_b next_b
+
+The n-th and n+1-th b^2 and b Haydock coefficients
+
+=item * next_c
+
+The n+1-th c Haydock coefficient
+
+=item * previous_g current_g next_g 
+
+The n-1-th n-th and n+1-th g Haydock coefficients
+
+=item * iteration
+
+Number of completed iterations
+
+=back
+
+=head1 METHODS
+
+=over 4
+
+=item * iterate
+
+Performs a single Haydock iteration and updates current_a, next_b,
+next_b2, next_c, next_g, next_state, shifting the current values where
+necessary. Returns 0 when unable to continue iterating. 
+
+=item * $s=applymetric($g, $psi)
+
+Returns the matrix of applying a  metric to the state; $g*psi.
+
+=item * $s= _firstState($self)
+
+Returns the fisrt state $v.
+
+=item * $s=applyOperator($self, $psi_G)
+
+Apply the Hamiltonian operator to state. State is ri:nx:ny... gnorm=i:nx:ny...
+
+=item * $s=innerProduct($self, $left, $right)
+
+Returns the inner product (Hamiltonian product) between states.
+
+=item * $s=magnitude($self, $psi)
+
+Returns the magnitude of a state gotten by taking the square root of the inner product of the state with itself, $self->innerProduct($psi, $psi)->abs->sqrt;.
+
+=item * $c=changesign
+
+Change sign to
+
+=back
+
+=cut
+
+
+
 package Photonic::WE::S::OneH;
 $Photonic::WE::S::OneH::VERSION = '0.011';
 

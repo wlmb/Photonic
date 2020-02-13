@@ -40,14 +40,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::Geometry::FromImage2D;
-   my $g1=Photonic::Geometry::FromImage2D->new(path=>$filename);
-   $B=$g1->B;
-   $G=$g2->G;
+   my $g=Photonic::Geometry::FromImage2D->new(path=>$filename);
+   $path=$g->path;
+   
 
 =head1 DESCRIPTION
 
-Create a geometry object to be used in a Homogeneization
-calculation using as input a monochromatic 2D image.
+Creates a geometry object to be used in a Homogeneization
+calculation using as input a monochromatic 2D image. 
 
 =head1 METHODS
 
@@ -64,7 +64,7 @@ inverted. Its size must be odd along both directions.
 $L is the size of the unit cell along the cartesian axes. By
 default, it is the number of pixels.
 
-$i controls whether the characteriztic function ought ought to be
+$i controls whether the characteriztic function ought to be
 inverted: 1 means invert, 0 don't invert. Default: 0
 
 =back

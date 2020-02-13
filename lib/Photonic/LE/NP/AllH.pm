@@ -40,7 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::LE::NP::AllH;
    my $iter=Photonic::LE::NP::AllH->new(
-       epsilon=>$e, geometry=>$geometry,nh=>$Nh, keepStates=>$save);
+       epsilon=>$e, geometry=>$geometry, nh=>$Nh, keepStates=>$save); 
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
@@ -58,15 +58,19 @@ them for later retrieval.
 
 =item * new(epsilon=>$e, geometry=>$g, nh=>$nh, keepStates=>$k)
 
-Initializes an Ph::NR::NP::AllH object. $nh is the maximum number of desired
-coefficients, $k is a flag, non zero to save the Haydock states. All
-other arguments are as in Photonic::LE::NP::OneH.
+Initializes an Ph::NR::NP::AllH object. $nh is the maximum numberof desired coefficients, $k is a flag, non zero to save the Haydock states. All other arguments are as in Photonic::LE::NP::OneH.
 
 =item * run
 
-Runs the iteration to completion
+Runs the iteration to completion, tells $iter to start the calculation and get values of variables you search.
 
 =item * All the Photonic::LE::NP::OneH methods
+
+Implements calculation of Haydock coefficients and states. See implementation documentation.
+
+=item * All the Photonic::Roles::AllH methods
+
+Iterates the calculation of one Haydock coefficient and state for non-retarded system at a time and saves them to later retrival.
 
 =back
 
@@ -76,8 +80,7 @@ Runs the iteration to completion
 
 =item * nh
 
-Maximum number of desired Haydock 'a' coefficients and states. The
-number of b coefficients is one less.
+Maximum number of desired Haydock 'a' coefficients and states. The number of b coefficients is one less.
 
 =item * keepStates
 
@@ -98,8 +101,6 @@ Array of Haydock b coefficients
 =item * b2s
 
 Array of Haydock b coefficients squared
-
-=item * All the Photonic::LE::NP::OneH methods
 
 =back
 
