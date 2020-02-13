@@ -6,12 +6,42 @@ Photonic::LE::NR2::SH
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::SH;
    my $nrsh=Photonic::LE::NR2::SH->
              new(shp=>$shp, epsA1=>$epsA1, epsB1=>$epsB1,
-                 epsA2=>$epsA2, epsB2=>$epsB2); 
+                 epsA2=>$epsA2, epsB2=>$epsB2);
    my $PL_G=$nrsh->selfConsistentL_G;
 
 
@@ -19,14 +49,14 @@ version 0.011
 
 Calculates the non retarded SH polarizations and fields of arbitrary a
 periodic composite made up of centrosymmetric isotropic component materials,
-using the continuous dipolium model. 
+using the continuous dipolium model.
 
 =head1 METHODS
 
 =over 4
 
 =item * new(shp=>$shp, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
-            epsB2=>epsB2);  
+            epsB2=>epsB2);
 
 Initializes the structure
 
@@ -42,7 +72,7 @@ and B materials at the fundamental and the second harmonic frequency
 
 =over 4
 
-=item * shp 
+=item * shp
 
 Invariant part of SHG calculator.
 
@@ -163,8 +193,9 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
-use Photonic::Utils qw(RtoG GtoR HProd linearCombine);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt);
 use Photonic::ExtraUtils qw(cgtsl);
+use Photonic::Iterator;
 use PDL::Constants qw(PI);
 use Moose;
 use MooseX::StrictConstructor;
@@ -174,63 +205,63 @@ has 'shp'=>(is=>'ro', 'isa'=>'Photonic::LE::NR2::SHP', required=>1,
     documentation=>'Object with invariant part of SHG calculation');
 has 'epsA1'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
     documentation=>'Fundamental dielectric function of host');
-has 'epsB1'=>(is=>'ro', isa=>'PDL::Complex', 
+has 'epsB1'=>(is=>'ro', isa=>'PDL::Complex',
         documentation=>'Fundamental dielectric function of inclusions');
 has 'epsA2'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
     documentation=>'SH Dielectric function of host');
-has 'epsB2'=>(is=>'ro', isa=>'PDL::Complex', required=>1, 
+has 'epsB2'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
         documentation=>'SH Dielectric function of inclusions');
 has 'alpha1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_alpha1', 
+         lazy=>1, builder=>'_build_alpha1',
          documentation=>'Linear "atomic" polarizability');
 has 'alpha2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_alpha2', 
+         lazy=>1, builder=>'_build_alpha2',
          documentation=>'SH linear "atomic" polarizability');
 has 'u1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_u1', 
+         lazy=>1, builder=>'_build_u1',
          documentation=>'Spectral variable at fundamental');
 has 'u2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_u2',  
+         lazy=>1, builder=>'_build_u2',
          documentation=>'Spectral variable at SH');
 has 'field1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_field1', 
+         lazy=>1, builder=>'_build_field1',
          documentation=>'longitudinal field at fundamental');
 has 'field2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_field2', 
+         lazy=>1, builder=>'_build_field2',
          documentation=>'longitudinal field at second harmonic');
 has 'epsL2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         writer=>'_epsL2', predicate=>'has_epsL2', 
+         writer=>'_epsL2', predicate=>'has_epsL2',
          documentation=>'longitudinal dielectric function at 2w');
 has 'dipolar'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_dipolar', 
+         lazy=>1, builder=>'_build_dipolar',
          documentation=>'SH dipolar contribution to SH polarization');
 has 'quadrupolar'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_quadrupolar', 
+         lazy=>1, builder=>'_build_quadrupolar',
          documentation=>'SH quadrupolar contribution to SH polarization');
 has 'external'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_external', 
+         lazy=>1, builder=>'_build_external',
          documentation=>'SH external contribution to SH polarization');
 has 'external_G'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
          lazy=>1, builder=>'_build_external_G',
          documentation=>'SH ext. polarization in reciprocal space');
 has 'externalL_G'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_externalL_G', 
+         lazy=>1, builder=>'_build_externalL_G',
          documentation=>
-             'SH ext. longitudinal polarization comp. in reciprocal space'); 
+             'SH ext. longitudinal polarization comp. in reciprocal space');
 has 'externalVecL_G'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_externalVecL_G', 
+         lazy=>1, builder=>'_build_externalVecL_G',
          documentation=>
-             'SH ext. longitudinal polarization proj. in recip. space'); 
+             'SH ext. longitudinal polarization proj. in recip. space');
 has 'externalVecL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_externalVecL', 
+         lazy=>1, builder=>'_build_externalVecL',
          documentation=>
-             'SH ext. longitudinal polarization proj. in real space'); 
+             'SH ext. longitudinal polarization proj. in real space');
 has 'HP' =>(is=>'ro', isa=>'Photonic::LE::NR2::AllH', init_arg=>undef,
          lazy=>1, builder=>'_build_HP',
          documentation=>
          'Structure to calculate Haydock basis for non linear polarization');
 has 'externalL_n'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-         lazy=>1, builder=>'_build_externalL_n', 
+         lazy=>1, builder=>'_build_externalL_n',
          documentation=>
              'SH ext. longitudinal polarization in Haydock
                representation');
@@ -238,7 +269,7 @@ has 'selfConsistentL_n'=>(is=>'ro', isa=>'PDL::Complex',
          init_arg=>undef, lazy=>1,
          builder=>'_build_selfConsistentL_n',
          documentation=>
-             'SH self consistent longitudinal polarization 
+             'SH self consistent longitudinal polarization
               in Haydock representation');
 has 'selfConsistentL_G'=>(is=>'ro', isa=>'PDL::Complex',
          init_arg=>undef, lazy=>1,
@@ -272,7 +303,7 @@ has 'P2LMCalt'=>(is=>'ro', isa=>'PDL::Complex',
              'SH self consistent total macroscopic polarization
               in real space. Alternative');
 
-has 'filterflag'=>(is=>'rw', 
+has 'filterflag'=>(is=>'rw',
          documentation=>'Filter results in reciprocal space');
 
 #sub BUILD {
@@ -291,7 +322,7 @@ sub _alpha {
     my $epsB1=shift;
     my $alphaA1=my $alphaB1=0+0*i;
     $alphaA1=($epsA1-1)/(4*$self->densityA*PI) unless
-	$self->densityA==0; 
+	$self->densityA==0;
     $alphaB1=($epsB1-1)/(4*$self->densityB*PI) unless
 	$self->densityB==0;
     $alphaA1=$alphaB1 if $self->densityA==0;
@@ -335,14 +366,14 @@ sub _build_dipolar {
     #cartesian, nx, ny...
     my $G=$self->nrf->nr->G;
     #RorI cartesian nx ny
-    my $iG=$G*i; 
+    my $iG=$G*i;
     #RorI cartesian nx ny...
     my $iGE2=Cmul($iG, $Esquare_G->(,*1));
     #back to real space. Get cartesian out of the way and then back
-    #RorI, cartesian, nx, ny... 
-    my $nablaE2=ifftn($iGE2->mv(1,-1)->real, $ndims)->mv(-1,1)->complex; 
+    #RorI, cartesian, nx, ny...
+    my $nablaE2=ifftn($iGE2->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
     my $factor=-$self->density*$self->alpha1*$self->alpha2/2;
-       #RorI, nx, ny... 
+       #RorI, nx, ny...
     my $P=$factor->(,*1)*$nablaE2;
     #Should I filter in Fourier space before returning?
     return $P;
@@ -367,7 +398,7 @@ sub _build_quadrupolar {
     #cartesian, nx, ny...
     my $G=$self->nrf->nr->G;
     #RorI cartesian nx ny...
-    my $iG=$G*i; 
+    my $iG=$G*i;
     #RorI cartesian nx ny...
     #Note: sumover knows how to sum complex values.
     my $iGnaaEE_G=($iG->(,,*1)*$naaEE_G)->sumover; #dot
@@ -375,9 +406,9 @@ sub _build_quadrupolar {
     #Note: System knows how to multiply complex by real.
     $iGnaaEE_G = $iGnaaEE_G*$self->nrf->filter->(*1) if $self->nrf->has_filter;
     #back to real space. Get cartesian out of the way and then back
-    #RorI, cartesian, nx, ny... 
+    #RorI, cartesian, nx, ny...
     my $P=
-	ifftn($iGnaaEE_G->mv(1,-1)->real, $ndims)->mv(-1,1)->complex; 
+	ifftn($iGnaaEE_G->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
     return $P;
 }
 
@@ -421,15 +452,15 @@ sub _build_externalVecL {
     my $result=GtoR($extG, $self->ndims, 1);
     return $result;
 }
-    
+
 sub _build_HP { #build haydock states for P2
     my $self=shift;
     my $ext=$self->externalL_G;
     my $normext=sqrt(Cabs2($ext)->sum);
     my $extnorm=$ext->complex/$normext;
-    my $hp=Photonic::LE::NR2::AllH->new(nh=>$self->nrf->nh, 
+    my $hp=Photonic::LE::NR2::AllH->new(nh=>$self->nrf->nh,
 	geometry=>$self->nrf->nr->geometry, smallH=>$self->nrf->nr->smallH,
-		keepStates=>1, nextState=>$extnorm);
+		keepStates=>1, firstState=>$extnorm);
     $hp->run;
     return $hp;
 }
@@ -437,17 +468,17 @@ sub _build_HP { #build haydock states for P2
 sub _build_externalL_n {
     my $self=shift;
     my $pol=$self->externalL_G;
-    my $states=$self->HP->states;
+    my $stateit=$self->HP->state_iterator;
     my $nh=$self->HP->iteration;
     # innecesario: \propto \delta_{n0}
     #my @Pn=map HProd($states->[$_],$pol), 0..$nh-1;
     my @Pn=map {0+0*i} 0..$nh-1;
     #$Pn[0]=$pol->(:,(0),(0));
-    $Pn[0]=HProd($states->[0],$pol);
+    $Pn[0]=HProd($stateit->nextval,$pol);
     #print join " Pn ", @Pn[0..3], "\n";
     return PDL->pdl([@Pn])->complex;
 }
-    
+
 sub _build_selfConsistentL_n {
     my $self=shift;
     my $external=$self->externalL_n;
@@ -459,20 +490,20 @@ sub _build_selfConsistentL_n {
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
     my $supradiag=$subdiag->mv(0,-1)->rotate(-1)->mv(-1,0);
-    my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $external); 
+    my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $external);
     die "Error solving tridiag system" unless $info == 0;
     $result->complex;
     $result *= $u2/$self->epsA2;
     return $result;
-}    
+}
 
 sub _build_selfConsistentL_G {
     my $self=shift;
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
     my $PLn=[$self->selfConsistentL_n->dog];
-    my $states=$self->HP->states;
-    my $result=linearCombine($PLn, $states);
+    my $stateit=$self->HP->state_iterator;
+    my $result=linearCombineIt($PLn, $stateit);
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0)  if $filterflag;
     return $result;
@@ -529,7 +560,7 @@ sub _build_P2LMCalt {
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
-    my ($phi_n, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs); 
+    my ($phi_n, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
     my $phi_G=linearCombine([$phi_n->dog], $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
@@ -543,8 +574,8 @@ sub _build_P2LMCalt {
 	)->complex;
     my @Ppsi;
     foreach(0..$ndims-1){
-	my ($psi_n, $psiinfo)= 
-	    cgtsl($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:)); 
+	my ($psi_n, $psiinfo)=
+	    cgtsl($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
 	die "Error solving tridiag system" unless $psiinfo == 0;
 	# RorI nx ny .... cartesian
 	my $psi_G=linearCombine([$psi_n->dog], $states);
@@ -591,8 +622,8 @@ sub _filter { #Filter complex field in reciprocal space
     $field=$field->mv(-1,1) foreach(0..$skip-1); #mv cartesians back
     return $field;
 }
-    
+
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

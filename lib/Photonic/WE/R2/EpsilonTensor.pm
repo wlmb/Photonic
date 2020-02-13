@@ -6,6 +6,36 @@ Photonic::WE::R2::EpsilonTensor
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
    use Photonic::WE::R2::EpsilonTensor;
@@ -23,7 +53,7 @@ functions of the components.
 =over 4
 
 =item * new(metric=>$m, nh=>$nh, smallE=>$smallE, smallH=>$smallH,
-keepStates=>$k)  
+keepStates=>$k)
 
 Initializes the structure.
 
@@ -32,8 +62,7 @@ $m Photonic::WE::R2::Metric describing the structure and some parametres.
 $nh is the maximum number of Haydock coefficients to use.
 
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
-Haydock coefficients and for the continued fraction. From
-Photonic::Roles::EpsParams.  
+Haydock coefficients and for the continued fraction.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
@@ -41,7 +70,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 Returns the macroscopic dielectric tensor for a given value of the
 dielectric function of the particle $epsB. The host's
-response $epsA is taken from the metric.  
+response $epsA is taken from the metric.
 
 =back
 
@@ -74,10 +103,10 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-extends 'Photonic::WE::R2::Wave'; 
+extends 'Photonic::WE::R2::Wave';
 
 has 'epsilonTensor' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-             writer=>'_epsilonTensor',   
+             writer=>'_epsilonTensor',
              documentation=>'Wave operator from last evaluation');
 
 around 'evaluate' => sub {
@@ -96,7 +125,7 @@ around 'evaluate' => sub {
 };
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

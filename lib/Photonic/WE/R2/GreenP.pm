@@ -6,6 +6,36 @@ Photonic::WE::R2::GreenP
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
    use Photonic::WE::R2::GreenP;
@@ -74,7 +104,7 @@ Flags that the last calculation converged before using up all coefficients
 
 =item * smallE
 
-Criteria of convergence. 0 means don't check. From Photonic::Roles::EpsParams. 
+Criteria of convergence. 0 means don't check.
 
 =back
 
@@ -97,10 +127,22 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-with 'Photonic::Roles::EpsParams'; #nh, smallE, epsA, epsB, u
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+	    documentation=>'Desired no. of Haydock coefficients');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+    	    documentation=>'Convergence criterium for use of Haydock coeff.');
+has 'epsA'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA',
+    documentation=>'Dielectric function of host');
+has 'epsB'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB',
+        documentation=>'Dielectric function of inclusions');
+has 'u'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_u',
+    documentation=>'Spectral variable');
+
 has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::R2::AllH', required=>1);
 has 'Gpp'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_Gpp');
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef, 
+has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
 
@@ -145,7 +187,7 @@ sub evaluate {
 	$n++;
     }
     #If there are less available coefficients than $self->nh and all
-    #of them were used, there is no remaining work to do, so, converged 
+    #of them were used, there is no remaining work to do, so, converged
     $converged=1 if $self->haydock->iteration < $self->nh;
     $self->_converged($converged);
     $self->_nhActual($n);
@@ -172,5 +214,5 @@ sub evaluate {
 
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

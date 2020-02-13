@@ -6,6 +6,36 @@ Photonic::LE::NR2::EpsL
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::EpsL;
@@ -30,7 +60,7 @@ $nr is a Photonic::LE::NR2::AllH structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
-$smallE is the criteria of convergence for the continued fraction 
+$smallE is the criteria of convergence for the continued fraction
 (defaults to 1e-7)
 
 =item * evaluate($epsA, $epsB)
@@ -76,7 +106,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallE
 
 Criteria of convergence for continued fraction. 0 means don't
-check. From Photonic::Roles::EpsParams
+check.
 
 =back
 
@@ -118,9 +148,9 @@ sub evaluate {
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
-    my $min= min($self->nh, $self->nr->iteration);  
+    my $min= min($self->nh, $self->nr->iteration);
     my ($fn, $n)=lentzCF([map {$u-$_} @$as], [map {-$_} @$b2s],
-			 $min, $self->smallE);  
+			 $min, $self->smallE);
     # Check this logic:
     my $converged=$n<$min || $self->nr->iteration<=$self->nh;
     $self->_converged($converged);
@@ -130,5 +160,5 @@ sub evaluate {
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

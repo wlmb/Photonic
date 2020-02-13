@@ -1,5 +1,37 @@
 #! /usr/bin/env perl
 # Proof of Spinor (S) module using Mortola results
+
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
+
 use strict;
 use warnings;
 use feature qw(say);
@@ -39,7 +71,7 @@ yy=>sqrt($epsA*$epsB*$epsC*$epsD*(1/$epsA+1/$epsB+1/$epsC+1/$epsD)*($epsA+$epsD)
 
 my $filename="epsM_S_${seed}_eA${epsA}_eB${epsB}_eC${epsC}_eD${epsD}_N${N}_Nh${nh}"; $filename=~s/\./_/g; $filename.=".dat";
 open(OUT, ">", "../data/$filename") or die "Couldn't open $filename for writing. $!";
-print OUT "#  dir epsM_re (Mortola)  epsM_im (Mortola)  epsM_re (Spinor)    epsM_im (Spinor) \n";  
+print OUT "#  dir epsM_re (Mortola)  epsM_im (Mortola)  epsM_re (Spinor)    epsM_im (Spinor) \n";
 my ($g,$allh,$nr)=(PDL->null,PDL->null,PDL->null);
 
 my %dir=(xx=>pdl(1,0),yy=>pdl(0,1));
@@ -47,7 +79,7 @@ foreach my $x (keys %dir){
     $g=Photonic::Geometry::FromEpsilon->new(epsilon=>$e,L=>pdl($l,$l),Direction0=>$dir{$x});
     $allh=Photonic::LE::S::AllH->new(geometry=>$g, nh=>$nh);
     $nr=Photonic::LE::S::EpsL->new(nr=>$allh,nh=>$nh);
-    say OUT join " ", $x, $epsM{$x}->re, $epsM{$x}->im, $nr->epsL->re, $nr->epsL->im; 
+    say OUT join " ", $x, $epsM{$x}->re, $epsM{$x}->im, $nr->epsL->re, $nr->epsL->im;
 
 }
 
@@ -102,5 +134,5 @@ sub eps{
     return ($h_nu, $eps);
 }
 
-    
+
 

@@ -6,10 +6,40 @@ Photonic::LE::NR2::AllH
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::AllH;
-   my $iter=Photonic::LE::NR2::AllH->new(geometry=>$geometry,nh=>$Nh); 
+   my $iter=Photonic::LE::NR2::AllH->new(geometry=>$geometry,nh=>$Nh);
    $iter->run;
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
@@ -25,7 +55,7 @@ calculation in a binary metamaterial.
 
 =over 4
 
-=item * new(geometry=>$g, nh=>$nh) 
+=item * new(geometry=>$g, nh=>$nh)
 
 Initializes an Ph::LE::NR2::AllH object. 
 $nh is the maximum number of desired coefficients. 
@@ -83,5 +113,5 @@ extends 'Photonic::LE::NR2::OneH';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeR';
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

@@ -6,11 +6,41 @@ Photonic::WE::S::Metric
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
     use Photonic::WE::S::Metric;
     my $gGG=Photonic::WE::S::Metric->new(
-            geometry=>$geometry, epsilon=>$eps, 
+            geometry=>$geometry, epsilon=>$eps,
             wavenumber => $q, $wavevector=>k);
     f($gGG->value);
 
@@ -35,7 +65,7 @@ $k. $q and $k are real.
 
 =over 4
 
-=item * value 
+=item * value
 
 The actual metric tensor as a complex PDL (d,d,n1,n2..nd)
 the first and second indices over cartesian indices for 0 to d-1 in d
@@ -60,7 +90,7 @@ use MooseX::StrictConstructor;
 
 # Later make it complex
 has 'value'     => (is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
-                   builder=>'_value', 
+                   builder=>'_value',
                    documentation=>'Metric tensor');
 
 with 'Photonic::Roles::Metric';
@@ -111,6 +141,6 @@ sub _value {
     my $gGG=PDL->pdl($gPGG, $gMGG)->mv(-1,2); #xy:xy:pm:nx:ny
     return $gGG;
 }
-    
+
 
 1;

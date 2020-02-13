@@ -1,3 +1,33 @@
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 use strict;
 use warnings;
 use PDL;
@@ -6,15 +36,15 @@ use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::Geometry::FromImage2D;
 use Photonic::Geometry::FromEpsilon;
-use Test::More tests => 40;
+use Test::More tests => 39;
 my $pi=4*atan2(1,1);
 
-sub agree {    
+sub agree {
     my $a=shift;
     my $b=shift//0;
     return (($a-$b)*($a-$b))->sum<=1e-7;
 }
-    
+
 my $B=zeroes(11,11)->rvals<=5;
 my $g=Photonic::Geometry::FromB->new(B=>$B);
 my $gl=Photonic::Geometry::FromB->new(B=>$B, L=>pdl(1,1));
@@ -25,7 +55,7 @@ ok(($g->L->dims)[0]==2, "L is a 2D vector");
 ok(($g->L->dims)[0]==2, "L is a 2D vector");
 ok(agree(pdl($g->L),pdl(11,11)), "correct L values");
 ok(agree(($g->units)->[0], pdl(1,0)) && agree(($g->units)->[1], pdl(0,1)),
-   "units"); 
+   "units");
 ok($g->npoints==11*11, "npoints");
 ok(agree($g->scale,pdl(1,1)), "Default scale");
 ok(agree($gl->scale, pdl(1/11,1/11)), "Scale");
@@ -57,12 +87,9 @@ ok($g->f==$B->sum/(11*11), "filling fraction");
 ok(agree($g->unitPairs->[0], pdl(1,0))
    && agree($g->unitPairs->[1], pdl(1,1)/sqrt(2))
    && agree($g->unitPairs->[2], pdl(0,1)), "unitpairs");
-ok(agree($g->CunitPairs->[0]->re, pdl(1,0)/sqrt(2))
-   && agree($g->CunitPairs->[0]->im, pdl(0,1)/sqrt(2)),
+ok(agree($g->cUnitPairs->[0]->re, pdl(1,0)/sqrt(2))
+   && agree($g->cUnitPairs->[0]->im, pdl(0,1)/sqrt(2)),
    "cunitpairs");
-ok(agree($g->CCunitPairs->[0]->re, pdl(1,0)/sqrt(2))
-   && agree($g->CCunitPairs->[0]->im, -pdl(0,1)/sqrt(2)),
-   "ccunitpairs");
 ok(agree($g->unitDyads, pdl([1,0,0],[.5,1,.5],[0,0,1])), "unitDyads");
 ok(agree(lu_backsub(@{$g->unitDyadsLU}, $g->unitDyads->transpose),
 	 identity(3)), "unitDyadsLU");

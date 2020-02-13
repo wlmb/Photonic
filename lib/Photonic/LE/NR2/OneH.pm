@@ -6,6 +6,36 @@ Photonic::LE::NR2::OneH;
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
     use Photonic::LE::NR2::OneH;
@@ -38,7 +68,7 @@ smallness parameter  $s.
 
 =over 4
 
-=item * geometry Photonic::Types::GeometryG0 
+=item * geometry Photonic::Types::GeometryG0
 
 A Photonic::Geometry object defining the geometry of the system,
 the charateristic function and the direction of the G=0 vector. Should
@@ -51,9 +81,9 @@ Accesors handled by geometry (see Photonic::Roles::Geometry)
 =item * smallH
 
 A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero. Handled by Photonic::Roles::EpsParams
+b^2 coefficients are taken to be zero.
 
-=item * previousState currentState nextState 
+=item * previousState currentState nextState
 
 The n-1-th, n-th and n+1-th Haydock states; a complex number for each pixel
 
@@ -134,7 +164,7 @@ sub _firstState { #\delta_{G0}
     return $v;
 }
 
-sub applyOperator { 
+sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
     my $mask=undef;
@@ -142,7 +172,7 @@ sub applyOperator {
     # ri:nx:ny
     #state is ri:nx:ny:... gnorm=i:nx:ny...
     #Have to get cartesian out of the way, thread over it and iterate
-    #over the rest 
+    #over the rest
     my $Gpsi_G=$psi_G*$self->GNorm->mv(0,-1); #^G |psi>
     #Gpsi_G is ri:nx:ny...:i
     #Take inverse Fourier transform over all space dimensions,
@@ -180,5 +210,5 @@ sub changesign { #don't change sign
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

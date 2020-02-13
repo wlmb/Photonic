@@ -6,6 +6,36 @@ Photonic::WE::S::Green
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
    use Photonic::WE::S::Green;
@@ -23,7 +53,7 @@ functions of the components.
 =over 4
 
 =item * new(metric=>$m, nh=>$nh, smallH=>$smallH, smallE=>$smallE,
-keepStates=>$k)  
+keepStates=>$k)
 
 Initializes the structure.
 
@@ -40,7 +70,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 Returns the macroscopic Green's operator for a given value of the
 dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.  
+response $epsA is taken from the metric.
 
 =back
 
@@ -60,7 +90,7 @@ Dielectric function of component A
 
 Dielectric function of componente B
 
-=item * u 
+=item * u
 
 Spectral variable
 
@@ -91,7 +121,7 @@ Flags that the last calculation converged before using up all coefficients
 =item * smallH, smallE
 
 Criteria of convergence of Haydock coefficients and continued
-fraction. 0 means don't check. 
+fraction. 0 means don't check.
 
 =back
 
@@ -112,7 +142,7 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1, 
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
@@ -129,9 +159,9 @@ has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::S::GreenP]',
              documentation=>'Array of projected G calculators');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
-                  'All greenP evaluations converged'); 
+                  'All greenP evaluations converged');
 has 'greenTensor'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
-	      lazy=>1, builder=>'_build_greenTensor',   
+	      lazy=>1, builder=>'_build_greenTensor',
              documentation=>'Greens Tensor');
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
@@ -195,7 +225,7 @@ sub _build_greenP {
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;
 
 __END__

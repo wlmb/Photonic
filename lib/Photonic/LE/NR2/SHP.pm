@@ -6,11 +6,41 @@ Photonic::LE::NR2::SHP
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::SHP;
    my $nrshp=Photonic::LE::NR2::SHP->
-             new(nrf=>$nrf, densityA=>$dA, densityB=>$dB)); 
+             new(nrf=>$nrf, densityA=>$dA, densityB=>$dB));
 
 
 
@@ -19,7 +49,7 @@ version 0.011
 Prepares the data for the calculation of the non retarded SH
 polarization of an arbitrary periodic composite made up of
 centrosymmetric isotropic component materials, using the continuous
-dipolium model.  
+dipolium model.
 
 =head1 METHODS
 
@@ -30,7 +60,7 @@ dipolium model.
 Initializes the structure
 
 $nrf Photonic::LE::NR2::Field is a Haydock field calculator for the
-structure. 
+structure.
 
 $dA is the density of polarizable entities in medium A
 
@@ -91,7 +121,7 @@ has 'densityB'=>(is=>'ro', isa=>'Num', required=>1,
 has 'density'=>(is=>'ro', isa=>'PDL', writer=>'_density', init_arg=>undef,
          documentation=>'Normalized dipole entities density over unit cell');
 has 'ndims' =>(is=>'ro', isa=>'Int', init_arg=>undef, lazy=>1,
-         builder=>'_ndims', 
+         builder=>'_ndims',
          documentation=>'Number of dimensions of system');
 
 sub BUILD {
@@ -106,5 +136,5 @@ sub _ndims {
 }
 
 __PACKAGE__->meta->make_immutable;
-    
+
 1;

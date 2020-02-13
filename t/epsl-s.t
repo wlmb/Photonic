@@ -1,3 +1,33 @@
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 use strict;
 use warnings;
 use PDL;
@@ -14,7 +44,7 @@ use Test::More tests => 10;
 
 #my $pi=4*atan2(1,1);
 
-sub Cagree {    
+sub Cagree {
     my $a=shift;
     my $b=shift//0;
     my $prec=shift||1e-7;
@@ -28,7 +58,7 @@ my $B=zeroes(11)->xvals<5; #1D system
 my $f=$B->sumover/$B->nelem;
 my $epsilon=$ea*(1-$B)+$eb*$B;
 my $gl=Photonic::Geometry::FromEpsilon->new(epsilon=>$epsilon,
-					    Direction0=>pdl([1])); #long  
+					    Direction0=>pdl([1])); #long
 my $al=Photonic::LE::S::AllH->new(geometry=>$gl, nh=>10, epsilon=>$epsilon);
 my $elo=Photonic::LE::S::EpsL->new(nr=>$al, nh=>10);
 my $elv=$elo->epsL;
@@ -40,7 +70,7 @@ is($elo->converged,1, "Converged");
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $epsilont=$ea*(1-$Bt)+$eb*$Bt;
 my $gt=Photonic::Geometry::FromEpsilon->new(epsilon=>$epsilont,
-					    Direction0=>pdl([1,0])); #trans  
+					    Direction0=>pdl([1,0])); #trans
 my $at=Photonic::LE::S::AllH->new(geometry=>$gt, nh=>10);
 my $eto=Photonic::LE::S::EpsL->new(nr=>$at, nh=>10);
 my $etv=$eto->epsL;
@@ -55,7 +85,7 @@ $Bc=((($Bc->xvals<$N) & ($Bc->yvals<$N))
    | (($Bc->xvals>=$N) & ($Bc->yvals>=$N)));
 my $epsilonc=$ea*(1-$Bc)+$eb*$Bc;
 my $gc=Photonic::Geometry::FromEpsilon->new(epsilon=>$epsilonc,
-   Direction0=>pdl([1,0]));  
+   Direction0=>pdl([1,0]));
 my $ac=Photonic::LE::S::AllH->new(geometry=>$gc, nh=>2000,
    reorthogonalize=>1);
 my $eco=Photonic::LE::S::EpsL->new(nr=>$ac, nh=>2000);
@@ -82,19 +112,19 @@ is($eco->converged,1, "Converged");
     my $epsD=4+4.5*i;
     my $eimpar=FourPhasesImpar($N,$epsA,$epsB,$epsC,$epsD);
     my $epar=FourPhasesPar($N,$epsA,$epsB,$epsC,$epsD);
-    
+
     my %epsM=(
 	xx=>sqrt($epsA*$epsB*$epsC*$epsD
 		 * (1/$epsA + 1/$epsB +
 		    1/$epsC+1/$epsD)*($epsA+$epsB)*($epsC+$epsD) /
 		 (($epsA + $epsB + $epsC + $epsD) * ($epsA + $epsD) *
-		  ($epsC+$epsB))),  
+		  ($epsC+$epsB))),
 	yy=>sqrt($epsA*$epsB*$epsC*$epsD
 		 * (1/$epsA + 1/$epsB + 1/$epsC + 1/$epsD)
 		 * ($epsA+$epsD) * ($epsC+$epsB)
 		 / (($epsA + $epsB + $epsC + $epsD) * ($epsA+$epsB) *
 		    ($epsC+$epsD)))
-	); 
+	);
     my ($g,$allh,$nr)=(PDL->null,PDL->null,PDL->null);
     my %dir=(xx=>pdl(1,0),yy=>pdl(0,1));
     my %e=(neven => $epar,nodd =>$eimpar);

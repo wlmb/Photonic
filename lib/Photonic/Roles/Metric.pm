@@ -6,11 +6,41 @@ Photonic::Roles::Metric
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
     use Photonic::WE::R2::Metric;
     my $gGG=Photonic::WE::R2::Metric->new(
-            geometry=>$geometry, epsilon=>$eps, 
+            geometry=>$geometry, epsilon=>$eps,
             wavenumber => $q, $wavevector=>k);
     f($gGG->value);
 
@@ -35,7 +65,7 @@ $k. $q and $k are real.
 
 =over 4
 
-=item * value 
+=item * value
 
 The actual metric tensor as a complex PDL (d,d,n1,n2..nd)
 the first and second indices over cartesian indices for 0 to d-1 in d
@@ -57,7 +87,7 @@ has 'geometry'  => (is=>'ro', isa=>'Photonic::Types::Geometry', required=>1,
                     required=>1,
                     documentation=>'Geometry');
 has 'epsilon'   => (is=>'ro', isa=>'PDL', required=>1,
-		    default=>sub{PDL->pdl(1)}, 
+		    default=>sub{PDL->pdl(1)},
                    documentation=>'Real reference dielectric function');
 has 'wavenumber'=> (is=>'ro', isa=>'PDL', required=>1,
                    documentation=>'Vacuum wavenumber w/c');

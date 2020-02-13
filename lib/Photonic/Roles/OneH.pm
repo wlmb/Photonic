@@ -6,6 +6,36 @@ Photonic::Roles::OneH
 
 version 0.011
 
+=head1 COPYRIGHT NOTICE
+
+Photonic - A perl package for calculations on photonics and
+metamaterials.
+
+Copyright (C) 1916 by W. Luis Mochán
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 1, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
+
+    mochan@fis.unam.mx
+
+    Instituto de Ciencias Físicas, UNAM
+    Apartado Postal 48-3
+    62251 Cuernavaca, Morelos
+    México
+
+=cut
+
 =head1 SYNOPSIS
 
     use Photonic::LE::NR2::OneH;
@@ -51,7 +81,7 @@ smallness parameter  $s.
 
 =over 4
 
-=item * geometry Photonic::Types::GeometryG0 
+=item * geometry Photonic::Types::GeometryG0
 
 A Photonic::Geometry object defining the geometry of the system,
 the charateristic function and the direction of the G=0 vector. Should
@@ -64,9 +94,9 @@ Accesors handled by geometry (see Photonic::Roles::Geometry)
 =item * smallH
 
 A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero. Handled by Photonic::Roles::EpsParams
+b^2 coefficients are taken to be zero.
 
-=item * previousState currentState nextState 
+=item * previousState currentState nextState
 
 The n-1-th, n-th and n+1-th Haydock states
 
@@ -91,9 +121,9 @@ Number of completed iterations
 =item * iterate
 
 Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_state, shifting the current values where necessary. Returns 
-0 when unable to continue iterating. 
- 
+next_b2, next_state, shifting the current values where necessary. Returns
+0 when unable to continue iterating.
+
 =back
 
 =cut
@@ -125,7 +155,8 @@ has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
 has 'currentState' => (is=>'ro', isa=>'PDL::Complex', writer=>'_currentState',
       lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
 has 'nextState' =>(is=>'ro', isa=>maybe_type('PDL::Complex'),
-		   writer=>'_nextState',  lazy=>1, builder=>'_firstRState');
+		   writer=>'_nextState',  lazy=>1,
+		   builder=>'_firstRState', init_arg=>undef);
 has 'current_a' => (is=>'ro', writer=>'_current_a',  init_arg=>undef);
 has 'current_b2' => (is=>'ro', writer=>'_current_b2', init_arg=>undef);
 has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef,
@@ -133,13 +164,13 @@ has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef,
 has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
 has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef,
 		 builder=>'_cero');
-has 'current_c' => (is=>'ro', writer=>'_current_c', init_arg=>undef); 
+has 'current_c' => (is=>'ro', writer=>'_current_c', init_arg=>undef);
 has 'next_c' => (is=>'ro', writer=>'_next_c', init_arg=>undef,
-		 builder=>'_cero');  
+		 builder=>'_cero');
 has 'next_bc' => (is=>'ro', writer=>'_next_bc', init_arg=>undef,
 		  builder=>'_cero');
 has 'previous_g' => (is=>'ro', writer=>'_previous_g', init_arg=>undef);
-has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef, 
+has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef,
      builder=>'_cero');
 has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef);
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
@@ -158,7 +189,7 @@ sub iterate { #single Haydock iteration
     #Note: calculate Current a, next b2, next b, next state
     #Done if there is no next state
     return 0 unless defined $self->nextState;
-    $self->_iterate_indeed; 
+    $self->_iterate_indeed;
 }
 
 sub _fullorthogonalize_indeed {
@@ -176,7 +207,9 @@ sub _iterate_indeed {
     $self->_current_c(my $c_n=$self->next_c);
     $self->_previous_g(my $g_nm1=$self->current_g);
     $self->_current_g(my $g_n=$self->next_g);
-    my $opPsi=$self->applyOperator($psi_n); 
+    #Make sure to increment counter before orthogonalizing.
+    $self->_iteration($self->iteration+1); #increment counter
+    my $opPsi=$self->applyOperator($psi_n);
     my $a_n=$g_n*$self->innerProduct($psi_n, $opPsi);
     my $bpsi_np1=$opPsi-$a_n*$psi_n-$c_n*$psi_nm1;
     $bpsi_np1=$self->_fullorthogonalize_indeed($bpsi_np1);
@@ -196,7 +229,6 @@ sub _iterate_indeed {
     $self->_next_c($self->_coerce($c_np1));
     $self->_next_bc($self->_coerce($bc_np1));
     $self->_nextState($psi_np1);
-    $self->_iteration($self->iteration+1); #increment counter
     return 1;
 }
 
