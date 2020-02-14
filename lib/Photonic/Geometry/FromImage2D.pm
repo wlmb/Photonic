@@ -1,3 +1,8 @@
+package Photonic::Geometry::FromImage2D;
+$Photonic::Geometry::FromImage2D::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::Geometry::FromImage2D
@@ -95,8 +100,6 @@ L<Photonic::Roles::Geometry>
 
 =cut
 
-package Photonic::Geometry::FromImage2D;
-$Photonic::Geometry::FromImage2D::VERSION = '0.011';
 use namespace::autoclean;
 use Moose;
 use MooseX::StrictConstructor;

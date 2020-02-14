@@ -1,3 +1,8 @@
+package Photonic::WE::S::Wave;
+$Photonic::WE::S::Wave::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::S::Wave
@@ -88,8 +93,6 @@ The macroscopic wave operator of the last operation
 
 =cut
 
-package Photonic::WE::S::Wave;
-$Photonic::WE::S::Wave::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

@@ -1,3 +1,8 @@
+package Photonic::LE::NR2::SHP;
+$Photonic::LE::NR2::SHP::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::LE::NR2::SHP
@@ -98,8 +103,6 @@ Number of dimensions of the system
 
 =cut
 
-package Photonic::LE::NR2::SHP;
-$Photonic::LE::NR2::SHP::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

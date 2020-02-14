@@ -1,3 +1,8 @@
+package Photonic::LE::NP::OneH;
+$Photonic::LE::NP::OneH::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::LE::NP::OneH
@@ -151,8 +156,6 @@ Returns the fisrt state.
 
 =cut
 
-package Photonic::LE::NP::OneH;
-$Photonic::LE::NP::OneH::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

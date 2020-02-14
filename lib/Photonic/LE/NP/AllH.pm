@@ -1,3 +1,8 @@
+package Photonic::LE::NP::AllH;
+$Photonic::LE::NP::AllH::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::LE::NP::AllH
@@ -122,8 +127,6 @@ Array of Haydock b coefficients squared
 
 =cut
 
-package Photonic::LE::NP::AllH;
-$Photonic::LE::NP::AllH::VERSION = '0.011';
 use namespace::autoclean;
 use Machine::Epsilon;
 use PDL::Lite;

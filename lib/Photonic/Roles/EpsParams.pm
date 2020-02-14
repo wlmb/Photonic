@@ -1,3 +1,8 @@
+package Photonic::Roles::EpsParams;
+$Photonic::Roles::EpsParams::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::Roles::EpsParams
@@ -81,8 +86,6 @@ Spectral variable
 
 
 
-package Photonic::Roles::EpsParams;
-$Photonic::Roles::EpsParams::VERSION = '0.011';
 use Moose::Role;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1,

@@ -1,3 +1,8 @@
+package Photonic::Roles::OneH;
+$Photonic::Roles::OneH::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::Roles::OneH
@@ -128,8 +133,6 @@ next_b2, next_state, shifting the current values where necessary. Returns
 
 =cut
 
-package Photonic::Roles::OneH;
-$Photonic::Roles::OneH::VERSION = '0.011';
 use Moose::Role;
 
 use PDL::Lite;

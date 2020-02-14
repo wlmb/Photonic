@@ -1,3 +1,8 @@
+package Photonic::Roles::EpsL;
+$Photonic::Roles::EpsL::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::Roles::EpsL
@@ -130,8 +135,6 @@ check.
 
 =cut
 
-package Photonic::Roles::EpsL;
-$Photonic::Roles::EpsL::VERSION = '0.011';
 use Moose::Role;
 use PDL::Lite;
 use PDL::NiceSlice;

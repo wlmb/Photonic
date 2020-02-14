@@ -1,3 +1,8 @@
+package Photonic::WE::S::EpsilonTensor;
+$Photonic::WE::S::EpsilonTensor::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::S::EpsilonTensor
@@ -62,7 +67,7 @@ $m Photonic::WE::S::Metric describing the structure and some parametres.
 $nh is the maximum number of Haydock coefficients to use.
 
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
-Haydock coefficients and for the continued fraction. 
+Haydock coefficients and for the continued fraction.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
@@ -89,8 +94,6 @@ The macroscopic dielectric tensor of the last operation
 
 =cut
 
-package Photonic::WE::S::EpsilonTensor;
-$Photonic::WE::S::EpsilonTensor::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

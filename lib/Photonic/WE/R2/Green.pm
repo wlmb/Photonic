@@ -1,3 +1,8 @@
+package Photonic::WE::R2::Green;
+$Photonic::WE::R2::Green::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::R2::Green
@@ -129,8 +134,6 @@ fraction. 0 means don't check.
 
 =cut
 
-package Photonic::WE::R2::Green;
-$Photonic::WE::R2::Green::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -167,7 +170,7 @@ around 'evaluate' => sub {
     my $epsB=shift;
     my $sym=$self->$orig($epsB);
     #That's all unless you want the anstisymmetric part
-    return $sym if $self->symmetric; 
+    return $sym if $self->symmetric;
     my @greenPc; #array of Green's projections along complex directions.
     my $converged=$self->converged;
     foreach(@{$self->cGreenP}){

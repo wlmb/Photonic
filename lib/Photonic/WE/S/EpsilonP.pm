@@ -1,3 +1,8 @@
+package Photonic::WE::S::EpsilonP;
+$Photonic::WE::S::EpsilonP::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::S::EpsilonP
@@ -63,7 +68,7 @@ $h Photonic::WE::S::AllH describing the structure and some parametres.
 $nh is the maximum number of Haydock coefficients to use.
 
 $smallE is the criterium of convergence (default 1e-7) for
-Haydock coefficients and for the continued fraction. 
+Haydock coefficients and for the continued fraction.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
@@ -92,8 +97,6 @@ The macroscopic dielectric projection of the last operation
 
 =cut
 
-package Photonic::WE::S::EpsilonP;
-$Photonic::WE::S::EpsilonP::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

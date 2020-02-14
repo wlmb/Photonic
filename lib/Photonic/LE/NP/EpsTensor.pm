@@ -1,3 +1,8 @@
+package Photonic::LE::NP::EpsTensor;
+$Photonic::LE::NP::EpsTensor::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::LE::NP::EpsTensor
@@ -115,8 +120,6 @@ don't check.
 
 =cut
 
-package Photonic::LE::NP::EpsTensor;
-$Photonic::LE::NP::EpsTensor::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

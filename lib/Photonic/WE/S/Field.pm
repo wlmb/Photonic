@@ -1,3 +1,8 @@
+package Photonic::WE::S::Field;
+$Photonic::WE::S::Field::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::S::Field
@@ -86,7 +91,7 @@ Maximum number of Haydock coefficients to use.
 
 =item * smallE
 
-Criteria of convergence. 0 means don't check. 
+Criteria of convergence. 0 means don't check.
 
 =item * epsA
 
@@ -127,8 +132,6 @@ evaluation of the field
 
 =cut
 
-package Photonic::WE::S::Field;
-$Photonic::WE::S::Field::VERSION = '0.011';
 
 
 use namespace::autoclean;

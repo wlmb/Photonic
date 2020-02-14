@@ -1,3 +1,8 @@
+package Photonic::WE::R2::EpsilonTensor;
+$Photonic::WE::R2::EpsilonTensor::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::R2::EpsilonTensor
@@ -89,8 +94,6 @@ The macroscopic dielectric tensor of the last operation
 
 =cut
 
-package Photonic::WE::R2::EpsilonTensor;
-$Photonic::WE::R2::EpsilonTensor::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

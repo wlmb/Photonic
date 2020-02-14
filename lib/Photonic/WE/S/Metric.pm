@@ -1,3 +1,8 @@
+package Photonic::WE::S::Metric;
+$Photonic::WE::S::Metric::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::S::Metric
@@ -75,8 +80,7 @@ dimensions, the next d indices n1,n2...nd identify the wavevector G.
 
 =cut
 
-package Photonic::WE::S::Metric;
-$Photonic::WE::S::Metric::VERSION = '0.011';
+
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::MatrixOps;

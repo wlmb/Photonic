@@ -1,3 +1,8 @@
+package Photonic::Roles::KeepStates;
+$Photonic::Roles::KeepStates::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::Roles::KeepStates
@@ -58,8 +63,6 @@ keep states (0).
 
 =cut
 
-package Photonic::Roles::KeepStates;
-$Photonic::Roles::KeepStates::VERSION = '0.011';
 use Moose::Role;
 
 

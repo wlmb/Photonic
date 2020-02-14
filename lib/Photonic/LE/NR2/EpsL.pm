@@ -1,3 +1,8 @@
+package Photonic::LE::NR2::EpsL;
+$Photonic::LE::NR2::EpsL::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::LE::NR2::EpsL
@@ -118,8 +123,6 @@ check.
 
 =cut
 
-package Photonic::LE::NR2::EpsL;
-$Photonic::LE::NR2::EpsL::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

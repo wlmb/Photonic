@@ -1,6 +1,8 @@
 package Photonic::Geometry::FromEpsilon;
 $Photonic::Geometry::FromEpsilon::VERSION = '0.011';
 
+=encoding UTF-8
+
 =head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and

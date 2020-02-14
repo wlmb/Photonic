@@ -1,6 +1,7 @@
 package Photonic::Types;
 $Photonic::Types::VERSION = '0.011';
 
+=encoding UTF-8
 
 =head1 COPYRIGHT NOTICE
 

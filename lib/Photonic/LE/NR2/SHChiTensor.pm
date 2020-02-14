@@ -1,3 +1,8 @@
+package Photonic::LE::NR2::SHChiTensor;
+$Photonic::LE::NR2::SHChiTensor::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::LE::NR2::SHChiTensor
@@ -150,8 +155,6 @@ Spectral variables
 
 =cut
 
-package Photonic::LE::NR2::SHChiTensor;
-$Photonic::LE::NR2::SHChiTensor::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

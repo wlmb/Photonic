@@ -1,3 +1,8 @@
+package Photonic::WE::R2::GreenS;
+$Photonic::WE::R2::GreenS::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::R2::GreenS
@@ -71,7 +76,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 Returns the macroscopic Green's operator for a given value of the
 dielectric functions of the particle $epsB. The host's
 response $epsA is taken from the metric. It is assumed the tensor is
-symmetric.  
+symmetric.
 
 =back
 
@@ -128,8 +133,6 @@ fraction. 0 means don't check.
 
 =cut
 
-package Photonic::WE::R2::GreenS;
-$Photonic::WE::R2::GreenS::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

@@ -1,3 +1,9 @@
+package Photonic::LE::NR2::Field;
+$Photonic::LE::NR2::Field::VERSION = '0.011';
+
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::LE::NR2::Field
@@ -128,8 +134,6 @@ evaluation of the field
 
 =cut
 
-package Photonic::LE::NR2::Field;
-$Photonic::LE::NR2::Field::VERSION = '0.011';
 
 use namespace::autoclean;
 use PDL::Lite;

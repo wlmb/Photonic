@@ -1,3 +1,8 @@
+package Photonic::WE::R2::GreenP;
+$Photonic::WE::R2::GreenP::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::R2::GreenP
@@ -117,8 +122,6 @@ Criteria of convergence. 0 means don't check.
 
 =cut
 
-package Photonic::WE::R2::GreenP;
-$Photonic::WE::R2::GreenP::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;

@@ -1,3 +1,8 @@
+package Photonic::LE::NR2::OneH;
+$Photonic::LE::NR2::OneH::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::LE::NR2::OneH;

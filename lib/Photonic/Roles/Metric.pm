@@ -1,3 +1,8 @@
+package Photonic::Roles::Metric;
+$Photonic::Roles::Metric::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::Roles::Metric
@@ -91,8 +96,6 @@ The actual metric tensor as a complex PDL. Provided by implementation.
 
 =cut
 
-package Photonic::Roles::Metric;
-$Photonic::Roles::Metric::VERSION = '0.011';
 use namespace::autoclean;
 use PDL::Lite;
 use Moose::Role;

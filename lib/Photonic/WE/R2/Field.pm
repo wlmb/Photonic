@@ -1,3 +1,8 @@
+package Photonic::WE::R2::Field;
+$Photonic::WE::R2::Field::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::R2::Field
@@ -122,8 +127,6 @@ real space field in format RorI, cartesian, nx, ny,...
 
 =cut
 
-package Photonic::WE::R2::Field;
-$Photonic::WE::R2::Field::VERSION = '0.011';
 
 use namespace::autoclean;
 use PDL::Lite;

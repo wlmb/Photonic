@@ -1,3 +1,8 @@
+package Photonic::Roles::AllH;
+$Photonic::Roles::AllH::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::Roles::AllH
@@ -125,8 +130,6 @@ Array of Haydock b coefficients squared
 
 =cut
 
-package Photonic::Roles::AllH;
-$Photonic::Roles::AllH::VERSION = '0.011';
 use Fcntl;
 use Machine::Epsilon;
 use Photonic::Iterator qw(:all);

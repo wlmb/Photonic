@@ -1,3 +1,8 @@
+package Photonic::WE::S::AllH;
+$Photonic::WE::S::AllH::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::S::AllH
@@ -111,8 +116,6 @@ Array of Haydock b coefficients squared
 
 =cut
 
-package Photonic::WE::S::AllH;
-$Photonic::WE::S::AllH::VERSION = '0.011';
 use namespace::autoclean;
 use Moose;
 use MooseX::StrictConstructor;

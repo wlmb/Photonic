@@ -1,3 +1,8 @@
+package Photonic::WE::S::OneH;
+$Photonic::WE::S::OneH::VERSION = '0.011';
+
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::S::OneH
@@ -133,9 +138,6 @@ Returns the fisrt state $v.
 =cut
 
 
-
-package Photonic::WE::S::OneH;
-$Photonic::WE::S::OneH::VERSION = '0.011';
 
 =head1 COPYRIGHT NOTICE
 

@@ -1,6 +1,8 @@
 package Photonic::CharacteristicFunctions;
 $Photonic::CharacteristicFunctions::VERSION = '0.011';
 
+=encoding UTF-8
+
 =head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
@@ -143,4 +145,3 @@ in polar coordinates
 =back
 
 =cut
-
