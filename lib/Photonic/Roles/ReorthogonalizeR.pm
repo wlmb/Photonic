@@ -3,6 +3,14 @@ $Photonic::Roles::ReorthogonalizeR::VERSION = '0.011';
 
 =encoding UTF-8
 
+=head1 NAME
+
+Photonic::Roles::ReorthogonalizeC
+
+=head1 VERSION
+
+version 0.011
+
 =head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
@@ -30,6 +38,77 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     Apartado Postal 48-3
     62251 Cuernavaca, Morelos
     México
+
+=head1 SYNOPSIS
+
+    package 'Mypackage';
+    with 'Photonic::Roles::ReorthogonalizeR';
+    .
+    .
+    .
+    $self->_checkorthogonalize;
+
+=head1 DESCRIPTION
+
+Roles consumed by AllH objects to be used in a Photonic
+calculation. Estimates orthogonlization errors and makes a full
+reorthogoalization of Haydock states when required. This version works
+for Hermitian operators with real Hayock coefficients.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item * previous_W, current_W, next_W
+
+Vector of overlap estimates.
+
+=item * accuracy
+
+Desired accuracy. Default: machine precision.
+
+=item * noise
+
+Estimate of numerical noise added by each iteration. Default: machine
+precision.
+
+=item * normOp
+
+Estimate of the norm of the operator. Default: 1.
+
+=item * fullorthogonalize_N
+
+Required number of reorthogonalizations.
+
+=item * orthogonalizations
+
+Actual number of orthogonalizations performed.
+
+=back
+
+=head1 INTERNAL ATTRIBUTES
+
+=over 4
+
+=item * _justorthogonalized
+
+Flags a recent orthogonalization.
+
+=back
+
+=head1 INTERNAL METHODS
+
+=over 4
+
+=item * _build_next_W
+
+=item * _fullorthogonalize_indeed
+
+=item * _checkorthogonalize
+
+=item * _sign
+
+=back
 
 =cut
 

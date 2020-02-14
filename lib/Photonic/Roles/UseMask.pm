@@ -3,6 +3,14 @@ $Photonic::Roles::UseMask::VERSION = '0.011';
 
 =encoding UTF-8
 
+=head1 NAME
+
+Photonic::Roles::UseMask
+
+=head1 VERSION
+
+version 0.011
+
 =head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
@@ -30,6 +38,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     Apartado Postal 48-3
     62251 Cuernavaca, Morelos
     México
+
+=head1 SYNOPSIS
+
+    package 'Mypackage';
+    with 'Photonic::Roles::UseMask';
+    .
+    .
+    .
+    my $mask=$self->mask if $self->use_mask;
+
+=head1 DESCRIPTION
+
+Factors out use of masks in reciprocal space.
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item * use_mask
+
+Flag to use a mask.
+
+=item * mask
+
+The actual mask. Default: A mask that filters out the largest
+reciprocal vector for each even dimension of reciprocal space.
+
+=back
 
 =cut
 
