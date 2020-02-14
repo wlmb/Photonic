@@ -139,7 +139,7 @@ spinor space.
 Returns the magnitude of a state by taking the square root of the
 inner product of the state with itself.
 
-=item * $c=changesign
+=item * changesign
 
 Returns 0, as there is no need to change sign.
 

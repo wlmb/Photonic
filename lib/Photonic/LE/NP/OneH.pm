@@ -137,7 +137,7 @@ Returns the inner (Euclidean) product between states $left and $right.
 Returns the magnitude of state $psi_G in reciprocal space by taking the square root of
 the inner product of the state with itself.
 
-=item * $c=changesign
+=item * changesign
 
 Returns zero, as there is no need to change sign.
 

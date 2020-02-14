@@ -1,6 +1,8 @@
 package Photonic::WE::R2::AllH;
 $Photonic::WE::R2::AllH::VERSION = '0.011';
 
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::WE::R2::AllH

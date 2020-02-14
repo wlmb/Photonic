@@ -228,7 +228,7 @@ Performs a single Haydock iteration and updates current_a, next_b,
 next_b2, next_c, next_g, next_state, shifting the current values where
 necessary. Returns 0 when unable to continue iterating.
 
-=item * applymetric($psi)
+=item * applyMetric($psi)
 
 Returns the result of applying the metric 'g' to the state; $psi.
 
@@ -247,13 +247,13 @@ Returns the inner Hermitian product between states using the metric.
 Returns the magnitude of a state as the square root of
 the inner product of the state with itself.
 
-=item * $c=changesign
+=item * changesign
 
 Returns 1 if sign change is required to ensure b^2 is positive.
 
 =back
 
-=INTERNAL METHODS
+=head1 INTERNAL METHODS
 
 =over 4
 

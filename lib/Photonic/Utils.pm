@@ -353,6 +353,11 @@ Complex linear combination of states. $c is an arrayref of 'complex' pdl
 scalars and $s is an arrayref of 'complex' states ('complex'
 multidimensional pdl).
 
+=item * $r=linearCombineIt($c, $it)
+
+Complex linear combination of states from iterator. $c is an arrayref
+of 'complex' pdl scalars and $it is an iterator for the corresponding states.
+
 =item * $p=HProd($a, $b, $skip)
 
 Hermitean product <a|b> of two 2x.... 'complex' multidimensional

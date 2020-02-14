@@ -58,6 +58,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     with 'Photonic::Roles::EpsL';
     has...
 
+=back
 
 =head1 DESCRIPTION
 

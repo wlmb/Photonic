@@ -85,6 +85,14 @@ states. All other arguments are as in Photonic::...::OneH.
 
 Runs the iteration to completion.
 
+=item * loadall
+
+Load previously saved state from file, if provided.
+
+=item * storeall
+
+Store final state to file, if provided.
+
 =item * All the Photonic::...::OneH methods
 
 =back
@@ -101,6 +109,11 @@ number of b coefficients is one less (but it starts with a dummy zero).
 =item * keepStates
 
 Flag to keep (1) or discard (0) Haydock states
+
+=item * state_iterator
+
+Iterator to provide the previously calculated and saved states. It may
+take the states from memory or from a file if provided.
 
 =item * states
 

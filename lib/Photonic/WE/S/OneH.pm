@@ -100,7 +100,7 @@ Performs a single Haydock iteration and updates current_a, next_b,
 next_b2, next_c, next_g, next_state, shifting the current values where
 necessary. Returns 0 when unable to continue iterating.
 
-=item * applymetric($psi)
+=item * applyMetric($psi)
 
 Returns the result of applying the metric to the state $psi.
 

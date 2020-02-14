@@ -2,6 +2,8 @@ pp_setversion('0.011');
 
 pp_addpm({At=>Top},<<'EOD');
 
+=encoding UTF-8
+
 =head1 NAME
 
 Photonic::ExtraUtils - Glue for utility Fortran routines
@@ -195,4 +197,3 @@ pp_def('cgtsl',
 # );
 
 pp_done();
-

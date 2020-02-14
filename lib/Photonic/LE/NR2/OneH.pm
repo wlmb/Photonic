@@ -131,7 +131,7 @@ Returns the inner (Hermitian) product between states.
 Returns the magnitude of a state as the square root of the inner
 =product of the state with itself.
 
-=item * $c=changesign
+=item * changesign
 
 Return 0, as there is no need to change sign.
 
