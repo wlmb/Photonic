@@ -49,10 +49,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Calculates the macroscopic dielectric function for a given fixed
-Photonic::WE::R2::AllH structure as a function of the dielectric
-functions of the components. Based on the wave equation for a binary
-metamaterial, with a non-dissipative host.
+Calculates the macroscopic Green's function projected along some direction.
+Based on the wave equation for a binary metamaterial, with a non-dissipative host.
 
 =head1 METHODS
 
@@ -199,23 +197,6 @@ sub evaluate {
     $self->_Gpp($u*$g0b02/($epsA*$fn));
     return $self->Gpp;
 }
-
-#sub storeAllH {
-#    my $self=shift;
-#    my $nh=$self->nh;
-#    my $polr=$self->haydock->polarization->re;
-#    my $poli=$self->haydock->polarization->im;
-#    my $filename="nh_$nh-pol_$polr.i$poli";
-#    my @states=@{$self->haydock->states};
-#    open(OUT, ">", $filename) or die "Couldn't open $filename for writing. $!";
-#    print OUT "@states";
-#}
-
-#sub forgetstates {
-#        my $self=shift;
-#        undef @{$self->haydock->states} if  $self->haydock->reorthogonalize;
-#}
-
 
 __PACKAGE__->meta->make_immutable;
 
