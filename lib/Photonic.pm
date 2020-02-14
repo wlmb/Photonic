@@ -66,140 +66,334 @@ coefficients.
 =head1 DESCRIPTION
 
 Set of packages for the calculation of optical properties of
-metamaterials. The included packages are:
+metamaterials. The included modules are:
+
+=over 4
+
+=item L<Photonic>
+
+This file. This package.
 
 =over 4
 
 =item L<Photonic::CharacteristicFunctions>
 
-Some examples of characteriztic functions.
+Couple of examples of characteristic functions, helpful for fast
+tests.
 
 =item L<Photonic::ExtraUtils>
 
-Some useful fortran routines from linpack.
+Call some fortran utility routines from perl.
 
 =item L<Photonic::Geometry>
 
-Object to hold the geometry of the metamaterial.
+Group of modules for geometrical characterization.
+
+=over 4
+
+=item L<Photonic::Geometry::FromB>
+
+Geometrical attributes of binary metamaterials, obtained from a
+characteristic function.
+
+=item L<Photonic::Geometry::FromEpsilon>
+
+Geometrical attributes, obtained from the microscopic dielectric function.
 
 =item L<Photonic::Geometry::FromImage2D>
 
-Obtain the geometry from a black and white 2D image.
+Geometrical attributes, obtained from a 2D image.
 
-=item L<Photonic::Types>
+=back
 
-Definition of some types.
+=item L<Photonic::Iterator>
 
-=item L<Photonic::Utils>
+Facilitate the creation of iterators. Useful to iterate over large
+amounts of data, such as states, without keeping them in memory.
 
-Some useful functions.
+=item L<Photonic::LE>
 
-=item L<Photonic::NonRetarded::OneH>
+Group of modules for non retarded calculations based on the
+longitudinal dielectric function.
 
-Object to calculate one Haydock coefficient.
+=over 4
 
-=item L<Photonic::Nonretarded::AllH>
+=item L<Photonic::LE::NP>
 
-Object to calculate all Haydock coeffficients.
+Group of modules for non retarded calculations based on the
+longitudinal dielectric function for metamaterials made of an
+arbitrary number of phases NP. Constrained to a macroscopic external
+field of one Fourier component.
 
-=item L<Photonic::NonRetarded::EpsL>
+=over 4
 
-Object to calculate the longitudinal dielectric response in the non
-retarded regime.
+=item L<Photonic::LE::NP::AllH>
 
-=item L<Photonic::NonRetarded::EpsTensor>
+Obtain all the Haydock coefficients.
 
-Object to calculate all components of the dielectric tensor in the non
-retarded regime.
+=item L<Photonic::LE::NP::EpsL>
 
-=item L<Photonic::NonRetarded::Field>
+Calculate the longitudinal dielectric response.
 
-Object to calculate the microscopic electromagnetic fields in the non
-retarded regime.
+=item L<Photonic::LE::NP::EpsTensor>
 
-=item L<Photonic::NonRetarded::SHP>
+Calculate the dielectric tensor.
 
-Object to prepare the data for the calculation of the SH polarization
-in the non retarded regime using the dipolium model.
+=item L<Photonic::LE::NP::OneH>
 
-=item L<Photonic::NonRetarded::SH>
+Calculator for one Haydock coefficient.
 
-Object to calculate the second harmonic polarization in the
-nonretarded regime.
+=back
 
-=item L<Photonic::NonRetarded::SHChiTensor>
+=item L<Photonic::LE::NR2>
 
-Object to calculate the second harmonic susceptibility tensor in the
-non retarded regime using the dipolium model.
+Group of modules for non retarded calculations based on the
+longitudinal dielectric function of binary metamaterials, based on the
+characteristic function.
 
-=item L<Photonic::Retarded::OneH>
+=over 4
 
-Object to calculate one Haydock coefficient with retardation.
+=item L<Photonic::LE::NR2::AllH>
 
-=item L<Photonic::Retarded::AllH>
+Obtain all the Haydock coefficients.
 
-Object to calculate all Haydock coeffficients with retardation.
+=item L<Photonic::LE::NR2::EpsL>
 
-=item L<Photonic::Retarded::EpsilonP>
+Calculate the longitudinal dielectric response.
 
-Object to calculate the retarded macroscopic dielectric response along
-a principal direction.
+=item L<Photonic::LE::NR2::EpsTensor>
 
-=item L<Photonic::Retarded::EpsilonTensorF>
+Calculate the dielectric tensor.
 
-Object to calculate the retarded macroscopic dielectric tensor
-including girotropy.
+=item L<Photonic::LE::NR2::Field>
 
-=item L<Photonic::Retarded::EpsilonTensor>
+Calculate the microscopic field.
 
-Object to calculate the retarded macroscopic dielectric tensor without
-girotropy.
+=item L<Photonic::LE::NR2::OneH>
 
-=item L<Photonic::Retarded::Field>
+Calculator for one Haydock coefficient.
 
-Object to calculate the microscopic retarded electric field.
+=item L<Photonic::LE::NR2::SH>
 
-=item L<Photonic::Retarded::GreenF>
+Calculate the SH polarization.
 
-Object to calculate the macroscopic inverse of the (retarded) wave operator
-including girotropy.
+=item L<Photonic::LE::NR2::SHChiTensor>
 
-=item L<Photonic::Retarded::Green>
+Calculate the second harmonic quadratic susceptibility.
 
-Object to calculate the macroscopic inverse of the (retarded) wave operator
-including girotropy.
+=item L<Photonic::LE::NR2::SHP>
 
-=item L<Photonic::Retarded::GreenP>
+Prepares data for the calculation of the nonretarded second harmonic
+polarization.
 
-Object to calculate the macroscopic inverse of the (retarded) wave operator
-along a principal direction.
+=back
 
-=item L<Photonic::Retarded::Metric>
+=item L<Photonic::LE::S>
 
-Object to provide a Metric tensor for Haydock's retarded calculations.
+Group of modules for non retarded calculations based on the
+longitudinal dielectric function for metamaterials made of an
+arbitrary number of phases, using the spinor representation.
 
-=item L<Photonic::Retarded::WaveF>
+=over 4
 
-Objecto to calculate the macroscopic retarded wave operator including
-girotropy.
+=item L<Photonic::LE::S::AllH>
 
-=item L<Photonic::Retarded::Wave>
+Obtain all the Haydock coefficients.
 
-Objecto to calculate the macroscopic retarded wave operator without
-girotropy.
+=item L<Photonic::LE::S::EpsL>
 
-=item L<Photonic::Retarded::WaveP>
+Calculate the longitudinal dielectric response.
 
-Objecto to calculate the macroscopic retarded wave operator along a
-principal direction.
+=item L<Photonic::LE::S::EpsTensor>
+
+Calculate the dielectric tensor.
+
+=item L<Photonic::LE::S::Field>
+
+Calculate the microscopic field.
+
+=item L<Photonic::LE::S::OneH>
+
+Calculator for one Haydock coefficient.
+
+=back
+
+=back
+
+=item L<Photonic::Roles>
+
+Group of roles to factor out related behavior.
+
+=over 4
+
+=item L<Photonic::Roles::AllH>
+
+Obtain all the Haydock coefficients.
+
+=item L<Photonic::Roles::EpsL>
+
+Calculate the longitudinal dielectric response.
 
 =item L<Photonic::Roles::EpsParams>
 
-Fields that are factored as they are common in different packages.
+Some fields that have been factored our from the calculations of the response.
+
+=item L<Photonic::Roles::Geometry>
+
+Roles consumed by all Geometry objects.
 
 =item L<Photonic::Roles::KeepStates>
 
-Flag that is factored as it is common in different packages.
+Flag to keepstates.
+
+=item L<Photonic::Roles::Metric>
+
+Roles factored out of the metric calculators.
+
+=item L<Photonic::Roles::OneH>
+
+Roles factored out of the calculatoin of one Haydock coefficient.
+
+=item L<Photonic::Roles::ReorthogonalizeC>
+
+Roles to keep Haydock states orthogonalized. Version for non-Hermitian
+operators and complex Haydock coefficients.
+
+=item L<Photonic::Roles::ReorthogonalizeR>
+
+Roles to keep Haydock states orthogonalized. Version for non-Hermitian
+operators and complex Haydock coefficients.
+
+=item L<Photonic::Roles::UseMask>
+
+Roles to manage masks in reciprocal space.
+
+=back
+
+=item L<Photonic::Types>
+
+Defines types that are useful in constraining values for Photonic
+calculations.
+
+=item L<Photonic::Utils>
+
+Useful assortment of utility functions.
+
+=item L<Photonic::WE>
+
+Group of modules for Photonic calculations starting from the wave
+equation.
+
+=over 4
+
+=item L<Photonic::WE::R2>
+
+Group of modules for binary metamaterials characterized by a
+characteriztic function.
+
+=over 4
+
+=item L<Photonic::WE::R2::AllH>
+
+Obtain all the Haydock coefficients.
+
+=item L<Photonic::WE::R2::EpsilonP>
+
+Calculate the dielectric function projected along some direction.
+
+=item L<Photonic::WE::R2::EpsilonTensor>
+
+Calculate the dielectric tensor.
+
+=item L<Photonic::WE::R2::Field>
+
+Calculate the microscopic field.
+
+=item L<Photonic::WE::R2::Green>
+
+Calculate the macroscopic Green tensor.
+
+=item L<Photonic::WE::R2::GreenP>
+
+Calculate the macroscopic Green tensor projected onto some direction.
+
+=item L<Photonic::WE::R2::GreenS>
+
+Calculates the macroscopic Green tensor assuming it is symmetric.
+
+=item L<Photonic::WE::R2::Metric>
+
+Retarded metric tensor of binary metamaterial with a non-dissipative
+host.
+
+=item L<Photonic::WE::R2::OneH>
+
+Calculate one Haydock coefficient.
+
+=item L<Photonic::WE::R2::Wave>
+
+Macroscopic wave tensor.
+
+=item L<Photonic::WE::R2::WaveP>
+
+Macroscopic wave operator projected into some direction.
+
+=back
+
+=item L<Photonic::WE::S>
+
+Group of modules for calculations within metamaterials with an
+arbitrary number of phases characterized by a complex microscopic
+dielectric function, using the spinor representation.
+
+=over 4
+
+=item L<Photonic::WE::S::AllH>
+
+Obtain all the Haydock coefficients.
+
+=item L<Photonic::WE::S::EpsilonP>
+
+Calculate the dielectric function projected along some direction.
+
+=item L<Photonic::WE::S::EpsilonTensor>
+
+Calculate the dielectric tensor.
+
+=item L<Photonic::WE::S::Field>
+
+Calculate the microscopic field.
+
+=item L<Photonic::WE::S::Green>
+
+Calculate the macroscopic Green tensor.
+
+=item L<Photonic::WE::S::GreenP>
+
+Calculate the macroscopic Green tensor projected onto some direction.
+
+=item L<Photonic::WE::S::Metric>
+
+Retarded metric tensor of binary metamaterial with a non-dissipative
+host.
+
+=item L<Photonic::WE::S::OneH>
+
+Calculate one Haydock coefficient.
+
+=item L<Photonic::WE::S::Wave>
+
+Macroscopic wave tensor.
+
+=item L<Photonic::WE::S::WaveP>
+
+Macroscopic wave operator projected into some direction.
+
+=back
+
+=back
+
+=back
 
 =back
 
@@ -225,41 +419,23 @@ México, C<lucilajr@icf.unam.mx>
 =item * José Samuel Pérez-Huerta, Unidad Académica de Física,
 Universidad Autónoma de Zacatecas, México  C<jsperez@fisica.uaz.edu.mx>
 
-=back
+=item * Merlyn Jaqueline Juárez-Gutiérrez, Instituto de Ciencias
+Físicas, Universidad Nacional Autónoma de México and Centro de
+Investigación en Ciencias, Universidad Autónoma del Estado de
+Morelos, México C<merlynj@icf.unam.mx>
 
-=head1 WARNINGS
-
-Since version 0.011 don't use the following modules. There are more specific implementations:
-
-=over 4
-
-=item Photonic::Geometry
-
-=item Photonic::OneH
-
-=item Photonic::LE
-
-=item Photonic::WE
-
-=item Photonic::AllH
-
-=item Photonic::LE::S
-
-=item Photonic::LE::NP
-
-=item Photonic::LE::NR2
 
 =back
 
 
 =head1 ACKNOWLEDGMENTS
 
-This work was partially supported by DGAPA-UNAM under grants IN108413
-and IN113016.
+This work was partially supported by DGAPA-UNAM under grants IN108413,
+IN113016, and IN111119.
 
 =head1 LICENSE
 
-This software is copyright (c) 2016 by W. Luis Mochan.
+This software is copyright (c) 2016 by W. Luis Mochán.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
