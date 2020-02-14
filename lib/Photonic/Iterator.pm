@@ -76,8 +76,8 @@ lexical variables) to know which is the next item. The example above
 creates an iterator for walking over the elements of an array
 reference. The method or function nextval produces the next element if
 available or undef when there is no more data. Used in Photonic to
-=iterate over Haydock states without caring whether they are stored in
-=an array or in an external file.
+iterate over Haydock states without caring whether they are stored in
+an array or in an external file.
 
 =head1 EXPORTABLE FUNCTIONS
 
