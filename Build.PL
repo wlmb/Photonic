@@ -48,7 +48,9 @@ my $builder = Module::Build::Pluggable->new(
 	'W. Luis Mochan <mochan@fis.unam.mx>',
 	'Guillermo Ortiz <gortiz@exa.unne.edu.ar>',
 	'Bernardo S. Mendoza <bms@cio.mx>',
-	'Jose Samuel Perez-Huerta <jsperez@fisica.uaz.edu.mx>'
+	'Jose Samuel Perez-Huerta <jsperez@fisica.uaz.edu.mx>',
+	'Lucila Juarez Reyes <lucilajuarezreyes@gmail.com>',
+	'Merlyn Jaqueline Juarez-Gutierrez <merlynj@icf.unam.mx>'
 	],
     dist_version_from => 'lib/Photonic.pm',
     license    => 'perl',
