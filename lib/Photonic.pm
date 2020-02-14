@@ -227,6 +227,30 @@ Universidad Autónoma de Zacatecas, México  C<jsperez@fisica.uaz.edu.mx>
 
 =back
 
+=head1 WARNINGS
+
+Since version 0.011 don't use the following modules. There are more specific implementations:
+
+=over 4
+
+=item Photonic::Geometry
+
+=item Photonic::OneH
+
+=item Photonic::LE
+
+=item Photonic::WE
+
+=item Photonic::AllH
+
+=item Photonic::LE::S
+
+=item Photonic::LE::NP
+
+=item Photonic::LE::NR2
+
+=back
+
 
 =head1 ACKNOWLEDGMENTS
 
