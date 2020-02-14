@@ -52,7 +52,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Calculates the retarded metric tensor g_{GG'}^{ij} for use in the
-calculation of the retarded Haydock coefficients for the wave equation in a binary medium where the host has no dissipation.
+calculation of the retarded Haydock coefficients for the wave equation
+in a binary medium where the host has no dissipation.
 
 =head1 METHODS
 

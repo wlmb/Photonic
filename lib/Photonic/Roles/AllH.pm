@@ -39,8 +39,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     62251 Cuernavaca, Morelos
     México
 
-=cut
-
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::AllH;
