@@ -1,6 +1,6 @@
 # Build.PL
 # Use to build the package Photonic
-our $VERSION = '0.011';
+our $VERSION = '0.012';
 
 =head1 COPYRIGHT NOTICE
 
