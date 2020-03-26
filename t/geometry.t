@@ -97,7 +97,7 @@ ok(agree($g->Vec2LC_G(zeroes(11,11)->ndcoords->r2C)->re,
 	 (zeroes(11,11)->ndcoords*$g->GNorm)->sumover),
    "Vec2LC");
 ok(agree($g->LC2Vec_G(ones(11,11)->r2C)->re, $g->GNorm), "LC2Vec_G");
-##
+
 SKIP: {
     skip "image converter not found", 5
 	unless rpiccan("PNG");
