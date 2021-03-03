@@ -14,6 +14,11 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         perl-version: ['5.14', '5.20']
+        include:
+          - perl-version: '5.30'
+            os: ubuntu-latest
+            release-test: true
+            coverage: true
     steps:
       - uses: actions/checkout@v2
       - uses: shogo82148/actions-setup-perl@v1
