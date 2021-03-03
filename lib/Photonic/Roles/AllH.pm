@@ -356,7 +356,9 @@ sub _pop_state {
     unless(defined $self->stateFN){
 	$self->_nextState(pop @{$self->_states});
 	$self->_currentState($self->_states->[-1]);
-	$self->_previousState($self->_states->[-2]//r2C(0));
+	my $s2 = $self->_states->[-2];
+	$s2 = r2C(0) if !defined $s2;
+	$self->_previousState($s2);
 	return;
     }
     pop @{$self->_statePos};

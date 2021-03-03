@@ -120,7 +120,7 @@ sub _build_epsilonTensor {
     my $k=$self->metric->wavevector;
     if($q->isa('PDL::Complex') || $k->isa('PDL::Complex')){
 	#Make both complex
-	map {$_=r2C($_) unless $_->isa('PDL::Complex')} $q, $k;
+	$_ = $_->isa('PDL::Complex') ? $_ : r2C($_) for $q, $k;
 	my $k2=($k*$k)->sumover; #inner
 	my $kk=$k->(:,:,*1)*$k->(:,*1,:); #outer
 	my $id=identity($k);

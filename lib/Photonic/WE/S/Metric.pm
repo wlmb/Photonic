@@ -110,7 +110,7 @@ sub _value {
     if($eps->isa('PDL::Complex') || $k->isa('PDL::Complex')
        || $q->isa('PDL::Complex')) { #complex metric
 	#Make all complex
-	map {$_=r2C($_) unless $_->isa('PDL::Complex')} $q, $k, $eps;
+	$_ = $_->isa('PDL::Complex') ? $_ : r2C($_) for $q, $k, $eps;
 	croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
 	    [$k->dims]->[1]==$self->ndims and $k->ndims==2;
 	my ($kPG, $kMG) = ($k+$G, $k-$G); #ri:xy:nx:ny
