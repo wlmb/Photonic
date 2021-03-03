@@ -90,9 +90,9 @@ my $builder = Module::Build::Pluggable->new(
     test_requires => {
 	'Machine::Epsilon'            => '0',
 	'Test::More'                  => '0',
-	    'Pod::Coverage::TrustPod' => '0',
-	    'Test::Pod'           => '0',
-	    'Test::Pod::Coverage'  => '1.08',
+#	    'Pod::Coverage::TrustPod' => '0',
+#	    'Test::Pod'           => '0',
+#	    'Test::Pod::Coverage'  => '1.08',
     },
     configure_requires => {
 	'File::Basename'                     => '0',
