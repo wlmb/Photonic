@@ -84,9 +84,11 @@ my $builder = Module::Build::Pluggable->new(
 	'PDL::Lite'                      => '0',
 	'PDL::MatrixOps'                 => '0',
 	'PDL::NiceSlice'                 => '0',
+	'PDL::FFTW3'                     => '0',
 	'Storable'                       => '0',
     },
     test_requires => {
+	'Machine::Epsilon'            => '0',
 	'Test::More'                  => '0',
 	    'Pod::Coverage::TrustPod' => '0',
 	    'Test::Pod'           => '0',
