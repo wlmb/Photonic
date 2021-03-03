@@ -16,7 +16,7 @@ version 0.014
 Photonic - A perl package for calculations on photonics and
 metamaterials.
 
-Copyright (C) 1916 by W. Luis Mochán
+Copyright (C) 2016 by W. Luis Mochán
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -356,7 +356,9 @@ sub _pop_state {
     unless(defined $self->stateFN){
 	$self->_nextState(pop @{$self->_states});
 	$self->_currentState($self->_states->[-1]);
-	$self->_previousState($self->_states->[-2]//r2C(0));
+	my $s2 = $self->_states->[-2];
+	$s2 = r2C(0) if !defined $s2;
+	$self->_previousState($s2);
 	return;
     }
     pop @{$self->_statePos};

@@ -16,7 +16,7 @@ version 0.014
 Photonic - A perl package for calculations on photonics and
 metamaterials.
 
-Copyright (C) 1916 by W. Luis Mochán
+Copyright (C) 2016 by W. Luis Mochán
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ sub _build_epsilonTensor {
     my $k=$self->metric->wavevector;
     if($q->isa('PDL::Complex') || $k->isa('PDL::Complex')){
 	#Make both complex
-	map {$_=r2C($_) unless $_->isa('PDL::Complex')} $q, $k;
+	$_ = $_->isa('PDL::Complex') ? $_ : r2C($_) for $q, $k;
 	my $k2=($k*$k)->sumover; #inner
 	my $kk=$k->(:,:,*1)*$k->(:,*1,:); #outer
 	my $id=identity($k);

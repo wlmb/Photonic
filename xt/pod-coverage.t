@@ -3,7 +3,7 @@
 Photonic - A perl package for calculations on photonics and
 metamaterials.
 
-Copyright (C) 1916 by W. Luis Mochán
+Copyright (C) 2016 by W. Luis Mochán
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,18 +28,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
+use 5.006;
 use strict;
 use warnings;
 use Test::More;
 
-## no critic
-eval q{use Test::Version 1.003001 qw( version_all_ok ), {
-        is_strict   => 1,
-        has_version => 1,
-        consistent  => 1,
-    };
-};
-plan skip_all => "Test::Version 1.003001 required for testing version numbers"
+unless ( $ENV{RELEASE_TESTING} ) {
+    plan( skip_all => "Author tests not required for installation" );
+}
+
+# Ensure a recent version of Test::Pod::Coverage
+my $min_tpc = 1.08;
+eval "use Test::Pod::Coverage $min_tpc";
+plan skip_all => "Test::Pod::Coverage $min_tpc required for testing POD coverage"
     if $@;
-version_all_ok();
-done_testing;
+
+# Test::Pod::Coverage doesn't require a minimum Pod::Coverage version,
+# but older versions don't recognize some common documentation styles
+my $min_pc = 0.18;
+eval "use Pod::Coverage $min_pc";
+plan skip_all => "Pod::Coverage $min_pc required for testing POD coverage"
+    if $@;
+#Untaint the $PATH, as Photonic::Geometry::FromImage2D in taint mode
+#since PDL::IO::Pic fails too.
+($ENV{PATH}) = ($ENV{PATH} =~ /^(.*)$/g);
+
+all_pod_coverage_ok();

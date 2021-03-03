@@ -7,7 +7,7 @@ our $VERSION = '0.014';
 Photonic - A perl package for calculations on photonics and
 metamaterials.
 
-Copyright (C) 1916 by W. Luis Mochán
+Copyright (C) 2016 by W. Luis Mochán
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ my $builder = Module::Build::Pluggable->new(
 	'Moose::Role'                    => '0',
 	'Moose::Util::TypeConstraints'   => '0',
 	'MooseX::StrictConstructor'      => '0',
-	'perl'                           => '5.10.0',
+	'perl'                           => '5.14.0',
 	'PDL'                            => '0',
 	'PDL::Complex'                   => '2.009',
 	'PDL::Constants'                 => '0',
@@ -84,13 +84,12 @@ my $builder = Module::Build::Pluggable->new(
 	'PDL::Lite'                      => '0',
 	'PDL::MatrixOps'                 => '0',
 	'PDL::NiceSlice'                 => '0',
+	'PDL::FFTW3'                     => '0',
 	'Storable'                       => '0',
     },
     test_requires => {
+	'Machine::Epsilon'            => '0',
 	'Test::More'                  => '0',
-	    'Pod::Coverage::TrustPod' => '0',
-	    'Test::Pod'           => '0',
-	    'Test::Pod::Coverage'  => '1.08',
     },
     configure_requires => {
 	'File::Basename'                     => '0',
@@ -107,9 +106,26 @@ my $builder = Module::Build::Pluggable->new(
     add_to_cleanup  => [ 'Photonic-*', '.xs' ],
     create_makefile_pl => 'small',
     meta_merge     => {
+        "meta-spec" => { version => 2 },
+        dynamic_config => 0,
         resources => {
-            repository  => 'https://github.com/wlmb/Photonic',
-        }
+            repository => {
+                type => 'git',
+                url => 'git@github.com:wlmb/Photonic.git',
+                web => 'https://github.com/wlmb/Photonic',
+            },
+        },
+        prereqs => {
+            develop => {
+                requires => {
+                    'Test::CheckManifest' => '0.9',
+                    'Pod::Coverage::TrustPod' => '0',
+                    'Test::Pod' => '1.22',
+                    'Test::Pod::Coverage' => '1.08',
+                    'Test::Version' => '1.003001',
+                },
+            },
+        },
     },
     );
 $builder->create_build_script();

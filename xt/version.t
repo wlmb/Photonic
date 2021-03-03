@@ -1,11 +1,9 @@
-#!perl
-
 =head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
 metamaterials.
 
-Copyright (C) 1916 by W. Luis Mochán
+Copyright (C) 2016 by W. Luis Mochán
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,28 +28,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
-
-BEGIN {
-  unless ($ENV{AUTHOR_TESTING}) {
-    require Test::More;
-    Test::More::plan(skip_all => 'these tests are for testing by the author');
-  }
-}
-
-BEGIN {
-    require Test::More;
-    Test::More::plan(skip_all => 'these tests would fail anyway');
-  }
-}
-
-
 use strict;
 use warnings;
-
 use Test::More;
-use English qw(-no_match_vars);
 
-eval "use Test::Perl::Critic";
-plan skip_all => 'Test::Perl::Critic required to criticise code' if $@;
-Test::Perl::Critic->import( -profile => "perlcritic.rc" ) if -e "perlcritic.rc";
-all_critic_ok();
+## no critic
+eval q{use Test::Version 1.003001 qw( version_all_ok ), {
+        is_strict   => 1,
+        has_version => 1,
+        consistent  => 1,
+    };
+};
+plan skip_all => "Test::Version 1.003001 required for testing version numbers"
+    if $@;
+version_all_ok();
+done_testing;
