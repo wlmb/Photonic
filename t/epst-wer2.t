@@ -33,28 +33,14 @@ use warnings;
 use PDL;
 use PDL::NiceSlice;
 use PDL::Complex;
-use Photonic::Geometry::FromB;
 use Photonic::WE::R2::Metric;
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::EpsilonP;
 use Photonic::WE::R2::EpsilonTensor;
 
-use Machine::Epsilon;
-use List::Util;
-
 use Test::More tests => 9;
-
-sub agree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)*($a-$b))->sum<=1e-4;
-}
-
-sub Cagree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)->Cabs2)->sum<=1e-4;
-}
+use lib 't/lib';
+use TestUtils;
 
 #Check epsilontensor for simple 1D system
 #Non-retarded limit

@@ -37,19 +37,9 @@ use Photonic::Geometry::FromEpsilon;
 use Photonic::LE::S::AllH;
 use Photonic::LE::S::EpsL;
 
-use Machine::Epsilon;
-use List::Util;
-
 use Test::More tests => 10;
-
-#my $pi=4*atan2(1,1);
-
-sub Cagree {
-    my $a=shift;
-    my $b=shift//0;
-    my $prec=shift||1e-7;
-    return (($a-$b)->Cabs2)->sum<=$prec;
-}
+use lib 't/lib';
+use TestUtils;
 
 my $ea=1+2*i;
 my $eb=3+4*i;

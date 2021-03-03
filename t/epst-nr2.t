@@ -33,22 +33,11 @@ use warnings;
 use PDL;
 use PDL::NiceSlice;
 use PDL::Complex;
-use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::EpsTensor;
 
-use Machine::Epsilon;
-use List::Util;
-
 use Test::More tests => 5;
-
-#my $pi=4*atan2(1,1);
-
-sub Cagree {
-    my $a=shift;
-    my $b=shift//0;
-    my $prec=shift//1e-7;
-    return (($a-$b)->Cabs2)->sum<=$prec;
-}
+use lib 't/lib';
+use TestUtils;
 
 my $ea=1+2*i;
 my $eb=3+4*i;

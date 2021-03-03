@@ -31,20 +31,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Geometry::FromEpsilon;
 use Photonic::LE::S::OneH;
 
 use Test::More tests => 4;
-
-#my $pi=4*atan2(1,1);
-
-sub Cagree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)->Cabs2)->sum<=1e-7;
-}
+use lib 't/lib';
+use TestUtils;
 
 #Check haydock coefficients for simple 1D system
 #1D system e=1 or 2

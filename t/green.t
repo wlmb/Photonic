@@ -38,22 +38,9 @@ use Photonic::WE::S::Metric;
 use Photonic::WE::S::AllH;
 use Photonic::WE::S::Green;
 
-use Machine::Epsilon;
-use List::Util;
-
 use Test::More tests => 4;
-
-sub agree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)*($a-$b))->sum<=1e-7;
-}
-
-sub Cagree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)->Cabs2)->sum<=1e-7;
-}
+use lib 't/lib';
+use TestUtils;
 
 #Check green for simple 1D system
 my ($ea, $eb)=(r2C(1), r2C(2));

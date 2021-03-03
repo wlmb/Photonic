@@ -31,30 +31,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use PDL::NiceSlice;
 use PDL::Complex;
-use Photonic::Geometry::FromB;
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::Metric;
 use Photonic::WE::R2::Field;
 
-use Machine::Epsilon;
-use List::Util;
-
 use Test::More tests => 2;
-
-#my $pi=4*atan2(1,1);
-
-sub Cagree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)->Cabs2)->sum<=1e-7;
-}
-sub Cdif {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)->Cabs2)->sum;
-}
+use lib 't/lib';
+use TestUtils;
 
 my $ea=1+0*i;
 my $eb=3+4*i;

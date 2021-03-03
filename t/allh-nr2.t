@@ -31,24 +31,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use PDL::NiceSlice;
-use PDL::Complex;
-use Photonic::Geometry::FromB;
-use Photonic::LE::NR2::AllH;
-use Photonic::Utils qw(HProd);
-
-use Machine::Epsilon;
-use List::Util;
 
 use Test::More tests => 12;
+use lib 't/lib';
+use TestUtils;
 
-#my $pi=4*atan2(1,1);
-
-sub agree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)*($a-$b))->sum<=1e-7;
-}
+my $fn = make_fn();
+make_default_store($fn);
 
 #Check haydock coefficients for simple 1D system
 my $B=zeroes(11)->xvals<5; #1D system
@@ -99,7 +88,7 @@ ok(agree(pdl($b2st), pdl($bst)**2), "1D T b2==b^2");
     my $als=Photonic::LE::NR2::AllH
 	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
 	      accuracy=>machine_epsilon(), noise=>machine_epsilon(),
-	      normOp=>1, stateFN=>"scratch/rem.dat");
+	      normOp=>1, stateFN=>$fn);
     $als->run;
     ok($als->iteration <= 15*15,
        "No more iterations than dimensions. Square. States in file");
