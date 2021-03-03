@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::AllH;
-   my $iter=Photonic::LE;;NR2::AllH->new(geometry=>$geometry,nh=>$Nh,
+   my $iter=Photonic::LE::NR2::AllH->new(geometry=>$geometry,nh=>$Nh,
             keepStates=>$save);
    $iter->run;
    my $haydock_as=$iter->as;
