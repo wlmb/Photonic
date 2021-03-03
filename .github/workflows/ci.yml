@@ -32,13 +32,6 @@ jobs:
       - run: cpanm -v --force Inline::C # failing due to permissions blowing up t/08taint.t
       - run: cpanm Module::Build::Pluggable::PDL Module::Build::Pluggable::Fortran # configure deps
       - run: cpanm -n --installdeps .
-      - name: Run release tests # before others as may install useful stuff
-        if: ${{ matrix.release-test }}
-        env:
-          RELEASE_TESTING: 1
-        run: |
-          cpanm -n --installdeps --with-develop .
-          prove -lr xt
       - name: Run tests (no coverage)
         if: ${{ !matrix.coverage }}
         run: perl Build.PL && HARNESS_OPTIONS='j4' ./Build test
@@ -49,3 +42,11 @@ jobs:
         run: |
           cpanm -n Devel::Cover::Report::Coveralls
           HARNESS_OPTIONS='j4' cover -test -report Coveralls
+      - name: Run release tests # after main tests so built
+        if: ${{ matrix.release-test }}
+        env:
+          AUTHOR_TESTING: 1
+          RELEASE_TESTING: 1
+        run: |
+          cpanm -n --installdeps --with-develop .
+          prove -br xt

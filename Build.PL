@@ -90,9 +90,6 @@ my $builder = Module::Build::Pluggable->new(
     test_requires => {
 	'Machine::Epsilon'            => '0',
 	'Test::More'                  => '0',
-#	    'Pod::Coverage::TrustPod' => '0',
-#	    'Test::Pod'           => '0',
-#	    'Test::Pod::Coverage'  => '1.08',
     },
     configure_requires => {
 	'File::Basename'                     => '0',
@@ -109,9 +106,26 @@ my $builder = Module::Build::Pluggable->new(
     add_to_cleanup  => [ 'Photonic-*', '.xs' ],
     create_makefile_pl => 'small',
     meta_merge     => {
+        "meta-spec" => { version => 2 },
+        dynamic_config => 0,
         resources => {
-            repository  => 'https://github.com/wlmb/Photonic',
-        }
+            repository => {
+                type => 'git',
+                url => 'git@github.com:wlmb/Photonic.git',
+                web => 'https://github.com/wlmb/Photonic',
+            },
+        },
+        prereqs => {
+            develop => {
+                requires => {
+                    'Test::CheckManifest' => '0.9',
+                    'Pod::Coverage::TrustPod' => '0',
+                    'Test::Pod' => '1.22',
+                    'Test::Pod::Coverage' => '1.08',
+                    'Test::Version' => '1.003001',
+                },
+            },
+        },
     },
     );
 $builder->create_build_script();
