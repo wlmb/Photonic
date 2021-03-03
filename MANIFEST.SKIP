@@ -79,8 +79,7 @@
 \bPhotonic-[\d\.\_]+
 
 # Avoid some particular files
-# travis (hasn't worked)
-^\.travis\.yml$
+^\.github/
 ^rem\..*
 # compiled objects
 ^.*\.o$
