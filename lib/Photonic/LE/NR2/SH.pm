@@ -197,7 +197,7 @@ use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt);
-use Photonic::ExtraUtils qw(cgtsl);
+use Photonic::ExtraUtils qw(cgtsv);
 use Photonic::Iterator;
 use PDL::Constants qw(PI);
 use Moose;
@@ -490,10 +490,10 @@ sub _build_selfConsistentL_n {
     my $bs=$self->HP->bs;
     my $u2=$self->u2;
     my $diag=$u2->complex - PDL->pdl($as)->(0:$nh-1);
-    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
-    my $supradiag=$subdiag->mv(0,-1)->rotate(-1)->mv(-1,0);
-    my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $external);
+    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
+    my $supradiag=$subdiag;
+    my ($result, $info)= cgtsv($subdiag, $diag, $supradiag, $external);
     die "Error solving tridiag system" unless $info == 0;
     $result->complex;
     $result *= $u2/$self->epsA2;
@@ -553,16 +553,16 @@ sub _build_P2LMCalt {
     my $nh=$self->nrf->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->nrf->nr->iteration if $nh>=$self->nrf->nr->iteration;
-    # calculate using linpack for tridiag system
+    # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=|0>.
     my $diag=$self->u2->Cconj->complex - PDL->pdl([@$as])->(0:$nh-1);
-    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
+    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
     my $supradiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
-    my ($phi_n, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs);
+    my ($phi_n, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
     my $phi_G=linearCombine([$phi_n->dog], $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
@@ -577,7 +577,7 @@ sub _build_P2LMCalt {
     my @Ppsi;
     foreach(0..$ndims-1){
 	my ($psi_n, $psiinfo)=
-	    cgtsl($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
+	    cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
 	die "Error solving tridiag system" unless $psiinfo == 0;
 	# RorI nx ny .... cartesian
 	my $psi_G=linearCombine([$psi_n->dog], $states);

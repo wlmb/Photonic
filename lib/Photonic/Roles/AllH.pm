@@ -295,7 +295,7 @@ sub storeall {
     my $fn=$self->storeAllFN;
     return unless defined $fn; # unless you actually want to store everything
     my $fh=IO::File->new($fn, "w")
-	or croak "Couldn't open $fn for writting: $!";
+	or croak "Couldn't open $fn for writing: $!";
     #save all results but states
     my %all=  map {($_=>$self->$_)} @allfields;
     store_fd \%all, $fh or croak "Couldn't store all info; $!";

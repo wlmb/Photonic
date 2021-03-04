@@ -141,7 +141,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
-use Photonic::ExtraUtils qw(cgtsl);
+use Photonic::ExtraUtils qw(cgtsv);
 use Photonic::Types;
 use Photonic::Iterator qw(nextval);
 use Moose;
@@ -188,17 +188,19 @@ sub evaluate {
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->nr->iteration if $nh>=$self->nr->iteration;
-    # calculate using linpack for tridiag system
+    # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=D^L.
     # At first take D=|0>
     my $diag=$u->complex - PDL->pdl($as)->(0:$nh-1);
-    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
-    my $supradiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
+    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->r2C->real
+      ->mv(0,-1)->rotate(-1)->mv(-1,0)
+      ->complex;
+    my $supradiag=$subdiag;
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
-    my ($result, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs);
+    my ($result, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
     # Obtain longitudinal macroscopic response from result
     $self->_epsL(my $epsL=1/$result->(:,(0)));
