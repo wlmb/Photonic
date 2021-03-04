@@ -65,7 +65,6 @@ my $builder = Module::Build::Pluggable->new(
 	'ExtUtils::F77'                  => '1.23',
 	'IO::File'                       => '0',
 	'List::Util'                     => '0',
-	'List::MoreUtils'                => '0',
 	'Machine::Epsilon'               => '0',
 	'Moose'                          => '0',
 	'Moose::Role'                    => '0',
