@@ -8,7 +8,6 @@ examples/mortola.pl
 examples/Ring.pl
 examples/WE/R2/field.pl
 fortran/cgtsl.f
-fortran/dgtsl.f
 INSTALL
 lib/Photonic.pm
 lib/Photonic/CharacteristicFunctions.pm
@@ -82,7 +81,6 @@ t/allh-wes.t
 t/allh-writest.t
 t/cgtsl.t
 t/characteristic-functions.t
-t/dgtsl.t
 t/epsl-nr2-nc.t
 t/epsl-nr2.t
 t/epsl-s.t
