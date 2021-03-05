@@ -57,7 +57,6 @@ my $builder = Module::Build::Pluggable->new(
     release_status => 'stable', #stable, testing or unstable
     f_source   => [ 'fortran' ],
     requires   => {
-	'Inline'                         => '0',
 	'Carp'                           => '0',
 	'Cwd'                            => '0',
 	'DynaLoader'                     => '0',

@@ -433,13 +433,4 @@ faster. May thread over extra dimensions.
 
 =back
 
-=head1 NOTE
-
-Uses Inline::Pdlpp, so the first time it is run it compiles itself,
-and would take a little longer than the following. To recompile,
-remove the directory _Inline/ before running.
-
-B<You must make sure that the relative location of the libutils.so
-library is correct.> See $Bin below.
-
 =cut
