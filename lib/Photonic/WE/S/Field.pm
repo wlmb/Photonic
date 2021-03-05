@@ -175,7 +175,6 @@ sub BUILD {
 sub evaluate {
     my $self=shift;
     my $as=$self->nr->as;
-    my $b2s=$self->nr->b2s;
     my $bs=$self->nr->bs;
     my $cs=$self->nr->cs;
     my $stateit=$self->nr->state_iterator;

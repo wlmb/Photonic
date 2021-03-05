@@ -548,7 +548,6 @@ sub _build_P2LMCalt {
     my $u2=$self->u2;
     my $B=$self->nrf->nr->geometry->B;
     my $as=$self->nrf->nr->as;
-    my $b2s=$self->nrf->nr->b2s;
     my $bs=$self->nrf->nr->bs;
     my $states=$self->nrf->nr->states;
     my $nh=$self->nrf->nh; #desired number of Haydock terms

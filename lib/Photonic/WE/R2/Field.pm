@@ -172,7 +172,6 @@ sub evaluate {
     $self->_epsA(my $epsA=$self->nr->epsilon->r2C);
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my $as=$self->nr->as;
-    my $b2s=$self->nr->b2s;
     my $bs=$self->nr->bs;
     my $cs=$self->nr->cs;
     my $stateit=$self->nr->state_iterator;
