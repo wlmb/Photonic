@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::R2::EpsilonP;
    my $eps=Photonic::WE::R2::EpsilonP->new(haydock=>$h, nh=>$nh);
-   my $EpsTensor=$W->evaluate($epsB);
+   my $EpsP=$eps->evaluate($epsB);
 
 =head1 DESCRIPTION
 

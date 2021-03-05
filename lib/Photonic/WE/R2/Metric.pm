@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     use Photonic::WE::R2::Metric;
     my $gGG=Photonic::WE::R2::Metric->new(
             geometry=>$geometry, epsilon=>$eps,
-            wavenumber => $q, $wavevector=>k);
+            wavenumber => $q, wavevector=>$k);
     f($gGG->value);
 
 =head1 DESCRIPTION
@@ -59,7 +59,7 @@ in a binary medium where the host has no dissipation.
 
 =over 4
 
-=item * new(geometry=>$g, epsilon=>$e, $wavenumber=>$q, $wavevector=>$k);
+=item * new(geometry=>$g, epsilon=>$e, wavenumber=>$q, wavevector=>$k);
 
 Create a new Ph::WE::R2::Metric object with Geometry $g, dielectric
 function of the host $e, vacuum wavenumber $q=omega/c  and wavevector
