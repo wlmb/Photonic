@@ -119,7 +119,6 @@ use Machine::Epsilon;
 use PDL::Lite;
 use PDL::Complex;
 use PDL::NiceSlice;
-use List::MoreUtils qw(pairwise);
 use Moose::Role;
 
 has 'previous_W' =>(is=>'ro',
@@ -170,9 +169,6 @@ around '_fullorthogonalize_indeed' => sub {
     $self->_orthogonalizations($self->orthogonalizations+1);
     $self->_write_justorthogonalized(1);
     my $it=$self->state_iterator;
-    #foreach(pairwise {[$a, $b]} @{$self->states}, @{$self->gs}){
-	#for every saved state
-	#my ($s, $g)=($_->[0], $_->[1]); #state, metric
     for my $g(@{$self->gs}){
 	my $s=$it->nextval;
 	$psi=$psi-$g*$self->innerProduct($s, $psi)*$s;

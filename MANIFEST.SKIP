@@ -85,14 +85,6 @@
 ^.*\.o$
 #ignored files
 ^ignore\.txt$
-#automatically built pm, xs and c files
-\bExtraUtils\.pm$
-\bExtraUtils\.xs$
-\bExtraUtils\.c$
-#The copied typefile
-\btypemap$
-#Automaticall built makefile (using Build)
-#^Makefile.PL$ #Better leave it so perl Makefile.PL works
 #rem whatever
 \brem\.dat$
 # others

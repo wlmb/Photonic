@@ -149,8 +149,6 @@ Returns the fisrt state $v.
 
 =cut
 
-package Photonic::LE::NR2::OneH;
-$Photonic::LE::NR2::OneH::VERSION = '0.014';
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
