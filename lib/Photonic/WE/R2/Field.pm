@@ -134,7 +134,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::WE::R2::AllH;
-use Photonic::ExtraUtils qw(cgtsl);
+use Photonic::ExtraUtils qw(cgtsv);
 use Photonic::Types;
 use Photonic::Iterator;
 use Moose;
@@ -172,23 +172,22 @@ sub evaluate {
     $self->_epsA(my $epsA=$self->nr->epsilon->r2C);
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my $as=$self->nr->as;
-    my $b2s=$self->nr->b2s;
     my $bs=$self->nr->bs;
     my $cs=$self->nr->cs;
     my $stateit=$self->nr->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->nr->iteration if $nh>$self->nr->iteration;
-    # calculate using linpack for tridiag system
+    # calculate using lapack for tridiag system
     my $diag=$u->complex - PDL->pdl($as)->(0:$nh-1);
-    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->r2C;
     # rotate complex zero from first to last element.
+    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=-PDL->pdl($cs)->(0:$nh-1)->rotate(-1)->r2C;
     my $rhs=PDL->zeroes($nh); #build a nh pdl
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;
     #coefficients of g^{-1}E
-    my ($giEs_coeff, $info)= cgtsl($subdiag, $diag, $supradiag, $rhs);
+    my ($giEs_coeff, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
     #
     my @giEs= map {PDL->pdl($_)->complex} @{$giEs_coeff->unpdl};
