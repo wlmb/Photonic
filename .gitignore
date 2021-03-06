@@ -34,6 +34,7 @@ debian/*.substvars
 *.rej
 *.tmp
 *.patch
+*.bak
 tmp*
 tmp_*
 
