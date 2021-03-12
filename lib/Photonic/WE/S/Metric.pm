@@ -1,5 +1,5 @@
 package Photonic::WE::S::Metric;
-$Photonic::WE::S::Metric::VERSION = '0.014';
+$Photonic::WE::S::Metric::VERSION = '0.015';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::S::Metric
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 COPYRIGHT NOTICE
 

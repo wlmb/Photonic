@@ -7,7 +7,7 @@ use PDL::Complex;
 require PDL::LinearAlgebra::Complex;
 use Exporter;
 
-our $VERSION = '0.014';
+our $VERSION = '0.015';
 our @ISA = 'Exporter';
 our @EXPORT = qw(cgtsv);
 
@@ -19,7 +19,7 @@ Photonic::ExtraUtils - Glue for utility Fortran routines
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 COPYRIGHT NOTICE
 

@@ -1,5 +1,5 @@
 package Photonic::WE::R2::EpsilonTensor;
-$Photonic::WE::R2::EpsilonTensor::VERSION = '0.014';
+$Photonic::WE::R2::EpsilonTensor::VERSION = '0.015';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::R2::EpsilonTensor
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 COPYRIGHT NOTICE
 

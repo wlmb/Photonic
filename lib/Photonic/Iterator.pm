@@ -6,7 +6,7 @@ Photonic::Iterator
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 COPYRIGHT NOTICE
 
@@ -108,7 +108,7 @@ blessed iterators, so you don't have to import the function nextval.
 =cut
 
 package Photonic::Iterator;
-$Photonic::Iterator::VERSION='0.014';
+$Photonic::Iterator::VERSION='0.015';
 
 use strict;
 use warnings;

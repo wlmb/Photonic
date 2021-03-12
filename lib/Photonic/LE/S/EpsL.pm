@@ -1,5 +1,5 @@
 package Photonic::LE::S::EpsL;
-$Photonic::LE::S::EpsL::VERSION = '0.014';
+$Photonic::LE::S::EpsL::VERSION = '0.015';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::S::EpsL
 
 =head1 VERSION
 
-version 0.014
+version 0.015
 
 =head1 COPYRIGHT NOTICE
 
