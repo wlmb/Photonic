@@ -87,5 +87,7 @@
 ^ignore\.txt$
 #rem whatever
 \brem\.dat$
+#emacs TAGS file
+^TAGS$
 # others
 ^dist\.ini$
