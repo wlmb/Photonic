@@ -17,7 +17,6 @@ WriteMakefile(
     MIN_PERL_VERSION => '5.14.0',
     PREREQ_PM => {
 	'Carp'                           => '0',
-	'ExtUtils::F77'                  => '1.23',
 	'IO::File'                       => '0',
 	'List::Util'                     => '0',
 	'Machine::Epsilon'               => '0',
@@ -30,7 +29,6 @@ WriteMakefile(
 	'PDL::Constants'                 => '0',
 	'PDL::Core'                      => '0',
 	'PDL::Core::Dev'                 => '0',
-	'PDL::Exporter'                  => '0',
 	'PDL::FFTW3'                     => '0',
 	'PDL::IO::Pic'                   => '0',
 	'PDL::IO::Storable'              => '0',
