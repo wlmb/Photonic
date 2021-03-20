@@ -365,7 +365,7 @@ sub _build_dipolar {
     my $Esquare_R=Cmul($field, $field)->sumover;
     #Fourier transform
     # RorI nx ny...
-    my $Esquare_G=fftn($Esquare_R->real, $ndims)->complex;
+    my $Esquare_G=fftn($Esquare_R, $ndims)->complex;
     #cartesian, nx, ny...
     my $G=$self->nrf->nr->G;
     #RorI cartesian nx ny
@@ -374,7 +374,7 @@ sub _build_dipolar {
     my $iGE2=Cmul($iG, $Esquare_G->(,*1));
     #back to real space. Get cartesian out of the way and then back
     #RorI, cartesian, nx, ny...
-    my $nablaE2=ifftn($iGE2->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
+    my $nablaE2=ifftn($iGE2->mv(1,-1), $ndims)->mv(-1,1)->complex;
     my $factor=-$self->density*$self->alpha1*$self->alpha2/2;
        #RorI, nx, ny...
     my $P=$factor->(,*1)*$nablaE2;
@@ -396,7 +396,7 @@ sub _build_quadrupolar {
     #Fourier transform
     # RorI cartesian cartesian nx ny... Get cartesians out of the way
     # and thread
-    my $naaEE_G=fftn($naaEE_R->mv(1,-1)->mv(1,-1)->real,
+    my $naaEE_G=fftn($naaEE_R->mv(1,-1)->mv(1,-1),
 			$ndims)->mv(-1,1)->mv(-1,1)->complex;
     #cartesian, nx, ny...
     my $G=$self->nrf->nr->G;
@@ -411,7 +411,7 @@ sub _build_quadrupolar {
     #back to real space. Get cartesian out of the way and then back
     #RorI, cartesian, nx, ny...
     my $P=
-	ifftn($iGnaaEE_G->mv(1,-1)->real, $ndims)->mv(-1,1)->complex;
+	ifftn($iGnaaEE_G->mv(1,-1), $ndims)->mv(-1,1)->complex;
     return $P;
 }
 

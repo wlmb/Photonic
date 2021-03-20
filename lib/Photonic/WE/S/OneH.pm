@@ -217,7 +217,7 @@ sub applyOperator {
     my $H=($self->epsilonR-$self->epsilon)/$self->epsilonR;
     my $Hgpsi_r=$H*$gpsi_r; #ri:nx:ny:xy:pm
     #Transform to reciprocal space, move xy and pm back and make complex,
-    my $psi_G=fftn($Hgpsi_r->real, $self->ndims)->mv(-1,1)->mv(-1,1)->complex;
+    my $psi_G=fftn($Hgpsi_r, $self->ndims)->mv(-1,1)->mv(-1,1)->complex;
     #Apply mask
     #psi_G is ri:xy:pm:nx:ny mask is nx:ny
     $psi_G=$psi_G*$mask->(*1,*1) if defined $mask; #use dummies for xy:pm
