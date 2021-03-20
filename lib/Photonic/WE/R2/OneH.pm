@@ -259,7 +259,7 @@ Returns 1 if sign change is required to ensure b^2 is positive.
 
 =item *  _firstState
 
-Returns the fisrt state $v.
+Returns the first state $v.
 
 =back
 

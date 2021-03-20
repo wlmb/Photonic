@@ -149,7 +149,7 @@ Returns zero, as there is no need to change sign.
 
 =item * _firstState
 
-Returns the fisrt state.
+Returns the first state.
 
 =back
 

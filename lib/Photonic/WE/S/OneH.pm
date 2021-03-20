@@ -131,7 +131,7 @@ Returns 0, as there is no need to change sign.
 
 =item * $s= _firstState($self)
 
-Returns the fisrt state $v.
+Returns the first state $v.
 
 =back
 

@@ -143,7 +143,7 @@ Return 0, as there is no need to change sign.
 
 item * _firstState
 
-Returns the fisrt state $v.
+Returns the first state $v.
 
 =back
 
