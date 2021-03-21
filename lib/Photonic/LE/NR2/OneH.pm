@@ -143,7 +143,7 @@ Return 0, as there is no need to change sign.
 
 item * _firstState
 
-Returns the fisrt state $v.
+Returns the first state $v.
 
 =back
 
@@ -188,13 +188,13 @@ sub applyOperator {
     #Gpsi_G is ri:nx:ny...:i
     #Take inverse Fourier transform over all space dimensions,
     #thread over cartesian indices
-    my $Gpsi_R=ifftn($Gpsi_G->real, $self->ndims)->complex; #real space ^G|psi>
+    my $Gpsi_R=ifftn($Gpsi_G, $self->ndims)->complex; #real space ^G|psi>
     #Gpsi_R is ri:nx:ny:...:i
     #Multiply by characteristic function. Thread cartesian
     my $BGpsi_R=$Gpsi_R*$self->B; #B^G|psi> in Real Space
     #BGpsi_R is ri:nx:ny:...:i
     #Transform to reciprocal space
-    my $BGpsi_G=fftn($BGpsi_R->real, $self->ndims)->complex; #<G|B^G|psi>
+    my $BGpsi_G=fftn($BGpsi_R, $self->ndims)->complex; #<G|B^G|psi>
     #BGpsi_G is ri:nx:ny:...:i
     #Scalar product with Gnorm
     my $GBGpsi_G=($BGpsi_G*$self->GNorm->mv(0,-1)) #^GB^G|psi>

@@ -149,7 +149,7 @@ Returns zero, as there is no need to change sign.
 
 =item * _firstState
 
-Returns the fisrt state.
+Returns the first state.
 
 =back
 
@@ -212,17 +212,14 @@ sub applyOperator {
     #the result is complex ri:nx:ny...:i cartesian
     #Take inverse Fourier transform over all space dimensions,
     #thread over cartesian indices
-    #Notice that (i)fftn wants a real 2,nx,ny... piddle, not a complex
-    #one. Thus, I have to convert complex to real and back here and
-    #downwards.
-    my $Gpsi_R=ifftn($Gpsi_G->real, $self->ndims)->complex;
+    my $Gpsi_R=ifftn($Gpsi_G, $self->ndims)->complex;
     # $Gpsi_R is ri:nx:ny:...:i
     # Multiply by the dielectric function in Real Space. Thread
     # cartesian index
     my $eGpsi_R=$self->epsilon*$Gpsi_R; #Epsilon could be tensorial!
     # $eGpsi_R is ri:nx:ny...:i
     #Transform to reciprocal space
-    my $eGpsi_G=fftn($eGpsi_R->real, $self->ndims)->complex;
+    my $eGpsi_G=fftn($eGpsi_R, $self->ndims)->complex;
     # $eGpsi_G is ri:nx:ny:...:i
     #Scalar product with Gnorm
     my $GeGpsi_G=($eGpsi_G*$self->GNorm->mv(0,-1)) #^Ge^G|psi>

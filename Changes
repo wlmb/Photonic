@@ -1,3 +1,6 @@
+- use PDL::FFTW3's new ability to take PDL::Complex inputs
+
+0.015 2021-03-12
 - convert from bundled Fortran code to PDL::LinearAlgebra
 
 0.014 2020-03-26
@@ -20,7 +23,7 @@
   - New directories: NPhase.
   - NPhase/OneH
   - NPhase/AllH
-  - Change Pod to new OneH ALlH
+  - Change Pod to new OneH AllH
   - Allow complex Haydock coefficients in new codes.
   - Added NPhase/EpsL
   - Added NPhase/EpsTensor

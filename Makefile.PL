@@ -35,7 +35,7 @@ WriteMakefile(
 	'PDL::Lite'                      => '0',
 	'PDL::MatrixOps'                 => '0',
 	'PDL::NiceSlice'                 => '0',
-	'PDL::FFTW3'                     => '0',
+	'PDL::FFTW3'                     => '0.10', # accept PDL::Complex
 	'PDL::LinearAlgebra'             => '0.15', # cgtsv
 	'Storable'                       => '0',
     },
