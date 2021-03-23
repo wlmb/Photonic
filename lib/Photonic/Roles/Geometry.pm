@@ -277,7 +277,7 @@ sub _G0 {
     my $self=shift;
     my $value=shift;
     croak "Direction0 must be ".$self->ndims."-dimensional vector" unless
-	[$value->dims]->[0]==$self->ndims and $value->ndims==1;
+	$value->dim(0)==$self->ndims and $value->ndims==1;
     croak "Direction must be non-null" unless $value->inner($value)>0;
     my $arg=":". (",(0)" x $self->ndims); #:,(0),... dimension of space times
     $value=$value->norm; #normalize

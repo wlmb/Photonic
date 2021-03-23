@@ -115,7 +115,7 @@ sub _firstState {
     croak "Polarization has wrong dimensions. " .
 	  " Should be $d-dimensional complex vector."
 	unless any_complex($e) && $e->ndims==2 &&
-	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d;
+	$e->dim(0)==2 && $e->dim(1)==$d;
     my $modulus2=$e->Cabs2->sumover;
     croak "Polarization should be non null" unless
 	$modulus2 > 0;

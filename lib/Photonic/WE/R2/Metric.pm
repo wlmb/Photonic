@@ -107,7 +107,7 @@ sub _value {
     my $eps=$self->epsilon;
     my $k=$self->wavevector;
     croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
-	[$k->dims]->[0]==$self->ndims and $k->ndims==1;
+	$k->dim(0)==$self->ndims and $k->ndims==1;
     my $kPG = $k+$G; #xyz nx ny nz
     # (k+G)(k+G) diad
     my $kPGkPG = $kPG->outer($kPG); #xyz xyz nx ny nz
