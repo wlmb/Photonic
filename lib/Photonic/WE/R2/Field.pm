@@ -77,7 +77,7 @@ dielectric functions of the host $epsA and the particle $epsB.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

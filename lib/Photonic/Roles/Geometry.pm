@@ -357,7 +357,7 @@ Roles consumed by geometry objects to be used in a Photonic
 calculation. See also the specific implementations under
 L<Photonic::Geometry>.
 
-=head1 ACCESORS (defined by the implementation)
+=head1 ACCESSORS (defined by the implementation)
 
 =over 4
 
@@ -367,7 +367,7 @@ The characteristic function as PDL
 
 =back
 
-=head1 ACCESORS (read write)
+=head1 ACCESSORS (read write)
 
 =over 4
 
@@ -377,7 +377,7 @@ Direction of the zero length wavevector
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

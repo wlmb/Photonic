@@ -39,7 +39,7 @@ field along the complex direction $e and with small convergence parameter $s.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

@@ -110,7 +110,7 @@ default, it is the number of voxels or pixels.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

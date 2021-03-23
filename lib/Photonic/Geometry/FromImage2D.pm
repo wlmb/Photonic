@@ -75,7 +75,7 @@ inverted: 1 means invert, 0 don't invert. Default: 0
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

@@ -73,7 +73,7 @@ and B materials at the fundamental and the second harmonic frequency
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 
@@ -171,7 +171,7 @@ SH self consistent total polarization vector field in real space
 
 =back
 
-=head1 ACCESORS (read/write)
+=head1 ACCESSORS (read/write)
 
 =over 4
 
