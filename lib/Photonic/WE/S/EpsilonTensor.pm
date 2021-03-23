@@ -102,6 +102,7 @@ use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::Types;
+use Photonic::Utils qw(any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -118,7 +119,7 @@ sub _build_epsilonTensor {
     my $q=$self->metric->wavenumber;
     my $q2=$q*$q;
     my $k=$self->metric->wavevector;
-    if($q->isa('PDL::Complex') || $k->isa('PDL::Complex')){
+    if(any_complex($q, $k)){
 	#Make both complex
 	$_ = $_->isa('PDL::Complex') ? $_ : r2C($_) for $q, $k;
 	my $k2=($k*$k)->sumover; #inner

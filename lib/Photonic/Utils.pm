@@ -39,7 +39,7 @@ require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
     HProd MHProd EProd VSProd SProd linearCombine
-    linearCombineIt lentzCF);
+    linearCombineIt lentzCF any_complex);
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
@@ -75,12 +75,15 @@ sub linearCombineIt { #complex linear combination of states from iterator
     return $result;
 }
 
+sub any_complex {
+    grep ref $_ eq 'PDL::Complex', @_;
+}
+
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $first=shift;
     my $second=shift;
     my $skip=shift//0;
-    my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');
+    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     confess "Dimensions should be equal" unless $ndims == $second->ndims;
     my $prod=$first->complex->Cconj*$second->complex;
@@ -100,8 +103,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     my $metric=shift;
     # pass $metric->value  xyz xyz nx ny nz
     my $skip=shift//0;
-    my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');
+    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     carp "We don't trust the skip argument in MHProd yet" if $skip;
@@ -123,8 +125,7 @@ sub EProd { #Euclidean product between two fields in reciprocal
     my $first=shift;
     my $second=shift;
     my $skip=shift//0;
-    my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');
+    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #First reverse all reciprocal dimensions
@@ -153,8 +154,7 @@ sub SProd { #Spinor product between two fields in reciprocal
     my $first=shift;
     my $second=shift;
     my $skip=shift//0;
-    my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');
+    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #dimensions are like rori, pmk, s1,s2, nx,ny
@@ -185,8 +185,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
              #space. Indices are ri:xy:pm:nx:ny...
     my $first=shift;
     my $second=shift;
-    my $iscomplex = (ref $first eq 'PDL::Complex' or ref $second eq
-	'PDL::Complex');
+    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #dimensions are like ri:xy:pm:nx:ny
@@ -217,7 +216,7 @@ sub RtoG { #transform a 'complex' scalar, vector or tensorial field
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $iscomplex=ref $field eq 'PDL::Complex';
+    my $iscomplex = any_complex($field);
     my $moved=$iscomplex? $field->real : $field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=fftn($moved, $ndims);
@@ -231,7 +230,7 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $iscomplex=ref $field eq 'PDL::Complex';
+    my $iscomplex = any_complex($field);
     my $moved=$iscomplex? $field->real : $field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=ifftn($moved, $ndims);
@@ -430,6 +429,10 @@ corresponding to the real and imaginary parts, j denotes columns of a,
 rows of b, i denotes rows of a and of the result c, k denotes columns
 of b and the result c. Recall that in pdl the first (row) index is
 faster. May thread over extra dimensions.
+
+=item * any_complex
+
+True if any of the args are a complex PDL.
 
 =back
 

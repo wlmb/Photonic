@@ -165,7 +165,7 @@ use PDL::Complex;
 use List::Util;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(SProd);
+use Photonic::Utils qw(SProd any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -199,7 +199,7 @@ sub applyOperator {
     my $psi_G=shift;
     my $mask=undef;
     $mask=$self->mask if $self->use_mask;
-    confess "State should be complex" unless $psi_G->isa('PDL::Complex');
+    confess "State should be complex" unless any_complex($psi_G);
     #Each state is a spinor with two wavefunctions \psi_{k,G} and
     #\psi_{-k,G}, thus the index plus or minus k, pm.
     #Notation ri=real or imaginary, pm=+ or - k, xy=cartesian

@@ -89,6 +89,7 @@ use PDL::Complex;
 use List::Util;
 use Carp;
 use Photonic::Types;
+use Photonic::Utils qw(any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -107,8 +108,7 @@ sub _value {
     my $q=$self->wavenumber;
     my $eps=$self->epsilon;
     my $k=$self->wavevector;
-    if($eps->isa('PDL::Complex') || $k->isa('PDL::Complex')
-       || $q->isa('PDL::Complex')) { #complex metric
+    if(any_complex($eps, $k, $q)) { #complex metric
 	#Make all complex
 	$_ = $_->isa('PDL::Complex') ? $_ : r2C($_) for $q, $k, $eps;
 	croak "Wave vector must be ".$self->ndims."-dimensional vector" unless

@@ -41,6 +41,7 @@ use PDL::NiceSlice;
 use PDL::MatrixOps;
 use PDL::Complex;
 use Photonic::Types;
+use Photonic::Utils qw(any_complex);
 use Carp;
 use constant PI=>4*atan2(1,1);
 
@@ -292,7 +293,7 @@ sub Vec2LC_G { #longitudinal component of 'complex' vector field in
     my $field=shift; # vector field to project
     croak "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
-    my $iscomplex=ref $field eq 'PDL::Complex';
+    my $iscomplex=any_complex($field);
     $field=$field->complex unless $iscomplex;
     my $gnorm=$self->GNorm;
     my $result=Cscale($field, $gnorm)->sumover;
@@ -306,7 +307,7 @@ sub LC2Vec_G { #longitudinal vector field from its longitudinal
     my $field=shift; # scalar field of longitudinal components
     croak "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
-    my $iscomplex=ref $field eq 'PDL::Complex';
+    my $iscomplex=any_complex($field);
     $field=$field->complex unless $iscomplex;
     my $gnorm=$self->GNorm;
     #$gnorm is XorY nx, ny...

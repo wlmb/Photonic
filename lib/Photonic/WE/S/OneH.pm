@@ -178,7 +178,7 @@ use PDL::Complex;
 use List::Util;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(VSProd);
+use Photonic::Utils qw(VSProd any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -265,7 +265,7 @@ sub _firstState { #\delta_{G0}
     my $d=[$e->dims]->[1];
     croak "Polarization has wrong dimensions. " .
 	  " Should be $d-dimensional complex vector."
-	unless $e->isa('PDL::Complex') && $e->ndims==2 &&
+	unless any_complex($e) && $e->ndims==2 &&
 	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d;
     my $modulus2=$e->Cabs2->sumover;
     croak "Polarization should be non null" unless

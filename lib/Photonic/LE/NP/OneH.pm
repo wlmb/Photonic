@@ -164,7 +164,7 @@ use PDL::Complex;
 use List::Util;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(EProd);
+use Photonic::Utils qw(EProd any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -203,7 +203,7 @@ sub _firstState { #\delta_{G0}
 sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
-    confess "State should be complex" unless $psi_G->isa('PDL::Complex');
+    confess "State should be complex" unless any_complex($psi_G);
     #state is ri:nx:ny... gnorm=i:nx:ny...
     #Multiply by vector ^G.
     #Have to get cartesian out of the way, thread over it and iterate
