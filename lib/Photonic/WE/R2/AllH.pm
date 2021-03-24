@@ -82,7 +82,7 @@ Runs the iteration to completion.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

@@ -73,7 +73,7 @@ $dB is the density of polarizable entities in medium B
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

@@ -39,7 +39,7 @@ field along the complex direction $e and with small convergence parameter $s.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 
@@ -178,7 +178,7 @@ use PDL::Complex;
 use List::Util;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(VSProd);
+use Photonic::Utils qw(VSProd any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -262,11 +262,11 @@ sub _firstState { #\delta_{G0}
     my $arg="(0),:" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1/sqrt(2);
     my $e=$self->polarization; #ri:xy
-    my $d=[$e->dims]->[1];
+    my $d=$e->dim(1);
     croak "Polarization has wrong dimensions. " .
 	  " Should be $d-dimensional complex vector."
-	unless $e->isa('PDL::Complex') && $e->ndims==2 &&
-	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d;
+	unless any_complex($e) && $e->ndims==2 &&
+	$e->dim(0)==2 && $e->dim(1)==$d;
     my $modulus2=$e->Cabs2->sumover;
     croak "Polarization should be non null" unless
 	$modulus2 > 0;

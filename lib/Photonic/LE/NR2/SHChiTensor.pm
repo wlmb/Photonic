@@ -90,7 +90,7 @@ susceptibility.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 
@@ -143,7 +143,7 @@ means don't check.
 
 =back
 
-=head1 ACCESORS (missing)
+=head1 ACCESSORS (missing)
 
 =over 4
 

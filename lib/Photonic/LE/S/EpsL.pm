@@ -70,7 +70,7 @@ $smallE is the criteria of convergence for the continued fraction
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

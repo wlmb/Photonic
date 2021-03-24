@@ -95,7 +95,7 @@ Store final state to file, if provided.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 
