@@ -41,6 +41,7 @@ use PDL::NiceSlice;
 use PDL::MatrixOps;
 use PDL::Complex;
 use Photonic::Types;
+use Photonic::Utils qw(any_complex);
 use Carp;
 use constant PI=>4*atan2(1,1);
 
@@ -276,7 +277,7 @@ sub _G0 {
     my $self=shift;
     my $value=shift;
     croak "Direction0 must be ".$self->ndims."-dimensional vector" unless
-	[$value->dims]->[0]==$self->ndims and $value->ndims==1;
+	$value->dim(0)==$self->ndims and $value->ndims==1;
     croak "Direction must be non-null" unless $value->inner($value)>0;
     my $arg=":". (",(0)" x $self->ndims); #:,(0),... dimension of space times
     $value=$value->norm; #normalize
@@ -292,7 +293,7 @@ sub Vec2LC_G { #longitudinal component of 'complex' vector field in
     my $field=shift; # vector field to project
     croak "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
-    my $iscomplex=ref $field eq 'PDL::Complex';
+    my $iscomplex=any_complex($field);
     $field=$field->complex unless $iscomplex;
     my $gnorm=$self->GNorm;
     my $result=Cscale($field, $gnorm)->sumover;
@@ -306,7 +307,7 @@ sub LC2Vec_G { #longitudinal vector field from its longitudinal
     my $field=shift; # scalar field of longitudinal components
     croak "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
-    my $iscomplex=ref $field eq 'PDL::Complex';
+    my $iscomplex=any_complex($field);
     $field=$field->complex unless $iscomplex;
     my $gnorm=$self->GNorm;
     #$gnorm is XorY nx, ny...
@@ -357,7 +358,7 @@ Roles consumed by geometry objects to be used in a Photonic
 calculation. See also the specific implementations under
 L<Photonic::Geometry>.
 
-=head1 ACCESORS (defined by the implementation)
+=head1 ACCESSORS (defined by the implementation)
 
 =over 4
 
@@ -367,7 +368,7 @@ The characteristic function as PDL
 
 =back
 
-=head1 ACCESORS (read write)
+=head1 ACCESSORS (read write)
 
 =over 4
 
@@ -377,7 +378,7 @@ Direction of the zero length wavevector
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

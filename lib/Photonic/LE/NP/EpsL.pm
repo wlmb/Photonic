@@ -70,7 +70,7 @@ determines the precision of the results. It defaults to 1e-7.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

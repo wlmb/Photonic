@@ -43,7 +43,7 @@ use List::Util;
 use Carp;
 use Moose;
 use MooseX::StrictConstructor;
-use Photonic::Utils qw(MHProd);
+use Photonic::Utils qw(MHProd any_complex);
 
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
     handles=>[qw(B ndims dims epsilon)],required=>1);
@@ -114,8 +114,8 @@ sub _firstState {
     my $e=$self->polarization; #RorI xyz
     croak "Polarization has wrong dimensions. " .
 	  " Should be $d-dimensional complex vector."
-	unless $e->isa('PDL::Complex') && $e->ndims==2 &&
-	[$e->dims]->[0]==2 && [$e->dims]->[1]==$d;
+	unless any_complex($e) && $e->ndims==2 &&
+	$e->dim(0)==2 && $e->dim(1)==$d;
     my $modulus2=$e->Cabs2->sumover;
     croak "Polarization should be non null" unless
 	$modulus2 > 0;
@@ -167,7 +167,7 @@ field along the complex direction $e and with smallness parameter  $s.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

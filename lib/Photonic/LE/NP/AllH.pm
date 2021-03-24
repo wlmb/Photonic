@@ -88,7 +88,7 @@ non-retarded system at a time and saves them to later retrival.
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 

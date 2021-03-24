@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 Object fields that have been factored as they are common in different
 Photonic subpackages to calculate the macroscopic dielectric function.
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =head2 nh
 

@@ -82,7 +82,7 @@ Iterate the calculation of Haydock coefficients and states. See L<Photonic::Role
 
 =back
 
-=head1 ACCESORS (read only)
+=head1 ACCESSORS (read only)
 
 =over 4
 
