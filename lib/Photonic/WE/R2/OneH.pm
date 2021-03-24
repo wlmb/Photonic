@@ -63,13 +63,13 @@ sub applyOperator {
     my $gpsi=$self->applyMetric($psi);
     # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
     # transform to real space. Note FFFTW3 wants real PDL's[2,...]
-    my $gpsi_r=ifftn($gpsi->real->mv(1,-1), $self->ndims);
+    my $gpsi_r=ifftn($gpsi->mv(1,-1), $self->ndims);
     #$psi_r is RorI nx ny nz  xyz, B is nx ny nz
     # Multiply by characteristic function
     my $Bgpsi_r=Cscale($gpsi_r,$self->B);
     #Bpsi_r is RorI nx ny nz  xyz
     #Transform to reciprocal space, move xyz back and make complex,
-    my $psi_G=fftn($Bgpsi_r, $self->ndims)->mv(-1,1)->complex;
+    my $psi_G=fftn($Bgpsi_r, $self->ndims)->mv(-1,1);
     #Apply mask
     #psi_G is ri:xy:nx:ny mask is nx:ny
     $psi_G=$psi_G*$mask->(*1) if defined $mask; #use dummy for xy

@@ -215,7 +215,7 @@ sub applyOperator {
     #Take inverse Fourier transform over all space dimensions,
     #thread over cartesian and pmk indices
     #real space ^G|psi>
-    my $Gpsi_R=ifftn($Gpsi_G, $self->ndims)->complex;
+    my $Gpsi_R=ifftn($Gpsi_G, $self->ndims);
     # $Gpsi_R is ri:nx:ny...i:pmk
     # $self->epsilon is ri:nx:ny...
     #Multiply by the dielectric function in Real Space. Thread
@@ -223,7 +223,7 @@ sub applyOperator {
     my $eGpsi_R=$self->epsilon*$Gpsi_R; #Epsilon could be tensorial!
     #$eGpsi_R is ri:nx:ny,...i:pmk
     #Transform to reciprocal space
-    my $eGpsi_G=fftn($eGpsi_R, $self->ndims)->complex->mv(-1,1);
+    my $eGpsi_G=fftn($eGpsi_R, $self->ndims)->mv(-1,1);
     #$eGpsi_G is ri:pmk:nx:ny...:i
     #Scalar product with pmGnorm: i:pm:nx:ny...
     my $GeGpsi_G=($eGpsi_G*$self->pmGNorm->mv(0,-1)) #^Ge^G|psi>

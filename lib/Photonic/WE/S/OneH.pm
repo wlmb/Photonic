@@ -212,12 +212,12 @@ sub applyOperator {
     my $gpsi=$self->applyMetric($psi);
     # gpsi is ri:xy:pm:nx:ny. Get cartesian and pm out of the way and
     # transform to real space. Note FFFTW3 wants real PDL's[2,...]
-    my $gpsi_r=ifftn($gpsi->real->mv(1,-1)->mv(1,-1), $self->ndims)->complex;
+    my $gpsi_r=ifftn($gpsi->mv(1,-1)->mv(1,-1), $self->ndims);
     #ri:nx:ny:xy:pm
     my $H=($self->epsilonR-$self->epsilon)/$self->epsilonR;
     my $Hgpsi_r=$H*$gpsi_r; #ri:nx:ny:xy:pm
     #Transform to reciprocal space, move xy and pm back and make complex,
-    my $psi_G=fftn($Hgpsi_r, $self->ndims)->mv(-1,1)->mv(-1,1)->complex;
+    my $psi_G=fftn($Hgpsi_r, $self->ndims)->mv(-1,1)->mv(-1,1);
     #Apply mask
     #psi_G is ri:xy:pm:nx:ny mask is nx:ny
     $psi_G=$psi_G*$mask->(*1,*1) if defined $mask; #use dummies for xy:pm

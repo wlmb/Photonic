@@ -223,7 +223,7 @@ sub evaluate {
     #filter RandI for each cartesian
     $field_G *= $self->filter->(*1) if $self->has_filter;
     #get cartesian out of the way, fourier transform, put cartesian.
-    my $field_R=ifftn($field_G->mv(1,-1), $ndims)->mv(-1,1)->complex;
+    my $field_R=ifftn($field_G->mv(1,-1), $ndims)->mv(-1,1);
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
     #result is RorI, cartesian, nx, ny,...
     $self->_field($field_R);
