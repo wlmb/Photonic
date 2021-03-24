@@ -29,7 +29,7 @@ WriteMakefile(
 	'PDL::Constants'                 => '0',
 	'PDL::Core'                      => '0',
 	'PDL::Core::Dev'                 => '0',
-	'PDL::FFTW3'                     => '0',
+	'PDL::FFTW3'                     => '0.12',
 	'PDL::IO::Pic'                   => '0',
 	'PDL::IO::Storable'              => '0',
 	'PDL::Lite'                      => '0',
