@@ -29,13 +29,12 @@ WriteMakefile(
 	'PDL::Constants'                 => '0',
 	'PDL::Core'                      => '0',
 	'PDL::Core::Dev'                 => '0',
-	'PDL::FFTW3'                     => '0.12',
 	'PDL::IO::Pic'                   => '0',
 	'PDL::IO::Storable'              => '0',
 	'PDL::Lite'                      => '0',
 	'PDL::MatrixOps'                 => '0',
 	'PDL::NiceSlice'                 => '0',
-	'PDL::FFTW3'                     => '0.10', # accept PDL::Complex
+	'PDL::FFTW3'                     => '0.12', # accept PDL::Complex
 	'PDL::LinearAlgebra'             => '0.15', # cgtsv
 	'Storable'                       => '0',
     },
