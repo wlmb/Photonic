@@ -76,7 +76,7 @@ sub linearCombineIt { #complex linear combination of states from iterator
 }
 
 sub any_complex {
-    grep ref $_ eq 'PDL::Complex', @_;
+    grep ref $_ && (ref $_ eq 'PDL::Complex' or !$_->type->real), @_;
 }
 
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims

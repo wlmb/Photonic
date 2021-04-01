@@ -76,7 +76,7 @@ function $e and optional smallness parameter  $s.
 
 =item * epsilon
 
-A PDL::Complex PDL giving the value of the dielectric function epsilon
+A complex PDL giving the value of the dielectric function epsilon
 for each pixel of the system
 
 =item * geometry Photonic::Types::GeometryG0

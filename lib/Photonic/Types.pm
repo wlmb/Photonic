@@ -35,8 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 
 use Moose::Util::TypeConstraints;
-#use PDL::Lite;
-#use PDL::NiceSlice;
+use Photonic::Utils qw(any_complex);
 
 subtype 'Photonic::Types::OddInt' =>
     as 'Int',
@@ -88,7 +87,8 @@ subtype 'Photonic::Types::WE::S::AllHSave' =>
     message { "Can't calculate fields if you don't keepStates" };
 
 subtype 'Photonic::Types::PDLComplex' =>
-  as 'PDL::Complex',
+  as 'PDL',
+  where { any_complex($_) },
   ;
 
 no Moose::Util::TypeConstraints;

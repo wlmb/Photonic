@@ -63,7 +63,7 @@ functions of the components.
 
 Initializes the structure.
 
-$e PDL::Complex is the dielectric function as a complex scalar field
+$e complex PDL is the dielectric function as a complex scalar field
 
 $g Photonic::Geometry describing the structure
 
@@ -82,7 +82,7 @@ $k is a flag to keep states in Haydock calculations (default 0)
 
 =item * epsilon
 
-A PDL::Complex PDL giving the value of the dielectric function epsilon
+A complex PDL giving the value of the dielectric function epsilon
 for each pixel of the system
 
 =item * keepStates

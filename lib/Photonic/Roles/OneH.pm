@@ -223,7 +223,7 @@ sub _iterate_indeed {
     my $c_np1=$g_np1*$g_n*$b_np1;
     my $bc_np1=$g_np1*$g_n*$b2_np1;
     my $psi_np1;
-    $psi_np1=$bpsi_np1/$b_np1 unless $b2_np1->abs<=$self->smallH;
+    $psi_np1=$bpsi_np1/$b_np1 unless PDL::all($b2_np1->abs<=$self->smallH);
     #save values
     $self->_current_a($self->_coerce($a_n));
     $self->_next_b2($self->_coerce($b2_np1));
