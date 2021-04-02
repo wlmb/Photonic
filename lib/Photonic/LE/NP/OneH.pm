@@ -177,7 +177,7 @@ has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
 with 'Photonic::Roles::OneH';
 
-#don't allow intialization of enxt state, as this module is fragile
+#don't allow initialization of next state, as this module is fragile
 #and depends on a particular initial state. Otherwise, use the
 #Roles::OneH attribute.
 
