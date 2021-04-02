@@ -133,13 +133,8 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1, lazy=>1,
-		builder=> '_build_epsilon');
-
-my $ghandles={map {$_=>$_} qw(B ndims dims r G GNorm L scale f)};
-$ghandles->{epsilonFromG}='epsilon';
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
-    handles=>$ghandles,required=>1
+    handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
 );
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
@@ -168,12 +163,7 @@ has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writ
 has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
 
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
-
-sub _build_epsilon {
-    my $self=shift;
-    return $self->epsilonFromG;
-}
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
 
 sub _build_epsTensor {
     my $self=shift;

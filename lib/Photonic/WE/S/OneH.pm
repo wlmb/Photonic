@@ -182,8 +182,6 @@ use Photonic::Utils qw(VSProd any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1, lazy=>1,
-		builder=>'_epsilon');
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::S::Metric',
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',
 			 geometry=>'geometry', epsilonR=>'epsilon'},
@@ -193,14 +191,7 @@ has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH',  'Photonic::Roles::UseMask';
-
-sub _epsilon {
-    my $self=shift;
-    die "Coudln't obtain dielectric function from geometry" unless
-	$self->geometry->can('epsilon');
-    return $self->geometry->epsilon;
-}
+with 'Photonic::Roles::OneH',  'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
 
 #Required by Photonic::Roles::OneH
 

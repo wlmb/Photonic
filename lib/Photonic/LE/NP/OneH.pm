@@ -168,27 +168,18 @@ use Photonic::Utils qw(EProd any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1, lazy=>1,
-		builder=>'_epsilon');
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
 );
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH';
+with 'Photonic::Roles::OneH', 'Photonic::Roles::EpsFromGeometry';
 
 #don't allow initialization of next state, as this module is fragile
 #and depends on a particular initial state. Otherwise, use the
 #Roles::OneH attribute.
 
 has '+nextState' =>(init_arg=>undef);
-
-sub _epsilon {
-    my $self=shift;
-    die "Coudln't obtain dielectric function from geometry" unless
-	$self->geometry->can('epsilon');
-    return $self->geometry->epsilon;
-}
 
 #Required by Photonic::Roles::OneH
 
