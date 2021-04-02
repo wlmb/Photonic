@@ -196,7 +196,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
-use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex);
 use Photonic::ExtraUtils qw(cgtsv);
 use Photonic::Iterator;
 use Photonic::Types;
@@ -360,7 +360,7 @@ sub _build_field2 {
 sub _build_dipolar {
     my $self=shift;
     my $field=$self->field1;
-    die "Expected complex \$field" unless $field->isa('PDL::Complex');
+    die "Expected complex \$field" unless any_complex($field);
     my $ndims=$self->ndims;
     #E^2 Square each complex component and sum over components
     #result is RorI, nx, ny...
