@@ -199,6 +199,7 @@ use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt);
 use Photonic::ExtraUtils qw(cgtsv);
 use Photonic::Iterator;
+use Photonic::Types;
 use PDL::Constants qw(PI);
 use Moose;
 use MooseX::StrictConstructor;
@@ -206,56 +207,56 @@ use MooseX::StrictConstructor;
 has 'shp'=>(is=>'ro', 'isa'=>'Photonic::LE::NR2::SHP', required=>1,
     handles=>[qw(ndims nrf densityA densityB density nr)],
     documentation=>'Object with invariant part of SHG calculation');
-has 'epsA1'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
+has 'epsA1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
     documentation=>'Fundamental dielectric function of host');
-has 'epsB1'=>(is=>'ro', isa=>'PDL::Complex',
+has 'epsB1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
         documentation=>'Fundamental dielectric function of inclusions');
-has 'epsA2'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
+has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
     documentation=>'SH Dielectric function of host');
-has 'epsB2'=>(is=>'ro', isa=>'PDL::Complex', required=>1,
+has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
         documentation=>'SH Dielectric function of inclusions');
-has 'alpha1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'alpha1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_alpha1',
          documentation=>'Linear "atomic" polarizability');
-has 'alpha2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'alpha2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_alpha2',
          documentation=>'SH linear "atomic" polarizability');
-has 'u1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'u1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_u1',
          documentation=>'Spectral variable at fundamental');
-has 'u2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'u2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_u2',
          documentation=>'Spectral variable at SH');
-has 'field1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'field1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_field1',
          documentation=>'longitudinal field at fundamental');
-has 'field2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'field2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_field2',
          documentation=>'longitudinal field at second harmonic');
-has 'epsL2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'epsL2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          writer=>'_epsL2', predicate=>'has_epsL2',
          documentation=>'longitudinal dielectric function at 2w');
-has 'dipolar'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'dipolar'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_dipolar',
          documentation=>'SH dipolar contribution to SH polarization');
-has 'quadrupolar'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'quadrupolar'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_quadrupolar',
          documentation=>'SH quadrupolar contribution to SH polarization');
-has 'external'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'external'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_external',
          documentation=>'SH external contribution to SH polarization');
-has 'external_G'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'external_G'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_external_G',
          documentation=>'SH ext. polarization in reciprocal space');
-has 'externalL_G'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'externalL_G'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_externalL_G',
          documentation=>
              'SH ext. longitudinal polarization comp. in reciprocal space');
-has 'externalVecL_G'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'externalVecL_G'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_externalVecL_G',
          documentation=>
              'SH ext. longitudinal polarization proj. in recip. space');
-has 'externalVecL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'externalVecL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_externalVecL',
          documentation=>
              'SH ext. longitudinal polarization proj. in real space');
@@ -263,43 +264,43 @@ has 'HP' =>(is=>'ro', isa=>'Photonic::LE::NR2::AllH', init_arg=>undef,
          lazy=>1, builder=>'_build_HP',
          documentation=>
          'Structure to calculate Haydock basis for non linear polarization');
-has 'externalL_n'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'externalL_n'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_externalL_n',
          documentation=>
              'SH ext. longitudinal polarization in Haydock
                representation');
-has 'selfConsistentL_n'=>(is=>'ro', isa=>'PDL::Complex',
+has 'selfConsistentL_n'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
          init_arg=>undef, lazy=>1,
          builder=>'_build_selfConsistentL_n',
          documentation=>
              'SH self consistent longitudinal polarization
               in Haydock representation');
-has 'selfConsistentL_G'=>(is=>'ro', isa=>'PDL::Complex',
+has 'selfConsistentL_G'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
          init_arg=>undef, lazy=>1,
          builder=>'_build_selfConsistentL_G',
          documentation=>
              'SH self consistent longitudinal polarization components in
                reciprocal space');
-has 'selfConsistentVecL_G'=>(is=>'ro', isa=>'PDL::Complex',
+has 'selfConsistentVecL_G'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
          init_arg=>undef, lazy=>1,
          builder=>'_build_selfConsistentVecL_G',
          documentation=>
              'SH self consistent longitudinal polarization vector
               field in reciprocal space');
-has 'selfConsistentVecL'=>(is=>'ro', isa=>'PDL::Complex',
+has 'selfConsistentVecL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
          init_arg=>undef, lazy=>1,
          builder=>'_build_selfConsistentVecL',
          documentation=>
              'SH self consistent longitudinal polarization vector
               field in real space');
-has 'P2'=>(is=>'ro', isa=>'PDL::Complex',
+has 'P2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
          init_arg=>undef, lazy=>1,
          builder=>'_build_P2',
          documentation=>
              'SH self consistent total polarization vector
               field in real space');
 
-has 'P2LMCalt'=>(is=>'ro', isa=>'PDL::Complex',
+has 'P2LMCalt'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
          init_arg=>undef, lazy=>1,
          builder=>'_build_P2LMCalt',
          documentation=>

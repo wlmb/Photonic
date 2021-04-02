@@ -182,14 +182,14 @@ use Photonic::Utils qw(VSProd any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
+has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1, lazy=>1,
 		builder=>'_epsilon');
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::S::Metric',
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',
 			 geometry=>'geometry', epsilonR=>'epsilon'},
 	       required=>1);
-has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
-has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
+has 'polarization' =>(is=>'ro', required=>1, isa=>'Photonic::Types::PDLComplex');
+has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');

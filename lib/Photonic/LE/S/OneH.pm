@@ -169,7 +169,7 @@ use Photonic::Utils qw(SProd any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1, lazy=>1,
+has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1, lazy=>1,
 		builder=>'_epsilon');
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B ndims dims r G GNorm L scale f pmGNorm)],required=>1

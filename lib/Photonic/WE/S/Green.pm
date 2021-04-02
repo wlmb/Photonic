@@ -163,7 +163,7 @@ has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::S::GreenP]',
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All greenP evaluations converged');
-has 'greenTensor'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'greenTensor'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
 	      lazy=>1, builder=>'_build_greenTensor',
              documentation=>'Greens Tensor');
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,

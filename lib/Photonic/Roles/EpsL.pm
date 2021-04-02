@@ -147,7 +147,7 @@ has 'nh' =>(is=>'ro', isa=>'Num', required=>1, lazy=>1, builder=>'_nh',
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'epsL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
 	     writer=>'_epsL',
 	     documentation=>'Value of dielectric function'  );
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,

@@ -133,7 +133,7 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'epsilon'=>(is=>'ro', isa=>'PDL::Complex', required=>1);
+has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1);
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
     handles=>[qw(B dims r G GNorm L scale f)],required=>1
 );

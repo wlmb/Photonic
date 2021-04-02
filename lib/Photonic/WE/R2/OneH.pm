@@ -44,11 +44,12 @@ use Carp;
 use Moose;
 use MooseX::StrictConstructor;
 use Photonic::Utils qw(MHProd any_complex);
+use Photonic::Types;
 
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
     handles=>[qw(B ndims dims epsilon)],required=>1);
-has 'polarization' =>(is=>'ro', required=>1, isa=>'PDL::Complex');
-has 'normalizedPolarization' =>(is=>'ro', isa=>'PDL::Complex',
+has 'polarization' =>(is=>'ro', required=>1, isa=>'Photonic::Types::PDLComplex');
+has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');

@@ -172,7 +172,7 @@ has 'nh' =>(is=>'ro', isa=>'Num', required=>1, lazy=>1, builder=>'_nh',
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'epsL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
 	     writer=>'_epsL',
 	     documentation=>'Value of dielectric function'  );
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
@@ -208,13 +208,13 @@ has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 
 #accesors
-has 'epsA1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA1',
+has 'epsA1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA1',
     documentation=>'Dielectric function of host');
-has 'epsB1'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB1',
+has 'epsB1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB1',
         documentation=>'Dielectric function of inclusions');
-has 'epsA2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsA2',
+has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA2',
     documentation=>'Dielectric function of host');
-has 'epsB2'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsB2',
+has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB2',
         documentation=>'Dielectric function of inclusions');
 has 'nrshp' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::SHP]',
             init_arg=>undef, lazy=>1, builder=>'_build_nrshp',

@@ -107,7 +107,7 @@ use MooseX::StrictConstructor;
 
 extends 'Photonic::WE::R2::GreenP';
 
-has 'waveOperator' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
              writer=>'_waveOperator',
              documentation=>'Wave operator from last evaluation');
 

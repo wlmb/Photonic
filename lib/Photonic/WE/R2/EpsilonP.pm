@@ -111,7 +111,7 @@ use MooseX::StrictConstructor;
 
 extends 'Photonic::WE::R2::WaveP';
 
-has 'epsilon' =>  (is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'epsilon' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
              writer=>'_epsilon',
              documentation=>'Wave projection from last evaluation');
 

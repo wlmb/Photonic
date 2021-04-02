@@ -1,4 +1,5 @@
 - use PDL::FFTW3's new ability to take PDL::Complex inputs
+- Moose type abstracting real vs complex data
 
 0.015 2021-03-12
 - convert from bundled Fortran code to PDL::LinearAlgebra

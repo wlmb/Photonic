@@ -87,6 +87,10 @@ subtype 'Photonic::Types::WE::S::AllHSave' =>
   where { $_->keepStates == 1 },
     message { "Can't calculate fields if you don't keepStates" };
 
+subtype 'Photonic::Types::PDLComplex' =>
+  as 'PDL::Complex',
+  ;
+
 no Moose::Util::TypeConstraints;
 
 __END__

@@ -136,7 +136,7 @@ has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::S::AllH', required=>1);
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
-has 'Gpp'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef,
+has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
 	    lazy=>1, builder=>'_build_Gpp',
 	      documentation=>'Value of projected Greens function');
 

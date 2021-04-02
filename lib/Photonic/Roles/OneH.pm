@@ -141,7 +141,7 @@ use PDL::FFTW3;
 use PDL::Complex;
 use List::Util;
 use Carp;
-#use Photonic::Types;
+use Photonic::Types;
 use Moose::Util::TypeConstraints;
 
 requires
@@ -151,13 +151,13 @@ requires
     'magnitude', #magnitude of a state
     'complexCoeffs', #Haydock coefficients are complex
     'changesign'; #change sign of $b2
-has 'firstState' =>(is=>'ro', isa=>'PDL::Complex', lazy=>1,
+has 'firstState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1,
 		    builder=>'_firstState');
-has 'previousState' =>(is=>'ro', isa=>'PDL::Complex', writer=>'_previousState',
+has 'previousState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_previousState',
     init_arg=>undef);
-has 'currentState' => (is=>'ro', isa=>'PDL::Complex', writer=>'_currentState',
+has 'currentState' => (is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_currentState',
       lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
-has 'nextState' =>(is=>'ro', isa=>maybe_type('PDL::Complex'),
+has 'nextState' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
 		   writer=>'_nextState',  lazy=>1,
 		   builder=>'_firstRState', init_arg=>undef);
 has 'current_a' => (is=>'ro', writer=>'_current_a',  init_arg=>undef);

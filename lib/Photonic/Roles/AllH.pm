@@ -158,7 +158,7 @@ has nh=>(is=>'ro', required=>1,
 # Moved to Role below
 #has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepStates',
 #         documentation=>'flag to keep Haydock states');
-has _states=>(is=>'ro', isa=>'ArrayRef[PDL::Complex]',
+has _states=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]',
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
 # why not pdl?

@@ -122,7 +122,7 @@ use Moose;
 use MooseX::StrictConstructor;
 
 has 'nr' =>(is=>'ro', isa=>'Photonic::LE::S::AllH', required=>1);
-has 'epsL'=>(is=>'ro', isa=>'PDL::Complex', init_arg=>undef, writer=>'_epsL');
+has 'epsL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsL');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
