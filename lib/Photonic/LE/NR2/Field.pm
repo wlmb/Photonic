@@ -205,19 +205,18 @@ sub evaluate {
     # Obtain longitudinal macroscopic response from result
     $self->_epsL(my $epsL=1/$result->(:,(0)));
     # Normalize result so macroscopic field is 1.
-    $result*=$epsL;
-    my @Es= map {PDL->pdl($_)->complex} @{$result->unpdl};
+    my $Es= $result*$epsL;
     #states are RorI,nx,ny...
     #field is RorY,cartesian,nx,ny...
-    my $ndims=$self->nr->B->ndims; # num. of dims of space
     my @dims=$self->nr->B->dims; # actual dims of space
+    my $ndims=@dims; # num. of dims of space
     my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
 	my $GPsi_G=Cscale($stateit->nextval,
 			  $self->nr->GNorm->mv(0,-1))->mv(-1,1);#^G|psi_n>
 	#the result is RorI, cartesian, nx, ny,...
-	my $EnGPsi_G=Cmul($GPsi_G,$Es[$n]); #En ^G|psi_n>
+	my $EnGPsi_G=$GPsi_G*$Es->(:,$n); #En ^G|psi_n>
 	$field_G+=$EnGPsi_G;
     }
     #filter RandI for each cartesian
@@ -231,7 +230,6 @@ sub evaluate {
     #print "EM=$EM\n";
     return $field_R;
 }
-
 
 __PACKAGE__->meta->make_immutable;
 

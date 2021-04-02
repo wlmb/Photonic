@@ -364,7 +364,7 @@ sub _build_dipolar {
     my $ndims=$self->ndims;
     #E^2 Square each complex component and sum over components
     #result is RorI, nx, ny...
-    my $Esquare_R=Cmul($field, $field)->sumover;
+    my $Esquare_R=($field*$field)->sumover;
     #Fourier transform
     # RorI nx ny...
     my $Esquare_G=fftn($Esquare_R, $ndims);
@@ -373,7 +373,7 @@ sub _build_dipolar {
     #RorI cartesian nx ny
     my $iG=$G*i;
     #RorI cartesian nx ny...
-    my $iGE2=Cmul($iG, $Esquare_G->(,*1));
+    my $iGE2=$iG*$Esquare_G->(,*1);
     #back to real space. Get cartesian out of the way and then back
     #RorI, cartesian, nx, ny...
     my $nablaE2=ifftn($iGE2->mv(1,-1), $ndims)->mv(-1,1);

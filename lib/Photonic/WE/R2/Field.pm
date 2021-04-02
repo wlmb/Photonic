@@ -187,19 +187,17 @@ sub evaluate {
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;
     #coefficients of g^{-1}E
-    my ($giEs_coeff, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
+    my ($giEs, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
-    #
-    my @giEs= map {PDL->pdl($_)->complex} @{$giEs_coeff->unpdl};
     #states are ri,xy,nx,ny...
     #field is ri,xy,nx,ny...
-    my $ndims=$self->nr->B->ndims; # num. of dims of space
     my @dims=$self->nr->B->dims; # actual dims of space
+    my $ndims=@dims; # num. of dims of space
     my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
     #print $field_G->info, "\n";
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
-	my $giE_G=$giEs[$n]*$stateit->nextval; #En ^G|psi_n>
+	my $giE_G=$giEs->(:,$n)*$stateit->nextval; #En ^G|psi_n>
 	$field_G+=$giE_G;
     }
     #

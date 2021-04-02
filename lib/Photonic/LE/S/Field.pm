@@ -198,12 +198,11 @@ sub evaluate {
     # Add spinor normalization.
     $self->_epsL(my $epsL=sqrt(2)/$result->(:,(0)));
     # Normalize result so macroscopic field is 1.
-    $result*=$epsL;
-    my @Es= map {PDL->pdl($_)->complex} @{$result->unpdl};
+    my $Es = $result*$epsL;
     #states are ri,nx,ny...
     #field is ri,xy,pm,nx,ny...
-    my $ndims=$self->nr->B->ndims; # num. of dims of space
     my @dims=$self->nr->B->dims; # actual dims of space
+    my $ndims=@dims; # num. of dims of space
     my $field_G=PDL->zeroes(2, $ndims, 2, @dims)->complex;
     for(my $n=0; $n<$nh; ++$n){
 	#state is ri,pm,nx,ny...
@@ -211,7 +210,7 @@ sub evaluate {
 	#$Gpsi_G is ri,xy,pm,nx,ny
 	my $GPsi_G=($self->nr->pmGNorm->mv(0,-1)*$stateit->nextval)
 	    ->mv(-1,1); #^G|psi_n>
-	my $EnGPsi_G=$Es[$n]*$GPsi_G; #En ^G|psi_n>
+	my $EnGPsi_G=$Es->(:,$n)*$GPsi_G; #En ^G|psi_n>
 	$field_G+=$EnGPsi_G; #ri,xy,pm,nx,ny...
     }
     #Choose +k
