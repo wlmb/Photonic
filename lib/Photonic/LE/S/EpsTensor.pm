@@ -124,9 +124,9 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use PDL::MatrixOps;
+use Photonic::Utils qw(tensor);
+use List::Util qw(all);
 use Storable qw(dclone);
-use PDL::IO::Storable;
 use Photonic::LE::S::AllH;
 use Photonic::LE::S::EpsL;
 use Photonic::Types;
@@ -167,29 +167,8 @@ with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask', 'Photonic::Roles
 
 sub _build_epsTensor {
     my $self=shift;
-    my @eps; #array of @eps along different directions.
-    my $converged=1;
-    foreach(@{$self->epsL}){
-	push @eps, $_->epsL;
-	$converged &&=$_->converged;
-    }
-    $self->_converged($converged);
-    my $reEpsL=PDL->pdl([map {$_->re} @eps]);
-    my $imEpsL=PDL->pdl([map {$_->im} @eps]);
-    my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
-    my $reEps=lu_backsub($lu, $perm, $parity, $reEpsL);
-    my $imEps=lu_backsub($lu, $perm, $parity, $imEpsL);
-    my $nd=$self->geometry->B->ndims;
-    my $epsTensor=PDL->zeroes(2, $nd, $nd)->complex;
-    my $n=0;
-    for my $i(0..$nd-1){
-	for my $j($i..$nd-1){
-	    $epsTensor->(:,($i),($j)).=$reEps->($n)+i*$imEps->($n);
-	    $epsTensor->(:,($j),($i)).=$reEps->($n)+i*$imEps->($n);
-	    ++$n;
-	}
-    }
-    return $epsTensor;
+    $self->_converged(all { $_->converged } @{$self->epsL});
+    tensor(pdl([map $_->epsL, @{$self->epsL}])->complex, $self->geometry->unitDyadsLU, $self->geometry->B->ndims);
 }
 
 sub _build_nr { # One Haydock coefficients calculator per direction0

@@ -134,13 +134,12 @@ fraction. 0 means don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::Complex;
-use PDL::MatrixOps;
 use Storable qw(dclone);
 use Photonic::WE::S::AllH;
 use Photonic::WE::S::GreenP;
 use Photonic::Types;
+use Photonic::Utils qw(tensor);
+use List::Util qw(all);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -171,29 +170,8 @@ with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 sub _build_greenTensor {
     my $self=shift;
-    my @greenP; #array of Green's projections along different directions.
-    my $converged=1;
-    foreach(@{$self->greenP}){
-	push @greenP, $_->Gpp;
-	$converged &&=$_->converged;
-    }
-    $self->_converged($converged);
-    my $reGreenP=PDL->pdl([map {$_->re} @greenP]);
-    my $imGreenP=PDL->pdl([map {$_->im} @greenP]);
-    my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
-    my $reGreen=lu_backsub($lu, $perm, $parity, $reGreenP);
-    my $imGreen=lu_backsub($lu, $perm, $parity, $imGreenP);
-    my $nd=$self->geometry->ndims;
-    my $greenTensor=PDL->zeroes(2, $nd, $nd)->complex;
-    my $n=0;
-    for my $i(0..$nd-1){
-	for my $j($i..$nd-1){
-	    $greenTensor->(:,($i),($j)).=$reGreen->($n)+i*$imGreen->($n);
-	    $greenTensor->(:,($j),($i)).=$reGreen->($n)+i*$imGreen->($n);
-	    ++$n;
-	}
-    }
-    return $greenTensor;
+    $self->_converged(all { $_->converged } @{$self->greenP});
+    tensor(pdl([map $_->Gpp, @{$self->greenP}])->complex, $self->geometry->unitDyadsLU, $self->geometry->ndims);
 }
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0
@@ -212,7 +190,7 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
 	    mask=>$self->mask);
 	push @haydock, $haydock;
     }
-    return [@haydock]
+    return \@haydock;
 }
 
 sub _build_greenP {
@@ -223,7 +201,7 @@ sub _build_greenP {
 	    haydock=>$_, nh=>$self->nh, smallE=>$self->smallE);
 	push @greenP, $g;
     }
-    return [@greenP]
+    return \@greenP;
 }
 
 __PACKAGE__->meta->make_immutable;

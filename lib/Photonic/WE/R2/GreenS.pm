@@ -135,14 +135,13 @@ fraction. 0 means don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::Complex;
-use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
+use Photonic::Utils qw(tensor);
+use List::Util qw(all);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -182,30 +181,10 @@ sub evaluate {
     $self->_epsA(my $epsA=$self->metric->epsilon->r2C);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my @greenP; #array of Green's projections along different directions.
-    my $converged=1;
-    foreach(@{$self->greenP}){
-	push @greenP, $_->evaluate($epsB);
-	$converged &&=$_->converged;
-    }
-    $self->_converged($converged);
-    my $reGreenP=PDL->pdl([map {$_->re} @greenP]);
-    my $imGreenP=PDL->pdl([map {$_->im} @greenP]);
-    my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
-    my $reGreen=lu_backsub($lu, $perm, $parity, $reGreenP);
-    my $imGreen=lu_backsub($lu, $perm, $parity, $imGreenP);
-    my $nd=$self->ndims;
-    my $greenTensor=PDL->zeroes(2, $nd, $nd)->complex;
-    my $n=0;
-    for my $i(0..$nd-1){
-	for my $j($i..$nd-1){
-	    $greenTensor->(:,($i),($j)).=$reGreen->($n)+i*$imGreen->($n);
-	    $greenTensor->(:,($j),($i)).=$reGreen->($n)+i*$imGreen->($n);
-	    ++$n;
-	}
-    }
+    $self->_converged(all { $_->converged } @{$self->greenP});
+    my $greenTensor = tensor(pdl([map $_->evaluate($epsB), @{$self->greenP}])->complex, $self->geometry->unitDyadsLU, $self->geometry->ndims);
     $self->_greenTensor($greenTensor);
-    return $greenTensor;
+    $greenTensor;
 }
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0

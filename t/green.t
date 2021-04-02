@@ -53,10 +53,14 @@ my $m=Photonic::WE::S::Metric->new(
     wavevector=>pdl([1,0])*1e-8);
 my $gr=Photonic::WE::S::Green->new(nh=>10, metric=>$m);
 my $grv=$gr->greenTensor;
-ok(Cagree($grv->(:,(0),(0)), ($f/$eb+(1-$f)/$ea)),
-			     "1D long non retarded");
-ok(Cagree($grv->(:,(1),(1)), 1/($f*$eb+(1-$f)*$ea)),
-			     "1D transverse non retarded");
+my $expected = $f/$eb+(1-$f)/$ea;
+ok(Cagree($grv->(:,(0),(0)), $expected),
+			     "1D long non retarded")
+                             or diag "got: ", $grv->(:,(0),(0)), ", \nexpected: $expected";
+$expected = 1/($f*$eb+(1-$f)*$ea);
+ok(Cagree($grv->(:,(1),(1)), $expected),
+			     "1D transverse non retarded")
+                             or diag "got: ", $grv->(:,(1),(1)), "\nexpected: ", $expected;
 ok(Cagree($grv->(:,(0),(1)), 0),
 			     "1D l-t non retarded");
 ok(Cagree($grv->(:,(1),(0)), 0),

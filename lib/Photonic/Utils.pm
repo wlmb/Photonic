@@ -39,11 +39,12 @@ require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR LC
     HProd MHProd EProd VSProd SProd linearCombine
-    linearCombineIt lentzCF any_complex);
+    linearCombineIt lentzCF any_complex tensor);
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
 use PDL::Complex;
+use PDL::MatrixOps;
 use Photonic::Iterator qw(nextval);
 use Carp;
 use warnings;
@@ -77,6 +78,22 @@ sub linearCombineIt { #complex linear combination of states from iterator
 
 sub any_complex {
     grep ref $_ && (ref $_ eq 'PDL::Complex' or !$_->type->real), @_;
+}
+
+sub tensor {
+    my ($data, $decomp, $nd) = @_;
+    my $reData=lu_backsub(@$decomp, $data->re);
+    my $imData=lu_backsub(@$decomp, $data->im);
+    my $tensor=PDL->zeroes(2, $nd, $nd)->complex;
+    my $n=0;
+    for my $i(0..$nd-1){
+        for my $j($i..$nd-1){
+            $tensor->(:,($i),($j)).=$reData->($n)+i*$imData->($n);
+            $tensor->(:,($j),($i)).=$reData->($n)+i*$imData->($n);
+            ++$n;
+        }
+    }
+    $tensor;
 }
 
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
@@ -410,6 +427,12 @@ are centered on the decimated lattice points.
 =item * any_complex
 
 True if any of the args are a complex PDL.
+
+=item * tensor
+
+Given a complex PDL, an LU decomposition array-ref for the first 3
+params of L<PDL::MatrixOps/lu_backsub>, and the size of the tensor,
+returns the tensor.
 
 =back
 

@@ -281,7 +281,7 @@ sub evaluate {
 		/$self->geometry->npoints;
 	}
 	$P2Mmask = $P2Mmask + $f*$Dep2 if $kind eq 'f' or $kind eq 'l'
-	    or $kind eq 'a'; # substract masked macro depolarization field
+	    or $kind eq 'a'; # subtract masked macro depolarization field
 	push @P2M, $P2Mmask;
     }
     #NOTE. Maybe I have to correct response to D-> response to E
