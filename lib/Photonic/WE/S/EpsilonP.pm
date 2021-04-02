@@ -99,12 +99,6 @@ The macroscopic dielectric projection of the last operation
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::Complex;
-use PDL::MatrixOps;
-#use Storable qw(dclone);
-#use PDL::IO::Storable;
-#use Photonic::WE::S::AllH;
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;

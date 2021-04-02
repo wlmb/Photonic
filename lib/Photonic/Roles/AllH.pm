@@ -145,7 +145,6 @@ use Fcntl;
 use Machine::Epsilon;
 use Photonic::Iterator qw(:all);
 use PDL::Lite;
-use PDL::Complex;
 use PDL::NiceSlice;
 use IO::File;
 use Storable qw(store_fd fd_retrieve);

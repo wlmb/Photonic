@@ -94,12 +94,8 @@ The macroscopic wave operator of the last operation
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::MatrixOps;
-use Storable qw(dclone store);
-use PDL::IO::Storable;
-#use Photonic::WE::R2::AllH;
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;

@@ -94,9 +94,6 @@ The macroscopic wave operator of the last operation
 =cut
 
 use namespace::autoclean;
-use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;

@@ -99,8 +99,6 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::MatrixOps;
-use Storable qw(dclone);
-use PDL::IO::Storable;
 use Photonic::Types;
 use Photonic::Utils qw(any_complex);
 use Moose;
@@ -111,7 +109,6 @@ extends 'Photonic::WE::S::Wave';
 has 'epsilonTensor' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
 			 lazy=>1, builder=>'_build_epsilonTensor',
 			 documentation=>'macroscopit response');
-
 
 sub _build_epsilonTensor {
     my $self=shift;

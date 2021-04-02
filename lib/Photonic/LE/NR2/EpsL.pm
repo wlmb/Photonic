@@ -126,7 +126,6 @@ check.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::LE::NR2::AllH;
 use Photonic::Types;
 use Photonic::Utils qw(lentzCF);

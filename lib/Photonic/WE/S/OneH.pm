@@ -49,7 +49,7 @@ A L<Photonic::WE::S::Metric> object defining the geometry of the
 system, the charateristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
 
-=item * polarization PDL::Complex
+=item * polarization complex PDL
 
 A non null vector defining the complex direction of the macroscopic
 field.

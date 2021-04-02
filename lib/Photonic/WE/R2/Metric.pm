@@ -85,10 +85,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::MatrixOps;
 use PDL::NiceSlice;
-use PDL::Complex;
-use List::Util;
 use Carp;
-use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 

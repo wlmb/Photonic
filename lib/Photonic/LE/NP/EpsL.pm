@@ -112,7 +112,6 @@ check.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::LE::NP::AllH;
 use Photonic::Types;
 use Moose;

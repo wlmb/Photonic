@@ -138,7 +138,6 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
-use PDL::IO::Storable;
 use Photonic::WE::S::AllH;
 use Photonic::WE::S::GreenP;
 use Photonic::Types;

@@ -119,7 +119,6 @@ Criteria of convergence. 0 means don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::WE::S::AllH;
 use Photonic::Types;

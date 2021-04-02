@@ -3,7 +3,6 @@ package Photonic::ExtraUtils;
 use strict;
 use warnings;
 use Carp;
-use PDL::Complex;
 require PDL::LinearAlgebra::Complex;
 use Exporter;
 

@@ -106,7 +106,6 @@ Number of dimensions of the system
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Moose;
 use MooseX::StrictConstructor;
 

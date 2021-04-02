@@ -137,9 +137,6 @@ check.
 =cut
 
 use Moose::Role;
-use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::Types;
 
 has 'nr' =>(is=>'ro', isa=>'Photonic::Types::AllH', required=>1);

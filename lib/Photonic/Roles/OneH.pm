@@ -136,11 +136,7 @@ next_b2, next_state, shifting the current values where necessary. Returns
 use Moose::Role;
 
 use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::FFTW3;
 use PDL::Complex;
-use List::Util;
-use Carp;
 use Photonic::Types;
 use Moose::Util::TypeConstraints;
 
@@ -251,8 +247,6 @@ sub _firstRState {
     $self->_next_g($g);
     return $phi; #goes into _nextState
 }
-
-
 
 sub _coerce {
     my $self=shift;
