@@ -39,7 +39,9 @@ require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR LC
     HProd MHProd EProd VSProd SProd linearCombine
-    linearCombineIt lentzCF any_complex tensor);
+    linearCombineIt lentzCF any_complex tensor
+    make_haydock make_greenp
+);
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
@@ -47,6 +49,7 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Photonic::Iterator qw(nextval);
 use Carp;
+use Storable qw(dclone);
 use warnings;
 use strict;
 
@@ -94,6 +97,27 @@ sub tensor {
         }
     }
     $tensor;
+}
+
+my @HAYDOCK_PARAMS = qw(
+  nh keepStates smallH reorthogonalize use_mask mask
+);
+sub make_haydock {
+  my ($self, $class) = @_;
+  # This must change if G is not symmetric
+  [ map $class->new(
+      metric=>dclone($self->metric), polarization=>$_->r2C,
+      map +($_ => $self->$_), @HAYDOCK_PARAMS), @{$self->geometry->unitPairs}
+  ];
+}
+
+my @GREENP_PARAMS = qw(nh smallE);
+sub make_greenp {
+  my ($self, $class) = @_;
+  [ map $class->new(
+      haydock=>$_,
+      map +($_ => $self->$_), @GREENP_PARAMS), @{$self->haydock}
+  ];
 }
 
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
@@ -433,6 +457,13 @@ True if any of the args are a complex PDL.
 Given a complex PDL, an LU decomposition array-ref for the first 3
 params of L<PDL::MatrixOps/lu_backsub>, and the size of the tensor,
 returns the tensor.
+
+=item * make_haydock
+
+=item * make_greenp
+
+Given an object and a classname, construct an array-ref of objects of
+that class, with relevant fields copied from the object.
 
 =back
 

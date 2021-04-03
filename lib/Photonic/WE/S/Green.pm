@@ -134,11 +134,10 @@ fraction. 0 means don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use Storable qw(dclone);
 use Photonic::WE::S::AllH;
 use Photonic::WE::S::GreenP;
 use Photonic::Types;
-use Photonic::Utils qw(tensor);
+use Photonic::Utils qw(tensor make_haydock make_greenp);
 use List::Util qw(all);
 use Moose;
 use MooseX::StrictConstructor;
@@ -175,33 +174,11 @@ sub _build_greenTensor {
 }
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0
-    my $self=shift;
-    my @haydock;
-    # This must change if G is not symmetric
-    foreach(@{$self->geometry->unitPairs}){
-	my $m=dclone($self->metric); #clone metric, to be safe
-	my $e=$_->r2C; #polarization
-	#Build a corresponding Photonic::WE::S::AllH structure
-	my $haydock=Photonic::WE::S::AllH->new(
-	    metric=>$m, polarization=>$e, nh=>$self->nh,
-	    keepStates=>$self->keepStates, smallH=>$self->smallH,
-	    reorthogonalize=>$self->reorthogonalize,
-	    use_mask=>$self->use_mask,
-	    mask=>$self->mask);
-	push @haydock, $haydock;
-    }
-    return \@haydock;
+    make_haydock(shift, 'Photonic::WE::S::AllH');
 }
 
 sub _build_greenP {
-    my $self=shift;
-    my @greenP;
-    foreach(@{$self->haydock}){
-	my $g=Photonic::WE::S::GreenP->new(
-	    haydock=>$_, nh=>$self->nh, smallE=>$self->smallE);
-	push @greenP, $g;
-    }
-    return \@greenP;
+    make_greenp(shift, 'Photonic::WE::S::GreenP');
 }
 
 __PACKAGE__->meta->make_immutable;
