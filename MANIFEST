@@ -102,6 +102,7 @@ t/oneh-nr2.t
 t/oneh-s.t
 t/oneh-wer2.t
 t/oneh-wes.t
+t/utils.t
 TODO
 xt/author-pod-coverage.t
 xt/author-pod-syntax.t
