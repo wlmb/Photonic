@@ -34,4 +34,13 @@ my $got = lentzCF(
 my $expected = 1.4688427299703299 + 2.6112759643916901*i;
 ok approx($got, $expected) or diag "got: $got, expected $expected";
 
+$expected = -1.2045454545454499 - 0.79545454545454497*i;
+$got = lentzCF(
+  [$expected],
+  [-1 - 0.247933884297521*i],
+  1,
+  1e-7,
+);
+ok approx($got, $expected) or diag "got: $got, expected $expected";
+
 done_testing;
