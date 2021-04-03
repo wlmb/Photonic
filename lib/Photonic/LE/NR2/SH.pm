@@ -493,7 +493,7 @@ sub _build_selfConsistentL_n {
     my $u2=$self->u2;
     my $diag=$u2->complex - PDL->pdl($as)->(0:$nh-1);
     # rotate complex zero from first to last element.
-    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
+    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag;
     my ($result, $info)= cgtsv($subdiag, $diag, $supradiag, $external);
     die "Error solving tridiag system" unless $info == 0;

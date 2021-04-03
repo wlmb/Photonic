@@ -193,9 +193,7 @@ sub evaluate {
     # At first take D=|0>
     my $diag=$u->complex - PDL->pdl($as)->(0:$nh-1);
     # rotate complex zero from first to last element.
-    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->r2C->real
-      ->mv(0,-1)->rotate(-1)->mv(-1,0)
-      ->complex;
+    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag;
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;

@@ -52,7 +52,7 @@ my $flb=1/$eb;
 my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
 ($fla, $flb)=map {$_/$fproml} ($fla, $flb);
 my $flx=pdl([$fla*(1-$B)+$flb*$B])->complex->mv(1,-1);
-ok(Cagree($flv, $flx), "1D long field");
+ok(Cagree($flv, $flx), "1D long field") or diag "got: $flv\nexpected: $flx";
 
 #View 2D from 1D superlattice.
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
