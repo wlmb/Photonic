@@ -164,7 +164,6 @@ use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
-use Photonic::Utils qw(cmatmult);
 
 use Moose;
 

@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 # Collection of subroutines. Thus, no Moose
 require Exporter;
 @ISA=qw(Exporter);
-@EXPORT_OK=qw(vectors2Dlist tile cmatmult  RtoG GtoR LC
+@EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR LC
     HProd MHProd EProd VSProd SProd linearCombine
     linearCombineIt lentzCF any_complex);
 use PDL::Lite;
@@ -305,20 +305,6 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
 	$f1((0))->flat, $f1((1))->flat);
 }
 
-
-sub cmatmult {
-    my $a=shift;
-    my $b=shift;
-    my $ar=$a((0)); #realpart
-    my $ai=$a((1)); #imaginary part
-    my $br=$b((0)); #realpart
-    my $bi=$b((1)); #imaginary part
-    my $cr=($ar x $br) - ($ai x $bi);
-    my $ci=($ar x $bi) + ($ai x $br);
-    my $c=PDL::cat($cr, $ci)->mv(-1,0);
-    return $c;
-}
-
 1;
 
 
@@ -420,15 +406,6 @@ along the y direction, etc. Useful for making plots.
 Returns a 2D vector field ready for gnuplotting from a vector field $f
 scaling the result by $s and decimating the field by $d. The vectors
 are centered on the decimated lattice points.
-
-=item * $c=cmatmult($a, $b)
-
-Returns the matrix product of the complex matrices $a times $b, with
-signatures a(2,j,i), b(2,k,j), c(2,k,i). The first index is 2,
-corresponding to the real and imaginary parts, j denotes columns of a,
-rows of b, i denotes rows of a and of the result c, k denotes columns
-of b and the result c. Recall that in pdl the first (row) index is
-faster. May thread over extra dimensions.
 
 =item * any_complex
 
