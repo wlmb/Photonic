@@ -213,8 +213,6 @@ sub applyOperator {
     #psi_G is ri:xy:pm:nx:ny mask is nx:ny
     $psi_G=$psi_G*$mask->(*1,*1) if defined $mask; #use dummies for xy:pm
     return $psi_G;
-
-    return $psi_G;
 }
 
 sub applyMetric {
