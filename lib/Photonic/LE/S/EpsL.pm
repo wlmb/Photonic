@@ -134,8 +134,7 @@ after BUILD => sub {
     my $min= min($self->nh, $self->nr->iteration);
     my ($fn, $n)=lentzCF($as, [map {-$_} @$b2s], $min, $self->smallE);
     # Check this logic:
-    my $converged=$n<$min || $self->nr->iteration<=$self->nh;
-    $self->_converged($converged);
+    $self->_converged($n<$min || $self->nr->iteration<=$self->nh);
     $self->_nhActual($n);
     $self->_epsL($fn);
     return $fn;
