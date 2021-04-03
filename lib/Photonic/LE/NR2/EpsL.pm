@@ -126,6 +126,7 @@ check.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
+use PDL::Complex;
 use Photonic::LE::NR2::AllH;
 use Photonic::Types;
 use Photonic::Utils qw(lentzCF);
@@ -148,11 +149,10 @@ sub evaluate {
     $self->_epsA(my $epsA=shift);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $as=$self->nr->as;
-    my $b2s=$self->nr->b2s;
+    my $as=pdl(map r2C($_), @{$self->nr->as})->cplx;
+    my $b2s=pdl(map r2C($_), @{$self->nr->b2s})->cplx;
     my $min= min($self->nh, $self->nr->iteration);
-    my ($fn, $n)=lentzCF([map {$u-$_} @$as], [map {-$_} @$b2s],
-			 $min, $self->smallE);
+    my ($fn, $n)=lentzCF($u-$as, -$b2s, $min, $self->smallE);
     # Check this logic:
     $self->_converged($n<$min || $self->nr->iteration<=$self->nh);
     $self->_nhActual($n);

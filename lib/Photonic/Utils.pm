@@ -42,7 +42,7 @@ require Exporter;
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
 );
-use PDL::Lite;
+use PDL::LiteF;
 use PDL::NiceSlice;
 use PDL::FFTW3;
 use PDL::Complex;
@@ -291,17 +291,17 @@ sub lentzCF {
     my $small=shift;
     my $tiny=1.e-30;
     my $converged=0;
-    my $fn=$as->[0];
-    $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
+    my $fn=$as->(:,0);
+    $fn=r2C($tiny) if all(($fn->re==0) & ($fn->im==0));
     my $n=1;
     my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
     my ($Cn, $Dn); #current coeffs.
     my $Deltan;
     while($n<$max){
-	$Dn=$as->[$n]+$bs->[$n]*$Dnm1;
-	$Dn=r2C($tiny) if $Dn->re==0 and $Dn->im==0;
-	$Cn=$as->[$n]+$bs->[$n]/$Cnm1;
-	$Cn=r2C($tiny) if $Cn->re==0 and $Cn->im==0;
+	$Dn=$as->(:,$n)+$bs->(:,$n)*$Dnm1;
+	$Dn=r2C($tiny) if all(($Dn->re==0) & ($Dn->im==0));
+	$Cn=$as->(:,$n)+$bs->(:,$n)/$Cnm1;
+	$Cn=r2C($tiny) if all(($Cn->re==0) & ($Cn->im==0));
 	$Dn=1/$Dn;
 	$Deltan=$Cn*$Dn;
 	$fn=$fnm1*$Deltan;
@@ -311,6 +311,7 @@ sub lentzCF {
 	$Cnm1=$Cn;
 	$n++;
     }
+    $fn = $fn->(:,(0));
     return wantarray? ($fn, $n): $fn;
 }
 

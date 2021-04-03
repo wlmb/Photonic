@@ -57,7 +57,7 @@ my $at=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10);
 my $eto=Photonic::LE::NR2::EpsL->new(nr=>$at, nh=>10);
 my $etv=$eto->evaluate($ea, $eb);
 my $etx=(1-$gt->f)*$ea+$gt->f*$eb;
-ok(Cagree($etv, $etx), "1D trans epsilon");
+ok(Cagree($etv, $etx), "1D trans epsilon") or diag "got: $etv\nexpected: $etx";
 is($eto->converged,1, "Converged");
 
 #Test chess board
