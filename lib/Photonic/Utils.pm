@@ -85,14 +85,14 @@ sub any_complex {
 
 sub tensor {
     my ($data, $decomp, $nd) = @_;
-    my $reData=lu_backsub(@$decomp, $data->re);
-    my $imData=lu_backsub(@$decomp, $data->im);
-    my $tensor=PDL->zeroes(2, $nd, $nd)->complex;
-    my $n=0;
+    my $backsub = lu_backsub(@$decomp, $data->re)->r2C;
+    $backsub += lu_backsub(@$decomp, $data->im) * i;
+    my $tensor = PDL->zeroes(2, $nd, $nd)->complex;
+    my $n = 0;
     for my $i(0..$nd-1){
         for my $j($i..$nd-1){
-            $tensor->(:,($i),($j)).=$reData->($n)+i*$imData->($n);
-            $tensor->(:,($j),($i)).=$reData->($n)+i*$imData->($n);
+            $tensor->(:,($i),($j)) .= $backsub->(:,$n);
+            $tensor->(:,($j),($i)) .= $backsub->(:,$n);
             ++$n;
         }
     }
