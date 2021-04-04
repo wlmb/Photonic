@@ -325,7 +325,7 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
     my $d=shift; #decimation
     my $f1=$s*$f->(:,0:-1:$d, 0:-1:$d); #decimate two dimensions
     my $coords=$d*PDL::ndcoords(@{[$f1->dims]}[1,2]);
-    return ( #basex, basey, vectorx vectory
+    ( #basex, basey, vectorx vectory
 	($coords((0))-.5*$f1((0)))->flat,
 	($coords((1))-.5*$f1((1)))->flat,
 	$f1((0))->flat, $f1((1))->flat);

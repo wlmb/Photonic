@@ -620,7 +620,6 @@ sub _filter { #Filter complex field in reciprocal space
     return $field;
 }
 
-
 __PACKAGE__->meta->make_immutable;
 
 1;

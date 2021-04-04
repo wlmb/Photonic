@@ -60,16 +60,18 @@ ok(Cagree($flv, $flx), "1D long field") or diag "got: $flv\nexpected: $flx";
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
 my $nt=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10, keepStates=>1);
-my $fto=Photonic::LE::NR2::Field->new(nr=>$nt, nh=>10);
+my $fto=Photonic::LE::NR2::Field->new(nr=>$nt, nh=>10, filter=>ones(1));
 my $ftv=$fto->evaluate($ea, $eb);
 my $ftx=pdl(r2C(1), r2C(0))->complex;
 ok(Cagree($ftv, $ftx), "1D trans field");
 
 my ($dA, $dB) = (0, 1); # vacuum, then anything as is normalised to dB
-my $nrshp=Photonic::LE::NR2::SHP->new(nrf=>$fto, densityA=>$dA, densityB=>$dB);
+my $nrshp=Photonic::LE::NR2::SHP->new(
+  nrf=>$fto, densityA=>$dA, densityB=>$dB,
+);
 my $nrsh=Photonic::LE::NR2::SH->new(
   shp=>$nrshp, epsA1=>$ea, epsB1=>$eb,
-  epsA2=>$ea*$ea, epsB2=>$eb*$eb, # also very arbitrary!
+  epsA2=>$ea*$ea, epsB2=>$eb*$eb, filterflag => 1
 );
 my $got=$nrsh->selfConsistentL_G;
 my $expected = pdl(<<'EOF')->complex;
