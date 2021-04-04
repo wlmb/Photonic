@@ -55,7 +55,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    my $haydock_cs=$iter->cs;
    my $haydock_bcs=$iter->bcs;
    my $haydock_gs=$iter->gs;
-   my $haydock_states=$iter->states;
 
 =head1 DESCRIPTION
 

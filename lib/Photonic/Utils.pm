@@ -38,7 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR LC
-    HProd MHProd EProd VSProd SProd linearCombine
+    HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
 );
@@ -52,19 +52,6 @@ use Carp;
 use Storable qw(dclone);
 use warnings;
 use strict;
-
-sub linearCombine { #complex linear combination of states
-    my $coefficients=shift; #arrayref of complex coefficients
-    my $states=shift; #arrayref of complex states
-    my $numCoeff=@$coefficients;
-    die "More coefficients than states in basis" if
-	$numCoeff>@$states;
-    my $result=0+0*i;
-    foreach(0..$numCoeff-1){
-	$result += $coefficients->[$_]*$states->[$_];
-    }
-    return $result;
-}
 
 sub linearCombineIt { #complex linear combination of states from iterator
     my $coefficients=shift; #arrayref of complex coefficients
@@ -250,8 +237,6 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     return $result;
 }
 
-
-
 sub RtoG { #transform a 'complex' scalar, vector or tensorial field
 	   #from real to reciprocal space
     my $field=shift; #field to fourier transform
@@ -371,12 +356,6 @@ Utility functions that may be useful.
 =head1 Exportable Functions
 
 =over 4
-
-=item * $r=linearCombine($c, $s)
-
-Complex linear combination of states. $c is an arrayref of 'complex' pdl
-scalars and $s is an arrayref of 'complex' states ('complex'
-multidimensional pdl).
 
 =item * $r=linearCombineIt($c, $it)
 

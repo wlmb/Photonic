@@ -48,7 +48,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    my $haydock_as=$iter->as;
    my $haydock_bs=$iter->bs;
    my $haydock_b2s=$iter->b2s;
-   my $haydock_states=$iter->states;
 
 =over 4
 
@@ -228,10 +227,6 @@ sub state_iterator {
     });
 }
 
-sub states {
-    confess "Don't use 'states'. Use state_iterator instead";
-}
-
 sub _build_stateFD {
     my $self=shift;
     my $fn=$self->stateFN;
@@ -244,11 +239,6 @@ sub _build_stateFD {
 
 #I use before and after trick (below), as a[n] is calculated together
 #with b[n+1] in each iteration
-
-#before 'states' => sub {
-#    my $self=shift;
-#    confess "Can't return states unless keepStates!=0" unless $self->keepStates;
-#};
 
 before '_iterate_indeed' => sub {
     my $self=shift;
