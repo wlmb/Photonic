@@ -173,5 +173,32 @@ $expected = pdl(<<'EOF')->complex;
 ]
 EOF
 ok(Cagree($got, $expected), "externalVecL") or diag "got: $got\nexpected: $expected";
+$got=$nrsh->field2;
+$expected = pdl(<<'EOF')->complex;
+[-0.6756993 -0.10576923]
+EOF
+ok(Cagree($got, $expected), "field2") or diag "got: $got\nexpected: $expected";
+$got=$nrsh->P2;
+$expected = pdl(<<'EOF')->complex;
+[
+ [ [ [0 0] [-1.2467976e-18 -2.5931346e-19] ] ]
+ [ [ [0 0] [8.5108064e-20 2.6781772e-18] ] ]
+ [ [ [0 0] [-1.9408651e-18  -1.790065e-18] ] ]
+ [ [ [0 0] [-7.5028237e-19  8.3574075e-19] ] ]
+ [ [ [0 0] [-1.6593174e-18 -1.1691174e-18] ] ]
+ [ [ [0 0] [0 0] ] ]
+ [ [ [0 0] [0 0] ] ]
+ [ [ [0 0] [0 0] ] ]
+ [ [ [0 0] [0 0] ] ]
+ [ [ [0 0] [0 0] ] ]
+ [ [ [0 0] [0 0] ] ]
+]
+EOF
+ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
+$got=$nrsh->u1;
+$expected = pdl(<<'EOF')->complex;
+[-0.22115385 -0.10576923]
+EOF
+ok(Cagree($got, $expected), "u1") or diag "got: $got\nexpected: $expected";
 
 done_testing;
