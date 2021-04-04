@@ -126,6 +126,8 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::WE::R2::AllH;
 use Photonic::Types;
+use Photonic::Utils qw(lentzCF);
+use List::Util qw(min);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -158,40 +160,17 @@ sub evaluate {
     $self->_epsA(my $epsA=$self->haydock->epsilon->r2C);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $as=$self->haydock->as;
-    my $bcs=$self->haydock->bcs;
-    # Continued fraction evaluation: Lentz method
-    # Numerical Recipes p. 171
-    my $tiny=1.e-30;
-    my $converged=0;
+    my $as=pdl(map r2C($_), @{$self->haydock->as})->cplx;
+    my $bcs=pdl(map r2C($_), @{$self->haydock->bcs})->cplx;
+    my $min= min($self->nh, $self->haydock->iteration);
     #    b0+a1/b1+a2/...
-    #	lo debo convertir a
+    #   lo debo convertir a
     #       u-a_0-g0g1b1^2/u-a1-g1g2b2^2/...
     #   entonces bn->u-an y an->-g{n-1}gnbn^2 o -bc_n
-    my $fn=$u-$as->[0];
-    $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
-    my $n=1;
-    my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
-    my ($Cn, $Dn); #current coeffs.
-    my $Deltan;
-    while($n<$self->nh && $n<$self->haydock->iteration){
-	$Dn=$u-$as->[$n]-$bcs->[$n]*$Dnm1;
-	$Dn=r2C($tiny) if $Dn->re==0 and $Dn->im==0;
-	$Cn=$u-$as->[$n]-$bcs->[$n]/$Cnm1;
-	$Cn=r2C($tiny) if $Cn->re==0 and $Cn->im==0;
-	$Dn=1/$Dn;
-	$Deltan=$Cn*$Dn;
-	$fn=$fnm1*$Deltan;
-	last if $converged=$Deltan->approx(1, $self->smallE)->all;
-	$fnm1=$fn;
-	$Dnm1=$Dn;
-	$Cnm1=$Cn;
-	$n++;
-    }
+    my ($fn, $n)=lentzCF($u-$as, -$bcs, $min, $self->smallE);
     #If there are less available coefficients than $self->nh and all
     #of them were used, there is no remaining work to do, so, converged
-    $converged=1 if $self->haydock->iteration < $self->nh;
-    $self->_converged($converged);
+    $self->_converged($n<$min || $self->haydock->iteration<=$self->nh);
     $self->_nhActual($n);
     my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->[0];
     $self->_Gpp($u*$g0b02/($epsA*$fn));

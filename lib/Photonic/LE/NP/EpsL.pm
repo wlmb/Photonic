@@ -113,6 +113,8 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::LE::NP::AllH;
+use Photonic::Utils qw(lentzCF);
+use List::Util qw(min);
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
@@ -139,40 +141,17 @@ has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
 sub BUILD {
     my $self=shift;
     $self->nr->run unless $self->nr->iteration;
-    my $as=$self->nr->as;
-    my $b2s=$self->nr->b2s;
-    # Continued fraction evaluation: Lentz method
-    # Numerical Recipes p. 171
-    my $tiny=1.e-30;
-    my $converged=0;
+    my $as=pdl(map r2C($_), @{$self->nr->as})->cplx;
+    my $b2s=pdl(map r2C($_), @{$self->nr->b2s})->cplx;
+    my $min= min($self->nh, $self->nr->iteration);
 #    b0+a1/b1+a2/...
 #	lo debo convertir a
 #	a0-b1^2/a1-b2^2/
 #	entonces bn->an y an->-b_n^2
-    my $fn=$as->[0];
-    $fn=r2C($tiny) if $fn->re==0 and $fn->im==0;
-    my $n=1;
-    my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
-    my ($Cn, $Dn); #current coeffs.
-    my $Deltan;
-    while($n<$self->nh && $n<$self->nr->iteration){
-	$Dn=$as->[$n]-$b2s->[$n]*$Dnm1;
-	$Dn=r2C($tiny) if $Dn->re==0 and $Dn->im==0;
-	$Cn=$as->[$n]-$b2s->[$n]/$Cnm1;
-	$Cn=r2C($tiny) if $Cn->re==0 and $Cn->im==0;
-	$Dn=1/$Dn;
-	$Deltan=$Cn*$Dn;
-	$fn=$fnm1*$Deltan;
-	last if $converged=$Deltan->approx(1, $self->smallE)->all;
-	$fnm1=$fn;
-	$Dnm1=$Dn;
-	$Cnm1=$Cn;
-	$n++;
-    }
+    my ($fn, $n)=lentzCF($as, -$b2s, $min, $self->smallE);
     #If there are less available coefficients than $self->nh and all
     #of them were used, there is no remaining work to do, so, converged
-    $converged=1 if $self->nr->iteration < $self->nh;
-    $self->_converged($converged);
+    $self->_converged($n<$min || $self->nr->iteration<=$self->nh);
     $self->_nhActual($n);
     $self->_epsL($fn);
 }
