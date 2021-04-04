@@ -551,7 +551,6 @@ sub _build_P2LMCalt {
     my $B=$self->nrf->nr->geometry->B;
     my $as=$self->nrf->nr->as;
     my $bs=$self->nrf->nr->bs;
-    my $states=$self->nrf->nr->states;
     my $nh=$self->nrf->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->nrf->nr->iteration if $nh>=$self->nrf->nr->iteration;
@@ -566,15 +565,17 @@ sub _build_P2LMCalt {
     $rhs=$rhs->r2C;
     my ($phi_n, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
-    my $phi_G=linearCombine([$phi_n->dog], $states);
+    my $states=$self->nrf->nr->state_iterator;
+    my $phi_G=linearCombineIt([$phi_n->dog], $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
 
-    my $beta_G=RtoG($B*GtoR($states->[0],$ndims,0), $ndims,0);
+    my $beta_G=RtoG($B*GtoR($self->nrf->nr->firstState,$ndims,0), $ndims,0);
     #my $beta_G=RtoG(GtoR($states->[0],$ndims,0), $ndims,0);
     my $betaV_G=$beta_G->(,*1)*$GNorm;
     #my $betaV_G=$beta_G->(,*1)*$k;
+    $states=$self->nrf->nr->state_iterator;
     my $betaV_n=PDL->pdl(
-	[map {HProd($betaV_G,$states->[$_]->(,*1), 1)} (0..$nh-1)]
+	[map {HProd($betaV_G,$states->nextval->(,*1), 1)} (0..$nh-1)]
 	)->complex;
     my @Ppsi;
     foreach(0..$ndims-1){
@@ -582,7 +583,8 @@ sub _build_P2LMCalt {
 	    cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
 	die "Error solving tridiag system" unless $psiinfo == 0;
 	# RorI nx ny .... cartesian
-	my $psi_G=linearCombine([$psi_n->dog], $states);
+	$states=$self->nrf->nr->state_iterator;
+	my $psi_G=linearCombineIt([$psi_n->dog], $states);
 	my $Ppsi=HProd($psi_G, $PexL_G);
 	push @Ppsi, $Ppsi;
     }
@@ -594,7 +596,8 @@ sub _build_P2LMCalt {
     #my $P2M=PDL->pdl(@P2M)->complex;
     # RorI nx ny .... cartesian
     #my $psiV_n=PDL->pdl(@psi_ns);
-    #my $psi_G=linearCombine([$psiV_n->dog], $states);
+    #$states=$self->nrf->nr->state_iterator;
+    #my $psi_G=linearCombineIt([$psiV_n->dog], $states);
     #my $Pphi=(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
     #my $Ppsi=HProd($psi_G, $PexL_G);
     #my $P2M=$k*($Pphi+$Ppsi);

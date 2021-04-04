@@ -200,5 +200,12 @@ $expected = pdl(<<'EOF')->complex;
 [-0.22115385 -0.10576923]
 EOF
 ok(Cagree($got, $expected), "u1") or diag "got: $got\nexpected: $expected";
+$got=$nrsh->P2LMCalt;
+$expected = pdl(<<'EOF')->complex;
+[
+ [ [ [0 0] [-4.7586641e-16  6.7980915e-17] ] ]
+]
+EOF
+ok(Cagree($got, $expected), "P2LMCalt") or diag "got: $got\nexpected: $expected";
 
 done_testing;
