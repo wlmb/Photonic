@@ -28,7 +28,7 @@ jobs:
       - run: perl -V
       - name: Ubuntu packages
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get -y update && sudo apt-get -y install build-essential libfftw3-dev liblapack-dev
+        run: sudo apt-get -y update && sudo apt-get -y install build-essential libfftw3-dev liblapack-dev netpbm
       - run: cpanm -n Inline::C # failing due to permissions blowing up t/08taint.t
       - run: cpanm -n --installdeps .
       - name: Run tests (no coverage)
