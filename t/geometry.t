@@ -38,7 +38,7 @@ use Photonic::Geometry::FromImage2D;
 use Photonic::Geometry::FromEpsilon;
 use lib 't/lib';
 use TestUtils;
-use Test::More tests => 39;
+use Test::More;
 my $pi=4*atan2(1,1);
 
 my $B=zeroes(11,11)->rvals<=5;
@@ -99,6 +99,7 @@ SKIP: {
 	unless rpiccan("PNG");
     my $gw=Photonic::Geometry::FromImage2D->new(path=>'data/white.png');
     ok(defined $gw, "Create geometry from Image");
+    ok(all($gw->B==ones(11, 11)), "lazy-build B");
     ok($gw->npoints==11*11, "npoints");
     ok($gw->f==1, "filling fraction of white");
     my $gb=Photonic::Geometry::FromImage2D->new(path=>'data/black.png');
@@ -112,3 +113,5 @@ my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps);
 ok(defined $ge, "Create geometry from epsilon");
 is($ge->ndims, 2, "Number of dimensions");
 ok(agree(pdl($ge->dims),pdl(11,11)), "Size of each dimension");
+
+done_testing;
