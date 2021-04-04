@@ -44,7 +44,7 @@ my $eb=3+4*i;
 my $B=zeroes(11)->xvals<5; #1D system
 my $gl=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
 my $al=Photonic::LE::NR2::AllH->new(geometry=>$gl, nh=>10);
-my $elo=Photonic::LE::NR2::EpsL->new(nr=>$al, nh=>10);
+my $elo=Photonic::LE::NR2::EpsL->new(nr=>$al);
 my $elv=$elo->evaluate($ea, $eb);
 my $elx=1/((1-$gl->f)/$ea+$gl->f/$eb);
 ok(Cagree($elv, $elx), "1D long epsilon");
