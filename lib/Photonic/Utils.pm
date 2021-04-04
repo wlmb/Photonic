@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 # Collection of subroutines. Thus, no Moose
 require Exporter;
 @ISA=qw(Exporter);
-@EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR LC
+@EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
     HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp

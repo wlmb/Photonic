@@ -156,5 +156,22 @@ $expected = pdl(<<'EOF')->complex;
 ]
 EOF
 ok(Cagree($got, $expected), "quadrupolar") or diag "got: $got\nexpected: $expected";
+$got=$nrsh->externalVecL;
+$expected = pdl(<<'EOF')->complex;
+[
+ [ [ [0 0] [ 3.9327802e-18 -5.6182574e-19] ] ]
+ [ [ [0 0] [-7.5890335e-17  1.0841476e-17] ] ]
+ [ [ [0 0] [ 4.5529289e-17 -6.5041841e-18] ] ]
+ [ [ [0 0] [-2.5824128e-17  3.6891611e-18] ] ]
+ [ [ [0 0] [ 2.8655713e-17 -4.0936733e-18] ] ]
+ [ [ [0 0] [ 3.9327802e-18 -5.6182574e-19] ] ]
+ [ [ [0 0] [ 3.9327802e-18 -5.6182574e-19] ] ]
+ [ [ [0 0] [ 3.9327802e-18 -5.6182574e-19] ] ]
+ [ [ [0 0] [ 3.9327802e-18 -5.6182574e-19] ] ]
+ [ [ [0 0] [ 3.9327802e-18 -5.6182574e-19] ] ]
+ [ [ [0 0] [ 3.9327802e-18 -5.6182574e-19] ] ]
+]
+EOF
+ok(Cagree($got, $expected), "externalVecL") or diag "got: $got\nexpected: $expected";
 
 done_testing;
