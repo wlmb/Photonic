@@ -542,18 +542,20 @@ sub _build_P2LMCalt {
     my $self=shift;
     my $PexL_G=$self->externalL_G; #external long 2w polarization
     my $PexM=$self->external_G->(:,:,(0),(0)); #macroscopic external.
-    my $ndims=$self->nrf->nr->geometry->ndims;
-    my $nelem=$self->nrf->nr->geometry->npoints;
-    my $k=$self->nrf->nr->geometry->Direction0;
-    my $GNorm=$self->nrf->nr->geometry->GNorm;
+    my $nrf=$self->nrf;
+    my $nr=$nrf->nr;
+    my $geom=$nr->geometry;
+    my $ndims=$geom->ndims;
+    my $nelem=$geom->npoints;
+    my $k=$geom->Direction0;
     my $epsA2=$self->epsA2;
     my $u2=$self->u2;
-    my $B=$self->nrf->nr->geometry->B;
-    my $as=$self->nrf->nr->as;
-    my $bs=$self->nrf->nr->bs;
-    my $nh=$self->nrf->nh; #desired number of Haydock terms
+    my $B=$geom->B;
+    my $as=$nr->as;
+    my $bs=$nr->bs;
+    my $nh=$nrf->nh; #desired number of Haydock terms
     #don't go beyond available values.
-    $nh=$self->nrf->nr->iteration if $nh>=$self->nrf->nr->iteration;
+    $nh=$nr->iteration if $nh>=$nr->iteration;
     # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=|0>.
     my $diag=$self->u2->Cconj->complex - PDL->pdl([@$as])->(0:$nh-1);
@@ -565,15 +567,15 @@ sub _build_P2LMCalt {
     $rhs=$rhs->r2C;
     my ($phi_n, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
     die "Error solving tridiag system" unless $info == 0;
-    my $states=$self->nrf->nr->state_iterator;
+    my $states=$nr->state_iterator;
     my $phi_G=linearCombineIt([$phi_n->dog], $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
 
-    my $beta_G=RtoG($B*GtoR($self->nrf->nr->firstState,$ndims,0), $ndims,0);
+    my $beta_G=RtoG($B*GtoR($nr->firstState,$ndims,0), $ndims,0);
     #my $beta_G=RtoG(GtoR($states->[0],$ndims,0), $ndims,0);
-    my $betaV_G=$beta_G->(,*1)*$GNorm;
+    my $betaV_G=$beta_G->(,*1)*$geom->GNorm;
     #my $betaV_G=$beta_G->(,*1)*$k;
-    $states=$self->nrf->nr->state_iterator;
+    $states=$nr->state_iterator;
     my $betaV_n=PDL->pdl(
 	[map {HProd($betaV_G,$states->nextval->(,*1), 1)} (0..$nh-1)]
 	)->complex;
@@ -583,7 +585,7 @@ sub _build_P2LMCalt {
 	    cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
 	die "Error solving tridiag system" unless $psiinfo == 0;
 	# RorI nx ny .... cartesian
-	$states=$self->nrf->nr->state_iterator;
+	$states=$nr->state_iterator;
 	my $psi_G=linearCombineIt([$psi_n->dog], $states);
 	my $Ppsi=HProd($psi_G, $PexL_G);
 	push @Ppsi, $Ppsi;
@@ -596,13 +598,13 @@ sub _build_P2LMCalt {
     #my $P2M=PDL->pdl(@P2M)->complex;
     # RorI nx ny .... cartesian
     #my $psiV_n=PDL->pdl(@psi_ns);
-    #$states=$self->nrf->nr->state_iterator;
+    #$states=$nr->state_iterator;
     #my $psi_G=linearCombineIt([$psiV_n->dog], $states);
     #my $Pphi=(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
     #my $Ppsi=HProd($psi_G, $PexL_G);
     #my $P2M=$k*($Pphi+$Ppsi);
     return $P2M->(,,*1,*1);
-    #return $prod->(,*1)*$self->nrf->nr->geometry->Direction0;
+    #return $prod->(,*1)*$geom->Direction0;
 }
 
 sub _build_u1 {
