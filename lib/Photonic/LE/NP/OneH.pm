@@ -232,7 +232,7 @@ sub innerProduct {
     # The trick works, but is not robust and if non orthogonal states
     # are generated may give TROUBLE. Better use spinor methods,
     # though they take longer.
-    $p=-$p unless $left->(:,(0),(0))->re == 1; #unless initial state
+    $p=-$p unless PDL::all($left->(:,(0),(0))->re == 1); #unless initial state
     return $p;
 }
 

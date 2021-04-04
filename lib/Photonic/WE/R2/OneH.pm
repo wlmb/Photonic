@@ -242,7 +242,7 @@ mask in reciprocal space.
 
 Returns the inner Hermitian product between states using the metric.
 
-=item * $s=magnitude($self, $psi)
+=item * $s=magnitude($psi)
 
 Returns the magnitude of a state as the square root of
 the inner product of the state with itself.
