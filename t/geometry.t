@@ -36,14 +36,10 @@ use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::Geometry::FromImage2D;
 use Photonic::Geometry::FromEpsilon;
+use lib 't/lib';
+use TestUtils;
 use Test::More tests => 39;
 my $pi=4*atan2(1,1);
-
-sub agree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)*($a-$b))->sum<=1e-7;
-}
 
 my $B=zeroes(11,11)->rvals<=5;
 my $g=Photonic::Geometry::FromB->new(B=>$B);

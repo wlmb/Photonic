@@ -36,16 +36,9 @@ use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::WE::R2::Metric;
 use Photonic::WE::R2::OneH;
-
 use Test::More tests => 4;
-
-#my $pi=4*atan2(1,1);
-
-sub agree {
-    my $a=shift;
-    my $b=shift//0;
-    return (($a-$b)*($a-$b))->sum<=1e-7;
-}
+use lib 't/lib';
+use TestUtils;
 
 #Check haydock coefficients for simple 1D system
 my $B=zeroes(11)->xvals<5; #1D system
