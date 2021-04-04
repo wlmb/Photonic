@@ -39,7 +39,7 @@ use PDL::NiceSlice;
 use Photonic::ExtraUtils;
 use feature qw(say);
 use constant N=>10;
-use Test::More tests => 2*N+1;
+use Test::More;
 
 for my $D (3..N+2) { #first differencess
     #solve (1 + i)(b_{n + 1} - b_n)=1 - i with homogeneous BCs
@@ -74,3 +74,13 @@ my $b=ones(3)*(1 - i); $b->(,(-1)).=(1-3)*(1 - i);
 my ($y, $info)=cgtsv($c, $d, $e, $b);
 my $r=sequence(3)*(1 - i)/(1 + i);
 ok($y->complex->approx($r)->all, "Omit output arguments");
+
+#solve (1 + i)(b_{n+1}-b_n)=1 - i with homogeneous BCs
+$c=zeroes(3)+0*i;
+$d=-ones(3)*(1 + i);
+$e=ones(3)*(1 + i); $e->(,(-1)).=0+0*i;
+$b=ones(3)*(1 - i); $b->(,(-1)).=(1-3)*(1 - i);
+($y, $info)=cgtsv($c->inplace, $d, $e, $b);
+ok($y->complex->approx($r)->all, "Omit output arguments");
+
+done_testing;
