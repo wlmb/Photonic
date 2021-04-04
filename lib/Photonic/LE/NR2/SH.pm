@@ -560,7 +560,7 @@ sub _build_P2LMCalt {
     # solve \epsilon^LL \vec E^L=|0>.
     my $diag=$self->u2->Cconj->complex - PDL->pdl([@$as])->(0:$nh-1);
     # rotate complex zero from first to last element.
-    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->r2C->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
+    my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
@@ -572,7 +572,7 @@ sub _build_P2LMCalt {
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
 
     my $beta_G=RtoG($B*GtoR($nr->firstState,$ndims,0), $ndims,0);
-    #my $beta_G=RtoG(GtoR($states->[0],$ndims,0), $ndims,0);
+    #my $beta_G=RtoG(GtoR($nr->firstState,$ndims,0), $ndims,0);
     my $betaV_G=$beta_G->(,*1)*$geom->GNorm;
     #my $betaV_G=$beta_G->(,*1)*$k;
     $states=$nr->state_iterator;
@@ -591,20 +591,8 @@ sub _build_P2LMCalt {
 	push @Ppsi, $Ppsi;
     }
     my $Ppsi=PDL->pdl(@Ppsi)->complex;
-    #my $P2M=$Pphi+$Ppsi;
     my $P2M=$Pphi+$Ppsi+$PexM*$nelem; # Unnormalize Pex !!
-    #my $P2M=$Pphi;#+$Ppsi;
-    #my $P2M=$Ppsi;#+$Ppsi;
-    #my $P2M=PDL->pdl(@P2M)->complex;
-    # RorI nx ny .... cartesian
-    #my $psiV_n=PDL->pdl(@psi_ns);
-    #$states=$nr->state_iterator;
-    #my $psi_G=linearCombineIt([$psiV_n->dog], $states);
-    #my $Pphi=(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
-    #my $Ppsi=HProd($psi_G, $PexL_G);
-    #my $P2M=$k*($Pphi+$Ppsi);
     return $P2M->(,,*1,*1);
-    #return $prod->(,*1)*$geom->Direction0;
 }
 
 sub _build_u1 {
