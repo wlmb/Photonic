@@ -44,10 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::SHP;
-   my $nrshp=Photonic::LE::NR2::SHP->
-             new(nrf=>$nrf, densityA=>$dA, densityB=>$dB));
-
-
+   my $nrshp=Photonic::LE::NR2::SHP->new(
+             nrf=>$nrf, densityA=>$dA, densityB=>$dB);
 
 =head1 DESCRIPTION
 

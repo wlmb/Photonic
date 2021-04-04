@@ -229,7 +229,7 @@ sub state_iterator {
 }
 
 sub states {
-    croak "Don't use 'states'. Use state_iterator instead";
+    confess "Don't use 'states'. Use state_iterator instead";
 }
 
 sub _build_stateFD {
