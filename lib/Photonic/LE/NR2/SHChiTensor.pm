@@ -172,7 +172,7 @@ use Photonic::LE::NR2::EpsTensor;
 
 use Moose;
 
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1, lazy=>1, builder=>'_nh',
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
@@ -185,13 +185,6 @@ has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef,
 		  writer=>'_converged',
 		  documentation=>'The calculation did converge');
-
-sub _nh { #build desired number of Haydock coeffs to use.
-    my $self=shift;
-    return $self->nr->nh; #defaults to coefficients desired
-}
-
-
 
 #required parameters
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
