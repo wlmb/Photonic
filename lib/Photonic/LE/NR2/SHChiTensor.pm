@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::LE::NR2::SHChiTensor;
    my $chi=Photonic::LE::NR2::SHChiTensor->new(geometry=>$g,
-           $densityA=>$dA, $densityB=>$dB, nh=>$nh, nhf=>$nhf,
+           densityA=>$dA, densityB=>$dB, nh=>$nh, nhf=>$nhf,
            filter=>$f, filterflag=>$ff);
    my $chiTensor=$chi->evaluate($epsA1, $epsB1, $epsA2, $epsB2);
 
