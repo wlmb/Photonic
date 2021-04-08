@@ -90,12 +90,20 @@ my @HAYDOCK_PARAMS = qw(
   nh keepStates smallH reorthogonalize use_mask mask
 );
 sub make_haydock {
-  my ($self, $class) = @_;
+  my ($self, $class, $add_geom, @extra_attributes) = @_;
   # This must change if G is not symmetric
   [ map $class->new(
-      metric=>dclone($self->metric), polarization=>$_->r2C,
-      map +($_ => $self->$_), @HAYDOCK_PARAMS), @{$self->geometry->unitPairs}
+      _haydock_extra($self, $_, $add_geom),
+      map +($_ => $self->$_), @HAYDOCK_PARAMS, @extra_attributes
+    ), @{$self->geometry->unitPairs}
   ];
+}
+
+sub _haydock_extra {
+  my ($self, $u, $add_geom) = @_;
+  my $obj = dclone($add_geom ? $self->geometry : $self->metric);
+  $obj->Direction0($u) if $add_geom; #add G0 direction
+  $add_geom ? (geometry=>$obj) : (metric=>$obj, polarization=>$u->r2C);
 }
 
 my @GREENP_PARAMS = qw(nh smallE);
