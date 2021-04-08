@@ -81,12 +81,17 @@ haydock coefficients and continued fraction.
 Returns the macroscopic second Harmonic susceptibility function for a
 given value of the dielectric functions of the host $epsA and the
 particle $epsB at the fundamental 1 and second harmonic 2 frequency.
-$kind is an optional letter for testing purposes with values 'd' for
-dipolar, 'q' for quadrupolar, 'e' for external and 'f' for full
-selfconsistent calculation (the default). Mask is a mask with ones and
-zeroes, to evaluate the contribution of certain regions to the
-susceptibility.
 
+$kind is an optional letter for testing purposes with values 'd' for
+dipolar, 'q' for quadrupolar, 'e' for external, 'l' for second harmonic
+(SH) self consistent longitudinal polarization vector field in real space,
+'a' for SH self-consistent total macroscopic polarization in real space
+(alternative), 'el' for SH external longitudinal polarization projected
+in reciprocal space, and 'f' for full selfconsistent calculation
+(the default).
+
+Mask is a mask with ones and zeroes, to evaluate the contribution of
+certain regions to the susceptibility.
 
 =back
 
@@ -237,8 +242,7 @@ sub evaluate {
     $self->_epsA2(my $epsA2=shift);
     $self->_epsB2(my $epsB2=shift);
     my %options=@_; #the rest are options. Currently, kind and mask.
-    my $kind=lc($options{kind}); # Undocumented, for testing: Use full (f) P2 or
-		    # (d) dipolar or  (q) quadrupolar or (e) external
+    my $kind=lc($options{kind}//'');
     my $mask=$options{mask};
     my $nd=$self->geometry->B->ndims;
     my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
