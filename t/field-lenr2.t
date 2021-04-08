@@ -36,6 +36,7 @@ use Photonic::LE::NR2::AllH;
 use Photonic::LE::NR2::Field;
 use Photonic::LE::NR2::SHP;
 use Photonic::LE::NR2::SH;
+use Photonic::LE::NR2::SHChiTensor;
 
 use Test::More;
 use lib 't/lib';
@@ -208,6 +209,51 @@ $expected = pdl(<<'EOF')->complex;
  [ [ [0 0] [-4.7586641e-16  6.7980915e-17] ] ]
 ]
 EOF
-ok(Cagree($got, $expected), "P2LMCalt") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-46), "P2LMCalt") or diag "got: $got\nexpected: $expected";
+
+my $chi=Photonic::LE::NR2::SHChiTensor->new(
+  geometry=>$gl,
+  densityA=>$dA, densityB=>$dB, nhf=>10, nh=>10,
+);
+$got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb);
+$expected = pdl(<<'EOF')->complex;
+[ [ [ [ 2.365532e-18 -4.731064e-18] ] ] ]
+EOF
+ok(Cagree($got, $expected, 1e-51), "P2") or diag "got: $got\nexpected: $expected";
+$got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'f', mask => pdl(1));
+$expected = pdl(<<'EOF')->complex;
+[ [ [ [4.0239976e-18 -9.855343e-19] ] ] ]
+EOF
+ok(Cagree($got, $expected, 1e-50), "P2") or diag "got: $got\nexpected: $expected";
+$got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'l');
+$expected = pdl(<<'EOF')->complex;
+[ [ [ [1.4979937e-18 3.6442788e-18] ] ] ]
+EOF
+ok(Cagree($got, $expected, 1e-51), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
+$got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'a');
+$expected = pdl(<<'EOF')->complex;
+[ [ [ [-4.890401e-16 5.6504395e-16] ] ] ]
+EOF
+ok(Cagree($got, $expected, 1e-47), "P2LMCalt") or diag "got: $got\nexpected: $expected";
+$got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'd');
+$expected = pdl(<<'EOF')->complex;
+[ [ [ [5.0464683e-18 2.5232341e-18] ] ] ]
+EOF
+ok(Cagree($got, $expected, 1e-50), "dipolar") or diag "got: $got\nexpected: $expected";
+$got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'q');
+$expected = pdl(<<'EOF')->complex;
+[ [ [ [1.5770213e-19 3.1540427e-19] ] ] ]
+EOF
+ok(Cagree($got, $expected, 1e-50), "quadrupolar") or diag "got: $got\nexpected: $expected";
+$got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'e');
+$expected = pdl(<<'EOF')->complex;
+[ [ [ [9.9352345e-18 1.5770213e-18] ] ] ]
+EOF
+ok(Cagree($got, $expected, 1e-50), "external") or diag "got: $got\nexpected: $expected";
+$got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'el');
+$expected = pdl(<<'EOF')->complex;
+[ [ [ [7.2542982e-18 1.4193192e-18] ] ] ]
+EOF
+ok(Cagree($got, $expected, 1e-50), "externalVecL") or diag "got: $got\nexpected: $expected";
 
 done_testing;

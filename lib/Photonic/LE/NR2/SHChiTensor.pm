@@ -247,7 +247,7 @@ sub evaluate {
 	# RorI, XorY,nx,ny
 	# dipolar, quadrupolar, external, full
 	my $P2;
-	$P2=$nrsh->P2 if not defined $kind;
+	$P2=$nrsh->P2 if $kind eq '';
 	$P2=$nrsh->P2 if $kind eq 'f';
 	$P2=$nrsh->selfConsistentVecL if $kind eq 'l';
 	$P2=$nrsh->P2LMCalt if $kind eq 'a';
