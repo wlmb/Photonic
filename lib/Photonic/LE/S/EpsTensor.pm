@@ -122,11 +122,8 @@ don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::Utils qw(tensor make_haydock);
 use List::Util qw(all);
-use Storable qw(dclone);
 use Photonic::LE::S::AllH;
 use Photonic::LE::S::EpsL;
 use Photonic::Types;
@@ -178,15 +175,8 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
 
 sub _build_epsL {
     my $self=shift;
-    my @eps;
-    foreach(@{$self->nr}){
-	my $e=Photonic::LE::S::EpsL->
-	    new(nr=>$_, nh=>$self->nh, smallE=>$self->smallE);
-	push @eps, $e;
-    }
-    return [@eps]
+    [ map Photonic::LE::S::EpsL->new(nr=>$_, nh=>$self->nh, smallE=>$self->smallE), @{$self->nr} ];
 }
-
 
 __PACKAGE__->meta->make_immutable;
 

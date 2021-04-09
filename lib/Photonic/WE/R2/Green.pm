@@ -138,9 +138,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use PDL::MatrixOps;
 use Storable qw(dclone);
-use PDL::IO::Storable;
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
@@ -221,15 +219,8 @@ sub _build_cHaydock {
 
 sub _build_cGreenP {
     my $self=shift;
-    my @cGreenP;
-    foreach(@{$self->cHaydock}){
-	my $g=Photonic::WE::R2::GreenP->new(
-	    haydock=>$_, nh=>$self->nh, smallE=>$self->smallE);
-	push @cGreenP, $g;
-    }
-    return [@cGreenP]
+    [ map Photonic::WE::R2::GreenP->new(haydock=>$_, nh=>$self->nh, smallE=>$self->smallE), @{$self->cHaydock} ];
 }
-
 
 __PACKAGE__->meta->make_immutable;
 

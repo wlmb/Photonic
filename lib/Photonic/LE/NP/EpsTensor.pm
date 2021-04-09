@@ -122,10 +122,6 @@ don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::Complex;
-use PDL::MatrixOps;
-use Storable qw(dclone);
 use Photonic::Utils qw(tensor make_haydock);
 use List::Util qw(all);
 use Photonic::LE::NP::AllH;
@@ -158,7 +154,7 @@ has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
 sub _build_epsTensor {
     my $self=shift;
     $self->_converged(all { $_->converged } @{$self->epsL});
-    tensor(pdl([map $_->epsL, @{$self->epsL}])->complex, $self->geometry->unitDyadsLU, $self->geometry->B->ndims);
+    tensor(pdl([map $_->epsL, @{$self->epsL}]), $self->geometry->unitDyadsLU, $self->geometry->B->ndims);
 }
 
 sub _build_nr { # One Haydock coefficients calculator per direction0
@@ -168,15 +164,8 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
 
 sub _build_epsL {
     my $self=shift;
-    my @eps;
-    foreach(@{$self->nr}){
-	my $e=Photonic::LE::NP::EpsL->
-	    new(nr=>$_, nh=>$self->nh, smallE=>$self->smallE);
-	push @eps, $e;
-    }
-    return [@eps]
+    [ map Photonic::LE::NP::EpsL->new(nr=>$_, nh=>$self->nh, smallE=>$self->smallE), @{$self->nr} ];
 }
-
 
 __PACKAGE__->meta->make_immutable;
 
