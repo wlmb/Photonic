@@ -488,4 +488,26 @@ $got = pdl(vectors2Dlist(pdl(<<'EOF'), 0, 5));
 EOF
 ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
 
+my $data = pdl(<<'EOF')->complex;
+[
+ [    0.72727273              0]
+ [      1733.403 -2.8318751e-28]
+ [     3466.0788             -0]
+]
+EOF
+$got = tensor($data, [ pdl('[ [1 0 0] [0.5 1 0.5] [0 0 1] ]'), pdl('[0 1 2]'), 1 ], 2);
+$expected = pdl(<<'EOF')->complex;
+[
+ [
+  [    0.72727273              0]
+  [   -3.6365e-05 -2.8318751e-28]
+ ]
+ [
+  [   -3.6365e-05 -2.8318751e-28]
+  [     3466.0788              0]
+ ]
+]
+EOF
+ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
+
 done_testing;
