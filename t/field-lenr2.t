@@ -214,6 +214,7 @@ ok(Cagree($got, $expected, 1e-46), "P2LMCalt") or diag "got: $got\nexpected: $ex
 my $chi=Photonic::LE::NR2::SHChiTensor->new(
   geometry=>$gl,
   densityA=>$dA, densityB=>$dB, nhf=>10, nh=>10,
+  keepStates=>1,
 );
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb);
 $expected = pdl(<<'EOF')->complex;

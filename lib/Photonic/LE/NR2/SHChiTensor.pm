@@ -167,6 +167,7 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
+use Photonic::Utils qw(make_haydock);
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
 
@@ -188,7 +189,7 @@ has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef,
 
 #required parameters
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
-    handles=>[qw(B dims r G GNorm L scale f)],required=>1
+    handles=>[qw(B dims r G GNorm L scale f ndims)],required=>1
 );
 has 'densityA'=>(is=>'ro', isa=>'Num', required=>1,
          documentation=>'Normalized dipole entities density in medium A');
@@ -227,6 +228,8 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
+
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 sub evaluate {
     my $self=shift;
@@ -312,16 +315,10 @@ sub evaluate {
 
 sub _build_nrshp { # One Haydock coefficients calculator per direction0
     my $self=shift;
-    my @nrshp;
+    my $nr = make_haydock($self, 'Photonic::LE::NR2::AllH', 1);
+    my ($i, @nrshp) = 0;
     foreach(@{$self->geometry->unitPairs}){
-	my $g=dclone($self->geometry); #clone geometry
-	#OJO: Cuánto vale el campo macroscópico? Hay que normalizar esto?
-	$g->Direction0($_); #add G0 direction
-	#Build a corresponding LE::NR2::AllH structure
-	my $nr=Photonic::LE::NR2::AllH->new(
-	    nh=>$self->nh, geometry=>$g, keepStates=>1,
-	    reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH);
-	my @args=(nr=>$nr, nh=>$self->nhf, smallE=>$self->smallE);
+	my @args=(nr=>$nr->[$i++], nh=>$self->nhf, smallE=>$self->smallE);
 	push @args, filter=>$self->filter if $self->has_filter;
 	my $nrf=Photonic::LE::NR2::Field->new(@args);
 	my $nrshp=Photonic::LE::NR2::SHP->
@@ -329,7 +326,7 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 		densityB=>$self->densityB);
 	push @nrshp, $nrshp;
     }
-    return [@nrshp]
+    \@nrshp;
 }
 
 sub _build_epsTensor {
