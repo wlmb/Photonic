@@ -133,7 +133,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
-use Photonic::Utils qw(tensor);
+use Photonic::Utils qw(tensor make_haydock);
 use List::Util qw(all);
 use Photonic::LE::NR2::AllH;
 use Photonic::LE::NR2::EpsL;
@@ -184,20 +184,7 @@ sub evaluate {
 
 sub _build_nr { # One Haydock coefficients calculator per direction0
     my $self=shift;
-    my @nr;
-    foreach(@{$self->geometry->unitPairs}){
-	my $g=dclone($self->geometry); #clone geometry
-	$g->Direction0($_); #add G0 direction
-	#Build a corresponding LE::NR2::AllH structure
-	my $nr=Photonic::LE::NR2::AllH->new(
-	    geometry=>$g, smallH=>$self->smallH,
-	    nh=>$self->nh, keepStates=>$self->keepStates,
-	    reorthogonalize=>$self->reorthogonalize,
-	    use_mask=>$self->use_mask,
-	    mask=>$self->mask);
-	push @nr, $nr;
-    }
-    return [@nr]
+    make_haydock($self, 'Photonic::LE::NR2::AllH', 1);
 }
 
 sub _build_epsL {
