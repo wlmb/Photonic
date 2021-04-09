@@ -82,13 +82,14 @@ Returns the macroscopic second Harmonic susceptibility function for a
 given value of the dielectric functions of the host $epsA and the
 particle $epsB at the fundamental 1 and second harmonic 2 frequency.
 
-$kind is an optional letter for testing purposes with values 'd' for
-dipolar, 'q' for quadrupolar, 'e' for external, 'l' for second harmonic
-(SH) self consistent longitudinal polarization vector field in real space,
-'a' for SH self-consistent total macroscopic polarization in real space
-(alternative), 'el' for SH external longitudinal polarization projected
-in reciprocal space, and 'f' for full selfconsistent calculation
-(the default).
+$kind is an optional letter for testing purposes with values
+'d' for dipolar contribution,
+'q' for quadrupolar contribution,
+'e' for external contribution (dipolar+quadrupolar),
+'l' for self consistent polarization without macroscopic depolarization,
+'a' for self-consistent polarization (alternative, dubious),
+'el' for longitudinal projection of external polarization
+'f' for full selfconsistent calculation (the default).
 
 Mask is a mask with ones and zeroes, to evaluate the contribution of
 certain regions to the susceptibility.
