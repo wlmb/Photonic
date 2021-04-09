@@ -108,7 +108,7 @@ extends 'Photonic::WE::S::Wave';
 
 has 'epsilonTensor' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
 			 lazy=>1, builder=>'_build_epsilonTensor',
-			 documentation=>'macroscopit response');
+			 documentation=>'macroscopic response');
 
 sub _build_epsilonTensor {
     my $self=shift;
@@ -116,20 +116,18 @@ sub _build_epsilonTensor {
     my $q=$self->metric->wavenumber;
     my $q2=$q*$q;
     my $k=$self->metric->wavevector;
+    my ($k2, $kk);
     if(any_complex($q, $k)){
 	#Make both complex
 	$_ = $_->isa('PDL::Complex') ? $_ : r2C($_) for $q, $k;
-	my $k2=($k*$k)->sumover; #inner
-	my $kk=$k->(:,:,*1)*$k->(:,*1,:); #outer
-	my $id=identity($k);
-	my $eps=$wave+$k2/$q2*$id - $kk/$q2;
-	return $eps;
+	$k2=($k*$k)->sumover; #inner
+	$kk=$k->(:,:,*1)*$k->(:,*1,:); #outer
+    } else {
+	$k2=$k->inner($k);
+	$kk=$k->outer($k);
     }
-    my $k2=$k->inner($k);
-    my $kk=$k->outer($k);
     my $id=identity($k);
-    my $eps=$wave+$k2/$q2*$id - $kk/$q2;
-    return $eps;
+    $wave+$k2/$q2*$id - $kk/$q2;
 };
 
 __PACKAGE__->meta->make_immutable;
