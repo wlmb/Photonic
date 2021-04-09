@@ -64,7 +64,7 @@ Initializes the structure.
 
 $nr Photonic::LE::NR2::AllH is a Haydock calculator for the
 structure, *initialized* with the flag keepStates=>1
-(Photonic::Types::LE::NR2::AllHSave, as defined in Photonic::Types).
+(Photonic::Types::AllHSave, as defined in Photonic::Types).
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -147,7 +147,7 @@ use Photonic::Iterator qw(nextval);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nr'=>(is=>'ro', isa=>'Photonic::Types::LE::NR2::AllHSave', required=>1,
+has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
            documentation=>'Haydock recursion calculator');
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]', init_arg=>undef,
            writer=>'_Es', documentation=>'Field coefficients');

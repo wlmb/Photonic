@@ -66,26 +66,6 @@ subtype 'Photonic::Types::AllHSave' =>
   where { $_->keepStates == 1 },
     message { "Can't calculate fields if you don't keepStates" };
 
-subtype 'Photonic::Types::LE::NR2::AllHSave' =>
-  as 'Photonic::LE::NR2::AllH',
-  where { $_->keepStates == 1 },
-    message { "Can't calculate fields if you don't keepStates" };
-
-subtype 'Photonic::Types::LE::S::AllHSave' =>
-  as 'Photonic::LE::S::AllH',
-  where { $_->keepStates == 1 },
-    message { "Can't calculate fields if you don't keepStates" };
-
-subtype 'Photonic::Types::WE::R2::AllHSave' =>
-  as 'Photonic::WE::R2::AllH',
-  where { $_->keepStates == 1 },
-    message { "Can't calculate fields if you don't keepStates" };
-
-subtype 'Photonic::Types::WE::S::AllHSave' =>
-  as 'Photonic::WE::S::AllH',
-  where { $_->keepStates == 1 },
-    message { "Can't calculate fields if you don't keepStates" };
-
 subtype 'Photonic::Types::PDLComplex' =>
   as 'PDL',
   where { any_complex($_) },
