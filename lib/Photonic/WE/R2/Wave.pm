@@ -96,6 +96,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::Complex;
 use PDL::MatrixOps;
+use Photonic::Utils qw(wave_operator);
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
@@ -110,16 +111,9 @@ around 'evaluate' => sub {
     my $orig=shift;
     my $self=shift;
     my $green=$self->$orig(@_);
-    #make a real matrix from [[R -I][I R]] to solve complex eq.
-    my $greenreim=$green->re->append(-$green->im)
-       ->glue(1,$green->im->append($green->re))->sever; #copy vs sever?
-    my($lu, $perm, $par)=$greenreim->lu_decomp;
-    my $d=$self->geometry->ndims;
-    my $idreim=identity($d)->glue(1,PDL->zeroes($d,$d))->mv(0,-1);
-    my $wavereim=lu_backsub($lu,$perm,$par,$idreim);
-    my $wave=$wavereim->reshape($d,2,$d)->mv(1,0)->complex;
+    my $wave = wave_operator($green, $self->geometry->ndims);
     $self->_waveOperator($wave);
-    return $wave;
+    $wave;
 };
 
 __PACKAGE__->meta->make_immutable;

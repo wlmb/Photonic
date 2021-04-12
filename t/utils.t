@@ -488,4 +488,53 @@ $got = pdl(vectors2Dlist(pdl(<<'EOF'), 0, 5));
 EOF
 ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
 
+my $data = pdl(<<'EOF')->complex;
+[
+ [    0.72727273              0]
+ [      1733.403 -2.8318751e-28]
+ [     3466.0788             -0]
+]
+EOF
+$got = tensor($data, [ pdl('[ [1 0 0] [0.5 1 0.5] [0 0 1] ]'), pdl('[0 1 2]'), 1 ], 2);
+$expected = pdl(<<'EOF')->complex;
+[
+ [
+  [    0.72727273              0]
+  [   -3.6365e-05 -2.8318751e-28]
+ ]
+ [
+  [   -3.6365e-05 -2.8318751e-28]
+  [     3466.0788              0]
+ ]
+]
+EOF
+ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
+
+$data = pdl(<<'EOF')->complex;
+[
+ [
+  [    0.67272727    -0.10909091]
+  [-1.3253896e-09  1.7631692e-09]
+ ]
+ [
+  [-1.3253896e-09  1.7631692e-09]
+  [      -153.825     -1737.5269]
+ ]
+]
+EOF
+$got = wave_operator($data, 2);
+$expected = pdl(<<'EOF')->complex;
+[
+ [
+  [    1.4483986    0.23487544]
+  [1.1625849e-12 1.4461083e-12]
+ ]
+ [
+  [ 1.1625849e-12  1.4461083e-12]
+  [-5.0556058e-05  0.00057105487]
+ ]
+]
+EOF
+ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
+
 done_testing;

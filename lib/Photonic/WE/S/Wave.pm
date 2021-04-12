@@ -98,6 +98,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::MatrixOps;
+use Photonic::Utils qw(wave_operator);
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
@@ -110,16 +111,7 @@ has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>
 
 sub _build_waveOperator {
     my $self=shift;
-    my $green=$self->greenTensor;
-    #make a real matrix from [[R -I][I R]] to solve complex eq.
-    my $greenreim=$green->re->append(-$green->im)
-       ->glue(1,$green->im->append($green->re))->sever; #copy vs sever?
-    my($lu, $perm, $par)=$greenreim->lu_decomp;
-    my $d=$self->geometry->ndims;
-    my $idreim=identity($d)->glue(1,PDL->zeroes($d,$d))->mv(0,-1);
-    my $wavereim=lu_backsub($lu,$perm,$par,$idreim);
-    my $wave=$wavereim->reshape($d,2,$d)->mv(1,0)->complex;
-    return $wave;
+    wave_operator($self->greenTensor, $self->geometry->ndims);
 };
 
 __PACKAGE__->meta->make_immutable;

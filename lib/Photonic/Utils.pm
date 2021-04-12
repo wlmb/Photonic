@@ -41,6 +41,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
+    wave_operator
 );
 use PDL::LiteF;
 use PDL::NiceSlice;
@@ -68,6 +69,17 @@ sub linearCombineIt { #complex linear combination of states from iterator
 
 sub any_complex {
     grep ref $_ && (ref $_ eq 'PDL::Complex' or !$_->type->real), @_;
+}
+
+sub wave_operator {
+    my ($green, $nd) = @_;
+    #make a real matrix from [[R -I][I R]] to solve complex eq.
+    my $greenreim=$green->re->append(-$green->im)
+       ->glue(1,$green->im->append($green->re))->sever; #copy vs sever?
+    my ($lu, $perm, $par) = $greenreim->lu_decomp;
+    my $idreim = identity($nd)->glue(1, PDL->zeroes($nd, $nd))->mv(0, -1);
+    my $wavereim = lu_backsub($lu, $perm, $par, $idreim);
+    $wavereim->reshape($nd, 2, $nd)->mv(1, 0)->complex;
 }
 
 sub tensor {
@@ -443,6 +455,11 @@ True if any of the args are a complex PDL.
 Given a complex PDL, an LU decomposition array-ref for the first 3
 params of L<PDL::MatrixOps/lu_backsub>, and the size of the tensor,
 returns the tensor.
+
+=item * wave_operator
+
+Given a Green tensor and number of dimension in the geometry, returns
+a wave operator.
 
 =item * make_haydock
 
