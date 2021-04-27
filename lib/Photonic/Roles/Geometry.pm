@@ -44,6 +44,7 @@ use Photonic::Types;
 use Photonic::Utils qw(any_complex);
 use Carp;
 use constant PI=>4*atan2(1,1);
+require PDL::LinearAlgebra::Real;
 
 requires 'B'; #characteristic function
 
@@ -268,9 +269,9 @@ sub _build_unitDyads {
 
 sub _build_unitDyadsLU {
     my $self=shift;
-    my ($lu, $perm, $parity) = lu_decomp($self->unitDyads);
-    die 'Unit Dyad not invertible' unless defined $lu;
-    return [($lu, $perm, $parity)];
+    PDL::LinearAlgebra::Real::getrf(my $lu=$self->unitDyads->copy, my $perm=null, my $info=null);
+    die 'Unit Dyad not invertible' unless $info == 0;
+    [($lu, $perm)];
 }
 
 sub _G0 {

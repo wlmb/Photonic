@@ -51,6 +51,7 @@ use PDL::MatrixOps;
 use Photonic::Iterator qw(nextval);
 use Carp;
 use Storable qw(dclone);
+use PDL::LinearAlgebra::Real;
 use warnings;
 use strict;
 
@@ -76,16 +77,19 @@ sub wave_operator {
     #make a real matrix from [[R -I][I R]] to solve complex eq.
     my $greenreim=$green->re->append(-$green->im)
        ->glue(1,$green->im->append($green->re))->sever; #copy vs sever?
-    my ($lu, $perm, $par) = $greenreim->lu_decomp;
+    PDL::LinearAlgebra::Real::getrf(my $lu=$greenreim->copy, my $perm=null, my $info=null);
     my $idreim = identity($nd)->glue(1, PDL->zeroes($nd, $nd))->mv(0, -1);
-    my $wavereim = lu_backsub($lu, $perm, $par, $idreim);
+    PDL::LinearAlgebra::Real::getrs($lu, 1, my $wavereim=$idreim->copy, $perm, $info=null);
     $wavereim->reshape($nd, 2, $nd)->mv(1, 0)->complex;
 }
 
 sub tensor {
     my ($data, $decomp, $nd) = @_;
-    my $backsub = lu_backsub(@$decomp, $data->re)->r2C;
-    $backsub += lu_backsub(@$decomp, $data->im) * i;
+    my ($lu, $perm) = @$decomp;
+    PDL::LinearAlgebra::Real::getrs($lu, 1, my $t1=$data->re->copy, $perm, my $info=null);
+    my $backsub = r2C($t1);
+    PDL::LinearAlgebra::Real::getrs($lu, 1, my $t2=$data->im->copy, $perm, $info=null);
+    $backsub += i2C($t2);
     my $tensor = PDL->zeroes(2, $nd, $nd)->complex;
     my $n = 0;
     for my $i(0..$nd-1){

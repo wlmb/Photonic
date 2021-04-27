@@ -171,7 +171,7 @@ use PDL::IO::Storable;
 use Photonic::Utils qw(make_haydock);
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
-
+require PDL::LinearAlgebra::Real;
 use Moose;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
@@ -295,12 +295,14 @@ sub evaluate {
     #$reP2M and $imP2M have cartesian, dyad indices
     my $reP2M=PDL->pdl([map {$_->re} @P2M]);
     my $imP2M=PDL->pdl([map {$_->im} @P2M]);
-    my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
+    my ($lu, $perm) = @{$self->geometry->unitDyadsLU};
     #$reChi, $imChi have cartesian, dyad indices
     #Get cartesian indices out of the way, solve the system of
     #equations, and move the cartesian indices back
-    my $reChi=lu_backsub($lu, $perm, $parity, $reP2M->mv(0,-1))->mv(-1,0);
-    my $imChi=lu_backsub($lu, $perm, $parity, $imP2M->mv(0,-1))->mv(-1,0);
+    PDL::LinearAlgebra::Real::getrs($lu, 1, my $reChi=$reP2M->mv(0,-1)->copy, $perm, my $info=null);
+    $reChi = $reChi->mv(0,-1);
+    PDL::LinearAlgebra::Real::getrs($lu, 1, my $imChi=$imP2M->mv(0,-1)->copy, $perm, $info=null);
+    $imChi = $imChi->mv(0,-1);
     #chi has three cartesian indices
     my $chiTensor=PDL->zeroes(2, $nd, $nd, $nd)->complex;
     #convert dyadic to cartesian indices

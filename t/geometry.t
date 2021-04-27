@@ -39,6 +39,7 @@ use Photonic::Geometry::FromEpsilon;
 use lib 't/lib';
 use TestUtils;
 use Test::More;
+require PDL::LinearAlgebra::Real;
 my $pi=4*atan2(1,1);
 
 my $B=zeroes(11,11)->rvals<=5;
@@ -87,8 +88,12 @@ ok(agree($g->cUnitPairs->[0]->re, pdl(1,0)/sqrt(2))
    && agree($g->cUnitPairs->[0]->im, pdl(0,1)/sqrt(2)),
    "cunitpairs");
 ok(agree($g->unitDyads, pdl([1,0,0],[.5,1,.5],[0,0,1])), "unitDyads");
-ok(agree(lu_backsub(@{$g->unitDyadsLU}, $g->unitDyads->transpose),
-	 identity(3)), "unitDyadsLU");
+
+my ($lu, $perm) = @{$g->unitDyadsLU};
+PDL::LinearAlgebra::Real::getrs($lu, 1, my $got=$g->unitDyads->transpose->copy, $perm, my $info=null);
+is $info, 0;
+ok(agree($got, identity(3)), "unitDyadsLU");
+
 ok(agree($g->Vec2LC_G(zeroes(11,11)->ndcoords->r2C)->re,
 	 (zeroes(11,11)->ndcoords*$g->GNorm)->sumover),
    "Vec2LC");
