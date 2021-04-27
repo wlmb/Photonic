@@ -232,6 +232,17 @@ has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
+my %KIND2METHOD = (
+  '' => 'P2',
+  f => 'P2',
+  l => 'selfConsistentVecL',
+  a => 'P2LMCalt',
+  d => 'dipolar',
+  q => 'quadrupolar',
+  e => 'external',
+  el => 'externalVecL',
+);
+
 sub evaluate {
     my $self=shift;
     $self->_epsA1(my $epsA1=shift);
@@ -250,15 +261,8 @@ sub evaluate {
 	    epsB2=>$epsB2, filterflag=>0);
 	# RorI, XorY,nx,ny
 	# dipolar, quadrupolar, external, full
-	my $P2;
-	$P2=$nrsh->P2 if $kind eq '';
-	$P2=$nrsh->P2 if $kind eq 'f';
-	$P2=$nrsh->selfConsistentVecL if $kind eq 'l';
-	$P2=$nrsh->P2LMCalt if $kind eq 'a';
-	$P2=$nrsh->dipolar if $kind eq 'd';
-	$P2=$nrsh->quadrupolar if $kind eq 'q';
-	$P2=$nrsh->external if $kind eq 'e';
-	$P2=$nrsh->externalVecL if $kind eq 'el';
+	my $method = $KIND2METHOD{$kind};
+	my $P2 = $nrsh->$method;
 	my $P2M=$P2->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
