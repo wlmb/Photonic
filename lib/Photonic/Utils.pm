@@ -52,6 +52,7 @@ use Photonic::Iterator qw(nextval);
 use Carp;
 use Storable qw(dclone);
 use PDL::LinearAlgebra::Real;
+use PDL::LinearAlgebra::Complex;
 use warnings;
 use strict;
 
@@ -86,10 +87,7 @@ sub wave_operator {
 sub tensor {
     my ($data, $decomp, $nd) = @_;
     my ($lu, $perm) = @$decomp;
-    PDL::LinearAlgebra::Real::getrs($lu, 1, my $t1=$data->re->copy, $perm, my $info=null);
-    my $backsub = r2C($t1);
-    PDL::LinearAlgebra::Real::getrs($lu, 1, my $t2=$data->im->copy, $perm, $info=null);
-    $backsub += i2C($t2);
+    PDL::LinearAlgebra::Complex::cgetrs($lu, 1, my $backsub=$data->copy, $perm, my $info=null);
     my $tensor = PDL->zeroes(2, $nd, $nd)->complex;
     my $n = 0;
     for my $i(0..$nd-1){

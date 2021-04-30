@@ -299,9 +299,9 @@ sub evaluate {
     #$reChi, $imChi have cartesian, dyad indices
     #Get cartesian indices out of the way, solve the system of
     #equations, and move the cartesian indices back
-    PDL::LinearAlgebra::Real::getrs($lu, 1, my $reChi=$reP2M->mv(0,-1)->copy, $perm, my $info=null);
+    PDL::LinearAlgebra::Real::getrs($lu->re, 1, my $reChi=$reP2M->mv(0,-1)->copy, $perm, my $info=null);
     $reChi = $reChi->mv(0,-1);
-    PDL::LinearAlgebra::Real::getrs($lu, 1, my $imChi=$imP2M->mv(0,-1)->copy, $perm, $info=null);
+    PDL::LinearAlgebra::Real::getrs($lu->re, 1, my $imChi=$imP2M->mv(0,-1)->copy, $perm, $info=null);
     $imChi = $imChi->mv(0,-1);
     #chi has three cartesian indices
     my $chiTensor=PDL->zeroes(2, $nd, $nd, $nd)->complex;
