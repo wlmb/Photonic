@@ -70,7 +70,7 @@ my $eko=Photonic::LE::NR2::EpsTensor->new(
     geometry=>$gk, nh=>1000, reorthogonalize=>1, use_mask=>1);
 my $etva=$eko->evaluate($ea, $eb);
 my $etvb=$eko->evaluate($eb, $ea);
-my $etvr=zeroes(2,2,2)->complex;
+my $etvr=zeroes(2,2)->r2C;
 $etvr->(:,(0),(0)).= $etvb->(:,(1),(1));
 $etvr->(:,(0),(1)).=-$etvb->(:,(1),(0));
 $etvr->(:,(1),(0)).=-$etvb->(:,(0),(1));

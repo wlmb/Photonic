@@ -6,20 +6,20 @@ use Photonic::Utils;
 Photonic::Utils->import(@Photonic::Utils::EXPORT_OK);
 use Test::More;
 
-my $x = zeroes(2, 11)->complex;
+my $x = zeroes(11)->r2C;
 $x->slice(':,0') .= 1+0*i;
 ok approx(HProd($x, $x), r2C(1));
 ok approx(EProd($x, $x), r2C(1));
 
-$x = zeroes(2, 1, 11)->complex;
+$x = zeroes(1, 11)->r2C;
 $x->slice(':,:,0') .= 1+0*i;
 ok approx(MHProd($x, $x, ones(1, 1, 11)), r2C(1));
 
-$x = zeroes(2, 2, 11)->complex;
+$x = zeroes(2, 11)->r2C;
 $x->slice(':,:,0') .= 1/sqrt(2)+0*i;
 ok approx(SProd($x, $x), r2C(1));
 
-$x = zeroes(2, 1, 2, 11)->complex;
+$x = zeroes(1, 2, 11)->r2C;
 $x->slice(':,:,:,0') .= 1/sqrt(2)+0*i;
 ok approx(VSProd($x, $x), r2C(1));
 

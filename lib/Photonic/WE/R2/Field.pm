@@ -193,7 +193,7 @@ sub evaluate {
     #field is ri,xy,nx,ny...
     my @dims=$self->nr->B->dims; # actual dims of space
     my $ndims=@dims; # num. of dims of space
-    my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
+    my $field_G=PDL->zeroes($ndims, @dims)->r2C;
     #print $field_G->info, "\n";
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){

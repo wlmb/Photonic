@@ -57,7 +57,7 @@ ok(Cagree(pdl($o->next_b2), ($eb-$ea)**2*$f*(1-$f)), "1D b_1^2");
 $o->iterate;
 ok(Cagree(pdl($o->current_a), ((1-$ea)*$f+(1-$eb)*(1-$f))), "1D a_1");
 ok(Cagree(pdl($o->next_b2), 0), "1D b_2^2");
-my $x = zeroes(2, 1, 2, 11)->complex;
+my $x = zeroes(1, 2, 11)->r2C;
 $x->slice(':,:,0') .= 1+0*i;
 is $o->magnitude($x), 0, "magnitude";
 

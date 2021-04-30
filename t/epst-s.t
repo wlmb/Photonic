@@ -77,7 +77,7 @@ my $gkk=Photonic::Geometry::FromEpsilon->new(epsilon=>$epsilonkk); #
 my $ekko=Photonic::LE::S::EpsTensor->new(
     geometry=>$gkk, nh=>1000, reorthogonalize=>1, use_mask=>1);
 my $etvb=$eko->epsTensor;
-my $etvr=zeroes(2,2,2)->complex;
+my $etvr=zeroes(2,2)->r2C;
 $etvr->(:,(0),(0)).= $etvb->(:,(1),(1));
 $etvr->(:,(0),(1)).=-$etvb->(:,(1),(0));
 $etvr->(:,(1),(0)).=-$etvb->(:,(0),(1));

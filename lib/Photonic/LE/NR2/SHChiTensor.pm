@@ -304,7 +304,7 @@ sub evaluate {
     PDL::LinearAlgebra::Real::getrs($lu->re, 1, my $imChi=$imP2M->mv(0,-1)->copy, $perm, $info=null);
     $imChi = $imChi->mv(0,-1);
     #chi has three cartesian indices
-    my $chiTensor=PDL->zeroes(2, $nd, $nd, $nd)->complex;
+    my $chiTensor=PDL->zeroes($nd, $nd, $nd)->r2C;
     #convert dyadic to cartesian indices
     my $n=0;
     for my $i(0..$nd-1){

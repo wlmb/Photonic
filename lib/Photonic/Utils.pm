@@ -88,7 +88,7 @@ sub tensor {
     my ($data, $decomp, $nd) = @_;
     my ($lu, $perm) = @$decomp;
     PDL::LinearAlgebra::Complex::cgetrs($lu, 1, my $backsub=$data->copy, $perm, my $info=null);
-    my $tensor = PDL->zeroes(2, $nd, $nd)->complex;
+    my $tensor = PDL->zeroes($nd, $nd)->r2C;
     my $n = 0;
     for my $i(0..$nd-1){
         for my $j($i..$nd-1){
