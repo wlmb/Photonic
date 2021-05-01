@@ -241,6 +241,7 @@ my %KIND2METHOD = (
   e => 'external',
   el => 'externalVecL',
 );
+my %KIND2SUBTRACT = map +($_=>1), qw(f l a);
 
 sub evaluate {
     my $self=shift;
@@ -284,8 +285,7 @@ sub evaluate {
 	    ->complex->sumover  #RorI, XorY
 		/$self->geometry->npoints;
 	}
-	$P2Mmask = $P2Mmask + $f*$Dep2 if $kind eq 'f' or $kind eq 'l'
-	    or $kind eq 'a'; # subtract masked macro depolarization field
+	$P2Mmask += $f*$Dep2 if $KIND2SUBTRACT{$kind}; # subtract masked macro depolarization field
 	push @P2M, $P2Mmask;
     }
     #NOTE. Maybe I have to correct response to D-> response to E
