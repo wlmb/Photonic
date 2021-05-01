@@ -498,7 +498,7 @@ EOF
 $got = tensor($data, [
   pdl('[ [1 0 0] [0.5 1 0.5] [0 0 1] ]')->r2C,
   pdl('[1 2 3]'),
-], 2);
+], 2, 2);
 $expected = pdl(<<'EOF')->complex;
 [
  [

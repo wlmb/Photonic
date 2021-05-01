@@ -84,15 +84,18 @@ sub wave_operator {
 }
 
 sub tensor {
-    my ($data, $decomp, $nd) = @_;
+    my ($data, $decomp, $nd, $dims, $after_cb) = @_;
     my ($lu, $perm) = @$decomp;
     PDL::LinearAlgebra::Complex::cgetrs($lu, 1, my $backsub=$data->copy, $perm, my $info=null);
-    my $tensor = PDL->zeroes($nd, $nd)->r2C;
+    $backsub = $after_cb->($backsub) if $after_cb;
+    my $tensor = PDL->zeroes(($nd) x $dims)->r2C;
     my $n = 0;
+    my $slice_prefix = ':,' x ($dims-1);
     for my $i(0..$nd-1){
         for my $j($i..$nd-1){
-            $tensor->slice(":,($i),($j)") .= $backsub->slice(":,$n");
-            $tensor->slice(":,($j),($i)") .= $backsub->slice(":,$n");
+            my $bslice = $backsub->slice(":,$n");
+            $tensor->slice("$slice_prefix($i),($j)") .= $bslice;
+            $tensor->slice("$slice_prefix($j),($i)") .= $bslice;
             ++$n;
         }
     }

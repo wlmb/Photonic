@@ -174,7 +174,7 @@ sub evaluate {
     $self->_epsA(my $epsA=shift);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $epsTensor=tensor(pdl([map $_->evaluate($epsA, $epsB), @{$self->epsL}])->complex, $self->geometry->unitDyadsLU, $self->geometry->B->ndims);
+    my $epsTensor=tensor(pdl([map $_->evaluate($epsA, $epsB), @{$self->epsL}])->complex, $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
     $self->_converged(all { $_->converged } @{$self->epsL});
     return $epsTensor;
 }

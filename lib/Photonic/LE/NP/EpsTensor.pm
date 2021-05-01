@@ -154,7 +154,7 @@ has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
 sub _build_epsTensor {
     my $self=shift;
     $self->_converged(all { $_->converged } @{$self->epsL});
-    tensor(pdl([map $_->epsL, @{$self->epsL}]), $self->geometry->unitDyadsLU, $self->geometry->B->ndims);
+    tensor(pdl([map $_->epsL, @{$self->epsL}]), $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
 }
 
 sub _build_nr { # One Haydock coefficients calculator per direction0

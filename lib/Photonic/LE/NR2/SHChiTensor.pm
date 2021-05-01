@@ -168,7 +168,7 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-use Photonic::Utils qw(make_haydock);
+use Photonic::Utils qw(make_haydock tensor);
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
 require PDL::LinearAlgebra::Complex;
@@ -293,23 +293,9 @@ sub evaluate {
     #directions to the actual cartesian chi's.
     #$P2Mp has cartesian, dyad indices
     my $P2Mp = PDL->pdl(@P2M)->complex;
-    my ($lu, $perm) = @{$self->geometry->unitDyadsLU};
-    #$chi has cartesian, dyad indices
     #Get cartesian indices out of the way, solve the system of
     #equations, and move the cartesian indices back
-    PDL::LinearAlgebra::Complex::cgetrs($lu, 1, my $chi=$P2Mp->mv(1,-1)->copy, $perm, my $info=null);
-    $chi = $chi->mv(-1,1);
-    #chi has three cartesian indices
-    my $chiTensor=PDL->zeroes($nd, $nd, $nd)->r2C;
-    #convert dyadic to cartesian indices
-    my $n=0;
-    for my $i(0..$nd-1){
-	for my $j($i..$nd-1){
-	    $chiTensor->(:,:,($i),($j)).=$chi(:,$n);
-	    $chiTensor->(:,:,($j),($i)).=$chi(:,$n);
-	    ++$n;
-	}
-    }
+    my $chiTensor=tensor($P2Mp->mv(1,-1), $self->geometry->unitDyadsLU, $nd, 3, sub { $_[0]->mv(-1,1) });
     $self->_chiTensor($chiTensor);
     return $chiTensor;
 }
