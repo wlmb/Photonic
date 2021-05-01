@@ -181,9 +181,10 @@ sub EProd { #Euclidean product between two fields in reciprocal
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #First reverse all reciprocal dimensions
-    my $sl=":" #slice to skip complex dimension
-	. (", :" x $skip) #skip dimensions
-	. (", -1:0" x ($ndims-1-$skip)); #and reverse the rest
+    my $sl=join ',',
+	":", #slice to skip complex dimension
+	((":") x $skip), #skip dimensions
+	(("-1:0") x ($ndims-1-$skip)); #and reverse the rest
     my $first_mG=$first->slice($sl);
     #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     foreach($skip+1..$ndims-1){
@@ -211,10 +212,11 @@ sub SProd { #Spinor product between two fields in reciprocal
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #dimensions are like rori, pmk, s1,s2, nx,ny
     #First reverse all reciprocal dimensions
-    my $sl=":" #slice to keep complex dimension
-	. ", -1:0" #interchange spinor components +- to -+
-	. (", :" x $skip) #keep skip dimensions
-	. (", -1:0" x ($ndims-1-1-$skip)); #and reverse G indices
+    my $sl=join ',',
+	":", #slice to keep complex dimension
+	"-1:0", #interchange spinor components +- to -+
+	((":") x $skip), #keep skip dimensions
+	(("-1:0") x ($ndims-1-1-$skip)); #and reverse G indices
     my $first_mG=$first->slice($sl); #rori,pmk,s1,s2,nx,ny
     #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     foreach($skip+2..$ndims-1){
@@ -242,9 +244,10 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #dimensions are like ri:xy:pm:nx:ny
     #First reverse all reciprocal dimensions
-    my $sl=":,:" #slice to keep complex and vector dimension
-	. ", -1:0" #interchange spinor components +- to -+
-	. (", -1:0" x ($ndims-3)); #and reverse G indices
+    my $sl=join ',',
+	(":",":"), #slice to keep complex and vector dimension
+	"-1:0", #interchange spinor components +- to -+
+	(("-1:0") x ($ndims-3)); #and reverse G indices
     my $first_mG=$first->slice($sl); #ri:xy:pm:nx:ny
     #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     foreach(3..$ndims-1){ # G indices start after ri:xy:pm
