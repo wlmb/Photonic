@@ -171,7 +171,7 @@ use PDL::IO::Storable;
 use Photonic::Utils qw(make_haydock);
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
-require PDL::LinearAlgebra::Real;
+require PDL::LinearAlgebra::Complex;
 use Moose;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
@@ -278,7 +278,7 @@ sub evaluate {
 	if (defined $mask){ # is there a real mask?
 	    $f=$mask->sum/$self->geometry->npoints; #filling fraction
 				#of mask
-	    $P2=$P2*$mask->(*1); #masked polarization
+	    $P2*=$mask->(*1); #masked polarization
 	    $P2Mmask=$P2->mv(0,-1)->mv(0,-1) #masked macroscopic polarization
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
@@ -291,25 +291,22 @@ sub evaluate {
     #NOTE. Maybe I have to correct response to D-> response to E
     #I have to convert from the array of polarizations for given
     #directions to the actual cartesian chi's.
-    #$reP2M and $imP2M have cartesian, dyad indices
-    my $reP2M=PDL->pdl([map {$_->re} @P2M]);
-    my $imP2M=PDL->pdl([map {$_->im} @P2M]);
+    #$P2Mp has cartesian, dyad indices
+    my $P2Mp = PDL->pdl(@P2M)->complex;
     my ($lu, $perm) = @{$self->geometry->unitDyadsLU};
-    #$reChi, $imChi have cartesian, dyad indices
+    #$chi has cartesian, dyad indices
     #Get cartesian indices out of the way, solve the system of
     #equations, and move the cartesian indices back
-    PDL::LinearAlgebra::Real::getrs($lu->re, 1, my $reChi=$reP2M->mv(0,-1)->copy, $perm, my $info=null);
-    $reChi = $reChi->mv(0,-1);
-    PDL::LinearAlgebra::Real::getrs($lu->re, 1, my $imChi=$imP2M->mv(0,-1)->copy, $perm, $info=null);
-    $imChi = $imChi->mv(0,-1);
+    PDL::LinearAlgebra::Complex::cgetrs($lu, 1, my $chi=$P2Mp->mv(1,-1)->copy, $perm, my $info=null);
+    $chi = $chi->mv(-1,1);
     #chi has three cartesian indices
     my $chiTensor=PDL->zeroes($nd, $nd, $nd)->r2C;
     #convert dyadic to cartesian indices
     my $n=0;
     for my $i(0..$nd-1){
 	for my $j($i..$nd-1){
-	    $chiTensor->(:,:,($i),($j)).=$reChi(:,$n)+i*$imChi(:,$n);
-	    $chiTensor->(:,:,($j),($i)).=$reChi(:,$n)+i*$imChi(:,$n);
+	    $chiTensor->(:,:,($i),($j)).=$chi(:,$n);
+	    $chiTensor->(:,:,($j),($i)).=$chi(:,$n);
 	    ++$n;
 	}
     }
