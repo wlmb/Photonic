@@ -13,7 +13,8 @@ ok approx(EProd($x, $x), r2C(1));
 
 $x = zeroes(1, 11)->r2C;
 $x->slice(':,:,0') .= 1+0*i;
-ok approx(MHProd($x, $x, ones(1, 1, 11)), r2C(1));
+my $got = MHProd($x, $x, ones(1, 1, 11));
+ok approx($got, r2C(1)) or diag "got:$got";
 
 $x = zeroes(2, 11)->r2C;
 $x->slice(':,:,0') .= 1/sqrt(2)+0*i;
@@ -23,7 +24,7 @@ $x = zeroes(1, 2, 11)->r2C;
 $x->slice(':,:,:,0') .= 1/sqrt(2)+0*i;
 ok approx(VSProd($x, $x), r2C(1));
 
-my $got = lentzCF(
+$got = lentzCF(
   pdl([21/11 + 32*i/11, 23/11 + 34*i/11])->cplx,
   pdl([r2C(-1), -8.7603535536828499e-17 - 1.98347107438017*i])->cplx,
   2,

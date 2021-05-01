@@ -59,11 +59,11 @@ sub linearCombineIt { #complex linear combination of states from iterator
     my $coefficients=shift; #arrayref of complex coefficients
     my $stateit=shift; #iterator of complex states
     my $numCoeff=@$coefficients;
-    my $result=0+0*i;
+    my $result=r2C(0);
     foreach(0..$numCoeff-1){
 	my $s=nextval($stateit);
 	croak "More coefficients than states in basis" unless defined $s;
-	$result = $result + $coefficients->[$_]*$s;
+	$result += $coefficients->[$_]*$s;
     }
     return $result;
 }
