@@ -233,7 +233,6 @@ has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 my %KIND2METHOD = (
-  '' => 'P2',
   f => 'P2',
   l => 'selfConsistentVecL',
   a => 'P2LMCalt',
@@ -250,7 +249,7 @@ sub evaluate {
     $self->_epsA2(my $epsA2=shift);
     $self->_epsB2(my $epsB2=shift);
     my %options=@_; #the rest are options. Currently, kind and mask.
-    my $kind=lc($options{kind}//'');
+    my $kind=lc($options{kind}//'f');
     my $mask=$options{mask};
     my $nd=$self->geometry->B->ndims;
     my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
