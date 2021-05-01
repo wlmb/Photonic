@@ -44,7 +44,6 @@ require Exporter;
     wave_operator
 );
 use PDL::LiteF;
-use PDL::NiceSlice;
 use PDL::FFTW3;
 use PDL::Complex;
 use PDL::MatrixOps;
@@ -92,8 +91,8 @@ sub tensor {
     my $n = 0;
     for my $i(0..$nd-1){
         for my $j($i..$nd-1){
-            $tensor->(:,($i),($j)) .= $backsub->(:,$n);
-            $tensor->(:,($j),($i)) .= $backsub->(:,$n);
+            $tensor->slice(":,($i),($j)") .= $backsub->slice(":,$n");
+            $tensor->slice(":,($j),($i)") .= $backsub->slice(":,$n");
             ++$n;
         }
     }
@@ -158,7 +157,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     carp "We don't trust the skip argument in MHProd yet" if $skip;
     # I'm not sure about the skiped dimensions in the next line. Is it right?
-    my $mprod=($metric*$second(:,:,*1))->sumover;
+    my $mprod=($metric*$second->slice(":,:,*1"))->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
     my $prod=$first->complex->Cconj*$mprod->complex;
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
@@ -298,16 +297,16 @@ sub lentzCF {
     my $small=shift;
     my $tiny=1.e-30;
     my $converged=0;
-    my $fn=$as->(:,0);
+    my $fn=$as->slice(":,0");
     $fn=r2C($tiny) if all(($fn->re==0) & ($fn->im==0));
     my $n=1;
     my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
     my ($Cn, $Dn); #current coeffs.
     my $Deltan;
     while($n<$max){
-	$Dn=$as->(:,$n)+$bs->(:,$n)*$Dnm1;
+	$Dn=$as->slice(":,$n")+$bs->slice(":,$n")*$Dnm1;
 	$Dn=r2C($tiny) if all(($Dn->re==0) & ($Dn->im==0));
-	$Cn=$as->(:,$n)+$bs->(:,$n)/$Cnm1;
+	$Cn=$as->slice(":,$n")+$bs->slice(":,$n")/$Cnm1;
 	$Cn=r2C($tiny) if all(($Cn->re==0) & ($Cn->im==0));
 	$Dn=1/$Dn;
 	$Deltan=$Cn*$Dn;
@@ -318,7 +317,7 @@ sub lentzCF {
 	$Cnm1=$Cn;
 	$n++;
     }
-    $fn = $fn->(:,(0));
+    $fn = $fn->slice(":,(0)");
     return wantarray? ($fn, $n): $fn;
 }
 
@@ -345,12 +344,12 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
     my $f=shift; #vector field
     my $s=shift; #scale
     my $d=shift; #decimation
-    my $f1=$s*$f->(:,0:-1:$d, 0:-1:$d); #decimate two dimensions
+    my $f1=$s*$f->slice(":,0:-1:$d, 0:-1:$d"); #decimate two dimensions
     my $coords=$d*PDL::ndcoords(@{[$f1->dims]}[1,2]);
     ( #basex, basey, vectorx vectory
-	($coords((0))-.5*$f1((0)))->flat,
-	($coords((1))-.5*$f1((1)))->flat,
-	$f1((0))->flat, $f1((1))->flat);
+	($coords->slice("(0)")-.5*$f1->slice("(0)"))->flat,
+	($coords->slice("(1)")-.5*$f1->slice("(1)"))->flat,
+	$f1->slice("(0)")->flat, $f1->slice("(1)")->flat);
 }
 
 1;
