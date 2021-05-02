@@ -108,10 +108,6 @@ Array of Haydock b coefficients squared
 =cut
 
 use namespace::autoclean;
-use Machine::Epsilon;
-use PDL::Lite;
-use PDL::NiceSlice;
-#use Photonic::Utils qw(HProd);
 use Moose;
 use MooseX::StrictConstructor;
 extends 'Photonic::LE::NR2::OneH';

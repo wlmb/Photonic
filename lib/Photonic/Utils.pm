@@ -480,9 +480,8 @@ True if any of the args are a complex PDL.
 
 =item * tensor
 
-Given a complex PDL, an LU decomposition array-ref for the first 3
-params of L<PDL::MatrixOps/lu_backsub>, and the size of the tensor,
-returns the tensor.
+Given a complex PDL, an LU decomposition array-ref as returned by
+L</lu_decomp>, and the size of the tensor, returns the tensor.
 
 =item * wave_operator
 

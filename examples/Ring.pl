@@ -36,7 +36,6 @@ use strict;
 use warnings;
 use feature qw(say);
 use Getopt::Long;
-use List::Util;
 use constant PI=>4*atan2(1,1);
 
 use Photonic::Geometry::FromB;

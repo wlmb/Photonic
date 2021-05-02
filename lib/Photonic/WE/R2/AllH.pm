@@ -136,11 +136,6 @@ Array of Haydock g coefficients
 =cut
 
 use namespace::autoclean;
-use Machine::Epsilon;
-use PDL::Lite;
-use PDL::NiceSlice;
-use Photonic::Utils qw(MHProd);
-use Carp;
 use Moose;
 use MooseX::StrictConstructor;
 

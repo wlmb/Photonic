@@ -161,7 +161,6 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::FFTW3;
 use PDL::Complex;
-use List::Util;
 use Carp;
 use Photonic::Types;
 use Photonic::Utils qw(EProd any_complex);

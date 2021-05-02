@@ -141,7 +141,6 @@ Array of Haydock b coefficients squared
 =cut
 
 use Fcntl;
-use Machine::Epsilon;
 use Photonic::Iterator qw(:all);
 use PDL::Lite;
 use PDL::NiceSlice;
