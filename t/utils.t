@@ -8,12 +8,13 @@ use Test::More;
 
 my $x = zeroes(11)->r2C;
 $x->slice(':,0') .= 1+0*i;
-ok approx(HProd($x, $x), r2C(1));
+my $got = HProd($x, $x);
+ok approx($got, r2C(1)) or diag "got:$got";
 ok approx(EProd($x, $x), r2C(1));
 
 $x = zeroes(1, 11)->r2C;
 $x->slice(':,:,0') .= 1+0*i;
-my $got = MHProd($x, $x, ones(1, 1, 11));
+$got = MHProd($x, $x, ones(1, 1, 11));
 ok approx($got, r2C(1)) or diag "got:$got";
 
 $x = zeroes(2, 11)->r2C;
