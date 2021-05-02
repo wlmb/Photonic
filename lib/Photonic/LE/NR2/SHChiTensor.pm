@@ -171,7 +171,6 @@ use PDL::IO::Storable;
 use Photonic::Utils qw(make_haydock tensor);
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
-require PDL::LinearAlgebra::Complex;
 use Moose;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1,

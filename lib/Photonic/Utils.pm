@@ -42,12 +42,12 @@ require Exporter;
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
     wave_operator
-    cgtsv lu_decomp
+    cgtsv lu_decomp lu_solve
 );
 use PDL::LiteF;
 use PDL::FFTW3;
 use PDL::Complex;
-use PDL::MatrixOps;
+require PDL::MatrixOps;
 use Photonic::Iterator qw(nextval);
 use Carp;
 use Storable qw(dclone);
@@ -78,16 +78,14 @@ sub wave_operator {
     #make a real matrix from [[R -I][I R]] to solve complex eq.
     my $greenreim=$green->re->append(-$green->im)
        ->glue(1,$green->im->append($green->re))->sever; #copy vs sever?
-    PDL::LinearAlgebra::Real::getrf(my $lu=$greenreim->copy, my $perm=null, my $info=null);
-    my $idreim = identity($nd)->glue(1, PDL->zeroes($nd, $nd))->mv(0, -1);
-    PDL::LinearAlgebra::Real::getrs($lu, 1, my $wavereim=$idreim->copy, $perm, $info=null);
+    my $idreim = PDL::MatrixOps::identity($nd)->glue(1, PDL->zeroes($nd, $nd))->mv(0, -1);
+    my $wavereim = lu_solve([lu_decomp($greenreim)], $idreim->copy);
     $wavereim->reshape($nd, 2, $nd)->mv(1, 0)->complex;
 }
 
 sub tensor {
     my ($data, $decomp, $nd, $dims, $after_cb) = @_;
-    my ($lu, $perm) = @$decomp;
-    PDL::LinearAlgebra::Complex::cgetrs($lu, 1, my $backsub=$data->copy, $perm, my $info=null);
+    my $backsub = lu_solve($decomp, $data);
     $backsub = $after_cb->($backsub) if $after_cb;
     my $tensor = PDL->zeroes(($nd) x $dims)->r2C;
     my $n = 0;
@@ -370,6 +368,32 @@ sub cgtsv {
     ($b->isa("PDL::Complex") ? $b->complex : $b, $i);
 }
 
+sub lu_decomp {
+    confess "Wrong number of arguments" unless scalar(@_)==1;
+    my ($data) = @_;
+    my ($lu, $perm, $info) = ($data->copy, null, null);
+    if (any_complex($data)) {
+	PDL::LinearAlgebra::Complex::cgetrf($lu, $perm, $info);
+    } else {
+	PDL::LinearAlgebra::Real::getrf($lu, $perm, $info);
+    }
+    confess 'Decomposition failed' unless $info == 0;
+    ($lu, $perm);
+}
+
+sub lu_solve {
+    confess "Wrong number of arguments" unless scalar(@_)==2;
+    my ($decomp, $B) = @_;
+    my ($lu, $perm, $info, $x) = (@$decomp, null, $B->copy);
+    if (any_complex($x)) {
+	PDL::LinearAlgebra::Complex::cgetrs($lu, 1, $x, $perm, $info);
+    } else {
+	PDL::LinearAlgebra::Real::getrs($lu, 1, $x, $perm, $info);
+    }
+    confess 'Solving failed' unless $info == 0;
+    $x;
+}
+
 1;
 
 __END__
@@ -499,5 +523,17 @@ double precision matrix. C<$b(2,0..$n-1)> is the right hand side
 vector. C<$b> is replaced by the solution. C<$info> returns 0 for success
 or k if the k-1-th element of the diagonal became zero. Either 2Xn pdl's
 are used to represent complex numbers, as in PDL::Complex.
+
+=item * lu_decomp
+
+Uses the appropriate LU decomposition function (real vs complex,
+detected) for L</lu_solve>. Returns list of LU, permutations. Dies if
+decomposition failed.
+
+=item * lu_solve
+
+Uses the appropriate LU solver function (real vs complex,
+detected). Given an array-ref with the return values of L</lu_decomp>, and
+a transposed C<B> matrix, returns transposed C<x>. Dies if solving failed.
 
 =back
