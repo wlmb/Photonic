@@ -75,12 +75,7 @@ sub any_complex {
 
 sub wave_operator {
     my ($green, $nd) = @_;
-    #make a real matrix from [[R -I][I R]] to solve complex eq.
-    my $greenreim=$green->re->append(-$green->im)
-       ->glue(1,$green->im->append($green->re))->sever; #copy vs sever?
-    my $idreim = PDL::MatrixOps::identity($nd)->glue(1, PDL->zeroes($nd, $nd))->mv(0, -1);
-    my $wavereim = lu_solve([lu_decomp($greenreim)], $idreim->copy);
-    $wavereim->reshape($nd, 2, $nd)->mv(1, 0)->complex;
+    lu_solve([lu_decomp($green)], r2C(PDL::MatrixOps::identity($nd)));
 }
 
 sub tensor {
@@ -329,20 +324,10 @@ sub lentzCF {
 sub tile { # repeat field Nx X Ny X... times
     my $f=shift;
     my @n=@_; #number of repetitions along dimension
-    # Is next comment correct (2 X)?
-    my $dim=0; #field is 2 X dims X nx,ny,nz...
-    my $r=$f; #result
-    for my $n(@n){
-	die "repetition in tile should be >0" unless $n>0;
-	my $r1=$r;
-	$n--;
-	while($n-->0){
-	    $r1=$r1->glue($dim, $r);
-	}
-	$dim++; #prepare for next dimension
-	$r=$r1;
-    }
-    return $r;
+    my $sl = join ',', map ":,*$_", @n; # insert right-size dummy after each real
+    my $r = $f->slice($sl); #result
+    $r = $r->clump($_, $_+1) for 0..$#n;
+    $r;
 }
 
 sub vectors2Dlist { #2D vector fields ready for gnuploting
@@ -375,9 +360,9 @@ sub lu_decomp {
     if (any_complex($data)) {
 	PDL::LinearAlgebra::Complex::cgetrf($lu, $perm, $info);
     } else {
-	PDL::LinearAlgebra::Real::getrf($lu, $perm, $info);
+	PDL::LinearAlgebra::Real::getrf($lu, $perm, $info); # uncoverable statement
     }
-    confess 'Decomposition failed' unless $info == 0;
+    confess 'Decomposition failed' unless all($info == 0); # can be vector
     ($lu, $perm);
 }
 
@@ -388,9 +373,9 @@ sub lu_solve {
     if (any_complex($x)) {
 	PDL::LinearAlgebra::Complex::cgetrs($lu, 1, $x, $perm, $info);
     } else {
-	PDL::LinearAlgebra::Real::getrs($lu, 1, $x, $perm, $info);
+	PDL::LinearAlgebra::Real::getrs($lu, 1, $x, $perm, $info); # uncoverable statement
     }
-    confess 'Solving failed' unless $info == 0;
+    confess 'Solving failed' unless all($info == 0); # can be vector
     $x;
 }
 
