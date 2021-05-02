@@ -353,9 +353,8 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
     my $f1=$s*$f->slice(":,0:-1:$d, 0:-1:$d"); #decimate two dimensions
     my $coords=$d*PDL::ndcoords(@{[$f1->dims]}[1,2]);
     ( #basex, basey, vectorx vectory
-	($coords->slice("(0)")-.5*$f1->slice("(0)"))->flat,
-	($coords->slice("(1)")-.5*$f1->slice("(1)"))->flat,
-	$f1->slice("(0)")->flat, $f1->slice("(1)")->flat);
+	($coords-.5*$f1)->mv(0,-1)->clump(-2)->dog,
+	$f1->mv(0,-1)->clump(-2)->dog);
 }
 
 1;
