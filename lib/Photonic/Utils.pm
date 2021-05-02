@@ -75,12 +75,7 @@ sub any_complex {
 
 sub wave_operator {
     my ($green, $nd) = @_;
-    #make a real matrix from [[R -I][I R]] to solve complex eq.
-    my $greenreim=$green->re->append(-$green->im)
-       ->glue(1,$green->im->append($green->re))->sever; #copy vs sever?
-    my $idreim = PDL::MatrixOps::identity($nd)->glue(1, PDL->zeroes($nd, $nd))->mv(0, -1);
-    my $wavereim = lu_solve([lu_decomp($greenreim)], $idreim->copy);
-    $wavereim->reshape($nd, 2, $nd)->mv(1, 0)->complex;
+    lu_solve([lu_decomp($green)], r2C(PDL::MatrixOps::identity($nd)));
 }
 
 sub tensor {
