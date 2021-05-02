@@ -54,7 +54,7 @@ $o->iterate;
 ok(agree(pdl($o->current_a), 1-$g->f), "1D a_1");
 ok(agree(pdl($o->next_b2), 0), "1D b_2^2");
 my $x = zeroes(1, 11)->r2C;
-$x->slice(':,:,0') .= 1+0*i;
+$x->slice(':,:,0') .= r2C(1);
 is $o->magnitude($x), 1, "magnitude";
 
 done_testing;

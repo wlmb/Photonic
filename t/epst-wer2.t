@@ -47,7 +47,7 @@ use TestUtils;
 my ($ea, $eb)=(pdl(1),3+4*i);
 my $f=6/11;
 my $B=zeroes(11,1)->xvals>=5;
-#my $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
+#my $eps=r2C($ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5));
 my $g=Photonic::Geometry::FromB->new(B=>$B);
 my $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea, wavenumber=>pdl(2e-5),

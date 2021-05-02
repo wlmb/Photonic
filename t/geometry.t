@@ -113,7 +113,7 @@ SKIP: {
 	path=>'data/black.png', inverted=>1);
     ok($gbi->f==1, "filling fraction of inverted black");
 }
-my $eps=zeroes(11,11)+0*i;
+my $eps=r2C(zeroes(11,11));
 my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps);
 ok(defined $ge, "Create geometry from epsilon");
 is($ge->ndims, 2, "Number of dimensions");

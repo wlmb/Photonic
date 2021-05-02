@@ -59,7 +59,7 @@ my $gt=Photonic::Geometry::FromEpsilon->new(epsilon=>$epsilont); #trans
 my $eto=Photonic::LE::S::EpsTensor->new(geometry=>$gt, nh=>10);
 my $etv=$eto->epsTensor;
 my $etx=(1-$f)*$ea+$f*$eb;
-my $etenx=pdl([$etx, 0+0*i],[0+0*i, $elx])->complex;
+my $etenx=pdl([$etx, r2C(0)],[r2C(0), $elx])->complex;
 ok(Cagree($etv, $etenx), "1D trans epsilon");
 is($eto->converged,1, "Converged");
 #Keller
