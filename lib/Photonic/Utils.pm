@@ -360,7 +360,7 @@ sub lu_decomp {
     if (any_complex($data)) {
 	PDL::LinearAlgebra::Complex::cgetrf($lu, $perm, $info);
     } else {
-	PDL::LinearAlgebra::Real::getrf($lu, $perm, $info);
+	PDL::LinearAlgebra::Real::getrf($lu, $perm, $info); # uncoverable statement
     }
     confess 'Decomposition failed' unless all($info == 0); # can be vector
     ($lu, $perm);
@@ -373,7 +373,7 @@ sub lu_solve {
     if (any_complex($x)) {
 	PDL::LinearAlgebra::Complex::cgetrs($lu, 1, $x, $perm, $info);
     } else {
-	PDL::LinearAlgebra::Real::getrs($lu, 1, $x, $perm, $info);
+	PDL::LinearAlgebra::Real::getrs($lu, 1, $x, $perm, $info); # uncoverable statement
     }
     confess 'Solving failed' unless all($info == 0); # can be vector
     $x;
