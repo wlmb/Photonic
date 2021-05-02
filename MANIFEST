@@ -9,7 +9,6 @@ examples/WE/R2/field.pl
 INSTALL
 lib/Photonic.pm
 lib/Photonic/CharacteristicFunctions.pm
-lib/Photonic/ExtraUtils.pm
 lib/Photonic/Geometry/FromB.pm
 lib/Photonic/Geometry/FromEpsilon.pm
 lib/Photonic/Geometry/FromImage2D.pm

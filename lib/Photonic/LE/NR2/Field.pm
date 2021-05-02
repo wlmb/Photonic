@@ -141,7 +141,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
-use Photonic::ExtraUtils qw(cgtsv);
+use Photonic::Utils qw(cgtsv);
 use Photonic::Types;
 use Photonic::Iterator qw(nextval);
 use Moose;

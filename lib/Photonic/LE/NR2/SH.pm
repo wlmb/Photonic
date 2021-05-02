@@ -197,7 +197,7 @@ use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex);
-use Photonic::ExtraUtils qw(cgtsv);
+use Photonic::Utils qw(cgtsv);
 use Photonic::Iterator;
 use Photonic::Types;
 use PDL::Constants qw(PI);

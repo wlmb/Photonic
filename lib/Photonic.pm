@@ -81,10 +81,6 @@ This file. This package.
 Couple of examples of characteristic functions, helpful for fast
 tests.
 
-=item L<Photonic::ExtraUtils>
-
-Call some fortran utility routines from perl.
-
 =item L<Photonic::Geometry>
 
 Group of modules for geometrical characterization.

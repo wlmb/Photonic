@@ -1,5 +1,3 @@
-# Test the function ExtraUtils function cgtsv
-
 =head1 COPYRIGHT NOTICE
 
 Photonic - A perl package for calculations on photonics and
@@ -36,12 +34,12 @@ use warnings;
 use PDL;
 use PDL::Complex;
 use PDL::NiceSlice;
-use Photonic::ExtraUtils;
+use Photonic::Utils qw(cgtsv);
 use feature qw(say);
 use constant N=>10;
 use Test::More;
 
-for my $D (3..N+2) { #first differencess
+for my $D (3..N+2) { #first differences
     #solve (1 + i)(b_{n + 1} - b_n)=1 - i with homogeneous BCs
     my $c=r2C(zeroes($D));
     my $d=-ones($D)*(1 + i);

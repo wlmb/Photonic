@@ -42,6 +42,7 @@ require Exporter;
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
     wave_operator
+    cgtsv lu_decomp
 );
 use PDL::LiteF;
 use PDL::FFTW3;
@@ -50,8 +51,8 @@ use PDL::MatrixOps;
 use Photonic::Iterator qw(nextval);
 use Carp;
 use Storable qw(dclone);
-use PDL::LinearAlgebra::Real;
-use PDL::LinearAlgebra::Complex;
+require PDL::LinearAlgebra::Real;
+require PDL::LinearAlgebra::Complex;
 use warnings;
 use strict;
 
@@ -357,6 +358,18 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
 	$f1->mv(0,-1)->clump(-2)->dog);
 }
 
+sub cgtsv {
+    confess "Wrong number of arguments" unless scalar(@_)==4;
+    my ($c, $d, $e, $b) = @_;
+    my $i = PDL->null;
+    for (grep $_->is_inplace, $c, $d, $e, $b) {
+        $_ = $_->copy;
+        $_->set_inplace(0);
+    }
+    PDL::LinearAlgebra::Complex::cgtsv($c, $d, $e, $b, $i);
+    ($b->isa("PDL::Complex") ? $b->complex : $b, $i);
+}
+
 1;
 
 __END__
@@ -474,6 +487,17 @@ a wave operator.
 Given an object and a classname, construct an array-ref of objects of
 that class, with relevant fields copied from the object.
 
-=back
+=item * cgtsv
 
-=cut
+Solves a general complex tridiagonal system of equations.
+
+       ($b, my $info) = cgtsv($c, $d, $e, $b);
+
+where C<$c(2,0..$n-2)> is the subdiagonal, C<$d(2,0..$n-1)> the diagonal and
+C<$e(2,0..$n-2)> the supradiagonal of an $nX$n tridiagonal complex
+double precision matrix. C<$b(2,0..$n-1)> is the right hand side
+vector. C<$b> is replaced by the solution. C<$info> returns 0 for success
+or k if the k-1-th element of the diagonal became zero. Either 2Xn pdl's
+are used to represent complex numbers, as in PDL::Complex.
+
+=back
