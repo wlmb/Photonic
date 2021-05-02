@@ -141,7 +141,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
-use Photonic::ExtraUtils qw(cgtsv);
+use Photonic::Utils qw(cgtsv);
 use Photonic::Types;
 use Photonic::Iterator qw(nextval);
 use Moose;
@@ -208,7 +208,7 @@ sub evaluate {
     #field is RorY,cartesian,nx,ny...
     my @dims=$self->nr->B->dims; # actual dims of space
     my $ndims=@dims; # num. of dims of space
-    my $field_G=PDL->zeroes(2, $ndims, @dims)->complex;
+    my $field_G=PDL->zeroes($ndims, @dims)->r2C;
     #field is RorI, cartesian, nx, ny...
     for(my $n=0; $n<$nh; ++$n){
 	my $GPsi_G=Cscale($stateit->nextval,

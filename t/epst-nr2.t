@@ -56,7 +56,7 @@ my $gt=Photonic::Geometry::FromB->new(B=>$Bt); #trans
 my $eto=Photonic::LE::NR2::EpsTensor->new(geometry=>$gt, nh=>10);
 my $etv=$eto->evaluate($ea, $eb);
 my $etx=(1-$gt->f)*$ea+$gt->f*$eb;
-my $etenx=pdl([$etx, 0+0*i],[0+0*i, $elx])->complex;
+my $etenx=pdl([$etx, r2C(0)],[r2C(0), $elx])->complex;
 ok(Cagree($etv, $etenx), "1D trans epsilon");
 is($eto->converged,1, "Converged");
 
@@ -70,7 +70,7 @@ my $eko=Photonic::LE::NR2::EpsTensor->new(
     geometry=>$gk, nh=>1000, reorthogonalize=>1, use_mask=>1);
 my $etva=$eko->evaluate($ea, $eb);
 my $etvb=$eko->evaluate($eb, $ea);
-my $etvr=zeroes(2,2,2)->complex;
+my $etvr=zeroes(2,2)->r2C;
 $etvr->(:,(0),(0)).= $etvb->(:,(1),(1));
 $etvr->(:,(0),(1)).=-$etvb->(:,(1),(0));
 $etvr->(:,(1),(0)).=-$etvb->(:,(0),(1));

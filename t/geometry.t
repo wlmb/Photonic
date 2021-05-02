@@ -36,6 +36,7 @@ use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::Geometry::FromImage2D;
 use Photonic::Geometry::FromEpsilon;
+use Photonic::Utils qw(lu_solve);
 use lib 't/lib';
 use TestUtils;
 use Test::More;
@@ -87,8 +88,10 @@ ok(agree($g->cUnitPairs->[0]->re, pdl(1,0)/sqrt(2))
    && agree($g->cUnitPairs->[0]->im, pdl(0,1)/sqrt(2)),
    "cunitpairs");
 ok(agree($g->unitDyads, pdl([1,0,0],[.5,1,.5],[0,0,1])), "unitDyads");
-ok(agree(lu_backsub(@{$g->unitDyadsLU}, $g->unitDyads->transpose),
-	 identity(3)), "unitDyadsLU");
+
+my $got = lu_solve($g->unitDyadsLU, $g->unitDyads->transpose->r2C);
+ok(Cagree($got, identity(3)), "unitDyadsLU");
+
 ok(agree($g->Vec2LC_G(zeroes(11,11)->ndcoords->r2C)->re,
 	 (zeroes(11,11)->ndcoords*$g->GNorm)->sumover),
    "Vec2LC");
@@ -108,7 +111,7 @@ SKIP: {
 	path=>'data/black.png', inverted=>1);
     ok($gbi->f==1, "filling fraction of inverted black");
 }
-my $eps=zeroes(11,11)+0*i;
+my $eps=r2C(zeroes(11,11));
 my $ge=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps);
 ok(defined $ge, "Create geometry from epsilon");
 is($ge->ndims, 2, "Number of dimensions");

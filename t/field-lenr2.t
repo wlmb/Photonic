@@ -218,9 +218,9 @@ my $chi=Photonic::LE::NR2::SHChiTensor->new(
 );
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb);
 $expected = pdl(<<'EOF')->complex;
-[ [ [ [ 2.365532e-18 -4.731064e-18] ] ] ]
+[ [ [ [ 2.06087e-17 3.64698e-17 ] ] ] ]
 EOF
-ok(Cagree($got, $expected, 1e-51), "P2") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-41), "P2") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'f', mask => pdl(1));
 $expected = pdl(<<'EOF')->complex;
 [ [ [ [4.0239976e-18 -9.855343e-19] ] ] ]

@@ -6,24 +6,26 @@ use Photonic::Utils;
 Photonic::Utils->import(@Photonic::Utils::EXPORT_OK);
 use Test::More;
 
-my $x = zeroes(2, 11)->complex;
+my $x = zeroes(11)->r2C;
 $x->slice(':,0') .= 1+0*i;
-ok approx(HProd($x, $x), r2C(1));
+my $got = HProd($x, $x);
+ok approx($got, r2C(1)) or diag "got:$got";
 ok approx(EProd($x, $x), r2C(1));
 
-$x = zeroes(2, 1, 11)->complex;
+$x = zeroes(1, 11)->r2C;
 $x->slice(':,:,0') .= 1+0*i;
-ok approx(MHProd($x, $x, ones(1, 1, 11)), r2C(1));
+$got = MHProd($x, $x, ones(1, 1, 11));
+ok approx($got, r2C(1)) or diag "got:$got";
 
-$x = zeroes(2, 2, 11)->complex;
+$x = zeroes(2, 11)->r2C;
 $x->slice(':,:,0') .= 1/sqrt(2)+0*i;
 ok approx(SProd($x, $x), r2C(1));
 
-$x = zeroes(2, 1, 2, 11)->complex;
+$x = zeroes(1, 2, 11)->r2C;
 $x->slice(':,:,:,0') .= 1/sqrt(2)+0*i;
 ok approx(VSProd($x, $x), r2C(1));
 
-my $got = lentzCF(
+$got = lentzCF(
   pdl([21/11 + 32*i/11, 23/11 + 34*i/11])->cplx,
   pdl([r2C(-1), -8.7603535536828499e-17 - 1.98347107438017*i])->cplx,
   2,
@@ -495,7 +497,7 @@ my $data = pdl(<<'EOF')->complex;
  [     3466.0788             -0]
 ]
 EOF
-$got = tensor($data, [ pdl('[ [1 0 0] [0.5 1 0.5] [0 0 1] ]'), pdl('[0 1 2]'), 1 ], 2);
+$got = tensor($data, [lu_decomp(pdl('[[1 0 0] [0.5 1 0.5] [0 0 1]]')->r2C)], 2, 2);
 $expected = pdl(<<'EOF')->complex;
 [
  [

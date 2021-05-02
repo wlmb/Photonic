@@ -180,7 +180,7 @@ with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsF
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
-    my $v=PDL->zeroes(2,2,@{$self->dims})->complex; #ri:pm:nx:ny
+    my $v=PDL->zeroes(2,@{$self->dims})->r2C; #ri:pm:nx:ny
     my $arg="(0),:" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
     $v->slice($arg).=1/sqrt(2);
     return $v;

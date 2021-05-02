@@ -43,7 +43,7 @@ use TestUtils;
 #1D system e=1 or 2
 my ($ea, $eb)=(1+2*i, 3+4*i);
 my $f=6/11;
-my $eps=$ea*(zeroes(11)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
+my $eps=r2C($ea*(zeroes(11)->xvals<5)+ $eb*(zeroes(11)->xvals>=5));
 my $g=Photonic::Geometry::FromEpsilon
     ->new(epsilon=>$eps, Direction0=>pdl([1]));
 my $o=Photonic::LE::S::OneH->new(geometry=>$g);
@@ -54,8 +54,8 @@ $o->iterate;
 ok(Cagree(pdl($o->current_a), $ea*$f+$eb*(1-$f)), "1D a_1");
 ok(Cagree(pdl($o->next_b2), 0), "1D b_2^2");
 
-my $x = zeroes(2, 1, 2, 11)->complex;
-$x->slice(':,:,0') .= 1+0*i;
+my $x = zeroes(1, 2, 11)->r2C;
+$x->slice(':,:,0') .= r2C(1);
 ok approx($o->magnitude($x), 3.3166247903554), "magnitude";
 
 done_testing;

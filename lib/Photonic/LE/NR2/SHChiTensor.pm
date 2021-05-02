@@ -168,10 +168,9 @@ use PDL::Complex;
 use PDL::MatrixOps;
 use Storable qw(dclone);
 use PDL::IO::Storable;
-use Photonic::Utils qw(make_haydock);
+use Photonic::Utils qw(make_haydock tensor);
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
-
 use Moose;
 
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
@@ -232,6 +231,17 @@ has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
+my %KIND2METHOD = (
+  f => 'P2',
+  l => 'selfConsistentVecL',
+  a => 'P2LMCalt',
+  d => 'dipolar',
+  q => 'quadrupolar',
+  e => 'external',
+  el => 'externalVecL',
+);
+my %KIND2SUBTRACT = map +($_=>1), qw(f l a);
+
 sub evaluate {
     my $self=shift;
     $self->_epsA1(my $epsA1=shift);
@@ -239,7 +249,7 @@ sub evaluate {
     $self->_epsA2(my $epsA2=shift);
     $self->_epsB2(my $epsB2=shift);
     my %options=@_; #the rest are options. Currently, kind and mask.
-    my $kind=lc($options{kind}//'');
+    my $kind=lc($options{kind}//'f');
     my $mask=$options{mask};
     my $nd=$self->geometry->B->ndims;
     my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
@@ -250,15 +260,8 @@ sub evaluate {
 	    epsB2=>$epsB2, filterflag=>0);
 	# RorI, XorY,nx,ny
 	# dipolar, quadrupolar, external, full
-	my $P2;
-	$P2=$nrsh->P2 if $kind eq '';
-	$P2=$nrsh->P2 if $kind eq 'f';
-	$P2=$nrsh->selfConsistentVecL if $kind eq 'l';
-	$P2=$nrsh->P2LMCalt if $kind eq 'a';
-	$P2=$nrsh->dipolar if $kind eq 'd';
-	$P2=$nrsh->quadrupolar if $kind eq 'q';
-	$P2=$nrsh->external if $kind eq 'e';
-	$P2=$nrsh->externalVecL if $kind eq 'el';
+	my $method = $KIND2METHOD{$kind};
+	my $P2 = $nrsh->$method;
 	my $P2M=$P2->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
@@ -274,40 +277,24 @@ sub evaluate {
 	if (defined $mask){ # is there a real mask?
 	    $f=$mask->sum/$self->geometry->npoints; #filling fraction
 				#of mask
-	    $P2=$P2*$mask->(*1); #masked polarization
+	    $P2*=$mask->(*1); #masked polarization
 	    $P2Mmask=$P2->mv(0,-1)->mv(0,-1) #masked macroscopic polarization
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
 	    ->complex->sumover  #RorI, XorY
 		/$self->geometry->npoints;
 	}
-	$P2Mmask = $P2Mmask + $f*$Dep2 if $kind eq 'f' or $kind eq 'l'
-	    or $kind eq 'a'; # subtract masked macro depolarization field
+	$P2Mmask += $f*$Dep2 if $KIND2SUBTRACT{$kind}; # subtract masked macro depolarization field
 	push @P2M, $P2Mmask;
     }
     #NOTE. Maybe I have to correct response to D-> response to E
     #I have to convert from the array of polarizations for given
     #directions to the actual cartesian chi's.
-    #$reP2M and $imP2M have cartesian, dyad indices
-    my $reP2M=PDL->pdl([map {$_->re} @P2M]);
-    my $imP2M=PDL->pdl([map {$_->im} @P2M]);
-    my ($lu, $perm, $parity)=@{$self->geometry->unitDyadsLU};
-    #$reChi, $imChi have cartesian, dyad indices
+    #$P2Mp has cartesian, dyad indices
+    my $P2Mp = PDL->pdl(@P2M)->complex;
     #Get cartesian indices out of the way, solve the system of
     #equations, and move the cartesian indices back
-    my $reChi=lu_backsub($lu, $perm, $parity, $reP2M->mv(0,-1))->mv(-1,0);
-    my $imChi=lu_backsub($lu, $perm, $parity, $imP2M->mv(0,-1))->mv(-1,0);
-    #chi has three cartesian indices
-    my $chiTensor=PDL->zeroes(2, $nd, $nd, $nd)->complex;
-    #convert dyadic to cartesian indices
-    my $n=0;
-    for my $i(0..$nd-1){
-	for my $j($i..$nd-1){
-	    $chiTensor->(:,:,($i),($j)).=$reChi(:,$n)+i*$imChi(:,$n);
-	    $chiTensor->(:,:,($j),($i)).=$reChi(:,$n)+i*$imChi(:,$n);
-	    ++$n;
-	}
-    }
+    my $chiTensor=tensor($P2Mp->mv(1,-1), $self->geometry->unitDyadsLU, $nd, 3, sub { $_[0]->mv(-1,1) });
     $self->_chiTensor($chiTensor);
     return $chiTensor;
 }

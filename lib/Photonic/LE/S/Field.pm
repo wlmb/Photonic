@@ -138,7 +138,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::S::AllH;
-use Photonic::ExtraUtils qw(cgtsv);
+use Photonic::Utils qw(cgtsv);
 use Photonic::Types;
 use Photonic::Iterator;
 use Moose;
@@ -203,7 +203,7 @@ sub evaluate {
     #field is ri,xy,pm,nx,ny...
     my @dims=$self->nr->B->dims; # actual dims of space
     my $ndims=@dims; # num. of dims of space
-    my $field_G=PDL->zeroes(2, $ndims, 2, @dims)->complex;
+    my $field_G=PDL->zeroes($ndims, 2, @dims)->r2C;
     for(my $n=0; $n<$nh; ++$n){
 	#state is ri,pm,nx,ny...
 	#pmGnorm is xy,pm,nx,ny...

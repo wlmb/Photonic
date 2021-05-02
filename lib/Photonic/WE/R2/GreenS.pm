@@ -180,7 +180,7 @@ sub evaluate {
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
     $self->_converged(all { $_->converged } @{$self->greenP});
-    my $greenTensor = tensor(pdl([map $_->evaluate($epsB), @{$self->greenP}])->complex, $self->geometry->unitDyadsLU, $self->geometry->ndims);
+    my $greenTensor = tensor(pdl([map $_->evaluate($epsB), @{$self->greenP}])->complex, $self->geometry->unitDyadsLU, $self->geometry->ndims, 2);
     $self->_greenTensor($greenTensor);
     $greenTensor;
 }

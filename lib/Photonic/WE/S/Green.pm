@@ -170,7 +170,7 @@ with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 sub _build_greenTensor {
     my $self=shift;
     $self->_converged(all { $_->converged } @{$self->greenP});
-    tensor(pdl([map $_->Gpp, @{$self->greenP}])->complex, $self->geometry->unitDyadsLU, $self->geometry->ndims);
+    tensor(pdl([map $_->Gpp, @{$self->greenP}])->complex, $self->geometry->unitDyadsLU, $self->geometry->ndims, 2);
 }
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0

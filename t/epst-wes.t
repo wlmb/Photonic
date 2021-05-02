@@ -39,7 +39,7 @@ use Photonic::WE::S::AllH;
 use Photonic::WE::S::EpsilonP;
 use Photonic::WE::S::EpsilonTensor;
 
-use Test::More tests => 11;
+use Test::More;
 use lib 't/lib';
 use TestUtils;
 
@@ -47,7 +47,7 @@ use TestUtils;
 #Non-retarded limit
 my ($ea, $eb)=(1+2*i,3+4*i);
 my $f=6/11;
-my $eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5)+0*i;
+my $eps=r2C($ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5));
 my $g=Photonic::Geometry::FromEpsilon
     ->new(epsilon=>$eps);
 my $m=Photonic::WE::S::Metric->new(
@@ -77,7 +77,7 @@ ok(Cagree($etv->(:,(1),(0)), 0), "yx k parallel");
 #Compare to epsilon from transfer matrix.
 #Construct normal incidence transfer matrix
 ($ea, $eb)=(r2C(1),r2C(2));
-$eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
+$eps=r2C($ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5));
 $g=Photonic::Geometry::FromEpsilon
     ->new(epsilon=>$eps, L=>pdl(1,1));
 my ($na, $nb)=map {sqrt($_)} ($ea, $eb);
@@ -105,8 +105,8 @@ ok(Cagree($epstm, $etv), "Epsilon agrees with transfer matrix");
 
 #Compare to epsilon from transfer matrix with complex metric.
 #Construct normal incidence transfer matrix
-($ea, $eb)=(r2C(1+0*i),r2C(2+1*i));
-$eps=$ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5)+0*i;
+($ea, $eb)=(r2C(1),2+1*i);
+$eps=r2C($ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5));
 $g=Photonic::Geometry::FromEpsilon->new(epsilon=>$eps, L=>pdl(1,1));
 ($na, $nb)=map {sqrt($_)} ($ea, $eb);
 $q=1.2;
@@ -135,4 +135,4 @@ $et=Photonic::WE::S::EpsilonP->new(nh=>1000, haydock=>$h);
 $etv=$et->epsilon;
 ok(Cagree($epstm, $etv, 1e-4), "Projected eps agrees with trans mat. Complex case.");
 
-#done_testing();
+done_testing();

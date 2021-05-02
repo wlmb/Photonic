@@ -197,7 +197,7 @@ use PDL::Complex;
 use PDL::FFTW3;
 use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex);
-use Photonic::ExtraUtils qw(cgtsv);
+use Photonic::Utils qw(cgtsv);
 use Photonic::Iterator;
 use Photonic::Types;
 use PDL::Constants qw(PI);
@@ -324,7 +324,7 @@ sub _alpha {
     my $self=shift;
     my $epsA1=shift;
     my $epsB1=shift;
-    my $alphaA1=my $alphaB1=0+0*i;
+    my $alphaA1=my $alphaB1=r2C(0);
     $alphaA1=($epsA1-1)/(4*$self->densityA*PI) unless
 	$self->densityA==0;
     $alphaB1=($epsB1-1)/(4*$self->densityB*PI) unless
@@ -477,7 +477,7 @@ sub _build_externalL_n {
     my $nh=$self->HP->iteration;
     # innecesario: \propto \delta_{n0}
     #my @Pn=map HProd($states->[$_],$pol), 0..$nh-1;
-    my @Pn=map {0+0*i} 0..$nh-1;
+    my @Pn=map {r2C(0)} 0..$nh-1;
     #$Pn[0]=$pol->(:,(0),(0));
     $Pn[0]=HProd($stateit->nextval,$pol);
     #print join " Pn ", @Pn[0..3], "\n";

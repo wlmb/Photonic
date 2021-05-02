@@ -41,7 +41,7 @@ use PDL::NiceSlice;
 use PDL::MatrixOps;
 use PDL::Complex;
 use Photonic::Types;
-use Photonic::Utils qw(any_complex);
+use Photonic::Utils qw(any_complex lu_decomp);
 use Carp;
 use constant PI=>4*atan2(1,1);
 
@@ -268,9 +268,7 @@ sub _build_unitDyads {
 
 sub _build_unitDyadsLU {
     my $self=shift;
-    my ($lu, $perm, $parity) = lu_decomp($self->unitDyads);
-    die 'Unit Dyad not invertible' unless defined $lu;
-    return [($lu, $perm, $parity)];
+    [lu_decomp($self->unitDyads->r2C)];
 }
 
 sub _G0 {
