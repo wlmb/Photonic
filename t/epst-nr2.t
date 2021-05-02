@@ -35,7 +35,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::LE::NR2::EpsTensor;
 
-use Test::More tests => 5;
+use Test::More tests => 7;
 use lib 't/lib';
 use TestUtils;
 
@@ -59,6 +59,21 @@ my $etx=(1-$gt->f)*$ea+$gt->f*$eb;
 my $etenx=pdl([$etx, r2C(0)],[r2C(0), $elx])->complex;
 ok(Cagree($etv, $etenx), "1D trans epsilon");
 is($eto->converged,1, "Converged");
+
+# Extend 1D superlattice to 4D (why not?)
+my $Bt4=zeroes(11,1,1,1)->xvals<5; #2D flat system
+my $gt4=Photonic::Geometry::FromB->new(B=>$Bt4); #trans
+my $eto4=Photonic::LE::NR2::EpsTensor->new(geometry=>$gt4, nh=>10);
+my $etv4=$eto4->evaluate($ea, $eb);
+my $etenx4=pdl([
+    [$elx,   r2C(0),  r2C(0), r2C(0)],
+    [r2C(0),  $etx,  r2C(0), r2C(0)],
+    [r2C(0), r2C(0), $etx,   r2C(0)],
+    [r2C(0), r2C(0), r2C(0), $etx  ]
+    ])->complex;
+ok(Cagree($etv4, $etenx4), "4D trans epsilon");
+is($eto4->converged,1, "Converged");
+
 
 #Keller
 my $Nk=6;
