@@ -324,20 +324,10 @@ sub lentzCF {
 sub tile { # repeat field Nx X Ny X... times
     my $f=shift;
     my @n=@_; #number of repetitions along dimension
-    # Is next comment correct (2 X)?
-    my $dim=0; #field is 2 X dims X nx,ny,nz...
-    my $r=$f; #result
-    for my $n(@n){
-	die "repetition in tile should be >0" unless $n>0;
-	my $r1=$r;
-	$n--;
-	while($n-->0){
-	    $r1=$r1->glue($dim, $r);
-	}
-	$dim++; #prepare for next dimension
-	$r=$r1;
-    }
-    return $r;
+    my $sl = join ',', map ":,*$_", @n; # insert right-size dummy after each real
+    my $r = $f->slice($sl); #result
+    $r = $r->clump($_, $_+1) for 0..$#n;
+    $r;
 }
 
 sub vectors2Dlist { #2D vector fields ready for gnuploting
