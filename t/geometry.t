@@ -92,7 +92,7 @@ ok(agree($g->unitDyads, pdl([1,0,0],[.5,1,.5],[0,0,1])), "unitDyads");
 my ($lu, $perm) = @{$g->unitDyadsLU};
 PDL::LinearAlgebra::Complex::cgetrs($lu, 1, my $got=$g->unitDyads->transpose->r2C, $perm, my $info=null);
 is $info, 0;
-ok(agree($got, identity(3)), "unitDyadsLU");
+ok(Cagree($got, identity(3)), "unitDyadsLU");
 
 ok(agree($g->Vec2LC_G(zeroes(11,11)->ndcoords->r2C)->re,
 	 (zeroes(11,11)->ndcoords*$g->GNorm)->sumover),
