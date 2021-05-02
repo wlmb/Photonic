@@ -377,7 +377,7 @@ sub lu_decomp {
     } else {
 	PDL::LinearAlgebra::Real::getrf($lu, $perm, $info);
     }
-    confess 'Decomposition failed' unless $info == 0;
+    confess 'Decomposition failed' unless all($info == 0); # can be vector
     ($lu, $perm);
 }
 
@@ -390,7 +390,7 @@ sub lu_solve {
     } else {
 	PDL::LinearAlgebra::Real::getrs($lu, 1, $x, $perm, $info);
     }
-    confess 'Solving failed' unless $info == 0;
+    confess 'Solving failed' unless all($info == 0); # can be vector
     $x;
 }
 
