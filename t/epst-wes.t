@@ -39,7 +39,7 @@ use Photonic::WE::S::AllH;
 use Photonic::WE::S::EpsilonP;
 use Photonic::WE::S::EpsilonTensor;
 
-use Test::More tests => 11;
+use Test::More;
 use lib 't/lib';
 use TestUtils;
 
@@ -135,4 +135,4 @@ $et=Photonic::WE::S::EpsilonP->new(nh=>1000, haydock=>$h);
 $etv=$et->epsilon;
 ok(Cagree($epstm, $etv, 1e-4), "Projected eps agrees with trans mat. Complex case.");
 
-#done_testing();
+done_testing();
