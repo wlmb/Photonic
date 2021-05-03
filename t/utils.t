@@ -10,7 +10,8 @@ my $x = zeroes(11)->r2C;
 $x->slice(':,0') .= 1;
 my $got = HProd($x, $x);
 ok approx($got, r2C(1)), 'HProd' or diag "got:$got";
-ok approx(EProd($x, $x), r2C(1));
+$got = EProd($x, $x);
+ok approx($got, r2C(1)), 'EProd' or diag "got:$got";
 
 $x = zeroes(1, 11)->r2C;
 $x->slice(':,:,0') .= 1;
@@ -19,11 +20,13 @@ ok approx($got, r2C(1)), 'MHProd' or diag "got:$got";
 
 $x = zeroes(2, 11)->r2C;
 $x->slice(':,:,0') .= 1/sqrt(2);
-ok approx(SProd($x, $x), r2C(1)), 'SProd';
+$got = SProd($x, $x);
+ok approx($got, r2C(1)), 'SProd' or diag "got:$got";
 
 $x = zeroes(1, 2, 11)->r2C;
 $x->slice(':,:,:,0') .= 1/sqrt(2);
-ok approx(VSProd($x, $x), r2C(1)), 'VSProd';
+$got = VSProd($x, $x);
+ok approx($got, r2C(1)), 'VSProd' or diag "got:$got";
 
 $got = lentzCF(
   pdl([21/11 + 32*i/11, 23/11 + 34*i/11])->cplx,
