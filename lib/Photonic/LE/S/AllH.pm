@@ -116,7 +116,6 @@ Array of Haydock b coefficients squared
 =cut
 
 use namespace::autoclean;
-use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Moose;

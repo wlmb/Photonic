@@ -129,16 +129,12 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $first=shift;
     my $second=shift;
     my $skip=shift//0;
-    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     confess "Dimensions should be equal" unless $ndims == $second->ndims;
     my $prod=$first->complex->Cconj*$second->complex;
     # clump all except skip dimensions, protecto RorI index and sum.
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
 	->mv(-1,0)->sumover;
-    #Note: real does not take the real part, just gives a 2-real
-    #vector view of each complex
-    $result=$result->real unless $iscomplex;
     return $result;
 }
 
@@ -149,7 +145,6 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     my $metric=shift;
     # pass $metric->value  xyz xyz nx ny nz
     my $skip=shift//0;
-    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     carp "We don't trust the skip argument in MHProd yet" if $skip;
@@ -159,9 +154,6 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     my $prod=$first->complex->Cconj*$mprod->complex;
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
 	->mv(-1,0)->sumover;
-    #Note: real does not take the real part, just gives a 2-real
-    #vector view of each complex
-    $result=$result->real unless $iscomplex;
     return $result;
 }
 
@@ -171,7 +163,6 @@ sub EProd { #Euclidean product between two fields in reciprocal
     my $first=shift;
     my $second=shift;
     my $skip=shift//0;
-    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #First reverse all reciprocal dimensions
@@ -191,7 +182,6 @@ sub EProd { #Euclidean product between two fields in reciprocal
 	->clump(-1-$skip-1) #nx*ny:s1:s2:ri
 	->mv(-1,0) #ri:nx*ny,s1,s2
 	->sumover; #ri:s1:s2
-    $result=$result->real unless $iscomplex;
     return $result;
 }
 
@@ -201,7 +191,6 @@ sub SProd { #Spinor product between two fields in reciprocal
     my $first=shift;
     my $second=shift;
     my $skip=shift//0;
-    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #dimensions are like rori, pmk, s1,s2, nx,ny
@@ -223,9 +212,6 @@ sub SProd { #Spinor product between two fields in reciprocal
 	->clump(-1-$skip-1)  #nx*ny*pmk, s1, s2, rori
 	->mv(-1,0) #rori,nx*ny*pmk, s1,s2
 	->sumover; #rori, s1, s2
-    #Note: real does not take the real part, just gives a 2-real
-    #vector view of each complex
-    $result=$result->real unless $iscomplex;
     return $result;
 }
 
@@ -233,7 +219,6 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
              #space. Indices are ri:xy:pm:nx:ny...
     my $first=shift;
     my $second=shift;
-    my $iscomplex = any_complex($first, $second);
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     #dimensions are like ri:xy:pm:nx:ny
@@ -254,7 +239,6 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
 	->clump(-2)  #nx*ny*xy*pm:ri
 	->mv(-1,0) #ri:nx*ny*xy*pm
 	->sumover; #ri
-    $result=$result->real unless $iscomplex;
     return $result;
 }
 
@@ -263,11 +247,10 @@ sub RtoG { #transform a 'complex' scalar, vector or tensorial field
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $iscomplex = any_complex($field);
-    my $moved=$iscomplex? $field->real : $field;
+    my $moved=$field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=fftn($moved, $ndims);
-    my $result= $iscomplex?$transformed->complex : $transformed;
+    my $result=$transformed->complex;
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }
@@ -277,11 +260,10 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $iscomplex = any_complex($field);
-    my $moved=$iscomplex? $field->real : $field;
+    my $moved=$field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=ifftn($moved, $ndims);
-    my $result= $iscomplex?$transformed->complex : $transformed;
+    my $result=$transformed->complex;
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }
@@ -480,9 +462,8 @@ True if any of the args are a complex PDL.
 
 =item * tensor
 
-Given a complex PDL, an LU decomposition array-ref for the first 3
-params of L<PDL::MatrixOps/lu_backsub>, and the size of the tensor,
-returns the tensor.
+Given a complex PDL, an LU decomposition array-ref as returned by
+L</lu_decomp>, and the size of the tensor, returns the tensor.
 
 =item * wave_operator
 

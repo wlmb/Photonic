@@ -38,7 +38,6 @@ use Moose::Role;
 
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::MatrixOps;
 use PDL::Complex;
 use Photonic::Types;
 use Photonic::Utils qw(any_complex lu_decomp);
