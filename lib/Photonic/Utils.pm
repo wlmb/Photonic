@@ -149,7 +149,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     carp "We don't trust the skip argument in MHProd yet" if $skip;
     # I'm not sure about the skiped dimensions in the next line. Is it right?
-    my $mprod=($metric*$second->slice(":,:,*1"))->sumover;
+    my $mprod=($metric*$second->dummy(2))->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
     my $prod=$first->complex->Cconj*$mprod->complex;
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
