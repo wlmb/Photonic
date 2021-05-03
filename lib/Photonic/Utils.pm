@@ -247,11 +247,10 @@ sub RtoG { #transform a 'complex' scalar, vector or tensorial field
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $iscomplex = any_complex($field);
-    my $moved=$iscomplex? $field->real : $field;
+    my $moved=$field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=fftn($moved, $ndims);
-    my $result= $iscomplex?$transformed->complex : $transformed;
+    my $result=$transformed->complex;
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }
@@ -261,11 +260,10 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $iscomplex = any_complex($field);
-    my $moved=$iscomplex? $field->real : $field;
+    my $moved=$field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=ifftn($moved, $ndims);
-    my $result= $iscomplex?$transformed->complex : $transformed;
+    my $result=$transformed->complex;
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }
