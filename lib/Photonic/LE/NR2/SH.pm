@@ -561,7 +561,7 @@ sub _build_P2LMCalt {
     my $diag=$self->u2->Cconj->complex - PDL->pdl([@$as])->(0:$nh-1);
     # rotate complex zero from first to last element.
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->rotate(-1)->r2C;
-    my $supradiag=$subdiag->real->mv(0,-1)->rotate(-1)->mv(-1,0)->complex;
+    my $supradiag=$subdiag->mv(0,-1)->rotate(-1)->mv(-1,0);
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
