@@ -9,21 +9,21 @@ use Test::More;
 my $x = zeroes(11)->r2C;
 $x->slice(':,0') .= 1+0*i;
 my $got = HProd($x, $x);
-ok approx($got, r2C(1)) or diag "got:$got";
+ok approx($got, r2C(1)), 'HProd' or diag "got:$got";
 ok approx(EProd($x, $x), r2C(1));
 
 $x = zeroes(1, 11)->r2C;
 $x->slice(':,:,0') .= 1+0*i;
 $got = MHProd($x, $x, ones(1, 1, 11));
-ok approx($got, r2C(1)) or diag "got:$got";
+ok approx($got, r2C(1)), 'MHProd' or diag "got:$got";
 
 $x = zeroes(2, 11)->r2C;
 $x->slice(':,:,0') .= 1/sqrt(2)+0*i;
-ok approx(SProd($x, $x), r2C(1));
+ok approx(SProd($x, $x), r2C(1)), 'SProd';
 
 $x = zeroes(1, 2, 11)->r2C;
 $x->slice(':,:,:,0') .= 1/sqrt(2)+0*i;
-ok approx(VSProd($x, $x), r2C(1));
+ok approx(VSProd($x, $x), r2C(1)), 'VSProd';
 
 $got = lentzCF(
   pdl([21/11 + 32*i/11, 23/11 + 34*i/11])->cplx,
@@ -32,7 +32,7 @@ $got = lentzCF(
   1e-7,
 );
 my $expected = 1.4688427299703299 + 2.6112759643916901*i;
-ok approx($got, $expected) or diag "got: $got, expected $expected";
+ok approx($got, $expected), 'lentzCF' or diag "got: $got, expected $expected";
 
 $expected = -1.2045454545454499 - 0.79545454545454497*i;
 $got = lentzCF(
@@ -41,7 +41,7 @@ $got = lentzCF(
   1,
   1e-7,
 );
-ok approx($got, $expected) or diag "got: $got, expected $expected";
+ok approx($got, $expected), 'lentzCF' or diag "got: $got, expected $expected";
 
 $expected = pdl <<'EOF';
 [
@@ -108,7 +108,7 @@ $expected = pdl <<'EOF';
 ]
 EOF
 $got = tile(sequence(4, 4, 2, 2), 3, 3);
-ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
+ok all(approx($got, $expected)), 'tile' or diag "got: $got, expected $expected";
 
 $expected = pdl(<<'EOF')->complex;
 [
@@ -140,7 +140,7 @@ $got = RtoG(pdl(<<'EOF')->complex, 2, 1);
  [ [ [0 0] [0 0] ] ]
 ]
 EOF
-ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
+ok all(approx($got, $expected)), 'RtoG' or diag "got: $got, expected $expected";
 
 $expected = pdl(<<'EOF')->complex;
 [
@@ -172,7 +172,7 @@ $got = GtoR(pdl(<<'EOF')->complex, 2, 1);
  [ [ [0  0] [-6.4125149e-17 -7.2553859e-18] ] ]
 ]
 EOF
-ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
+ok all(approx($got, $expected)), 'GtoR' or diag "got: $got, expected $expected";
 
 $expected = pdl(<<'EOF');
 [
@@ -463,7 +463,7 @@ $expected = pdl(<<'EOF')->complex;
  ]
 ]
 EOF
-ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
+ok all(approx($got, $expected)), 'tensor' or diag "got: $got, expected $expected";
 
 $data = pdl(<<'EOF')->complex;
 [
@@ -490,6 +490,6 @@ $expected = pdl(<<'EOF')->complex;
  ]
 ]
 EOF
-ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
+ok all(approx($got, $expected)), 'wave_operator' or diag "got: $got, expected $expected";
 
 done_testing;
