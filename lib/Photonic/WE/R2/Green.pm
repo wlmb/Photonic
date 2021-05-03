@@ -137,7 +137,6 @@ fraction. 0 means don't check.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
@@ -167,25 +166,25 @@ around 'evaluate' => sub {
     my $self=shift;
     my $epsB=shift;
     my $sym=$self->$orig($epsB);
-    #That's all unless you want the anstisymmetric part
+    #That's all unless you want the antisymmetric part
     return $sym if $self->symmetric;
     my @greenPc = map $_->evaluate($epsB), @{$self->cGreenP}; ; #array of Green's projections along complex directions.
     $self->_converged(any { $_->converged } $self, @{$self->cGreenP});
     my $nd=$self->geometry->B->ndims;
-    my $asy=$sym->zeroes->complex; #ri,xy,xy, 2x$ndx$nd
+    my $asy=$sym->zeroes; #xy,xy, $ndx$nd
     my $cpairs=$self->geometry->cUnitPairs;
     my $m=0;
     for my $i(0..$nd-2){
 	for my $j($i+1..$nd-1){
-	    my $pair=$cpairs->(:,:,($m));
-	    #$asy is ri,xy,xy. First index is column
-	    $asy(:,($i), ($j)).=i()*(
+	    my $pair=$cpairs->(:,($m));
+	    #$asy is xy,xy. First index is column
+	    $asy(($i), ($j)).=PDL->i()*(
 		$greenPc[$m]-
-		($pair->Cconj->(:,*1) #ri, column, row
-		 *$pair->(:,:,*1)
+		($pair->conj->(*1) # column, row
+		 *$pair->(:,*1)
 		 *$sym)->sumover->sumover
-		); #ri
-	    $asy(:,($j), ($i)).=-$asy(:,($i),($j));
+		);
+	    $asy(($j), ($i)).=-$asy(($i),($j));
 	    $m++
 	}
      }

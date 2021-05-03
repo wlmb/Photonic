@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use PDL::Complex;
 use Photonic::LE::S::AllH;
 use Photonic::LE::S::Field;
 
@@ -53,7 +52,7 @@ my $fla=1/$ea;
 my $flb=1/$eb;
 my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
 ($fla, $flb)=map {$_/$fproml} ($fla, $flb);
-my $flx=($fla*(1-$B)+$flb*$B)->dummy(1);
+my $flx=($fla*(1-$B)+$flb*$B)->transpose;
 ok(Cagree($flv, $flx), "1D long field");
 
 #View 2D from 1D superlattice.

@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use PDL;
-use PDL::Complex;
 use Photonic::Utils;
 Photonic::Utils->import(@Photonic::Utils::EXPORT_OK);
 use Test::More;
@@ -9,7 +8,7 @@ use lib 't/lib';
 use TestUtils;
 
 my $x = zeroes(11)->r2C;
-$x->slice(':,0') .= 1;
+$x->slice('0') .= 1;
 my $single_complex_1 = $x;
 my $got = HProd($x, $x);
 ok approx($got, r2C(1)), 'HProd' or diag "got:$got";
@@ -17,33 +16,33 @@ $got = EProd($x, $x);
 ok approx($got, r2C(1)), 'EProd' or diag "got:$got";
 
 $x = zeroes(1, 11)->r2C;
-$x->slice(':,:,0') .= 1;
+$x->slice(':,0') .= 1;
 $got = MHProd($x, $x, ones(1, 1, 11));
 ok approx($got, r2C(1)), 'MHProd' or diag "got:$got";
 
 $x = zeroes(2, 11)->r2C;
-$x->slice(':,:,0') .= 1/sqrt(2);
+$x->slice(':,0') .= 1/sqrt(2);
 $got = SProd($x, $x);
 ok approx($got, r2C(1)), 'SProd' or diag "got:$got";
 
 $x = zeroes(1, 2, 11)->r2C;
-$x->slice(':,:,:,0') .= 1/sqrt(2);
+$x->slice(':,:,0') .= 1/sqrt(2);
 $got = VSProd($x, $x);
 ok approx($got, r2C(1)), 'VSProd' or diag "got:$got";
 
 $got = lentzCF(
-  PDL::Complex->from_native(pdl '[21+32i 23+34i]')/11,
-  PDL::Complex->from_native(pdl '[-1 -8.7603535536828499e-17-1.98347107438017i]'),
+  pdl('[21+32i 23+34i]')/11,
+  pdl('[-1 -8.7603535536828499e-17-1.98347107438017i]'),
   2,
   1e-7,
 );
-my $expected = 1.4688427299703299 + 2.6112759643916901*i;
+my $expected = czip 1.4688427299703299, 2.6112759643916901;
 ok approx($got, $expected), 'lentzCF' or diag "got: $got, expected $expected";
 
-$expected = -1.2045454545454499 - 0.79545454545454497*i;
+$expected = czip -1.2045454545454499, -0.79545454545454497;
 $got = lentzCF(
   $expected,
-  -1 - 0.247933884297521*i,
+  czip(-1, -0.247933884297521),
   1,
   1e-7,
 );
@@ -116,7 +115,7 @@ EOF
 $got = tile(sequence(4, 4, 2, 2), 3, 3);
 ok all(approx($got, $expected)), 'tile' or diag "got: $got, expected $expected";
 
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0 -4.3260582e-17+6.1800832e-18i ] ]
  [ [ 0 -5.9528635e-17+2.4920212e-17i ] ]
@@ -131,7 +130,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
  [ [ 0 -6.4125149e-17-7.2553859e-18i ] ]
 ]
 EOF
-$got = RtoG(PDL::Complex->from_native(pdl <<'EOF'), 2, 1);
+$got = RtoG(pdl(<<'EOF'), 2, 1);
 [
  [ [ 0 0 ] ]
  [ [ 0 -7.9823116e-17+1.1403302e-17i ] ]
@@ -148,7 +147,7 @@ $got = RtoG(PDL::Complex->from_native(pdl <<'EOF'), 2, 1);
 EOF
 ok all(approx($got, $expected)), 'RtoG' or diag "got: $got, expected $expected";
 
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
  [ [ 0 -7.5890335e-17+1.0841476e-17i ] ]
@@ -163,7 +162,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
  [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
 ]
 EOF
-$got = GtoR(PDL::Complex->from_native(pdl <<'EOF'), 2, 1);
+$got = GtoR(pdl(<<'EOF'), 2, 1);
 [
  [ [ 0 0 ] ]
  [ [ 0 -5.9528635e-17+2.4920212e-17i ] ]
@@ -449,7 +448,7 @@ $got = pdl(vectors2Dlist(pdl(<<'EOF'), 0, 5));
 EOF
 ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
 
-my $data = PDL::Complex->from_native(pdl <<'EOF');
+my $data = pdl(<<'EOF');
 [
  0.72727273
  1733.403-2.8318751e-28i
@@ -457,7 +456,7 @@ my $data = PDL::Complex->from_native(pdl <<'EOF');
 ]
 EOF
 $got = tensor($data, [lu_decomp(pdl('[[1 0 0] [0.5 1 0.5] [0 0 1]]')->r2C)], 2, 2);
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [
   0.72727273
@@ -471,7 +470,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok all(approx($got, $expected)), 'tensor' or diag "got: $got, expected $expected";
 
-$data = PDL::Complex->from_native(pdl <<'EOF');
+$data = pdl(<<'EOF');
 [
  [
       0.67272727-0.10909091i
@@ -484,7 +483,7 @@ $data = PDL::Complex->from_native(pdl <<'EOF');
 ]
 EOF
 $got = wave_operator($data, 2);
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [
       1.4483986+0.23487544i
@@ -514,7 +513,7 @@ $data = pdl(<<'EOF');
 ]
 EOF
 $got = apply_longitudinal_projection($single_complex_1, $data, 1, (zeroes(11)->xvals<5)->r2C);
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
      0.45454545
      0.13268118-0.29053126i

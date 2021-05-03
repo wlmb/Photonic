@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use PDL::Complex;
 use Photonic::Geometry::FromEpsilon;
 use Photonic::WE::S::Metric;
 use Photonic::WE::S::AllH;
@@ -59,8 +58,8 @@ my $as=$a->as;
 my $bs=$a->bs;
 my $b2s=$a->b2s;
 is($a->iteration, 2, "Number of iterations 1D longitudinal x");
-ok(Cagree($b2s, pdl([1, ($eb-$ea)**2*$f*(1-$f)])->cplx), "1D L b^2");
-ok(Cagree($as, pdl([(1-$ea)*(1-$f)+(1-$eb)*$f, (1-$ea)*$f+(1-$eb)*(1-$f)])->cplx, "1D L a"));
+ok(Cagree($b2s, pdl([1, ($eb-$ea)**2*$f*(1-$f)])), "1D L b^2");
+ok(Cagree($as, pdl([(1-$ea)*(1-$f)+(1-$eb)*$f, (1-$ea)*$f+(1-$eb)*(1-$f)]), "1D L a"));
 ok(Cagree($b2s, $bs**2), "1D L b2==b^2");
 
 #Check haydock coefficients for simple 1D system other longitudinal y
@@ -77,8 +76,8 @@ $a1l->run;
 my $as1l=$a1l->as;
 my $b2s1l=$a1l->b2s;
 is($a1l->iteration, 1, "Number of iterations 1D long y");
-ok(Cagree(($b2s1l->slice(",(0)")), 1), "1D L b_0^2");
-ok(Cagree($as1l->slice(",(0)"), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
+ok(Cagree(($b2s1l->slice("(0)")), 1), "1D L b_0^2");
+ok(Cagree($as1l->slice("(0)"), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
 
 #Check haydock coefficients for simple 1D system transverse prop x pol y
 my $epst=r2C($ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5));
@@ -95,8 +94,8 @@ my $ast=$at->as;
 my $bst=$at->bs;
 my $b2st=$at->b2s;
 is($at->iteration, 1, "Number of iterations 1D trans");
-ok(Cagree($b2st->slice(",(0)"), 1), "1D L b_0^2");
-ok(Cagree($ast->slice(",(0)"), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
+ok(Cagree($b2st->slice("(0)"), 1), "1D L b_0^2");
+ok(Cagree($ast->slice("(0)"), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
 
 #check reorthogonalize with square array
 my $Bs=zeroes(9,9)->rvals<4;

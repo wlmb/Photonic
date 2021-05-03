@@ -123,7 +123,6 @@ Criteria of convergence. 0 means don't check.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::WE::R2::AllH;
 use Photonic::Types;
 use Photonic::Utils qw(lentzCF);
@@ -160,8 +159,8 @@ sub evaluate {
     $self->_epsA(my $epsA=$self->haydock->epsilon->r2C);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $as=r2C($self->haydock->as);
-    my $bcs=r2C($self->haydock->bcs);
+    my $as=PDL::r2C($self->haydock->as);
+    my $bcs=PDL::r2C($self->haydock->bcs);
     my $min= min($self->nh, $self->haydock->iteration);
     #    b0+a1/b1+a2/...
     #   lo debo convertir a

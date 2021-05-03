@@ -25,7 +25,6 @@ WriteMakefile(
 	'Moose::Util::TypeConstraints'   => '0',
 	'MooseX::StrictConstructor'      => '0',
 	'PDL'                            => '2.049', # PDL::Complex->from_native
-	'PDL::Complex'                   => '2.009',
 	'PDL::Constants'                 => '0',
 	'PDL::Core'                      => '0',
 	'PDL::Core::Dev'                 => '0',
@@ -34,8 +33,8 @@ WriteMakefile(
 	'PDL::Lite'                      => '0',
 	'PDL::MatrixOps'                 => '0',
 	'PDL::NiceSlice'                 => '0',
-	'PDL::FFTW3'                     => '0.12', # accept PDL::Complex
-	'PDL::LinearAlgebra'             => '0.15', # cgtsv
+	'PDL::FFTW3'                     => '0.15', # fix ifftn bug
+	'PDL::LinearAlgebra'             => '0.20', # native-complex fixes
 	'Storable'                       => '0',
     },
     TEST_REQUIRES => {

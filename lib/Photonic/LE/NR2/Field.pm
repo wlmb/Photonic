@@ -138,7 +138,6 @@ evaluation of the field
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::LE::NR2::AllH;
 use Photonic::Utils qw(cgtsv GtoR);
 use Photonic::Types;
@@ -199,27 +198,27 @@ sub evaluate {
     $rhs=$rhs->r2C;
     my $result = cgtsv($subdiag, $diag, $supradiag, $rhs);
     # Obtain longitudinal macroscopic response from result
-    $self->_epsL(my $epsL=1/$result->(:,(0)));
+    $self->_epsL(my $epsL=1/$result->((0)));
     # Normalize result so macroscopic field is 1.
     my $Es= $result*$epsL;
-    #states are RorI,nx,ny...
-    #field is RorY,cartesian,nx,ny...
+    #states are nx,ny...
+    #field is cartesian,nx,ny...
     my @dims=$self->nr->B->dims; # actual dims of space
     my $ndims=@dims; # num. of dims of space
     my $field_G=PDL->zeroes($ndims, @dims)->r2C;
-    #field is RorI, cartesian, nx, ny...
+    #field is cartesian, nx, ny...
     my $nrGnorm = $self->nr->GNorm->r2C;
     for(my $n=0; $n<$nh; ++$n){
-	my $GPsi_G=($stateit->nextval->dummy(1) * $nrGnorm);#^G|psi_n>
-	#the result is RorI, cartesian, nx, ny,...
-	my $EnGPsi_G=$GPsi_G*$Es->(:,$n); #En ^G|psi_n>
+	my $GPsi_G=($stateit->nextval->dummy(0) * $nrGnorm);#^G|psi_n>
+	#the result is cartesian, nx, ny,...
+	my $EnGPsi_G=$GPsi_G*$Es->($n); #En ^G|psi_n>
 	$field_G+=$EnGPsi_G;
     }
     $field_G *= $self->filter if $self->has_filter;
     #get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=GtoR($field_G, $ndims, 1);
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
-    #result is RorI, cartesian, nx, ny,...
+    #result is cartesian, nx, ny,...
     $self->_field($field_R);
     return $field_R;
 }

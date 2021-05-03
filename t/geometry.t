@@ -32,7 +32,6 @@ use strict;
 use warnings;
 use PDL;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::Geometry::FromB;
 use Photonic::Geometry::FromImage2D;
 use Photonic::Geometry::FromEpsilon;
@@ -82,7 +81,7 @@ ok(agree($g->GNorm->(:,(5),(5)), $g->pmGNorm->(:,(0),(5),(5)))
 ok($g->f==$B->sum/(11*11), "filling fraction");
 ok(agree($g->unitPairs, pdl([1,0], pdl(1,1)/sqrt(2), [0,1])), "unitpairs");
 my $got = $g->cUnitPairs;
-my $expected = identity(2)->complex/sqrt(2);
+my $expected = czip(identity(2)->dog)/sqrt(2);
 ok(Cagree($got, $expected), "cunitpairs")
   or diag "got:$got\nexpected:$expected";
 ok(agree($g->unitDyads, pdl([1,0,0],[.5,1,.5],[0,0,1])), "unitDyads");

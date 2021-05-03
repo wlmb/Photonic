@@ -31,7 +31,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use PDL::Complex;
 use Photonic::LE::NR2::AllH;
 use Photonic::LE::NR2::Field;
 use Photonic::LE::NR2::SHP;
@@ -54,7 +53,7 @@ my $fla=1/$ea;
 my $flb=1/$eb;
 my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
 ($fla, $flb)=map {$_/$fproml} ($fla, $flb);
-my $flx=pdl([$fla*(1-$B)+$flb*$B])->complex->mv(1,-1);
+my $flx=pdl([$fla*(1-$B)+$flb*$B])->mv(0,-1);
 ok(Cagree($flv, $flx), "1D long field") or diag "got: $flv\nexpected: $flx";
 
 #View 2D from 1D superlattice.
@@ -63,7 +62,7 @@ my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
 my $nt=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10, keepStates=>1);
 my $fto=Photonic::LE::NR2::Field->new(nr=>$nt, nh=>10, filter=>ones(1));
 my $ftv=$fto->evaluate($ea, $eb);
-my $ftx=pdl(r2C(1), r2C(0))->complex;
+my $ftx=pdl(r2C(1), r2C(0));
 ok(Cagree($ftv, $ftx), "1D trans field");
 
 my ($dA, $dB) = (0, 1); # vacuum, then anything as is normalised to dB
@@ -75,7 +74,7 @@ my $nrsh=Photonic::LE::NR2::SH->new(
   epsA2=>$ea*$ea, epsB2=>$eb*$eb, filterflag => 1
 );
 my $got=$nrsh->dipolar;
-my $expected = PDL::Complex->from_native(pdl <<'EOF');
+my $expected = pdl(<<'EOF');
 [
  [ [ 0 0 ] ]
  [ [ 0 -7.9823116e-17+1.1403302e-17i ] ]
@@ -109,7 +108,7 @@ $expected = r2C(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected), "quadrupolar") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->external_G;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0 -4.3260582e-17+6.1800832e-18i ] ]
  [ [ 0 -5.9528635e-17+2.4920212e-17i ] ]
@@ -126,7 +125,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-33), "external_G") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->externalL_G;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ 0 ]
  [ -5.9528635e-17+2.4920212e-17i ]
@@ -143,7 +142,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalL_G") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->externalVecL_G;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0 0 ] ]
  [ [ 0 -5.9528635e-17+2.4920212e-17i ] ]
@@ -160,7 +159,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalVecL_G") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->externalVecL;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
  [ [ 0 -7.5890335e-17+1.0841476e-17i ] ]
@@ -177,7 +176,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalVecL") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->externalL_n;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  3.2531646e-16-8.2814988e-33i
  0
@@ -185,7 +184,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalL_n") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->externalL_G;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ 0 ]
  [ -5.9528635e-17+2.4920212e-17i ]
@@ -202,7 +201,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalL_G") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->selfConsistentL_G;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ 0 ]
  [ 2.3385878e-18+1.910126e-18i ]
@@ -219,7 +218,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-35), "selfConsistentL_G") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->selfConsistentVecL_G;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0 0 ] ]
  [ [ 0 2.3385878e-18+1.910126e-18i ] ]
@@ -236,7 +235,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-35), "selfConsistentVecL_G") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->selfConsistentVecL;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0 -5.8607157e-21-4.999633e-20i ] ]
  [ [ 0  1.326045e-18+2.8874943e-18i ] ]
@@ -253,7 +252,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-35), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->alpha1;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ 0.15915494+0.31830989i ]
  [ 0.15915494+0.31830989i ]
@@ -270,7 +269,7 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected), "alpha1") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->alpha1;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ 0.15915494+0.31830989i ]
  [ 0.15915494+0.31830989i ]
@@ -287,12 +286,12 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected), "alpha2") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->field2;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 -0.6756993-0.10576923i
 EOF
 ok(Cagree($got, $expected), "field2") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->P2;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0 -1.2467976e-18-2.5931346e-19i ] ]
  [ [ 0 8.5108064e-20+2.6781772e-18i ] ]
@@ -309,12 +308,12 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->u1;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 -0.22115385-0.10576923i
 EOF
 ok(Cagree($got, $expected), "u1") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->P2LMCalt;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ [ 0 -4.7586641e-16+6.7980915e-17i ] ]
 ]
@@ -330,7 +329,7 @@ $got = Photonic::LE::NR2::SH->new(
   shp=>$chi->nrshp->[0], epsA1=>$ea, epsB1=>$eb,
   epsA2=>$ea*$ea, epsB2=>$eb*$eb, filterflag=>0
 )->P2;
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [
  [ 0.0070072648+0.0097445079i ]
  [ -0.0019177555-0.002666887i ]
@@ -347,42 +346,42 @@ $expected = PDL::Complex->from_native(pdl <<'EOF');
 EOF
 ok(Cagree($got, $expected, 1e-18), "SHChiTensor SHPs P2") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb);
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [ [ [ 2.06087e-17+3.64698e-17i ] ] ]
 EOF
 ok(Cagree($got, $expected, 1e-41), "P2") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'f', mask => pdl(1));
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [ [ [ 4.0239976e-18-9.855343e-19i ] ] ]
 EOF
 ok(Cagree($got, $expected, 1e-50), "P2") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'l');
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [ [ [ 1.4979937e-18+3.6442788e-18i ] ] ]
 EOF
 ok(Cagree($got, $expected, 1e-51), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'a');
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [ [ [ -4.890401e-16+5.6504395e-16i ] ] ]
 EOF
 ok(Cagree($got, $expected, 1e-47), "P2LMCalt") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'd');
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [ [ [ 5.0464683e-18+2.5232341e-18i ] ] ]
 EOF
 ok(Cagree($got, $expected, 1e-50), "dipolar") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'q');
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [ [ [ 1.5770213e-19+3.1540427e-19i ] ] ]
 EOF
 ok(Cagree($got, $expected, 1e-50), "quadrupolar") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'e');
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [ [ [ 9.9352345e-18+1.5770213e-18i ] ] ]
 EOF
 ok(Cagree($got, $expected, 1e-50), "external") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb, kind => 'el');
-$expected = PDL::Complex->from_native(pdl <<'EOF');
+$expected = pdl(<<'EOF');
 [ [ [ 7.2542982e-18+1.4193192e-18i ] ] ]
 EOF
 ok(Cagree($got, $expected, 1e-50), "externalVecL") or diag "got: $got\nexpected: $expected";

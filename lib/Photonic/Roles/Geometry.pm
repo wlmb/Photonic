@@ -38,7 +38,6 @@ use Moose::Role;
 
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::Types;
 use Photonic::Utils qw(any_complex lu_decomp make_dyads);
 use PDL::MatrixOps qw();
@@ -228,9 +227,9 @@ sub _build_cUnitPairs {
     my $n = 0;
     for my $i(0..$nd-1){ #build pairs of vectors
 	for my $j($i+1..$nd-1){
-	    my $vc=($units->(($i))+i()*$units->(($j)));
-	    my $vcn=sqrt($vc->Cabs2->sumover);
-	    $cpairs->(:,:,($n)) .= $vc*(1/$vcn);
+	    my $vc=PDL::czip($units->(($i)), $units->(($j)));
+	    my $vcn=sqrt($vc->abs2->sumover);
+	    $cpairs->(:,($n)) .= $vc*(1/$vcn);
 	    $n++;
 	}
     }
@@ -279,9 +278,9 @@ sub LC2Vec_G { #longitudinal vector field from its longitudinal
 	$self->has_Direction0;
     my $gnorm=$self->GNorm;
     #$gnorm is XorY nx, ny...
-    #$field is RoI nx ny nz
-    #$result RoI XoY nx ny nz
-    $field->(,*1)*$gnorm;
+    #$field is nx ny nz
+    #$result XoY nx ny nz
+    $field->(*1)*$gnorm;
 }
 
 no Moose::Role;

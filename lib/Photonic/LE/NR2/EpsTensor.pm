@@ -129,7 +129,6 @@ don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::Complex;
 use Photonic::Utils qw(tensor make_haydock);
 use List::Util qw(all);
 use Photonic::LE::NR2::AllH;
@@ -174,7 +173,7 @@ sub evaluate {
     $self->_epsA(my $epsA=shift);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $epsTensor=tensor(pdl([map $_->evaluate($epsA, $epsB), @{$self->epsL}])->complex, $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
+    my $epsTensor=tensor(pdl([map $_->evaluate($epsA, $epsB), @{$self->epsL}]), $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
     $self->_converged(all { $_->converged } @{$self->epsL});
     return $epsTensor;
 }

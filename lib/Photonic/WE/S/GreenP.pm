@@ -119,7 +119,6 @@ Criteria of convergence. 0 means don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::Complex;
 use Photonic::WE::S::AllH;
 use Photonic::Types;
 use Photonic::Utils qw(lentzCF);
@@ -157,7 +156,7 @@ sub _build_Gpp {
     #of them were used, there is no remaining work to do, so, converged
     $self->_converged($n<$min || $self->haydock->iteration<=$self->nh);
     $self->_nhActual($n);
-    my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->slice(":,(0)");
+    my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->slice("(0)");
     return $g0b02/($epsR*$fn);
 }
 

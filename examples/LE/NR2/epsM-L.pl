@@ -40,8 +40,6 @@ use Photonic::LE::NR2::EpsL;
 
 use PDL;
 use PDL::NiceSlice;
-use PDL::Complex;
-
 
 # It is a M-dimensional problem where the macroscopic dielectric
 # tensor components are calculated into the polarization direction
@@ -79,7 +77,7 @@ $B=$B->rvals < $r;
 my $epsA=pdl(4); # used for host A and for metric
 my ($hnu_all,$epsBall)=eps("au"); # used for particle B, gold in this example.
 # in DATA below this file end
-my $elem=$epsBall->dim(1); # how many frequencies for calculation
+my $elem=$epsBall->dim(0); # how many frequencies for calculation
 
 # In this example the Longitudinal Epsilon (LE) is a Photonic::LE::NR2
 # perl-PDL module that heritates to the AllH and EpsL module that
@@ -115,7 +113,7 @@ my @out=(); # list for the output results
 
 #------------------------------------------------------------
 for(my $j=0;$j<$elem;$j++){
-    my $epsB=$epsBall(,($j),(0));
+    my $epsB=$epsBall(($j),(0));
     my $hnu=$hnu_all(($j),(0));
 #----------------------------------------------------------------------------------
 # Non Retarded calculation throw the $epsM_L object of Photonic::LE::NR2::EpsL

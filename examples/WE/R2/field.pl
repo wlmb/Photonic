@@ -36,7 +36,6 @@ use feature qw(say);
 
 use PDL;
 use PDL::NiceSlice;
-use PDL::Complex;
 use PDL::Graphics::Gnuplot;
 
 use Photonic::Geometry::FromB;

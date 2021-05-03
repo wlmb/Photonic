@@ -45,7 +45,6 @@ use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::EpsilonP;
 use PDL;
 use PDL::NiceSlice;
-use PDL::Complex;
 
 set_autopthread_targ(4);
 set_autopthread_size(4);
@@ -83,7 +82,7 @@ my $k=0.01; # wave vector component used below in xx direction
 # Units of $k are nm^{-1}. In de middle of VIS-NIR range it is approx
 # 2*PI/\lambda
 my $c=197.32; # it is \h c in q=\hbar\omega/\hbar c
-my $elem=$epsBall->dim(1); # how many frequencies for calculation
+my $elem=$epsBall->dim(0); # how many frequencies for calculation
 
 # If you have not Gnuplot and Gnuplot pdl module intalled, the lines below
 # commnented with ## would be useful for writing output data to a file named $filename
@@ -129,7 +128,7 @@ my @out=(); # list for the output results
 # for each frequency
 #------------------------------------------------------------
 for(my $j=0;$j<$elem;$j++){
-    my $epsB=$epsBall(,($j),(0));
+    my $epsB=$epsBall(($j),(0));
     my $hnu=$hnu_all(($j),(0));
     my $q=$hnu/$c;
 #----------------------------------------------------------------------------------
