@@ -290,12 +290,8 @@ sub Vec2LC_G { #longitudinal component of 'complex' vector field in
     my $field=shift; # vector field to project
     croak "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
-    my $iscomplex=any_complex($field);
-    $field=$field->complex unless $iscomplex;
     my $gnorm=$self->GNorm;
-    my $result=Cscale($field, $gnorm)->sumover;
-    $result=$result->real unless $iscomplex;
-    return $result;
+    Cscale($field, $gnorm)->sumover;
 }
 
 sub LC2Vec_G { #longitudinal vector field from its longitudinal
@@ -304,15 +300,11 @@ sub LC2Vec_G { #longitudinal vector field from its longitudinal
     my $field=shift; # scalar field of longitudinal components
     croak "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
-    my $iscomplex=any_complex($field);
-    $field=$field->complex unless $iscomplex;
     my $gnorm=$self->GNorm;
     #$gnorm is XorY nx, ny...
     #$field is RoI nx ny nz
     #$result RoI XoY nx ny nz
-    my $result=$field->(,*1)*$gnorm;
-    $result=$result->real unless $iscomplex;
-    return $result;
+    $field->(,*1)*$gnorm;
 }
 
 no Moose::Role;

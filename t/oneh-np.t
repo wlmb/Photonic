@@ -54,7 +54,7 @@ $o->iterate;
 ok(Cagree(pdl($o->current_a), $ea*$f+$eb*(1-$f)), "1D a_1");
 ok(Cagree(pdl($o->next_b2), 0), "1D b_2^2");
 my $x = zeroes(1, 2, 11)->r2C;
-$x->slice(':,:,0') .= r2C(1);
+$x->slice(':,:,0') .= 1;
 ok approx($o->magnitude($x), 3.3166247903554), "magnitude";
 
 done_testing;

@@ -149,7 +149,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     carp "We don't trust the skip argument in MHProd yet" if $skip;
     # I'm not sure about the skiped dimensions in the next line. Is it right?
-    my $mprod=($metric*$second->slice(":,:,*1"))->sumover;
+    my $mprod=($metric*$second->dummy(2))->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
     my $prod=$first->complex->Cconj*$mprod->complex;
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
@@ -277,19 +277,19 @@ sub lentzCF {
     my $bs=shift;
     my $max=shift;
     my $small=shift;
-    my $tiny=1.e-30;
+    my $tiny=r2C(1.e-30);
     my $converged=0;
     my $fn=$as->slice(":,0");
-    $fn=r2C($tiny) if all(($fn->re==0) & ($fn->im==0));
+    $fn=$tiny if all(($fn->re==0) & ($fn->im==0));
     my $n=1;
     my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
     my ($Cn, $Dn); #current coeffs.
     my $Deltan;
     while($n<$max){
 	$Dn=$as->slice(":,$n")+$bs->slice(":,$n")*$Dnm1;
-	$Dn=r2C($tiny) if all(($Dn->re==0) & ($Dn->im==0));
+	$Dn=$tiny if all(($Dn->re==0) & ($Dn->im==0));
 	$Cn=$as->slice(":,$n")+$bs->slice(":,$n")/$Cnm1;
-	$Cn=r2C($tiny) if all(($Cn->re==0) & ($Cn->im==0));
+	$Cn=$tiny if all(($Cn->re==0) & ($Cn->im==0));
 	$Dn=1/$Dn;
 	$Deltan=$Cn*$Dn;
 	$fn=$fnm1*$Deltan;
