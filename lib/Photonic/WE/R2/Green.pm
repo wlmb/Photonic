@@ -184,7 +184,7 @@ around 'evaluate' => sub {
 	for my $j($i+1..$nd-1){
 	    my $pair=$cpairs[$m];
 	    #$asy is ri,xy,xy. First index is column
-	    $asy(:,($i), ($j)).=i*(
+	    $asy(:,($i), ($j)).=i()*(
 		$greenPc[$m]-
 		($pair->Cconj->(:,*1,:) #ri, column, row
 		 *$pair->(:,:,*1)
