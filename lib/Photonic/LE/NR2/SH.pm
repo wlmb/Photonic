@@ -371,7 +371,7 @@ sub _build_dipolar {
     #cartesian, nx, ny...
     my $G=$self->nrf->nr->G;
     #RorI cartesian nx ny
-    my $iG=$G*i;
+    my $iG=i2C $G;
     #RorI cartesian nx ny...
     my $iGE2=$iG*$Esquare_G->(,*1);
     #back to real space. Get cartesian out of the way and then back
@@ -403,7 +403,7 @@ sub _build_quadrupolar {
     #cartesian, nx, ny...
     my $G=$self->nrf->nr->G;
     #RorI cartesian nx ny...
-    my $iG=$G*i;
+    my $iG=i2C $G;
     #RorI cartesian nx ny...
     #Note: sumover knows how to sum complex values.
     my $iGnaaEE_G=($iG->(,,*1)*$naaEE_G)->sumover; #dot
