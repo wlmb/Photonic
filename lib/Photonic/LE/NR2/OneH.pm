@@ -176,7 +176,7 @@ sub _firstState { #\delta_{G0}
 
 sub applyOperator {
     my $self=shift;
-    my $psi_G=shift->cplx;
+    my $psi_G=shift;
     my $mask=undef;
     $mask=$self->mask if $self->use_mask;
     # ri:nx:ny
