@@ -152,7 +152,7 @@ has 'firstState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1,
 has 'previousState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_previousState',
     init_arg=>undef);
 has 'currentState' => (is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_currentState',
-      lazy=>1, init_arg=>undef,  default=>sub {0+i*0});
+      lazy=>1, init_arg=>undef,  default=>sub {PDL::r2C(0)});
 has 'nextState' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
 		   writer=>'_nextState',  lazy=>1,
 		   builder=>'_firstRState', init_arg=>undef);
