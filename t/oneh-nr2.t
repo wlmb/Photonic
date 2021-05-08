@@ -44,7 +44,7 @@ my $B=zeroes(11)->xvals<5; #1D system
 my $g=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1]));
 my $o=Photonic::LE::NR2::OneH->new(geometry=>$g);
 $o->iterate;
-ok(agree(pdl($o->current_a), $g->f), "1D a_0");
+ok(agree(pdl($o->current_a), $g->f), "1D a_0") or diag "got=",$o->current_a, "\nexpected=", $g->f;
 ok(agree(pdl($o->next_b2), $g->f*(1-$g->f)), "1D b_1^2");
 $o->iterate;
 ok(agree(pdl($o->current_a), 1-$g->f), "1D a_1");
