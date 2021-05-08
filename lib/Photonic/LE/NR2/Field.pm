@@ -209,10 +209,9 @@ sub evaluate {
     my $ndims=@dims; # num. of dims of space
     my $field_G=PDL->zeroes($ndims, @dims)->r2C;
     #field is RorI, cartesian, nx, ny...
-    my $nrGnorm = $self->nr->GNorm->mv(0,-1);
+    my $nrGnorm = $self->nr->GNorm->mv(0,-1)->r2C;
     for(my $n=0; $n<$nh; ++$n){
-	my $GPsi_G=Cscale($stateit->nextval,
-			  $nrGnorm)->mv(-1,1);#^G|psi_n>
+	my $GPsi_G=($stateit->nextval * $nrGnorm)->mv(-1,1);#^G|psi_n>
 	#the result is RorI, cartesian, nx, ny,...
 	my $EnGPsi_G=$GPsi_G*$Es->(:,$n); #En ^G|psi_n>
 	$field_G+=$EnGPsi_G;
