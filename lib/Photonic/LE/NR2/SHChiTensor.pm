@@ -265,7 +265,7 @@ sub evaluate {
 	my $P2M=$P2->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
-	    ->complex->sumover  #RorI, XorY
+	    ->sumover  #RorI, XorY
 	    /$self->geometry->npoints;
 	my $k=$_->nrf->nr->geometry->Direction0;
 	my $FPChi=$epsT-identity($nd); #four pi chi linear 2w
@@ -281,7 +281,7 @@ sub evaluate {
 	    $P2Mmask=$P2->mv(0,-1)->mv(0,-1) #masked macroscopic polarization
 	    ->clump(-3) #linear index, RorI, XorY
 	    ->mv(-2,0) #RorI, index, XorY
-	    ->complex->sumover  #RorI, XorY
+	    ->sumover  #RorI, XorY
 		/$self->geometry->npoints;
 	}
 	$P2Mmask += $f*$Dep2 if $KIND2SUBTRACT{$kind}; # subtract masked macro depolarization field
