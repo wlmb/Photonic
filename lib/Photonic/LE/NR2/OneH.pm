@@ -175,7 +175,7 @@ sub _firstState { #\delta_{G0}
 sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
-    my $GBGpsi_G=apply_longitudinal_projection($psi_G, $self->GNorm, $self->ndims, $self->B);
+    my $GBGpsi_G=apply_longitudinal_projection($psi_G, $self->GNorm, $self->ndims, $self->B->r2C);
     my $mask = $self->mask;
     $GBGpsi_G *= $mask if defined $mask and $self->use_mask;
     return $GBGpsi_G;
