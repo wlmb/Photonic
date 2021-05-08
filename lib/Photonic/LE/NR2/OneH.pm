@@ -175,10 +175,9 @@ sub _firstState { #\delta_{G0}
 sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
-    my $mask=undef;
-    $mask=$self->mask if $self->use_mask;
     my $GBGpsi_G=apply_operator($psi_G, $self->GNorm, $self->ndims, $self->B);
-    $GBGpsi_G=$GBGpsi_G*$mask if defined $mask;
+    my $mask = $self->mask;
+    $GBGpsi_G *= $mask if defined $mask and $self->use_mask;
     return $GBGpsi_G;
 }
 
