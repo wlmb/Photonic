@@ -41,7 +41,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
-    wave_operator
+    wave_operator apply_operator
     cgtsv lu_decomp lu_solve
 );
 use PDL::LiteF;
@@ -362,6 +362,33 @@ sub lu_solve {
     $x;
 }
 
+sub apply_operator {
+    my ($psi_G, $gnorm, $ndims, $coeff) = @_;
+    #state is ri:nx:ny... gnorm=i:nx:ny...
+    #Multiply by vector ^G.
+    #Have to get cartesian out of the way, thread over it and iterate
+    #over the rest
+    my $Gpsi_G=$psi_G*$gnorm->mv(0,-1); #^G |psi>
+    #the result is complex ri:nx:ny...:i cartesian
+    #Take inverse Fourier transform over all space dimensions,
+    #thread over cartesian indices
+    my $Gpsi_R=ifftn($Gpsi_G, $ndims);
+    # $Gpsi_R is ri:nx:ny:...:i
+    # Multiply by the coefficient in Real Space.
+    # Thread cartesian index
+    my $eGpsi_R=$coeff*$Gpsi_R;
+    # $eGpsi_R is ri:nx:ny...:i
+    #Transform to reciprocal space
+    my $eGpsi_G=fftn($eGpsi_R, $ndims);
+    # $eGpsi_G is ri:nx:ny:...:i
+    #Scalar product with Gnorm
+    ($eGpsi_G*$gnorm->mv(0,-1)) #^Ge^G|psi>
+	# ri:nx:ny:...:i
+	# Move cartesian to front and sum over
+	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
+    #Result is ^G.epsilon^G|psi>, ri:nx:ny...
+}
+
 1;
 
 __END__
@@ -500,5 +527,12 @@ decomposition failed.
 Uses the appropriate LU solver function (real vs complex,
 detected). Given an array-ref with the return values of L</lu_decomp>, and
 a transposed C<B> matrix, returns transposed C<x>. Dies if solving failed.
+
+=item * apply_operator
+
+Given a C<psi_G> state, a C<GNorm>, the number of dimensions, and a
+real-space coefficient, transforms the C<psi_G> field from reciprocal to
+real space, multiplies by the coefficient, transforms back to reciprocal
+space.
 
 =back

@@ -158,12 +158,10 @@ Returns the first state.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::FFTW3;
 use PDL::Complex;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(EProd any_complex);
+use Photonic::Utils qw(EProd any_complex apply_operator);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -194,30 +192,7 @@ sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
     confess "State should be complex" unless any_complex($psi_G);
-    #state is ri:nx:ny... gnorm=i:nx:ny...
-    #Multiply by vector ^G.
-    #Have to get cartesian out of the way, thread over it and iterate
-    #over the rest
-    my $Gpsi_G=$psi_G*$self->GNorm->mv(0,-1); #^G |psi>
-    #the result is complex ri:nx:ny...:i cartesian
-    #Take inverse Fourier transform over all space dimensions,
-    #thread over cartesian indices
-    my $Gpsi_R=ifftn($Gpsi_G, $self->ndims);
-    # $Gpsi_R is ri:nx:ny:...:i
-    # Multiply by the dielectric function in Real Space. Thread
-    # cartesian index
-    my $eGpsi_R=$self->epsilon*$Gpsi_R; #Epsilon could be tensorial!
-    # $eGpsi_R is ri:nx:ny...:i
-    #Transform to reciprocal space
-    my $eGpsi_G=fftn($eGpsi_R, $self->ndims);
-    # $eGpsi_G is ri:nx:ny:...:i
-    #Scalar product with Gnorm
-    my $GeGpsi_G=($eGpsi_G*$self->GNorm->mv(0,-1)) #^Ge^G|psi>
-	# ri:nx:ny:...:i
-	# Move cartesian to front and sum over
-	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
-    #Result is ^G.epsilon^G|psi>, ri:nx:ny...
-    return $GeGpsi_G;
+    apply_operator($psi_G, $self->GNorm, $self->ndims, $self->epsilon);
 }
 
 sub innerProduct {
@@ -231,7 +206,7 @@ sub innerProduct {
     # The trick works, but is not robust and if non orthogonal states
     # are generated may give TROUBLE. Better use spinor methods,
     # though they take longer.
-    $p=-$p unless PDL::all($left->(:,(0),(0))->re == 1); #unless initial state
+    $p=-$p unless PDL::all($left->slice(':,(0),(0)')->re == 1); #unless initial state
     return $p;
 }
 
