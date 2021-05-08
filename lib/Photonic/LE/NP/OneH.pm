@@ -185,7 +185,7 @@ has '+nextState' =>(init_arg=>undef);
 sub _firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(@{$self->dims})->r2C; #RorI, nx, ny...
-    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
+    my $arg=join ',', ("(0)") x ($self->B->ndims+1); #(0),(0),... ndims+1 times
     $v->slice($arg).=1; #i*delta_{G0}
     return $v;
 }

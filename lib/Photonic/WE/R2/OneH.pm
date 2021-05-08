@@ -109,7 +109,7 @@ sub _firstState {
     my $self=shift;
     my $d=$self->ndims;
     my $v=PDL->zeroes(@{$self->dims}); #build a nx ny nz pdl
-    my $arg="(0)" . ",(0)" x ($d-1); #(0),(0),... ndims times
+    my $arg=join ',', ("(0)") x $d; #(0),(0),... ndims times
     $v->slice($arg).=1; #delta_{G0}
     my $e=$self->polarization; #RorI xyz
     croak "Polarization has wrong dimensions. " .
