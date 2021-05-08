@@ -368,24 +368,23 @@ sub apply_operator {
     #Multiply by vector ^G.
     #Have to get cartesian out of the way, thread over it and iterate
     #over the rest
-    my $Gpsi_G=$psi_G*$gnorm->mv(0,-1); #^G |psi>
-    #the result is complex ri:nx:ny...:i cartesian
+    my $Gpsi_G=$psi_G->dummy(1)*$gnorm; #^G |psi>
+    #the result is complex ri:i=cartesian:nx:ny...
     #Take inverse Fourier transform over all space dimensions,
-    #thread over cartesian indices
-    my $Gpsi_R=ifftn($Gpsi_G, $ndims);
-    # $Gpsi_R is ri:nx:ny:...:i
+    #move cartesian indices, thread, move back
+    my $Gpsi_R=ifftn($Gpsi_G->mv(1,-1), $ndims)->mv(-1,1);
+    # $Gpsi_R is ri:i:nx:ny:...
     # Multiply by the coefficient in Real Space.
-    # Thread cartesian index
-    my $eGpsi_R=$coeff*$Gpsi_R;
-    # $eGpsi_R is ri:nx:ny...:i
+    my $eGpsi_R=$coeff->dummy(1)*$Gpsi_R;
+    # $eGpsi_R is ri:i:nx:ny...
     #Transform to reciprocal space
-    my $eGpsi_G=fftn($eGpsi_R, $ndims);
-    # $eGpsi_G is ri:nx:ny:...:i
+    #move cartesian indices, thread, move back
+    my $eGpsi_G=fftn($eGpsi_R->mv(1,-1), $ndims)->mv(-1,1);
+    # $eGpsi_G is ri:i:nx:ny:...
     #Scalar product with Gnorm
-    ($eGpsi_G*$gnorm->mv(0,-1)) #^Ge^G|psi>
-	# ri:nx:ny:...:i
-	# Move cartesian to front and sum over
-	->mv(-1,1)->sumover; #^G.epsilon^G|psi>
+    ($eGpsi_G*$gnorm) #^Ge^G|psi>
+	# ri:i:nx:ny:...
+	->sumover; #^G.epsilon^G|psi>
     #Result is ^G.epsilon^G|psi>, ri:nx:ny...
 }
 
