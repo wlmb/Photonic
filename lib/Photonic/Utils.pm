@@ -332,7 +332,8 @@ sub cgtsv {
         $_->set_inplace(0);
     }
     PDL::LinearAlgebra::Complex::cgtsv($c, $d, $e, $b, $i);
-    ($b->isa("PDL::Complex") ? $b->complex : $b, $i);
+    confess "Error solving tridiag system" unless $i == 0;
+    $b->isa("PDL::Complex") ? $b->complex : $b;
 }
 
 sub lu_decomp {
@@ -481,14 +482,12 @@ that class, with relevant fields copied from the object.
 
 Solves a general complex tridiagonal system of equations.
 
-       ($b, my $info) = cgtsv($c, $d, $e, $b);
+       $b = cgtsv($c, $d, $e, $b);
 
 where C<$c(2,0..$n-2)> is the subdiagonal, C<$d(2,0..$n-1)> the diagonal and
 C<$e(2,0..$n-2)> the supradiagonal of an $nX$n tridiagonal complex
 double precision matrix. C<$b(2,0..$n-1)> is the right hand side
-vector. C<$b> is replaced by the solution. C<$info> returns 0 for success
-or k if the k-1-th element of the diagonal became zero. Either 2Xn pdl's
-are used to represent complex numbers, as in PDL::Complex.
+vector. C<$b> is replaced by the solution. Dies if gets an error.
 
 =item * lu_decomp
 
