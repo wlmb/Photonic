@@ -59,12 +59,12 @@ use strict;
 sub linearCombineIt { #complex linear combination of states from iterator
     my $coefficients=shift; #arrayref of complex coefficients
     my $stateit=shift; #iterator of complex states
-    my $numCoeff=@$coefficients;
+    my $numCoeff=$coefficients->dim(-1);
     my $result=r2C(0);
     foreach(0..$numCoeff-1){
 	my $s=nextval($stateit);
 	croak "More coefficients than states in basis" unless defined $s;
-	$result += $coefficients->[$_]*$s;
+	$result += $coefficients->slice(":,$_")*$s;
     }
     return $result;
 }
@@ -416,8 +416,8 @@ Utility functions that may be useful.
 
 =item * $r=linearCombineIt($c, $it)
 
-Complex linear combination of states from iterator. $c is an arrayref
-of 'complex' pdl scalars and $it is an iterator for the corresponding states.
+Complex linear combination of states from iterator. $c is a 'complex'
+ndarray and $it is an iterator for the corresponding states.
 
 =item * $p=HProd($a, $b, $skip)
 
