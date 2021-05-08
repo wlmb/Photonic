@@ -495,8 +495,7 @@ sub _build_selfConsistentL_n {
     # rotate complex zero from first to last element.
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag;
-    my ($result, $info)= cgtsv($subdiag, $diag, $supradiag, $external);
-    die "Error solving tridiag system" unless $info == 0;
+    my $result = cgtsv($subdiag, $diag, $supradiag, $external);
     $result->complex;
     $result *= $u2/$self->epsA2;
     return $result;
@@ -565,8 +564,7 @@ sub _build_P2LMCalt {
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
-    my ($phi_n, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
-    die "Error solving tridiag system" unless $info == 0;
+    my $phi_n = cgtsv($subdiag, $diag, $supradiag, $rhs);
     my $states=$nr->state_iterator;
     my $phi_G=linearCombineIt([$phi_n->dog], $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
@@ -581,9 +579,7 @@ sub _build_P2LMCalt {
 	)->complex;
     my @Ppsi;
     foreach(0..$ndims-1){
-	my ($psi_n, $psiinfo)=
-	    cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
-	die "Error solving tridiag system" unless $psiinfo == 0;
+	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
 	# RorI nx ny .... cartesian
 	$states=$nr->state_iterator;
 	my $psi_G=linearCombineIt([$psi_n->dog], $states);

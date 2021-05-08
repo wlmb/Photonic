@@ -45,10 +45,10 @@ for my $D (3..N+2) { #first differences
     my $d=-ones($D)*(1 + i);
     my $e=ones($D)*(1 + i); $e->(,(-1)).=r2C(0);
     my $b=ones($D)*(1 - i); $b->(,(-1)).=(1-$D)*(1 - i);
-    ($b, my $info) = cgtsv($c, $d, $e, $b);
+    $b = cgtsv($c, $d, $e, $b);
     my $r=sequence($D)*(1 - i)/(1 + i);
     ok($b->complex->approx($r)->all, "1st diff. cgtsv in D=$D")
-      or diag "info: ", $info, "\nGot: ", $b, "\nExpected: ", $r;
+      or diag "Got: ", $b, "\nExpected: ", $r;
 }
 
 for my $D (3..N+2) { #second differences
@@ -57,11 +57,11 @@ for my $D (3..N+2) { #second differences
     my $d=-2*ones($D)*(1 + i);
     my $e=ones($D)*(1 + i); $e->(,(-1)).=r2C(0);
     my $b=ones($D)*(1 - i);
-    ($b, my $info) = cgtsv($c, $d, $e, $b);
+    $b = cgtsv($c, $d, $e, $b);
     my $x=r2C(sequence($D));
     my $r=(-$D/2-($D-1)/2*$x+1/2*$x*$x)*(1 - i)/(1 + i);
     ok($b->complex->approx($r)->all, "2nd diff. cgtsv in D=$D")
-      or diag "info: ", $info, "\nGot: ", $b, "\nExpected: ", $r;
+      or diag "Got: ", $b, "\nExpected: ", $r;
 }
 
 #solve (1 + i)(b_{n+1}-b_n)=1 - i with homogeneous BCs
@@ -69,7 +69,7 @@ my $c=r2C(zeroes(3));
 my $d=-ones(3)*(1 + i);
 my $e=ones(3)*(1 + i); $e->(,(-1)).=r2C(0);
 my $b=ones(3)*(1 - i); $b->(,(-1)).=(1-3)*(1 - i);
-my ($y, $info)=cgtsv($c, $d, $e, $b);
+my $y=cgtsv($c, $d, $e, $b);
 my $r=sequence(3)*(1 - i)/(1 + i);
 ok($y->complex->approx($r)->all, "Omit output arguments");
 
@@ -78,7 +78,7 @@ $c=r2C(zeroes(3));
 $d=-ones(3)*(1 + i);
 $e=ones(3)*(1 + i); $e->(,(-1)).=r2C(0);
 $b=ones(3)*(1 - i); $b->(,(-1)).=(1-3)*(1 - i);
-($y, $info)=cgtsv($c->inplace, $d, $e, $b);
+$y=cgtsv($c->inplace, $d, $e, $b);
 ok($y->complex->approx($r)->all, "Omit output arguments");
 
 done_testing;

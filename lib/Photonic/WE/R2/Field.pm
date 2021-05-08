@@ -187,8 +187,7 @@ sub evaluate {
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;
     #coefficients of g^{-1}E
-    my ($giEs, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
-    die "Error solving tridiag system" unless $info == 0;
+    my $giEs = cgtsv($subdiag, $diag, $supradiag, $rhs);
     #states are ri,xy,nx,ny...
     #field is ri,xy,nx,ny...
     my @dims=$self->nr->B->dims; # actual dims of space
