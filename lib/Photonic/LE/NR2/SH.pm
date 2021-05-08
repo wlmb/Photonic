@@ -504,7 +504,7 @@ sub _build_selfConsistentL_G {
     my $self=shift;
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
-    my $PLn=[$self->selfConsistentL_n->dog];
+    my $PLn=$self->selfConsistentL_n;
     my $stateit=$self->HP->state_iterator;
     my $result=linearCombineIt($PLn, $stateit);
     $self->filterflag($filterflag);
@@ -565,7 +565,7 @@ sub _build_P2LMCalt {
     $rhs=$rhs->r2C;
     my $phi_n = cgtsv($subdiag, $diag, $supradiag, $rhs);
     my $states=$nr->state_iterator;
-    my $phi_G=linearCombineIt([$phi_n->dog], $states);
+    my $phi_G=linearCombineIt($phi_n, $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
 
     my $beta_G=RtoG($B*GtoR($nr->firstState,$ndims,0), $ndims,0);
@@ -581,7 +581,7 @@ sub _build_P2LMCalt {
 	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
 	# RorI nx ny .... cartesian
 	$states=$nr->state_iterator;
-	my $psi_G=linearCombineIt([$psi_n->dog], $states);
+	my $psi_G=linearCombineIt($psi_n, $states);
 	my $Ppsi=HProd($psi_G, $PexL_G);
 	push @Ppsi, $Ppsi;
     }
