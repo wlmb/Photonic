@@ -131,7 +131,7 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $skip=shift//0;
     my $ndims=$first->ndims;
     confess "Dimensions should be equal" unless $ndims == $second->ndims;
-    my $prod=$first->complex->Cconj*$second->complex;
+    my $prod=$first->Cconj*$second;
     # clump all except skip dimensions, protecto RorI index and sum.
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
 	->mv(-1,0)->sumover;
@@ -151,7 +151,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     # I'm not sure about the skiped dimensions in the next line. Is it right?
     my $mprod=($metric*$second->dummy(2))->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
-    my $prod=$first->complex->Cconj*$mprod->complex;
+    my $prod=$first->Cconj*$mprod;
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
 	->mv(-1,0)->sumover;
     return $result;
@@ -175,7 +175,7 @@ sub EProd { #Euclidean product between two fields in reciprocal
     foreach($skip+1..$ndims-1){
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $prod=$first_mG->complex*$second->complex;
+    my $prod=$first_mG*$second;
     # clump all except skip dimensions, protecto RorI index and sum.
     my $result=$prod #ri:s1:s2:nx:ny
 	->reorder($skip+1..$ndims-1,1..$skip,0) #nx:ny:s1:s2:ri
@@ -205,7 +205,7 @@ sub SProd { #Spinor product between two fields in reciprocal
     foreach($skip+2..$ndims-1){
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $prod=$first_mG->complex*$second->complex; #rori,pmk,s1,s2,nx,ny
+    my $prod=$first_mG*$second; #rori,pmk,s1,s2,nx,ny
     # clump all except skip dimensions, protect RorI index and sum.
     my $result=$prod #rori,pmk, s1,s2,nx,ny
 	->reorder($skip+2..$ndims-1,1..$skip+1,0) #nx,ny,pmk,s1,s2,rori
@@ -232,7 +232,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     foreach(3..$ndims-1){ # G indices start after ri:xy:pm
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $prod=$first_mG->complex*$second->complex; #ri:xy:pm:nx:ny
+    my $prod=$first_mG*$second; #ri:xy:pm:nx:ny
     # clump all except ri:xy.
     my $result=$prod #ri:xy:pm::nx:ny
 	->reorder(3..$ndims-1,1,2,0) #nx:ny:xy:pm:ri
@@ -250,7 +250,7 @@ sub RtoG { #transform a 'complex' scalar, vector or tensorial field
     my $moved=$field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=fftn($moved, $ndims);
-    my $result=$transformed->complex;
+    my $result=$transformed;
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }
@@ -263,7 +263,7 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
     my $moved=$field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=ifftn($moved, $ndims);
-    my $result=$transformed->complex;
+    my $result=$transformed;
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }

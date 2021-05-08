@@ -462,7 +462,7 @@ sub _build_HP { #build haydock states for P2
     my $self=shift;
     my $ext=$self->externalL_G;
     my $normext=sqrt(Cabs2($ext)->sum);
-    my $extnorm=$ext->complex/$normext;
+    my $extnorm=$ext/$normext;
     my $hp=Photonic::LE::NR2::AllH->new(nh=>$self->nrf->nh,
 	geometry=>$self->nrf->nr->geometry, smallH=>$self->nrf->nr->smallH,
 		keepStates=>1, firstState=>$extnorm);
@@ -491,12 +491,11 @@ sub _build_selfConsistentL_n {
     my $as=$self->HP->as;
     my $bs=$self->HP->bs;
     my $u2=$self->u2;
-    my $diag=$u2->complex - PDL->pdl($as)->(0:$nh-1);
+    my $diag=$u2 - PDL->pdl($as)->(0:$nh-1);
     # rotate complex zero from first to last element.
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag;
     my $result = cgtsv($subdiag, $diag, $supradiag, $external);
-    $result->complex;
     $result *= $u2/$self->epsA2;
     return $result;
 }
@@ -557,7 +556,7 @@ sub _build_P2LMCalt {
     $nh=$nr->iteration if $nh>=$nr->iteration;
     # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=|0>.
-    my $diag=$self->u2->Cconj->complex - PDL->pdl([@$as])->(0:$nh-1);
+    my $diag=$self->u2->Cconj - PDL->pdl([@$as])->(0:$nh-1);
     # rotate complex zero from first to last element.
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag->mv(0,-1)->rotate(-1)->mv(-1,0);
