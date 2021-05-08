@@ -291,7 +291,7 @@ sub Vec2LC_G { #longitudinal component of 'complex' vector field in
     croak "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
     my $gnorm=$self->GNorm;
-    Cscale($field, $gnorm)->sumover;
+    ($field * $gnorm->r2C)->sumover;
 }
 
 sub LC2Vec_G { #longitudinal vector field from its longitudinal
