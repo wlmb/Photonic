@@ -87,7 +87,7 @@ sub tensor {
     my $slice_prefix = ':,' x ($dims-1);
     for my $i(0..$nd-1){
         for my $j($i..$nd-1){
-            my $bslice = $backsub->slice(":,$n");
+            my $bslice = $backsub->slice(":,($n)");
             $tensor->slice("$slice_prefix($i),($j)") .= $bslice;
             $tensor->slice("$slice_prefix($j),($i)") .= $bslice;
             ++$n;
