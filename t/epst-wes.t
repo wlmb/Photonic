@@ -89,7 +89,7 @@ my $mt=($ma->(:,:,*1,:)*$mb->mv(2,1)->(:,:,:,*1))->sumover;
 #Solve exact dispersion relation
 my $cospd=($mt->(:,(0),(0))+$mt->(:,(1),(1)))/2;
 my $sinpd=sqrt(1-$cospd**2);
-my $pd=log($cospd+i*$sinpd)/i;
+my $pd=log($cospd+i()*$sinpd)/i;
 warn "Bloch vector not real, $pd" unless $pd->im->abs < 1e-7;
 $pd=$pd->re;
 #epsilon from transfer matrix
@@ -117,7 +117,7 @@ $mt=($ma->(:,:,*1,:)*$mb->mv(2,1)->(:,:,:,*1))->sumover;
 #Solve exact dispersion relation
 $cospd=($mt->(:,(0),(0))+$mt->(:,(1),(1)))/2;
 $sinpd=sqrt(1-$cospd**2);
-$pd=log($cospd+i*$sinpd)/i;
+$pd=log($cospd+i()*$sinpd)/i;
 #epsilon from transfer matrix
 $epstm=($pd/$q)**2;
 #epsilon from photonic
