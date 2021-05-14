@@ -41,7 +41,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
-    wave_operator apply_operator
+    wave_operator apply_longitudinal_projection
     cgtsv lu_decomp lu_solve
 );
 use PDL::LiteF;
@@ -87,7 +87,7 @@ sub tensor {
     my $slice_prefix = ':,' x ($dims-1);
     for my $i(0..$nd-1){
         for my $j($i..$nd-1){
-            my $bslice = $backsub->slice(":,$n");
+            my $bslice = $backsub->slice(":,($n)");
             $tensor->slice("$slice_prefix($i),($j)") .= $bslice;
             $tensor->slice("$slice_prefix($j),($i)") .= $bslice;
             ++$n;
@@ -362,7 +362,7 @@ sub lu_solve {
     $x;
 }
 
-sub apply_operator {
+sub apply_longitudinal_projection {
     my ($psi_G, $gnorm, $ndims, $coeff) = @_;
     #state is ri:nx:ny... gnorm=i:nx:ny...
     #Multiply by vector ^G.
@@ -527,7 +527,7 @@ Uses the appropriate LU solver function (real vs complex,
 detected). Given an array-ref with the return values of L</lu_decomp>, and
 a transposed C<B> matrix, returns transposed C<x>. Dies if solving failed.
 
-=item * apply_operator
+=item * apply_longitudinal_projection
 
 Given a C<psi_G> state, a C<GNorm>, the number of dimensions, and a
 real-space coefficient, transforms the C<psi_G> field from reciprocal to

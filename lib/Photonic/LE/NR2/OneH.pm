@@ -154,7 +154,7 @@ use PDL::Lite;
 use PDL::Complex;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(HProd apply_operator);
+use Photonic::Utils qw(HProd apply_longitudinal_projection);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -167,7 +167,7 @@ with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 sub _firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(@{$self->dims})->r2C; #RorI, nx, ny...
-    my $arg="(0)" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
+    my $arg=join ',', ("(0)") x ($self->ndims+1); #(0),(0),... ndims+1 times
     $v->slice($arg).=1; #delta_{G0}
     return $v;
 }
@@ -175,7 +175,7 @@ sub _firstState { #\delta_{G0}
 sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
-    my $GBGpsi_G=apply_operator($psi_G, $self->GNorm, $self->ndims, $self->B->r2C);
+    my $GBGpsi_G=apply_longitudinal_projection($psi_G, $self->GNorm, $self->ndims, $self->B->r2C);
     my $mask = $self->mask;
     $GBGpsi_G *= $mask if defined $mask and $self->use_mask;
     return $GBGpsi_G;

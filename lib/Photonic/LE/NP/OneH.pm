@@ -161,7 +161,7 @@ use PDL::Lite;
 use PDL::Complex;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(EProd any_complex apply_operator);
+use Photonic::Utils qw(EProd any_complex apply_longitudinal_projection);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -183,7 +183,7 @@ has '+nextState' =>(init_arg=>undef);
 sub _firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(@{$self->dims})->r2C; #RorI, nx, ny...
-    my $arg="(0)" . ",(0)" x $self->B->ndims; #(0),(0),... ndims+1 times
+    my $arg=join ',', ("(0)") x ($self->B->ndims+1); #(0),(0),... ndims+1 times
     $v->slice($arg).=1; #i*delta_{G0}
     return $v;
 }
@@ -192,7 +192,7 @@ sub applyOperator {
     my $self=shift;
     my $psi_G=shift;
     confess "State should be complex" unless any_complex($psi_G);
-    apply_operator($psi_G, $self->GNorm, $self->ndims, $self->epsilon);
+    apply_longitudinal_projection($psi_G, $self->GNorm, $self->ndims, $self->epsilon);
 }
 
 sub innerProduct {
