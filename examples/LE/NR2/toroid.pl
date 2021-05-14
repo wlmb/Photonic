@@ -4,12 +4,14 @@
 #
 # Use example:
 # ./toroid.pl -ratio 3 -fraction .3 -Nz 20 -Nxy 80 \
-#    -eps_a 1 -eps_b 5 -eps_a 1 -eps_b 10 -eps_a 1 -eps_b 25 -Nh 100
+#    -eps_a 1 -eps_b 5 -eps_a 1 -eps_b 10 -eps_a 1 \
+#     -eps_b 25 -Nh 100 -cores 4
 # gets dielectric function of a torus formed by a disk of radius a
 # that follows a circle of radius b with ratio b/a=3, filling fraction
 # .3 using a tetragonal lattice of 80x80x20 cubic voxels for various
 # combinations (eps_a, eps_b) of the dielectric functions of the host
-# (a) and the tori (b) using 100 Haydock coefficients.
+# (a) and the tori (b) using 100 Haydock coefficients and trying to
+# employ 4 cpu cores.
 
 use strict;
 use warnings;
@@ -31,6 +33,7 @@ my (@eps_a, @eps_b); # conductivities of medium and torus
 my $Nxy; # seminumber of voxels along x and y
 my $Nz;  # and along z. I assume cubic voxels
 my $Nh; #Number of Haydock coefficients to use
+my $cores; #Number of cores to use
 
 my $options=q(
 	'ratio=f'=>\$ratio,
@@ -39,7 +42,8 @@ my $options=q(
 	'eps_b=f'=>\@eps_b,
 	'Nxy=i'=>\$Nxy,
 	'Nz=i'=>\$Nz,
-	'Nh=i'=>\$Nh
+	'Nh=i'=>\$Nh,
+	'cores=i'=>\$cores;
 	);
 my %options=(eval $options);
 die "Bad option definition: $@" if $@;
@@ -53,6 +57,7 @@ usage($options, "Missing options")
 usage($options, "Missing eps") unless @eps_a>0 and @eps_a==@eps_b;
 usage($options, "Voxel numbers should be possitive") unless luall {$_>0} ($Nxy, $Nz);
 usage($options, "Ratio of large to small radius should be > 1") unless $ratio>=1;
+set_autopthread_targ($cores) if defined $cores;;
 my ($Nxy2, $Nz2)=(2*$Nxy+1, 2*$Nz+1);
 my $unit_cell_volume=$Nxy2*$Nxy2*$Nz2;
 
