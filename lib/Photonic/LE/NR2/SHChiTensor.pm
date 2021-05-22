@@ -254,13 +254,13 @@ sub evaluate {
     my $nd=$self->geometry->B->ndims;
     my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
     my @P2M; #array of longitudinal polarizations along different directions.
+    my $method = $KIND2METHOD{$kind};
     foreach(@{$self->nrshp}){
 	my $nrsh=Photonic::LE::NR2::SH->new(
 	    shp=>$_, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
 	    epsB2=>$epsB2, filterflag=>0);
 	# RorI, XorY,nx,ny
 	# dipolar, quadrupolar, external, full
-	my $method = $KIND2METHOD{$kind};
 	my $P2 = $nrsh->$method;
 	my $P2M=$P2->mv(0,-1)->mv(0,-1)
 	    ->clump(-3) #linear index, RorI, XorY
