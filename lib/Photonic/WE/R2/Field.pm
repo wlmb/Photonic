@@ -179,7 +179,7 @@ sub evaluate {
     #don't go beyond available values.
     $nh=$self->nr->iteration if $nh>$self->nr->iteration;
     # calculate using lapack for tridiag system
-    my $diag=$u->complex - PDL->pdl($as)->(0:$nh-1);
+    my $diag=$u - PDL->pdl($as)->(0:$nh-1);
     # rotate complex zero from first to last element.
     my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=-PDL->pdl($cs)->(0:$nh-1)->rotate(-1)->r2C;
@@ -187,8 +187,7 @@ sub evaluate {
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;
     #coefficients of g^{-1}E
-    my ($giEs, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
-    die "Error solving tridiag system" unless $info == 0;
+    my $giEs = cgtsv($subdiag, $diag, $supradiag, $rhs);
     #states are ri,xy,nx,ny...
     #field is ri,xy,nx,ny...
     my @dims=$self->nr->B->dims; # actual dims of space

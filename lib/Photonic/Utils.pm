@@ -41,7 +41,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
-    wave_operator
+    wave_operator apply_longitudinal_projection
     cgtsv lu_decomp lu_solve
 );
 use PDL::LiteF;
@@ -59,12 +59,12 @@ use strict;
 sub linearCombineIt { #complex linear combination of states from iterator
     my $coefficients=shift; #arrayref of complex coefficients
     my $stateit=shift; #iterator of complex states
-    my $numCoeff=@$coefficients;
+    my $numCoeff=$coefficients->dim(-1);
     my $result=r2C(0);
     foreach(0..$numCoeff-1){
 	my $s=nextval($stateit);
 	croak "More coefficients than states in basis" unless defined $s;
-	$result += $coefficients->[$_]*$s;
+	$result = $result + $coefficients->slice(":,$_")*$s;
     }
     return $result;
 }
@@ -130,8 +130,9 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $second=shift;
     my $skip=shift//0;
     my $ndims=$first->ndims;
-    confess "Dimensions should be equal" unless $ndims == $second->ndims;
-    my $prod=$first->complex->Cconj*$second->complex;
+    confess "Dimensions should be equal, instead: first=", $first->info, " second=", $second->info
+	unless $ndims == $second->ndims;
+    my $prod=$first->Cconj*$second;
     # clump all except skip dimensions, protecto RorI index and sum.
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
 	->mv(-1,0)->sumover;
@@ -151,7 +152,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     # I'm not sure about the skiped dimensions in the next line. Is it right?
     my $mprod=($metric*$second->dummy(2))->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
-    my $prod=$first->complex->Cconj*$mprod->complex;
+    my $prod=$first->Cconj*$mprod;
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)
 	->mv(-1,0)->sumover;
     return $result;
@@ -175,7 +176,7 @@ sub EProd { #Euclidean product between two fields in reciprocal
     foreach($skip+1..$ndims-1){
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $prod=$first_mG->complex*$second->complex;
+    my $prod=$first_mG*$second;
     # clump all except skip dimensions, protecto RorI index and sum.
     my $result=$prod #ri:s1:s2:nx:ny
 	->reorder($skip+1..$ndims-1,1..$skip,0) #nx:ny:s1:s2:ri
@@ -205,7 +206,7 @@ sub SProd { #Spinor product between two fields in reciprocal
     foreach($skip+2..$ndims-1){
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $prod=$first_mG->complex*$second->complex; #rori,pmk,s1,s2,nx,ny
+    my $prod=$first_mG*$second; #rori,pmk,s1,s2,nx,ny
     # clump all except skip dimensions, protect RorI index and sum.
     my $result=$prod #rori,pmk, s1,s2,nx,ny
 	->reorder($skip+2..$ndims-1,1..$skip+1,0) #nx,ny,pmk,s1,s2,rori
@@ -232,7 +233,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     foreach(3..$ndims-1){ # G indices start after ri:xy:pm
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $prod=$first_mG->complex*$second->complex; #ri:xy:pm:nx:ny
+    my $prod=$first_mG*$second; #ri:xy:pm:nx:ny
     # clump all except ri:xy.
     my $result=$prod #ri:xy:pm::nx:ny
 	->reorder(3..$ndims-1,1,2,0) #nx:ny:xy:pm:ri
@@ -250,7 +251,7 @@ sub RtoG { #transform a 'complex' scalar, vector or tensorial field
     my $moved=$field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=fftn($moved, $ndims);
-    my $result=$transformed->complex;
+    my $result=$transformed;
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }
@@ -263,7 +264,7 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
     my $moved=$field;
     $moved=$moved->mv(1,-1) foreach(0..$skip-1);
     my $transformed=ifftn($moved, $ndims);
-    my $result=$transformed->complex;
+    my $result=$transformed;
     $result=$result->mv(-1,1) foreach(0..$skip-1);
     return $result;
 }
@@ -280,16 +281,16 @@ sub lentzCF {
     my $tiny=r2C(1.e-30);
     my $converged=0;
     my $fn=$as->slice(":,0");
-    $fn=$tiny if all(($fn->re==0) & ($fn->im==0));
+    $fn=$tiny if all($fn==0);
     my $n=1;
     my ($fnm1, $Cnm1, $Dnm1)=($fn, $fn, r2C(0)); #previous coeffs.
     my ($Cn, $Dn); #current coeffs.
     my $Deltan;
     while($n<$max){
 	$Dn=$as->slice(":,$n")+$bs->slice(":,$n")*$Dnm1;
-	$Dn=$tiny if all(($Dn->re==0) & ($Dn->im==0));
+	$Dn=$tiny if all($Dn==0);
 	$Cn=$as->slice(":,$n")+$bs->slice(":,$n")/$Cnm1;
-	$Cn=$tiny if all(($Cn->re==0) & ($Cn->im==0));
+	$Cn=$tiny if all($Cn==0);
 	$Dn=1/$Dn;
 	$Deltan=$Cn*$Dn;
 	$fn=$fnm1*$Deltan;
@@ -332,7 +333,8 @@ sub cgtsv {
         $_->set_inplace(0);
     }
     PDL::LinearAlgebra::Complex::cgtsv($c, $d, $e, $b, $i);
-    ($b->isa("PDL::Complex") ? $b->complex : $b, $i);
+    confess "Error solving tridiag system" unless $i == 0;
+    $b->isa("PDL::Complex") ? $b->complex : $b;
 }
 
 sub lu_decomp {
@@ -359,6 +361,32 @@ sub lu_solve {
     }
     confess 'Solving failed' unless all($info == 0); # can be vector
     $x;
+}
+
+sub apply_longitudinal_projection {
+    my ($psi_G, $gnorm, $ndims, $coeff) = @_;
+    #state is ri:nx:ny... gnorm=i:nx:ny...
+    #Multiply by vector ^G.
+    #Have to get cartesian out of the way, thread over it and iterate
+    #over the rest
+    my $Gpsi_G=$psi_G->dummy(1)*$gnorm; #^G |psi>
+    #the result is complex ri:i=cartesian:nx:ny...
+    #Take inverse Fourier transform over all space dimensions,
+    #move cartesian indices, thread, move back
+    my $Gpsi_R=ifftn($Gpsi_G->mv(1,-1), $ndims)->mv(-1,1);
+    # $Gpsi_R is ri:i:nx:ny:...
+    # Multiply by the coefficient in Real Space.
+    my $eGpsi_R=$coeff->dummy(1)*$Gpsi_R;
+    # $eGpsi_R is ri:i:nx:ny...
+    #Transform to reciprocal space
+    #move cartesian indices, thread, move back
+    my $eGpsi_G=fftn($eGpsi_R->mv(1,-1), $ndims)->mv(-1,1);
+    # $eGpsi_G is ri:i:nx:ny:...
+    #Scalar product with Gnorm
+    ($eGpsi_G*$gnorm) #^Ge^G|psi>
+	# ri:i:nx:ny:...
+	->sumover; #^G.epsilon^G|psi>
+    #Result is ^G.epsilon^G|psi>, ri:nx:ny...
 }
 
 1;
@@ -389,8 +417,8 @@ Utility functions that may be useful.
 
 =item * $r=linearCombineIt($c, $it)
 
-Complex linear combination of states from iterator. $c is an arrayref
-of 'complex' pdl scalars and $it is an iterator for the corresponding states.
+Complex linear combination of states from iterator. $c is a 'complex'
+ndarray and $it is an iterator for the corresponding states.
 
 =item * $p=HProd($a, $b, $skip)
 
@@ -481,14 +509,12 @@ that class, with relevant fields copied from the object.
 
 Solves a general complex tridiagonal system of equations.
 
-       ($b, my $info) = cgtsv($c, $d, $e, $b);
+       $b = cgtsv($c, $d, $e, $b);
 
 where C<$c(2,0..$n-2)> is the subdiagonal, C<$d(2,0..$n-1)> the diagonal and
 C<$e(2,0..$n-2)> the supradiagonal of an $nX$n tridiagonal complex
 double precision matrix. C<$b(2,0..$n-1)> is the right hand side
-vector. C<$b> is replaced by the solution. C<$info> returns 0 for success
-or k if the k-1-th element of the diagonal became zero. Either 2Xn pdl's
-are used to represent complex numbers, as in PDL::Complex.
+vector. C<$b> is replaced by the solution. Dies if gets an error.
 
 =item * lu_decomp
 
@@ -501,5 +527,12 @@ decomposition failed.
 Uses the appropriate LU solver function (real vs complex,
 detected). Given an array-ref with the return values of L</lu_decomp>, and
 a transposed C<B> matrix, returns transposed C<x>. Dies if solving failed.
+
+=item * apply_longitudinal_projection
+
+Given a C<psi_G> state, a C<GNorm>, the number of dimensions, and a
+real-space coefficient, transforms the C<psi_G> field from reciprocal to
+real space, multiplies by the coefficient, transforms back to reciprocal
+space.
 
 =back

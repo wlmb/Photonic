@@ -233,7 +233,7 @@ sub _build_cUnitPairs {
     for my $i(0..$nd-1){ #build pairs of vectors
 	for my $j($i+1..$nd-1){
 	    my $vc=($units->[$i]+i()*$units->[$j]);
-	    my $vcn=sqrt(($units->[$i]+i()*$units->[$j])->Cabs2->sumover);
+	    my $vcn=sqrt($vc->Cabs2->sumover);
 	    my $vp=$vc*(1/$vcn);
 	    push @cpairs, $vp;
 	}
@@ -291,7 +291,7 @@ sub Vec2LC_G { #longitudinal component of 'complex' vector field in
     croak "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
     my $gnorm=$self->GNorm;
-    Cscale($field, $gnorm)->sumover;
+    ($field * $gnorm->r2C)->sumover;
 }
 
 sub LC2Vec_G { #longitudinal vector field from its longitudinal

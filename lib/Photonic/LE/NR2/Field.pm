@@ -191,15 +191,14 @@ sub evaluate {
     # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=D^L.
     # At first take D=|0>
-    my $diag=$u->complex - PDL->pdl($as)->(0:$nh-1);
+    my $diag=$u - PDL->pdl($as)->(0:$nh-1);
     # rotate complex zero from first to last element.
     my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag;
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
-    my ($result, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
-    die "Error solving tridiag system" unless $info == 0;
+    my $result = cgtsv($subdiag, $diag, $supradiag, $rhs);
     # Obtain longitudinal macroscopic response from result
     $self->_epsL(my $epsL=1/$result->(:,(0)));
     # Normalize result so macroscopic field is 1.
@@ -210,9 +209,9 @@ sub evaluate {
     my $ndims=@dims; # num. of dims of space
     my $field_G=PDL->zeroes($ndims, @dims)->r2C;
     #field is RorI, cartesian, nx, ny...
+    my $nrGnorm = $self->nr->GNorm->r2C;
     for(my $n=0; $n<$nh; ++$n){
-	my $GPsi_G=Cscale($stateit->nextval,
-			  $self->nr->GNorm->mv(0,-1))->mv(-1,1);#^G|psi_n>
+	my $GPsi_G=($stateit->nextval->dummy(1) * $nrGnorm);#^G|psi_n>
 	#the result is RorI, cartesian, nx, ny,...
 	my $EnGPsi_G=$GPsi_G*$Es->(:,$n); #En ^G|psi_n>
 	$field_G+=$EnGPsi_G;

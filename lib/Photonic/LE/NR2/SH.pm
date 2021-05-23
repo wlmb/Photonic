@@ -371,7 +371,7 @@ sub _build_dipolar {
     #cartesian, nx, ny...
     my $G=$self->nrf->nr->G;
     #RorI cartesian nx ny
-    my $iG=$G*i;
+    my $iG=i2C $G;
     #RorI cartesian nx ny...
     my $iGE2=$iG*$Esquare_G->(,*1);
     #back to real space. Get cartesian out of the way and then back
@@ -403,7 +403,7 @@ sub _build_quadrupolar {
     #cartesian, nx, ny...
     my $G=$self->nrf->nr->G;
     #RorI cartesian nx ny...
-    my $iG=$G*i;
+    my $iG=i2C $G;
     #RorI cartesian nx ny...
     #Note: sumover knows how to sum complex values.
     my $iGnaaEE_G=($iG->(,,*1)*$naaEE_G)->sumover; #dot
@@ -462,7 +462,7 @@ sub _build_HP { #build haydock states for P2
     my $self=shift;
     my $ext=$self->externalL_G;
     my $normext=sqrt(Cabs2($ext)->sum);
-    my $extnorm=$ext->complex/$normext;
+    my $extnorm=$ext/$normext;
     my $hp=Photonic::LE::NR2::AllH->new(nh=>$self->nrf->nh,
 	geometry=>$self->nrf->nr->geometry, smallH=>$self->nrf->nr->smallH,
 		keepStates=>1, firstState=>$extnorm);
@@ -491,13 +491,11 @@ sub _build_selfConsistentL_n {
     my $as=$self->HP->as;
     my $bs=$self->HP->bs;
     my $u2=$self->u2;
-    my $diag=$u2->complex - PDL->pdl($as)->(0:$nh-1);
+    my $diag=$u2 - PDL->pdl($as)->(0:$nh-1);
     # rotate complex zero from first to last element.
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag;
-    my ($result, $info)= cgtsv($subdiag, $diag, $supradiag, $external);
-    die "Error solving tridiag system" unless $info == 0;
-    $result->complex;
+    my $result = cgtsv($subdiag, $diag, $supradiag, $external);
     $result *= $u2/$self->epsA2;
     return $result;
 }
@@ -506,7 +504,7 @@ sub _build_selfConsistentL_G {
     my $self=shift;
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
-    my $PLn=[$self->selfConsistentL_n->dog];
+    my $PLn=$self->selfConsistentL_n;
     my $stateit=$self->HP->state_iterator;
     my $result=linearCombineIt($PLn, $stateit);
     $self->filterflag($filterflag);
@@ -558,17 +556,16 @@ sub _build_P2LMCalt {
     $nh=$nr->iteration if $nh>=$nr->iteration;
     # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=|0>.
-    my $diag=$self->u2->Cconj->complex - PDL->pdl([@$as])->(0:$nh-1);
+    my $diag=$self->u2->Cconj - PDL->pdl([@$as])->(0:$nh-1);
     # rotate complex zero from first to last element.
     my $subdiag=-PDL->pdl(@$bs)->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag->mv(0,-1)->rotate(-1)->mv(-1,0);
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
-    my ($phi_n, $info)= cgtsv($subdiag, $diag, $supradiag, $rhs);
-    die "Error solving tridiag system" unless $info == 0;
+    my $phi_n = cgtsv($subdiag, $diag, $supradiag, $rhs);
     my $states=$nr->state_iterator;
-    my $phi_G=linearCombineIt([$phi_n->dog], $states);
+    my $phi_G=linearCombineIt($phi_n, $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
 
     my $beta_G=RtoG($B*GtoR($nr->firstState,$ndims,0), $ndims,0);
@@ -581,12 +578,10 @@ sub _build_P2LMCalt {
 	)->complex;
     my @Ppsi;
     foreach(0..$ndims-1){
-	my ($psi_n, $psiinfo)=
-	    cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
-	die "Error solving tridiag system" unless $psiinfo == 0;
+	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
 	# RorI nx ny .... cartesian
 	$states=$nr->state_iterator;
-	my $psi_G=linearCombineIt([$psi_n->dog], $states);
+	my $psi_G=linearCombineIt($psi_n, $states);
 	my $Ppsi=HProd($psi_G, $PexL_G);
 	push @Ppsi, $Ppsi;
     }

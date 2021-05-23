@@ -66,7 +66,7 @@ sub applyOperator {
     my $gpsi_r=ifftn($gpsi->mv(1,-1), $self->ndims);
     #$psi_r is RorI nx ny nz  xyz, B is nx ny nz
     # Multiply by characteristic function
-    my $Bgpsi_r=Cscale($gpsi_r,$self->B);
+    my $Bgpsi_r=$gpsi_r * $self->B->r2C;
     #Bpsi_r is RorI nx ny nz  xyz
     #Transform to reciprocal space, move xyz back and make complex,
     my $psi_G=fftn($Bgpsi_r, $self->ndims)->mv(-1,1);
@@ -109,7 +109,7 @@ sub _firstState {
     my $self=shift;
     my $d=$self->ndims;
     my $v=PDL->zeroes(@{$self->dims}); #build a nx ny nz pdl
-    my $arg="(0)" . ",(0)" x ($d-1); #(0),(0),... ndims times
+    my $arg=join ',', ("(0)") x $d; #(0),(0),... ndims times
     $v->slice($arg).=1; #delta_{G0}
     my $e=$self->polarization; #RorI xyz
     croak "Polarization has wrong dimensions. " .

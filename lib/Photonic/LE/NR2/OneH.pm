@@ -151,12 +151,10 @@ Returns the first state $v.
 
 use namespace::autoclean;
 use PDL::Lite;
-use PDL::NiceSlice;
-use PDL::FFTW3;
 use PDL::Complex;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(HProd);
+use Photonic::Utils qw(HProd apply_longitudinal_projection);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -169,40 +167,17 @@ with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 sub _firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(@{$self->dims})->r2C; #RorI, nx, ny...
-    my $arg="(0)" . ",(0)" x $self->ndims; #(0),(0),... ndims+1 times
+    my $arg=join ',', ("(0)") x ($self->ndims+1); #(0),(0),... ndims+1 times
     $v->slice($arg).=1; #delta_{G0}
     return $v;
 }
 
 sub applyOperator {
     my $self=shift;
-    my $psi_G=(shift)->cplx;
-    my $mask=undef;
-    $mask=$self->mask if $self->use_mask;
-    # ri:nx:ny
-    #state is ri:nx:ny:... gnorm=i:nx:ny...
-    #Have to get cartesian out of the way, thread over it and iterate
-    #over the rest
-    my $Gpsi_G=$psi_G*$self->GNorm->mv(0,-1); #^G |psi>
-    #Gpsi_G is ri:nx:ny...:i
-    #Take inverse Fourier transform over all space dimensions,
-    #thread over cartesian indices
-    my $Gpsi_R=ifftn($Gpsi_G, $self->ndims); #real space ^G|psi>
-    #Gpsi_R is ri:nx:ny:...:i
-    #Multiply by characteristic function. Thread cartesian
-    my $BGpsi_R=$Gpsi_R*$self->B; #B^G|psi> in Real Space
-    #BGpsi_R is ri:nx:ny:...:i
-    #Transform to reciprocal space
-    my $BGpsi_G=fftn($BGpsi_R, $self->ndims); #<G|B^G|psi>
-    #BGpsi_G is ri:nx:ny:...:i
-    #Scalar product with Gnorm
-    my $GBGpsi_G=($BGpsi_G*$self->GNorm->mv(0,-1)) #^GB^G|psi>
-	# ri:nx:ny:...i
-	# Move cartesian to front and sum over
-	->mv(-1,1)->sumover; #^G.B^G|psi>
-    # Result is ri:nx:ny,...
-    #Normalization should have been taken care of by fftw3
-    $GBGpsi_G=$GBGpsi_G*$mask if defined $mask;
+    my $psi_G=shift;
+    my $GBGpsi_G=apply_longitudinal_projection($psi_G, $self->GNorm, $self->ndims, $self->B->r2C);
+    my $mask = $self->mask;
+    $GBGpsi_G *= $mask if defined $mask and $self->use_mask;
     return $GBGpsi_G;
 }
 

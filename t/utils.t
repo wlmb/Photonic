@@ -5,9 +5,12 @@ use PDL::Complex;
 use Photonic::Utils;
 Photonic::Utils->import(@Photonic::Utils::EXPORT_OK);
 use Test::More;
+use lib 't/lib';
+use TestUtils;
 
 my $x = zeroes(11)->r2C;
 $x->slice(':,0') .= 1;
+my $single_complex_1 = $x;
 my $got = HProd($x, $x);
 ok approx($got, r2C(1)), 'HProd' or diag "got:$got";
 $got = EProd($x, $x);
@@ -29,7 +32,7 @@ $got = VSProd($x, $x);
 ok approx($got, r2C(1)), 'VSProd' or diag "got:$got";
 
 $got = lentzCF(
-  pdl([21/11 + 32*i()/11, 23/11 + 34*i()/11])->cplx,
+  pdl([21 + 32*i(), 23 + 34*i()])->cplx/11,
   pdl([r2C(-1), -8.7603535536828499e-17 - 1.98347107438017*i()])->cplx,
   2,
   1e-7,
@@ -494,5 +497,38 @@ $expected = pdl(<<'EOF')->complex;
 ]
 EOF
 ok all(approx($got, $expected)), 'wave_operator' or diag "got: $got, expected $expected";
+
+$data = pdl(<<'EOF');
+[
+ [ 1]
+ [ 1]
+ [ 1]
+ [ 1]
+ [ 1]
+ [ 1]
+ [-1]
+ [-1]
+ [-1]
+ [-1]
+ [-1]
+]
+EOF
+$got = apply_longitudinal_projection($single_complex_1, $data, 1, (zeroes(11)->xvals<5)->r2C);
+$expected = pdl(<<'EOF')->complex;
+[
+ [   0.45454545             0]
+ [   0.13268118   -0.29053126]
+ [ -0.031023048  -0.035802506]
+ [   0.10498734  -0.030827064]
+ [ 0.0076895443  -0.053481955]
+ [  0.058392258   0.037526426]
+ [ -0.058392258   0.037526426]
+ [-0.0076895443  -0.053481955]
+ [  -0.10498734  -0.030827064]
+ [  0.031023048  -0.035802506]
+ [  -0.13268118   -0.29053126]
+]
+EOF
+ok all(approx($got, $expected)), 'apply_longitudinal_projection' or diag "got:$got\nexpected:$expected";
 
 done_testing;
