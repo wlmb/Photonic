@@ -64,7 +64,7 @@ sub linearCombineIt { #complex linear combination of states from iterator
     foreach(0..$numCoeff-1){
 	my $s=nextval($stateit);
 	croak "More coefficients than states in basis" unless defined $s;
-	$result += $coefficients->slice(":,$_")*$s;
+	$result = $result + $coefficients->slice(":,$_")*$s;
     }
     return $result;
 }
@@ -130,7 +130,8 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $second=shift;
     my $skip=shift//0;
     my $ndims=$first->ndims;
-    confess "Dimensions should be equal" unless $ndims == $second->ndims;
+    confess "Dimensions should be equal, instead: first=", $first->info, " second=", $second->info
+	unless $ndims == $second->ndims;
     my $prod=$first->Cconj*$second;
     # clump all except skip dimensions, protecto RorI index and sum.
     my $result=$prod->reorder($skip+1..$ndims-1,1..$skip,0)->clump(-1-$skip-1)

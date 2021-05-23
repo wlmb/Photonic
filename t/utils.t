@@ -5,6 +5,8 @@ use PDL::Complex;
 use Photonic::Utils;
 Photonic::Utils->import(@Photonic::Utils::EXPORT_OK);
 use Test::More;
+use lib 't/lib';
+use TestUtils;
 
 my $x = zeroes(11)->r2C;
 $x->slice(':,0') .= 1;
@@ -527,6 +529,6 @@ $expected = pdl(<<'EOF')->complex;
  [  -0.13268118   -0.29053126]
 ]
 EOF
-ok all(approx($got, $expected)), 'apply_longitudinal_projection' or diag "got: $got, expected $expected";
+ok all(approx($got, $expected)), 'apply_longitudinal_projection' or diag "got:$got\nexpected:$expected";
 
 done_testing;
