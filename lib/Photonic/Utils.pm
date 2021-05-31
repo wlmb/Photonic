@@ -41,7 +41,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
-    wave_operator apply_longitudinal_projection
+    wave_operator apply_longitudinal_projection make_dyads
     cgtsv lu_decomp lu_solve
 );
 use PDL::LiteF;
@@ -389,6 +389,29 @@ sub apply_longitudinal_projection {
     #Result is ^G.epsilon^G|psi>, ri:nx:ny...
 }
 
+sub make_dyads {
+    my ($nd, $unitPairs) = @_;
+    my $ne = $nd*($nd+1)/2; #number of symmetric matrix elements
+    my $matrix = PDL->zeroes($ne, $ne);
+    my $n = 0; #run over vector pairs
+    for my $i (0..$nd-1) {
+        for my $j ($i..$nd-1) {
+            my $m = 0; #run over components of dyads
+            for my $k (0..$nd-1) {
+                for my $l ($k..$nd-1) {
+                    my $factor = $k == $l?1:2;
+                    $matrix->slice("($m),($n)") .= #pdl order!
+                        $factor*$unitPairs->[$n]->slice("($k)") *
+                        $unitPairs->[$n]->slice("($l)");
+                    ++$m;
+                }
+            }
+            ++$n;
+        }
+    }
+    return $matrix;
+}
+
 1;
 
 __END__
@@ -534,5 +557,12 @@ Given a C<psi_G> state, a C<GNorm>, the number of dimensions, and a
 real-space coefficient, transforms the C<psi_G> field from reciprocal to
 real space, multiplies by the coefficient, transforms back to reciprocal
 space.
+
+=item * make_dyads
+
+Given a number of dimensions, and an array-ref of "unit pair" ndarrays,
+returns a matrix of dyads of unit vector pairs
+B<d>^{ij}_{kl}=B<u>^{i}_{kl}B<u>^{j}_{kl} as 2d matrix, adjusted for
+symmetry.
 
 =back

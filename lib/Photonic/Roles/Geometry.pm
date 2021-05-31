@@ -40,7 +40,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Types;
-use Photonic::Utils qw(any_complex lu_decomp);
+use Photonic::Utils qw(any_complex lu_decomp make_dyads);
 use Carp;
 use constant PI=>4*atan2(1,1);
 
@@ -243,26 +243,7 @@ sub _build_cUnitPairs {
 
 sub _build_unitDyads {
     my $self=shift;
-    my $nd=$self->ndims; #Number of dimensions
-    my $ne=$nd*($nd+1)/2; #number of symetric matrix elements
-    my $matrix=PDL->zeroes($ne,$ne);
-    my $n=0; #run over vector pairs
-    for my $i(0..$nd-1){
-	for my $j($i..$nd-1){
-	    my $m=0; #run over components of dyads
-	    for my $k(0..$nd-1){
-		for my $l($k..$nd-1){
-		    my $factor=$k==$l?1:2;
-		    $matrix->(($m),($n)) .= #pdl order!
-			$factor*$self->unitPairs->[$n]->(($k)) *
-			$self->unitPairs->[$n]->(($l));
-		    ++$m;
-		}
-	    }
-	    ++$n;
-	}
-    }
-    return $matrix;
+    make_dyads($self->ndims, $self->unitPairs);
 }
 
 sub _build_unitDyadsLU {
