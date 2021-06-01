@@ -189,7 +189,7 @@ sub _build_G {
 
 sub _build_GNorm { #origin set to zero here.
     my $self=shift;
-    croak "Can't normalize reciprocal lattice unless Direction0 is set"
+    confess "Can't normalize reciprocal lattice unless Direction0 is set"
 	unless $self->has_Direction0;
     return $self->G->norm;
 }
@@ -254,9 +254,9 @@ sub _build_unitDyadsLU {
 sub _G0 {
     my $self=shift;
     my $value=shift;
-    croak "Direction0 must be ".$self->ndims."-dimensional vector" unless
+    confess "Direction0 must be ".$self->ndims."-dimensional vector" unless
 	$value->dim(0)==$self->ndims and $value->ndims==1;
-    croak "Direction must be non-null" unless $value->inner($value)>0;
+    confess "Direction must be non-null" unless $value->inner($value)>0;
     my $arg=":". (",(0)" x $self->ndims); #:,(0),... dimension of space times
     $value=$value->norm; #normalize
     #Set element 0,0 for normalized arrays.
@@ -269,7 +269,7 @@ sub Vec2LC_G { #longitudinal component of 'complex' vector field in
                #reciprocal space
     my $self=shift;
     my $field=shift; # vector field to project
-    croak "Can't project unless Direction0 is set" unless
+    confess "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
     my $gnorm=$self->GNorm;
     ($field * $gnorm->r2C)->sumover;
@@ -279,7 +279,7 @@ sub LC2Vec_G { #longitudinal vector field from its longitudinal
 	       #components in reciprocal space
     my $self=shift;
     my $field=shift; # scalar field of longitudinal components
-    croak "Can't project unless Direction0 is set" unless
+    confess "Can't project unless Direction0 is set" unless
 	$self->has_Direction0;
     my $gnorm=$self->GNorm;
     #$gnorm is XorY nx, ny...

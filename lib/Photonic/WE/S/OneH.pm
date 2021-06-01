@@ -251,12 +251,12 @@ sub _firstState { #\delta_{G0}
     $v->slice($arg).=1/sqrt(2);
     my $e=$self->polarization; #ri:xy
     my $d=$e->dim(1);
-    croak "Polarization has wrong dimensions. " .
+    confess "Polarization has wrong dimensions. " .
 	  " Should be $d-dimensional complex vector."
 	unless any_complex($e) && $e->ndims==2 &&
 	$e->dim(0)==2 && $e->dim(1)==$d;
     my $modulus2=$e->Cabs2->sumover;
-    croak "Polarization should be non null" unless
+    confess "Polarization should be non null" unless
 	$modulus2 > 0;
     $e=$e/sqrt($modulus2);
     $self->_normalizedPolarization($e);
