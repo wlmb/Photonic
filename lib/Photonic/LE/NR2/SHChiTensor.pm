@@ -166,7 +166,6 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
 use PDL::MatrixOps;
-use Storable qw(dclone);
 use PDL::IO::Storable;
 use Photonic::Utils qw(make_haydock tensor);
 use Photonic::Types;

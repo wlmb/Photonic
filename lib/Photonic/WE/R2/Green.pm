@@ -138,13 +138,12 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use Storable qw(dclone);
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
-
+use Photonic::Utils qw(make_haydock);
 
 extends 'Photonic::WE::R2::GreenS';
 
@@ -204,17 +203,7 @@ around 'evaluate' => sub {
 sub _build_cHaydock {
     # One Haydock coefficients calculator per complex polarization
     my $self=shift;
-    my @cHaydock;
-    foreach(@{$self->geometry->cUnitPairs}){
-	my $m=dclone($self->metric); #clone metric, to be safe
-	my $e=$_; #polarization
-	#Build a corresponding Photonic::WE::R2::AllH structure
-	my $chaydock=Photonic::WE::R2::AllH->new(
-	    metric=>$m, polarization=>$e, nh=>$self->nh,
-	    keepStates=>$self->keepStates, smallH=>$self->smallH);
-	push @cHaydock, $chaydock;
-    }
-    return [@cHaydock]
+    make_haydock($self, 'Photonic::WE::R2::AllH', $self->geometry->cUnitPairs, 0);
 }
 
 sub _build_cGreenP {
