@@ -177,11 +177,11 @@ around 'evaluate' => sub {
     $self->_converged($converged);
     my $nd=$self->geometry->B->ndims;
     my $asy=$sym->zeroes->complex; #ri,xy,xy, 2x$ndx$nd
-    my @cpairs=@{$self->geometry->cUnitPairs};
+    my $cpairs=$self->geometry->cUnitPairs;
     my $m=0;
     for my $i(0..$nd-2){
 	for my $j($i+1..$nd-1){
-	    my $pair=$cpairs[$m];
+	    my $pair=$cpairs->(:,:,($m));
 	    #$asy is ri,xy,xy. First index is column
 	    $asy(:,($i), ($j)).=i()*(
 		$greenPc[$m]-

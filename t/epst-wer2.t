@@ -38,7 +38,7 @@ use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::EpsilonP;
 use Photonic::WE::R2::EpsilonTensor;
 
-use Test::More tests => 9;
+use Test::More;
 use lib 't/lib';
 use TestUtils;
 
@@ -99,3 +99,5 @@ $et=Photonic::WE::R2::EpsilonTensor->new(nh=>1000, metric=>$m,
 						  reorthogonalize=>1);
 $etv=$et->evaluate($eb)->(:,(1),(1));
 ok(Cagree($epstm, $etv), "Epsilon agrees with transfer matrix");
+
+done_testing;

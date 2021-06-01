@@ -105,7 +105,7 @@ sub make_haydock {
   [ map $class->new(
       _haydock_extra($self, $_, $add_geom),
       map +($_ => $self->$_), @HAYDOCK_PARAMS, @extra_attributes
-    ), @$pairs
+    ), $pairs->dog
   ];
 }
 
@@ -401,8 +401,8 @@ sub make_dyads {
                 for my $l ($k..$nd-1) {
                     my $factor = $k == $l?1:2;
                     $matrix->slice("($m),($n)") .= #pdl order!
-                        $factor*$unitPairs->[$n]->slice("($k)") *
-                        $unitPairs->[$n]->slice("($l)");
+                        $factor*$unitPairs->slice("($k),($n)") *
+                        $unitPairs->slice("($l),($n)");
                     ++$m;
                 }
             }

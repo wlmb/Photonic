@@ -90,10 +90,10 @@ has 'pmGNorm' =>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
        'array of spinors of +- unit norm reciprocal vectors xy,pm,nx,ny');
 has 'f'=>(is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_f',
      documentation=>'filling fraction of B region');
-has 'unitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
+has 'unitPairs'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
      builder=>'_build_unitPairs',
      documentation=>'Normalized sum of pairs of basis vectors');
-has 'cUnitPairs'=>(is=>'ro', isa=>'ArrayRef[PDL]', init_arg=>undef, lazy=>1,
+has 'cUnitPairs'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
      builder=>'_build_cUnitPairs',
      documentation=>'Normalized complex sum of pairs of basis vectors');
 has 'unitDyads'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
@@ -222,7 +222,7 @@ sub _build_unitPairs {
 	    push @pairs, $v;
 	}
     }
-    return [@pairs];
+    PDL->pdl(\@pairs);
 }
 
 sub _build_cUnitPairs {
@@ -238,7 +238,7 @@ sub _build_cUnitPairs {
 	    push @cpairs, $vp;
 	}
     }
-    return [@cpairs];
+    PDL->pdl(\@cpairs)->complex;
 }
 
 sub _build_unitDyads {

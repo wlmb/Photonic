@@ -532,7 +532,7 @@ EOF
 ok all(approx($got, $expected)), 'apply_longitudinal_projection' or diag "got:$got\nexpected:$expected";
 
 $data = pdl q[[1 0][0.70710678 0.70710678][0 1]];
-$got = make_dyads(2, [$data->dog]);
+$got = make_dyads(2, $data);
 $expected = pdl(<<'EOF');
 [
  [  1   0   0]

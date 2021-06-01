@@ -252,7 +252,7 @@ sub _firstState { #\delta_{G0}
     my $e=$self->polarization; #ri:xy
     my $d=$e->dim(1);
     confess "Polarization has wrong dimensions. " .
-	  " Should be $d-dimensional complex vector."
+	  " Should be $d-dimensional complex vector, got ($e)."
 	unless any_complex($e) && $e->ndims==2 &&
 	$e->dim(0)==2 && $e->dim(1)==$d;
     my $modulus2=$e->Cabs2->sumover;

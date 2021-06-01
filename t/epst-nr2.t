@@ -35,7 +35,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::LE::NR2::EpsTensor;
 
-use Test::More tests => 7;
+use Test::More;
 use lib 't/lib';
 use TestUtils;
 
@@ -92,3 +92,5 @@ $etvr->(:,(1),(0)).=-$etvb->(:,(0),(1));
 $etvr->(:,(1),(1)).= $etvb->(:,(0),(0));
 my $etvar=($etva->(:,*1,:,:)*$etvr->(:,:,:,*1))->mv(2,1)->sumover;
 ok(Cagree($etvar,$ea*$eb*identity(2), 1e-3), "Keller");
+
+done_testing;

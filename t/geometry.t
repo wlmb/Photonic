@@ -81,15 +81,14 @@ ok(agree($g->GNorm->(:,(5),(5)), $g->pmGNorm->(:,(0),(5),(5)))
     && agree($g->mGNorm->(:,(5),(5)), $g->pmGNorm->(:,(1),(5),(5))),
     "spinor normalized G at center");
 ok($g->f==$B->sum/(11*11), "filling fraction");
-ok(agree($g->unitPairs->[0], pdl(1,0))
-   && agree($g->unitPairs->[1], pdl(1,1)/sqrt(2))
-   && agree($g->unitPairs->[2], pdl(0,1)), "unitpairs");
-ok(agree($g->cUnitPairs->[0]->re, pdl(1,0)/sqrt(2))
-   && agree($g->cUnitPairs->[0]->im, pdl(0,1)/sqrt(2)),
-   "cunitpairs");
+ok(agree($g->unitPairs, pdl([1,0], pdl(1,1)/sqrt(2), [0,1])), "unitpairs");
+my $got = $g->cUnitPairs;
+my $expected = identity(2)->complex/sqrt(2);
+ok(Cagree($got, $expected), "cunitpairs")
+  or diag "got:$got\nexpected:$expected";
 ok(agree($g->unitDyads, pdl([1,0,0],[.5,1,.5],[0,0,1])), "unitDyads");
 
-my $got = lu_solve($g->unitDyadsLU, $g->unitDyads->transpose->r2C);
+$got = lu_solve($g->unitDyadsLU, $g->unitDyads->transpose->r2C);
 ok(Cagree($got, identity(3)), "unitDyadsLU");
 
 ok(agree($g->Vec2LC_G(zeroes(11,11)->ndcoords->r2C)->re,
