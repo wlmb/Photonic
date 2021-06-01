@@ -304,9 +304,9 @@ sub evaluate {
 sub _build_nrshp { # One Haydock coefficients calculator per direction0
     my $self=shift;
     my $nr = make_haydock($self, 'Photonic::LE::NR2::AllH', 1);
-    my ($i, @nrshp) = 0;
-    foreach(@{$self->geometry->unitPairs}){
-	my @args=(nr=>$nr->[$i++], nh=>$self->nhf, smallE=>$self->smallE);
+    my @nrshp;
+    foreach(@$nr){
+	my @args=(nr=>$_, nh=>$self->nhf, smallE=>$self->smallE);
 	push @args, filter=>$self->filter if $self->has_filter;
 	my $nrf=Photonic::LE::NR2::Field->new(@args);
 	my $nrshp=Photonic::LE::NR2::SHP->
