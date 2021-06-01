@@ -1,5 +1,5 @@
 package Photonic::Roles::Geometry;
-$Photonic::Roles::Geometry::VERSION = '0.015';
+$Photonic::Roles::Geometry::VERSION = '0.016';
 
 =encoding UTF-8
 
@@ -318,7 +318,7 @@ Photonic::Roles::Geometry
 
 =head1 VERSION
 
-version 0.015
+version 0.016
 
 =head1 SYNOPSIS
 
@@ -332,7 +332,7 @@ version 0.015
 =item (for developers)
 
     package Photonic::Geometry::FromB;
-    $Photonic::Geometry::Geometry::VERSION = '0.015';
+    $Photonic::Geometry::Geometry::VERSION = '0.016';
     use namespace::autoclean;
     use Moose;
     has 'B' =>(is=>'ro', isa=>'PDL', required=>1,
