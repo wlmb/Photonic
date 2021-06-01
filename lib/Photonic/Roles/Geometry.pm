@@ -41,6 +41,7 @@ use PDL::NiceSlice;
 use PDL::Complex;
 use Photonic::Types;
 use Photonic::Utils qw(any_complex lu_decomp make_dyads);
+use PDL::MatrixOps qw();
 use Carp;
 use constant PI=>4*atan2(1,1);
 
@@ -48,7 +49,7 @@ requires 'B'; #characteristic function
 
 has 'L' =>(is=>'ro', isa => 'PDL', lazy=>1, builder=>'_build_L',
 	   documentation=>'array of unit cell size');
-has 'units'=>(is=>'ro', isa=>'ArrayRef[PDL]', lazy=>1,
+has 'units'=>(is=>'ro', isa=>'PDL', lazy=>1,
      builder=>'_build_units',
      documentation=>'Basis of unit vectors');
 has 'primitive'=>(is=>'ro', isa=>'PDL', required=>1, lazy=>1,
@@ -113,19 +114,12 @@ sub _build_L {
 
 sub _build_units {
     my $self=shift;
-    my @units; # unit vectors
-    my $nd=$self->ndims;
-    foreach(0..$nd-1){ #build unit vectors
-	my $e=PDL->zeroes($nd);
-	$e->(($_)).=1;
-	push @units, $e;
-    }
-    return [@units];
+    PDL::MatrixOps::identity($self->ndims); # unit vectors
 }
 
 sub _build_primitive {
     my $self=shift;
-    return PDL->pdl($self->units); #xy:n
+    $self->units->copy; #xy:n
 }
 
 sub _build_primitiveNorm {
@@ -218,7 +212,7 @@ sub _build_unitPairs {
     my @pairs;
     for my $i(0..$nd-1){ #build pairs of vectors
 	for my $j($i..$nd-1){
-	    my $v=($units->[$i]+$units->[$j])->norm;
+	    my $v=($units->(($i))+$units->(($j)))->norm;
 	    push @pairs, $v;
 	}
     }
@@ -232,7 +226,7 @@ sub _build_cUnitPairs {
     my @cpairs;
     for my $i(0..$nd-1){ #build pairs of vectors
 	for my $j($i+1..$nd-1){
-	    my $vc=($units->[$i]+i()*$units->[$j]);
+	    my $vc=($units->(($i))+i()*$units->(($j)));
 	    my $vcn=sqrt($vc->Cabs2->sumover);
 	    my $vp=$vc*(1/$vcn);
 	    push @cpairs, $vp;

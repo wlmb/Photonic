@@ -51,8 +51,7 @@ ok($g->L->ndims==1, "L is a vector");
 ok(($g->L->dims)[0]==2, "L is a 2D vector");
 ok(($g->L->dims)[0]==2, "L is a 2D vector");
 ok(agree(pdl($g->L),pdl(11,11)), "correct L values");
-ok(agree(($g->units)->[0], pdl(1,0)) && agree(($g->units)->[1], pdl(0,1)),
-   "units");
+ok(agree($g->units, identity(2)), "units");
 ok($g->npoints==11*11, "npoints");
 ok(agree($g->scale,pdl(1,1)), "Default scale");
 ok(agree($gl->scale, pdl(1/11,1/11)), "Scale");
