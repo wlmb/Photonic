@@ -303,7 +303,7 @@ sub evaluate {
 
 sub _build_nrshp { # One Haydock coefficients calculator per direction0
     my $self=shift;
-    my $nr = make_haydock($self, 'Photonic::LE::NR2::AllH', 1);
+    my $nr = make_haydock($self, 'Photonic::LE::NR2::AllH', $self->geometry->unitPairs, 1, qw(reorthogonalize use_mask mask));
     my @nrshp;
     foreach(@$nr){
 	my @args=(nr=>$_, nh=>$self->nhf, smallE=>$self->smallE);

@@ -97,15 +97,15 @@ sub tensor {
 }
 
 my @HAYDOCK_PARAMS = qw(
-  nh keepStates smallH reorthogonalize use_mask mask
+  nh keepStates smallH
 );
 sub make_haydock {
-  my ($self, $class, $add_geom, @extra_attributes) = @_;
+  my ($self, $class, $pairs, $add_geom, @extra_attributes) = @_;
   # This must change if G is not symmetric
   [ map $class->new(
       _haydock_extra($self, $_, $add_geom),
       map +($_ => $self->$_), @HAYDOCK_PARAMS, @extra_attributes
-    ), @{$self->geometry->unitPairs}
+    ), @$pairs
   ];
 }
 

@@ -159,7 +159,7 @@ sub _build_epsTensor {
 
 sub _build_nr { # One Haydock coefficients calculator per direction0
     my $self=shift;
-    make_haydock($self, 'Photonic::LE::NP::AllH', 1, 'epsilon');
+    make_haydock($self, 'Photonic::LE::NP::AllH', $self->geometry->unitPairs, 1, qw(epsilon reorthogonalize use_mask mask));
 }
 
 sub _build_epsL {

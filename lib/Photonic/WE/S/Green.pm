@@ -174,7 +174,8 @@ sub _build_greenTensor {
 }
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0
-    make_haydock(shift, 'Photonic::WE::S::AllH');
+    my ($self) = @_;
+    make_haydock($self, 'Photonic::WE::S::AllH', $self->geometry->unitPairs, 0, qw(reorthogonalize use_mask mask));
 }
 
 sub _build_greenP {
