@@ -144,6 +144,7 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 use Photonic::Utils qw(make_haydock);
+use List::Util qw(any);
 
 extends 'Photonic::WE::R2::GreenS';
 
@@ -168,13 +169,8 @@ around 'evaluate' => sub {
     my $sym=$self->$orig($epsB);
     #That's all unless you want the anstisymmetric part
     return $sym if $self->symmetric;
-    my @greenPc; #array of Green's projections along complex directions.
-    my $converged=$self->converged;
-    foreach(@{$self->cGreenP}){
-	push @greenPc, $_->evaluate($epsB);
-	$converged &&=$_->converged;
-    }
-    $self->_converged($converged);
+    my @greenPc = map $_->evaluate($epsB), @{$self->cGreenP}; ; #array of Green's projections along complex directions.
+    $self->_converged(any { $_->converged } $self, @{$self->cGreenP});
     my $nd=$self->geometry->B->ndims;
     my $asy=$sym->zeroes->complex; #ri,xy,xy, 2x$ndx$nd
     my $cpairs=$self->geometry->cUnitPairs;
