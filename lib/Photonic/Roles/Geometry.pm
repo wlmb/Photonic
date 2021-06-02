@@ -209,30 +209,32 @@ sub _build_unitPairs {
     my $self=shift;
     my $nd=$self->ndims;
     my $units=$self->units;
-    my @pairs;
+    my $pairs = PDL->zeroes($nd, $nd * ($nd + 1) / 2);
+    my $n = 0;
     for my $i(0..$nd-1){ #build pairs of vectors
 	for my $j($i..$nd-1){
-	    my $v=($units->(($i))+$units->(($j)))->norm;
-	    push @pairs, $v;
+	    $pairs->(:,($n)) .= ($units->(($i))+$units->(($j)))->norm;
+	    $n++;
 	}
     }
-    PDL->pdl(\@pairs);
+    $pairs;
 }
 
 sub _build_cUnitPairs {
     my $self=shift;
     my $nd=$self->ndims;
     my $units=$self->units;
-    my @cpairs;
+    my $cpairs = PDL->zeroes($nd, $nd * ($nd - 1) / 2)->r2C;
+    my $n = 0;
     for my $i(0..$nd-1){ #build pairs of vectors
 	for my $j($i+1..$nd-1){
 	    my $vc=($units->(($i))+i()*$units->(($j)));
 	    my $vcn=sqrt($vc->Cabs2->sumover);
-	    my $vp=$vc*(1/$vcn);
-	    push @cpairs, $vp;
+	    $cpairs->(:,:,($n)) .= $vc*(1/$vcn);
+	    $n++;
 	}
     }
-    PDL->pdl(\@cpairs)->complex;
+    $cpairs;
 }
 
 sub _build_unitDyads {
