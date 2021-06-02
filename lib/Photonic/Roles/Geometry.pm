@@ -202,7 +202,7 @@ sub _build_pmGNorm { #normalized +- reciprocal lattice. Leave
 
 sub _build_f { #calculate filling fraction
     my $self=shift;
-    return $self->B->sum/$self->B->nelem;
+    return $self->B->avg;
 }
 
 sub _build_unitPairs {
