@@ -213,8 +213,7 @@ sub evaluate {
     }
     #Choose +k
     my $Esp=$field_G->(:,:,(0)); #ri,xy,nx,ny
-    #filter RandI for each cartesian
-    $Esp *= $self->filter->(*1) if $self->has_filter;
+    $Esp *= $self->filter if $self->has_filter;
     #get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=GtoR($Esp, $ndims, 1);
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
