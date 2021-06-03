@@ -128,34 +128,24 @@ is($eco->converged,1, "Converged");
 
 done_testing;
 
-sub FourPhasesImpar { #checkerboard
-    my $N=shift;
-    my $eA=shift;
-    my $eB=shift;
-    my $eC=shift;
-    my $eD=shift;
+sub checkerboard {
+    my ($N, $N1, $eA, $eB, $eC, $eD) = @_;
     $eB=($eB*ones($N,$N))->mv(0,-1);
-    my $z=$eB->glue(1,($eA*ones($N,$N+1))->mv(0,-1));
-    $eC=($eC*ones($N+1,$N))->mv(0,-1);
-    $z=$z->glue(0,($eC->glue(1,($eD*ones($N+1,$N+1))->mv(0,-1))));
+    my $z=$eB->glue(1,($eA*ones($N,$N1))->mv(0,-1));
+    $eC=($eC*ones($N1,$N))->mv(0,-1);
+    $z=$z->glue(0,($eC->glue(1,($eD*ones($N1,$N1))->mv(0,-1))));
     $z=$z->mv(-1,0);
-    $z(,,$N).=($z(,,$N+1)+$z(,,$N-1))/2;
-    $z(,$N,).=($z(,$N+1,)+$z(,$N-1,))/2;
+    $z(,,$N).=($z(,,$N1)+$z(,,$N-1))/2;
+    $z(,$N,).=($z(,$N1,)+$z(,$N-1,))/2;
     return $z;
 }
 
+sub FourPhasesImpar { #checkerboard
+    my ($N, $eA, $eB, $eC, $eD) = @_;
+    checkerboard($N, $N+1, $eA, $eB, $eC, $eD);
+}
+
 sub FourPhasesPar { #checkerboard
-    my $N=shift;
-    my $eA=shift;
-    my $eB=shift;
-    my $eC=shift;
-    my $eD=shift;
-    $eB=($eB*ones($N,$N))->mv(0,-1);
-    my $z=$eB->glue(1,($eA*ones($N,$N))->mv(0,-1));
-    $eC=($eC*ones($N,$N))->mv(0,-1);
-    $z=$z->glue(0,($eC->glue(1,($eD*ones($N,$N))->mv(0,-1))));
-    $z=$z->mv(-1,0);
-    $z(,,$N).=($z(,,$N)+$z(,,$N-1))/2;
-    $z(,$N,).=($z(,$N,)+$z(,$N-1,))/2;
-    return $z;
+    my ($N, $eA, $eB, $eC, $eD) = @_;
+    checkerboard($N, $N, $eA, $eB, $eC, $eD);
 }
