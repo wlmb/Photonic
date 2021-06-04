@@ -173,11 +173,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::FFTW3;
 use PDL::Complex;
 use Carp;
 use Photonic::Types;
-use Photonic::Utils qw(VSProd any_complex);
+use Photonic::Utils qw(VSProd any_complex GtoR RtoG);
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -201,13 +200,13 @@ sub applyOperator {
     $mask=$self->mask if $self->use_mask;
     my $gpsi=$self->applyMetric($psi);
     # gpsi is ri:xy:pm:nx:ny. Get cartesian and pm out of the way and
-    # transform to real space. Note FFFTW3 wants real PDL's[2,...]
-    my $gpsi_r=ifftn($gpsi->mv(1,-1)->mv(1,-1), $self->ndims);
+    # transform to real space. Note FFTW3 wants real PDL's[2,...]
+    my $gpsi_r=GtoR($gpsi, $self->ndims, 2)->mv(1,-1)->mv(1,-1);
     #ri:nx:ny:xy:pm
     my $H=($self->epsilonR-$self->epsilon)/$self->epsilonR;
     my $Hgpsi_r=$H*$gpsi_r; #ri:nx:ny:xy:pm
     #Transform to reciprocal space, move xy and pm back and make complex,
-    my $psi_G=fftn($Hgpsi_r, $self->ndims)->mv(-1,1)->mv(-1,1);
+    my $psi_G=RtoG($Hgpsi_r->mv(-1,1)->mv(-1,1), $self->ndims, 2);
     #Apply mask
     #psi_G is ri:xy:pm:nx:ny mask is nx:ny
     $psi_G=$psi_G*$mask->(*1,*1) if defined $mask; #use dummies for xy:pm

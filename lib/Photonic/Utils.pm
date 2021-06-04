@@ -371,16 +371,12 @@ sub apply_longitudinal_projection {
     #over the rest
     my $Gpsi_G=$psi_G->dummy(1)*$gnorm; #^G |psi>
     #the result is complex ri:i=cartesian:nx:ny...
-    #Take inverse Fourier transform over all space dimensions,
-    #move cartesian indices, thread, move back
-    my $Gpsi_R=ifftn($Gpsi_G->mv(1,-1), $ndims)->mv(-1,1);
+    my $Gpsi_R=GtoR($Gpsi_G, $ndims, 1);
     # $Gpsi_R is ri:i:nx:ny:...
     # Multiply by the coefficient in Real Space.
     my $eGpsi_R=$coeff->dummy(1)*$Gpsi_R;
     # $eGpsi_R is ri:i:nx:ny...
-    #Transform to reciprocal space
-    #move cartesian indices, thread, move back
-    my $eGpsi_G=fftn($eGpsi_R->mv(1,-1), $ndims)->mv(-1,1);
+    my $eGpsi_G=RtoG($eGpsi_R, $ndims, 1);
     # $eGpsi_G is ri:i:nx:ny:...
     #Scalar product with Gnorm
     ($eGpsi_G*$gnorm) #^Ge^G|psi>
