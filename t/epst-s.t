@@ -99,5 +99,5 @@ $etvr->(:,(0),(0)).= $etvb->(:,(1),(1));
 $etvr->(:,(0),(1)).=-$etvb->(:,(1),(0));
 $etvr->(:,(1),(0)).=-$etvb->(:,(0),(1));
 $etvr->(:,(1),(1)).= $etvb->(:,(0),(0));
-my $etvar=($etva->(:,*1,:,:)*$etvr->(:,:,:,*1))->mv(2,1)->sumover;
+my $etvar=($etva->(:,*1)*$etvr->(:,:,:,*1))->mv(2,1)->sumover;
 ok(Cagree($etvar,$ea*$eb*identity(2), 1e-3), "Keller");

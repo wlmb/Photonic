@@ -12,7 +12,7 @@ foreach my $D (1..5){
     my $g=Photonic::Geometry::FromB->new(B=>$B);
     my $T=random($D,$D)+i()*random($D,$D); #random 2nd rank complex tensor
     $T=($T+$T->mv(1,2))/2; #symmetrize
-    my $pairs=pdl($g->unitPairs); # indices: xy,n
+    my $pairs=$g->unitPairs; # indices: xy,n
     my $projections=($pairs*($T*$pairs->(:,*1))->sumover)->sumover; #indices: ri,dyad
     my $lu=$g->unitDyadsLU;
     my $newT=tensor($projections, $lu, $D, 2); #reconstructed tensor
@@ -24,7 +24,7 @@ foreach my $D(1..5){
     my $g=Photonic::Geometry::FromB->new(B=>$B);
     my $T=random($D,$D,$D)+i()*random($D,$D,$D)+1+i; #random 3d rank complex tensor
     $T=($T+$T->mv(2,3))/2; #symmetrize on last two indices, leave first alone. ri,xy,xy,xy
-    my $pairs=pdl($g->unitPairs); # indices: xy,n
+    my $pairs=$g->unitPairs; # indices: xy,n
     my $projections=($pairs->(:,*1)*($T->mv(1,-1)*$pairs->(:,*1,*1))->sumover)
 	->sumover->mv(1,-1); #indices: ri,dyad,xy
     my $lu=$g->unitDyadsLU;

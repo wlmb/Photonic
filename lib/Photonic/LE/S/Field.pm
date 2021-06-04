@@ -136,9 +136,8 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use PDL::FFTW3;
 use Photonic::LE::S::AllH;
-use Photonic::Utils qw(cgtsv);
+use Photonic::Utils qw(cgtsv GtoR);
 use Photonic::Types;
 use Photonic::Iterator;
 use Moose;
@@ -214,10 +213,9 @@ sub evaluate {
     }
     #Choose +k
     my $Esp=$field_G->(:,:,(0)); #ri,xy,nx,ny
-    #filter RandI for each cartesian
-    $Esp *= $self->filter->(*1) if $self->has_filter;
+    $Esp *= $self->filter if $self->has_filter;
     #get cartesian out of the way, fourier transform, put cartesian.
-    my $field_R=ifftn($Esp->mv(1,-1), $ndims)->mv(-1,1);
+    my $field_R=GtoR($Esp, $ndims, 1);
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
     #result is ri,xy,nx,ny,...
     $self->_field($field_R);

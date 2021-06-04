@@ -138,13 +138,13 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Complex;
-use Storable qw(dclone);
 use Photonic::WE::R2::AllH;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
-
+use Photonic::Utils qw(make_haydock);
+use List::Util qw(any);
 
 extends 'Photonic::WE::R2::GreenS';
 
@@ -169,24 +169,19 @@ around 'evaluate' => sub {
     my $sym=$self->$orig($epsB);
     #That's all unless you want the anstisymmetric part
     return $sym if $self->symmetric;
-    my @greenPc; #array of Green's projections along complex directions.
-    my $converged=$self->converged;
-    foreach(@{$self->cGreenP}){
-	push @greenPc, $_->evaluate($epsB);
-	$converged &&=$_->converged;
-    }
-    $self->_converged($converged);
+    my @greenPc = map $_->evaluate($epsB), @{$self->cGreenP}; ; #array of Green's projections along complex directions.
+    $self->_converged(any { $_->converged } $self, @{$self->cGreenP});
     my $nd=$self->geometry->B->ndims;
     my $asy=$sym->zeroes->complex; #ri,xy,xy, 2x$ndx$nd
-    my @cpairs=@{$self->geometry->cUnitPairs};
+    my $cpairs=$self->geometry->cUnitPairs;
     my $m=0;
     for my $i(0..$nd-2){
 	for my $j($i+1..$nd-1){
-	    my $pair=$cpairs[$m];
+	    my $pair=$cpairs->(:,:,($m));
 	    #$asy is ri,xy,xy. First index is column
 	    $asy(:,($i), ($j)).=i()*(
 		$greenPc[$m]-
-		($pair->Cconj->(:,*1,:) #ri, column, row
+		($pair->Cconj->(:,*1) #ri, column, row
 		 *$pair->(:,:,*1)
 		 *$sym)->sumover->sumover
 		); #ri
@@ -204,17 +199,7 @@ around 'evaluate' => sub {
 sub _build_cHaydock {
     # One Haydock coefficients calculator per complex polarization
     my $self=shift;
-    my @cHaydock;
-    foreach(@{$self->geometry->cUnitPairs}){
-	my $m=dclone($self->metric); #clone metric, to be safe
-	my $e=$_; #polarization
-	#Build a corresponding Photonic::WE::R2::AllH structure
-	my $chaydock=Photonic::WE::R2::AllH->new(
-	    metric=>$m, polarization=>$e, nh=>$self->nh,
-	    keepStates=>$self->keepStates, smallH=>$self->smallH);
-	push @cHaydock, $chaydock;
-    }
-    return [@cHaydock]
+    make_haydock($self, 'Photonic::WE::R2::AllH', $self->geometry->cUnitPairs, 0);
 }
 
 sub _build_cGreenP {

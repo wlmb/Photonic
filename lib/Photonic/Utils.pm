@@ -41,7 +41,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
-    wave_operator apply_longitudinal_projection
+    wave_operator apply_longitudinal_projection make_dyads
     cgtsv lu_decomp lu_solve
 );
 use PDL::LiteF;
@@ -97,15 +97,15 @@ sub tensor {
 }
 
 my @HAYDOCK_PARAMS = qw(
-  nh keepStates smallH reorthogonalize use_mask mask
+  nh keepStates smallH
 );
 sub make_haydock {
-  my ($self, $class, $add_geom, @extra_attributes) = @_;
+  my ($self, $class, $pairs, $add_geom, @extra_attributes) = @_;
   # This must change if G is not symmetric
   [ map $class->new(
       _haydock_extra($self, $_, $add_geom),
       map +($_ => $self->$_), @HAYDOCK_PARAMS, @extra_attributes
-    ), @{$self->geometry->unitPairs}
+    ), $pairs->dog
   ];
 }
 
@@ -371,22 +371,41 @@ sub apply_longitudinal_projection {
     #over the rest
     my $Gpsi_G=$psi_G->dummy(1)*$gnorm; #^G |psi>
     #the result is complex ri:i=cartesian:nx:ny...
-    #Take inverse Fourier transform over all space dimensions,
-    #move cartesian indices, thread, move back
-    my $Gpsi_R=ifftn($Gpsi_G->mv(1,-1), $ndims)->mv(-1,1);
+    my $Gpsi_R=GtoR($Gpsi_G, $ndims, 1);
     # $Gpsi_R is ri:i:nx:ny:...
     # Multiply by the coefficient in Real Space.
     my $eGpsi_R=$coeff->dummy(1)*$Gpsi_R;
     # $eGpsi_R is ri:i:nx:ny...
-    #Transform to reciprocal space
-    #move cartesian indices, thread, move back
-    my $eGpsi_G=fftn($eGpsi_R->mv(1,-1), $ndims)->mv(-1,1);
+    my $eGpsi_G=RtoG($eGpsi_R, $ndims, 1);
     # $eGpsi_G is ri:i:nx:ny:...
     #Scalar product with Gnorm
     ($eGpsi_G*$gnorm) #^Ge^G|psi>
 	# ri:i:nx:ny:...
 	->sumover; #^G.epsilon^G|psi>
     #Result is ^G.epsilon^G|psi>, ri:nx:ny...
+}
+
+sub make_dyads {
+    my ($nd, $unitPairs) = @_;
+    my $ne = $nd*($nd+1)/2; #number of symmetric matrix elements
+    my $matrix = PDL->zeroes($ne, $ne);
+    my $n = 0; #run over vector pairs
+    for my $i (0..$nd-1) {
+        for my $j ($i..$nd-1) {
+            my $m = 0; #run over components of dyads
+            for my $k (0..$nd-1) {
+                for my $l ($k..$nd-1) {
+                    my $factor = $k == $l?1:2;
+                    $matrix->slice("($m),($n)") .= #pdl order!
+                        $factor*$unitPairs->slice("($k),($n)") *
+                        $unitPairs->slice("($l),($n)");
+                    ++$m;
+                }
+            }
+            ++$n;
+        }
+    }
+    return $matrix;
 }
 
 1;
@@ -534,5 +553,12 @@ Given a C<psi_G> state, a C<GNorm>, the number of dimensions, and a
 real-space coefficient, transforms the C<psi_G> field from reciprocal to
 real space, multiplies by the coefficient, transforms back to reciprocal
 space.
+
+=item * make_dyads
+
+Given a number of dimensions, and an array-ref of "unit pair" ndarrays,
+returns a matrix of dyads of unit vector pairs
+B<d>^{ij}_{kl}=B<u>^{i}_{kl}B<u>^{j}_{kl} as 2d matrix, adjusted for
+symmetry.
 
 =back

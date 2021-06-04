@@ -121,7 +121,7 @@ sub _build_epsilonTensor {
 	#Make both complex
 	$_ = $_->isa('PDL::Complex') ? $_ : r2C($_) for $q, $k;
 	$k2=($k*$k)->sumover; #inner
-	$kk=$k->(:,:,*1)*$k->(:,*1,:); #outer
+	$kk=$k->(:,:,*1)*$k->(:,*1); #outer
     } else {
 	$k2=$k->inner($k);
 	$kk=$k->outer($k);

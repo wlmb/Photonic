@@ -85,7 +85,7 @@ my $q=1.2;
 my ($ka,$kb)=map {$q*$_} ((1-$f)*$na, $f*$nb); #Multiply by length also
 my $ma=pdl([cos($ka), -sin($ka)/$na],[$na*sin($ka), cos($ka)])->complex;
 my $mb=pdl([cos($kb), -sin($kb)/$nb],[$nb*sin($kb), cos($kb)])->complex;
-my $mt=($ma->(:,:,*1,:)*$mb->mv(2,1)->(:,:,:,*1))->sumover;
+my $mt=($ma->(:,:,*1)*$mb->mv(2,1)->(:,:,:,*1))->sumover;
 #Solve exact dispersion relation
 my $cospd=($mt->(:,(0),(0))+$mt->(:,(1),(1)))/2;
 my $sinpd=sqrt(1-$cospd**2);
@@ -113,7 +113,7 @@ $q=1.2;
 ($ka,$kb)=map {$q*$_} ((1-$f)*$na, $f*$nb); #Multiply by length also
 $ma=pdl([cos($ka), -sin($ka)/$na],[$na*sin($ka), cos($ka)])->complex;
 $mb=pdl([cos($kb), -sin($kb)/$nb],[$nb*sin($kb), cos($kb)])->complex;
-$mt=($ma->(:,:,*1,:)*$mb->mv(2,1)->(:,:,:,*1))->sumover;
+$mt=($ma->(:,:,*1)*$mb->mv(2,1)->(:,:,:,*1))->sumover;
 #Solve exact dispersion relation
 $cospd=($mt->(:,(0),(0))+$mt->(:,(1),(1)))/2;
 $sinpd=sqrt(1-$cospd**2);

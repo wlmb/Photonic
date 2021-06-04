@@ -37,12 +37,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::FFTW3;
 use PDL::Complex;
 use Carp;
 use Moose;
 use MooseX::StrictConstructor;
-use Photonic::Utils qw(MHProd any_complex);
+use Photonic::Utils qw(MHProd any_complex GtoR RtoG);
 use Photonic::Types;
 
 has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
@@ -62,14 +61,14 @@ sub applyOperator {
     $mask=$self->mask if $self->use_mask;
     my $gpsi=$self->applyMetric($psi);
     # gpsi is RorI xyz nx ny nz. Get cartesian out of the way and
-    # transform to real space. Note FFFTW3 wants real PDL's[2,...]
-    my $gpsi_r=ifftn($gpsi->mv(1,-1), $self->ndims);
+    # transform to real space. Note FFTW3 wants real PDL's[2,...]
+    my $gpsi_r=GtoR($gpsi, $self->ndims, 1)->mv(1,-1);
     #$psi_r is RorI nx ny nz  xyz, B is nx ny nz
     # Multiply by characteristic function
     my $Bgpsi_r=$gpsi_r * $self->B->r2C;
     #Bpsi_r is RorI nx ny nz  xyz
     #Transform to reciprocal space, move xyz back and make complex,
-    my $psi_G=fftn($Bgpsi_r, $self->ndims)->mv(-1,1);
+    my $psi_G=RtoG($Bgpsi_r->mv(-1,1), $self->ndims, 1);
     #Apply mask
     #psi_G is ri:xy:nx:ny mask is nx:ny
     $psi_G=$psi_G*$mask->(*1) if defined $mask; #use dummy for xy
@@ -112,12 +111,12 @@ sub _firstState {
     my $arg=join ',', ("(0)") x $d; #(0),(0),... ndims times
     $v->slice($arg).=1; #delta_{G0}
     my $e=$self->polarization; #RorI xyz
-    croak "Polarization has wrong dimensions. " .
-	  " Should be $d-dimensional complex vector."
+    confess "Polarization has wrong dimensions. " .
+	  " Should be $d-dimensional complex vector, got ($e)."
 	unless any_complex($e) && $e->ndims==2 &&
 	$e->dim(0)==2 && $e->dim(1)==$d;
     my $modulus2=$e->Cabs2->sumover;
-    croak "Polarization should be non null" unless
+    confess "Polarization should be non null" unless
 	$modulus2 > 0;
     $e=$e/sqrt($modulus2);
     $self->_normalizedPolarization($e);
