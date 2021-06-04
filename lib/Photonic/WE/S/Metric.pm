@@ -114,7 +114,7 @@ sub _value {
 	    $k->dim(1)==$self->ndims and $k->ndims==2;
 	my ($kPG, $kMG) = ($k+$G, $k-$G); #ri:xy:nx:ny
 	# (k+G)(k+G) diad
-	my ($kPGkPG, $kMGkMG) = map {$_->(:,:,*1)*$_->(:,*1,:)}
+	my ($kPGkPG, $kMGkMG) = map {$_->(:,:,*1)*$_->(:,*1)}
 	   ($kPG, $kMG); #ri:xy:xy:nx:ny
 	# interior product
 	my ($kPG2,$kMG2) = map {($_*$_)->sumover}  ($kPG, $kMG); #ri:nx:ny;

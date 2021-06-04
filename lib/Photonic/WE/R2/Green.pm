@@ -181,7 +181,7 @@ around 'evaluate' => sub {
 	    #$asy is ri,xy,xy. First index is column
 	    $asy(:,($i), ($j)).=i()*(
 		$greenPc[$m]-
-		($pair->Cconj->(:,*1,:) #ri, column, row
+		($pair->Cconj->(:,*1) #ri, column, row
 		 *$pair->(:,:,*1)
 		 *$sym)->sumover->sumover
 		); #ri

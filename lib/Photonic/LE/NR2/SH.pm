@@ -553,7 +553,7 @@ sub _build_P2LMCalt {
 	)->complex;
     my @Ppsi;
     foreach(0..$ndims-1){
-	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_),:));
+	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_)));
 	# RorI nx ny .... cartesian
 	$states=$nr->state_iterator;
 	my $psi_G=linearCombineIt($psi_n, $states);

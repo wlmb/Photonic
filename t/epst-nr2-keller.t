@@ -53,8 +53,8 @@ my $etvb=$eko->evaluate($eb, $ea);
 my $R=pdl([0,1],[-1,0]);
 my $mt=(($R(*1)*$etvb(:,:,:,*1))->mv(2,1))->sumover;
 my $Rt=$R->transpose;
-my $etvbR=(($mt(:,*1,:,:)*$Rt(,,*1))->mv(2,1))->sumover;
-my $etvab=($etva->(:,*1,:,:)*$etvbR->(:,:,:,*1))->mv(2,1)->sumover;
+my $etvbR=(($mt(:,*1)*$Rt(,,*1))->mv(2,1))->sumover;
+my $etvab=($etva->(:,*1)*$etvbR->(:,:,:,*1))->mv(2,1)->sumover;
 ok(Cagree($etvab,$ea*$eb*identity(2)),"Keller verified") or diag "got:$etvab\nexpected:", $ea*$eb*identity(2);
 
 done_testing;
