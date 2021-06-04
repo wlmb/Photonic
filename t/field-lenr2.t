@@ -326,6 +326,26 @@ my $chi=Photonic::LE::NR2::SHChiTensor->new(
   densityA=>$dA, densityB=>$dB, nhf=>10, nh=>10,
   keepStates=>1,
 );
+$got = Photonic::LE::NR2::SH->new(
+  shp=>$chi->nrshp->[0], epsA1=>$ea, epsB1=>$eb,
+  epsA2=>$ea*$ea, epsB2=>$eb*$eb, filterflag=>0
+)->P2;
+$expected = pdl(<<'EOF')->complex;
+[
+ [ [0.0070072648 0.0097445079] ]
+ [ [-0.0019177555  -0.002666887] ]
+ [ [-2.7383241e-17  8.8425853e-18] ]
+ [ [0.0019177555  0.002666887] ]
+ [ [-0.0070072648 -0.0097445079] ]
+ [ [ 0.014991596 -0.011757369] ]
+ [ [-0.0083074514  0.0065152354] ]
+ [ [ 0.0067611307 -0.0053025117] ]
+ [ [-0.0067611307  0.0053025117] ]
+ [ [ 0.0083074514 -0.0065152354] ]
+ [ [-0.014991596  0.011757369] ]
+]
+EOF
+ok(Cagree($got, $expected, 1e-18), "SHChiTensor SHPs P2") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate($ea, $eb, $ea*$ea, $eb*$eb);
 $expected = pdl(<<'EOF')->complex;
 [ [ [ [ 2.06087e-17 3.64698e-17 ] ] ] ]
