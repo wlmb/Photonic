@@ -221,8 +221,6 @@ sub evaluate {
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
     #result is RorI, cartesian, nx, ny,...
     $self->_field($field_R);
-    #my $EM=$field_R->mv(0,-1)->mv(0,-1)->clump(-3)->mv(-2,0)->sumover->mv(-1,1)/$self->nr->B->nelem;
-    #print "EM=$EM\n";
     return $field_R;
 }
 

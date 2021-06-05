@@ -541,9 +541,7 @@ sub _build_P2LMCalt {
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
 
     my $beta_G=RtoG($B*GtoR($nr->firstState,$ndims,0), $ndims,0);
-    #my $beta_G=RtoG(GtoR($nr->firstState,$ndims,0), $ndims,0);
     my $betaV_G=$beta_G->(,*1)*$geom->GNorm;
-    #my $betaV_G=$beta_G->(,*1)*$k;
     $states=$nr->state_iterator;
     my $betaV_n=PDL->pdl(
 	[map {HProd($betaV_G,$states->nextval->(,*1), 1)} (0..$nh-1)]

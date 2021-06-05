@@ -154,8 +154,6 @@ has '_justorthogonalized'=>(
 
 sub _build_next_W {
     my $self=shift;
-#    my $g_np1=$self->next_g;
-#    return r2C($g_np1)->(:,*1);
     my $g_n=$self->current_g;
     return r2C($g_n)->(:,*1);
 }
