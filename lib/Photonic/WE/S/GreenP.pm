@@ -145,8 +145,8 @@ sub _build_Gpp {
     my $self=shift;
     $self->haydock->run unless $self->haydock->iteration;
     my $epsR=$self->haydock->epsilonR;
-    my $as=pdl(map r2C($_), @{$self->haydock->as})->cplx;
-    my $bcs=pdl(map r2C($_), @{$self->haydock->bcs})->cplx;
+    my $as=pdl($self->haydock->as)->cplx;
+    my $bcs=pdl($self->haydock->bcs)->cplx;
     my $min= min($self->nh, $self->haydock->iteration);
     #    b0+a1/b1+a2/...
     #	lo debo convertir a

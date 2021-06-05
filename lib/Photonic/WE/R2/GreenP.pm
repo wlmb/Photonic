@@ -160,8 +160,8 @@ sub evaluate {
     $self->_epsA(my $epsA=$self->haydock->epsilon->r2C);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $as=pdl(map r2C($_), @{$self->haydock->as})->cplx;
-    my $bcs=pdl(map r2C($_), @{$self->haydock->bcs})->cplx;
+    my $as=r2C(pdl $self->haydock->as);
+    my $bcs=r2C(pdl $self->haydock->bcs);
     my $min= min($self->nh, $self->haydock->iteration);
     #    b0+a1/b1+a2/...
     #   lo debo convertir a

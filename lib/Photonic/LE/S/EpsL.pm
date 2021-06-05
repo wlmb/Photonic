@@ -130,8 +130,8 @@ with 'Photonic::Roles::EpsL';
 
 after BUILD => sub {
     my $self=shift;
-    my $as=pdl(map r2C($_), @{$self->nr->as})->cplx;
-    my $b2s=pdl(map r2C($_), @{$self->nr->b2s})->cplx;
+    my $as=pdl($self->nr->as)->cplx;
+    my $b2s=pdl($self->nr->b2s)->cplx;
     my $min= min($self->nh, $self->nr->iteration);
     my ($fn, $n)=lentzCF($as, -$b2s, $min, $self->smallE);
     # Check this logic:
