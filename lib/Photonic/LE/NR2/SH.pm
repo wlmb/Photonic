@@ -546,16 +546,13 @@ sub _build_P2LMCalt {
     my $betaV_n=PDL->pdl(
 	[map {HProd($betaV_G,$states->nextval->(,*1), 1)} (0..$nh-1)]
 	)->complex;
-    my @Ppsi;
+    my $Ppsi = PDL->zeroes($ndims)->r2C;
     foreach(0..$ndims-1){
-	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_)));
-	# RorI nx ny .... cartesian
+	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(:,($_))); # RorI nx ny .... cartesian
 	$states=$nr->state_iterator;
 	my $psi_G=linearCombineIt($psi_n, $states);
-	my $Ppsi=HProd($psi_G, $PexL_G);
-	push @Ppsi, $Ppsi;
+	$Ppsi->(:,($_)) .= HProd($psi_G, $PexL_G);
     }
-    my $Ppsi=PDL->pdl(@Ppsi)->complex;
     my $P2M=$Pphi+$Ppsi+$PexM*$nelem; # Unnormalize Pex !!
     return $P2M->(,,*1,*1);
 }
