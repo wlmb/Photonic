@@ -130,7 +130,7 @@ $etv=$et->epsilonTensor->(:,(1),(1));
 ok(Cagree($epstm, $etv, 1e-4), "Epsilon agrees with transfer matrix. Complex case.");
 
 my $h=Photonic::WE::S::AllH->new(nh=>1000, metric=>$m,
-   polarization=>pdl([0,r2C(1)])->complex, reorthogonalize=>1);
+   polarization=>r2C(pdl [0,1]), reorthogonalize=>1);
 $et=Photonic::WE::S::EpsilonP->new(nh=>1000, haydock=>$h);
 $etv=$et->epsilon;
 ok(Cagree($epstm, $etv, 1e-4), "Projected eps agrees with trans mat. Complex case.");

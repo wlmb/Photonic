@@ -58,7 +58,7 @@ my $fla=1/$ea;
 my $flb=1/$eb;
 my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
 ($fla, $flb)=map {$_/$fproml} ($fla, $flb);
-my $flx=pdl([$fla*(1-$B)+$flb*$B])->complex->mv(1,-1);
+my $flx=($fla*(1-$B)+$flb*$B)->dummy(1);
 ok(Cagree($flv, $flx), "1D long field");
 
 #View 2D from 1D superlattice. Long wavelength transverse case
@@ -72,5 +72,5 @@ my $nt=Photonic::WE::S::AllH->new(
    epsilon=>$epsilont);
 my $fto=Photonic::WE::S::Field->new(nr=>$nt, nh=>10);
 my $ftv=$fto->evaluate();
-my $ftx=pdl(r2C(1), r2C(0))->complex;
+my $ftx=r2C(pdl [1, 0]);
 ok(Cagree($ftv, $ftx), "1D trans field");
