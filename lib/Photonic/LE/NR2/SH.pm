@@ -451,12 +451,9 @@ sub _build_externalL_n {
     my $stateit=$self->HP->state_iterator;
     my $nh=$self->HP->iteration;
     # innecesario: \propto \delta_{n0}
-    #my @Pn=map HProd($states->[$_],$pol), 0..$nh-1;
-    my @Pn=map {r2C(0)} 0..$nh-1;
-    #$Pn[0]=$pol->(:,(0),(0));
-    $Pn[0]=HProd($stateit->nextval,$pol);
-    #print join " Pn ", @Pn[0..3], "\n";
-    return PDL->pdl([@Pn])->complex;
+    my $Pn=r2C(PDL->zeroes($nh));
+    $Pn->(:,(0)).=HProd($stateit->nextval,$pol);
+    $Pn;
 }
 
 sub _build_selfConsistentL_n {
