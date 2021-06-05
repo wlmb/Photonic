@@ -184,15 +184,15 @@ sub ring {
 
 sub eps{
     my $epsi=shift;
-    my @eps=();
     die "This example is prepared only for epsB=au (gold)" unless $epsi eq "au";
+    my (@h_nu, @re, @im);
     while(<main::DATA>){
-	(my $h_nu,my $eps_re,my $eps_im) = split;
-	my $linea=pdl($h_nu,$eps_re,$eps_im);
-	push @eps, $linea;
+	my ($h_nu, $eps_re, $eps_im) = split;
+        push @h_nu, $h_nu;
+        push @re, $eps_re;
+        push @im, $eps_im;
     }
-    my $eps=pdl(@eps)->mv(-1,0)->(,1)+i*pdl(@eps)->mv(-1,0)->(,2);
-    return (pdl(@eps)->mv(-1,0)->(,0), $eps);
+    (pdl(\@h_nu), pdl(\@re) + pdl(\@im) * i);
 }
 
 __END__

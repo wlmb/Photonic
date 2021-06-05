@@ -52,7 +52,7 @@ my $small=1e-05;
 my $epsA=r2C(1.0);
 my $epsBreal=-2;
 my $titulo=$epsBreal;
-my $epsB=r2C($epsBreal)+i*0.01;
+my $epsB=r2C($epsBreal)+0.01*i;
 
 my $pdir=pdl([0,1]);
 my $l=10;
