@@ -36,7 +36,7 @@ use Photonic::Geometry::FromEpsilon;
 use Photonic::WE::S::Metric;
 use Photonic::WE::S::AllH;
 
-use Test::More tests => 16;
+use Test::More;
 use lib 't/lib';
 use TestUtils;
 
@@ -55,16 +55,13 @@ my $m=Photonic::WE::S::Metric->new(
 my $a=Photonic::WE::S::AllH->new(metric=>$m,
    polarization=>pdl([1])->r2C, nh=>10);
 $a->run;
-my $as=$a->as;
-my $bs=$a->bs;
-my $b2s=$a->b2s;
+my $as=pdl($a->as)->cplx;
+my $bs=pdl($a->bs)->cplx;
+my $b2s=pdl($a->b2s)->cplx;
 is($a->iteration, 2, "Number of iterations 1D longitudinal x");
-ok(Cagree(($b2s->[0]), 1), "1D L b_0^2");
-ok(Cagree(($b2s->[1]), ($eb-$ea)**2*$f*(1-$f)), "1D L b_1^2");
-ok(Cagree(($as->[0]), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
-ok(Cagree(($as->[1]), (1-$ea)*$f+(1-$eb)*(1-$f)), "1D L a_1");
-ok(Cagree(pdl($b2s)->mv(-1,1)->complex, pdl($bs)->mv(-1,1)->complex**2),
-	"1D L b2==b^2");
+ok(Cagree($b2s, pdl([1, ($eb-$ea)**2*$f*(1-$f)])->cplx), "1D L b^2");
+ok(Cagree($as, pdl([(1-$ea)*(1-$f)+(1-$eb)*$f, (1-$ea)*$f+(1-$eb)*(1-$f)])->cplx, "1D L a"));
+ok(Cagree($b2s, $bs**2), "1D L b2==b^2");
 
 #Check haydock coefficients for simple 1D system other longitudinal y
 my $eps1l=r2C($ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5));
@@ -77,12 +74,11 @@ my $m1l=Photonic::WE::S::Metric->new(
 my $a1l=Photonic::WE::S::AllH->new(metric=>$m1l,
    polarization=>pdl([0,1])->r2C, nh=>10, smallH=>1e-4);
 $a1l->run;
-my $as1l=$a1l->as;
-my $bs1l=$a1l->bs;
-my $b2s1l=$a1l->b2s;
+my $as1l=pdl($a1l->as)->cplx;
+my $b2s1l=pdl($a1l->b2s)->cplx;
 is($a1l->iteration, 1, "Number of iterations 1D long y");
-ok(Cagree(($b2s1l->[0]), 1), "1D L b_0^2");
-ok(Cagree(($as1l->[0]), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
+ok(Cagree(($b2s1l->slice(",(0)")), 1), "1D L b_0^2");
+ok(Cagree($as1l->slice(",(0)"), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
 
 #Check haydock coefficients for simple 1D system transverse prop x pol y
 my $epst=r2C($ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11,1)->xvals>=5));
@@ -95,12 +91,12 @@ my $mt=Photonic::WE::S::Metric->new(
 my $at=Photonic::WE::S::AllH->new(metric=>$mt,
    polarization=>pdl([0,1])->r2C, nh=>10, smallH=>1e-4);
 $at->run;
-my $ast=$at->as;
-my $bst=$at->bs;
-my $b2st=$at->b2s;
+my $ast=pdl($at->as)->cplx;
+my $bst=pdl($at->bs)->cplx;
+my $b2st=pdl($at->b2s)->cplx;
 is($at->iteration, 1, "Number of iterations 1D trans");
-ok(Cagree(($b2st->[0]), 1), "1D L b_0^2");
-ok(Cagree(($ast->[0]), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
+ok(Cagree($b2st->slice(",(0)"), 1), "1D L b_0^2");
+ok(Cagree($ast->slice(",(0)"), (1-$ea)*(1-$f)+(1-$eb)*$f), "1D L a_0");
 
 #check reorthogonalize with square array
 my $Bs=zeroes(9,9)->rvals<4;
@@ -178,6 +174,8 @@ diag("Actual iterations: " . $als->iteration
 	 . " Actual orthogonalizations: ", $ale->orthogonalizations);
 }
 
+done_testing;
+
 __END__
 
 #check reorthogonalize again with square array
@@ -200,4 +198,3 @@ diag("Actual iterations: " . $al1s->iteration
 #    my $pr=$als->innerProduct($_, $st->[0]);
 #    print "$pr\n";
 #}
-

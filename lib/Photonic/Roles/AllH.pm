@@ -152,9 +152,6 @@ use Moose::Role;
 
 has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
-# Moved to Role below
-#has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepStates',
-#         documentation=>'flag to keep Haydock states');
 has _states=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]',
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
@@ -241,16 +238,16 @@ sub _build_stateFD {
 
 before '_iterate_indeed' => sub {
     my $self=shift;
-    $self->_save_b;
-    $self->_save_b2;
-    $self->_save_bc;
-    $self->_save_c;
+    $self->_save_val('b', 'next');
+    $self->_save_val('b2', 'next');
+    $self->_save_val('bc', 'next');
+    $self->_save_val('c', 'next');
     $self->_save_g;
     $self->_save_state;
 };
 after '_iterate_indeed' => sub {
     my $self=shift;
-    $self->_save_a;
+    $self->_save_val('a', 'current');
     $self->_checkorthogonalize;
 };
 
@@ -294,29 +291,23 @@ sub storeall {
     }
 }
 
-sub _save_a {
-    my $self=shift;
-    push @{$self->as}, $self->current_a;
+sub _save_val {
+    my ($self, $valname, $method) = @_;
+    my $valnames = $valname.'s';
+    my $writer = "_$valnames";
+    my $value = "${method}_$valname";
+    push @{$self->$valnames}, $self->$value;
 }
 
-sub _save_b {
-    my $self=shift;
-    push @{$self->bs}, $self->next_b;
-}
-
-sub _save_b2 {
-    my $self=shift;
-    push @{$self->b2s}, $self->next_b2;
-}
-
-sub _save_bc {
-    my $self=shift;
-    push @{$self->bcs}, $self->next_bc;
-}
-
-sub _save_c {
-    my $self=shift;
-    push @{$self->cs}, $self->next_c;
+sub _pop_val {
+    my ($self, $valname, $pop_dest, $last_dest) = @_;
+    my $valnames = $valname.'s';
+    my $writer = "_$valnames";
+    my $store = "_${pop_dest}_$valname";
+    $self->$store(pop @{$self->$valnames});
+    return if !$last_dest;
+    my $last = "_${last_dest}_$valname";
+    $self->$last($self->$valnames->[-1]);
 }
 
 sub _save_g {
@@ -363,14 +354,11 @@ sub _pop { # undo the changes done after, in and before iteration, for
 	   # reorthogonalization, in reverse order
     my $self=shift;
     $self->_pop_state;
-    $self->_current_a(pop @{$self->as});
-    $self->_next_b2(pop @{$self->b2s});
-    $self->_current_b2($self->b2s->[-1]);
-    $self->_next_b(pop @{$self->bs});
-    $self->_current_b($self->bs->[-1]);
-    $self->_next_c(pop @{$self->cs});
-    $self->_current_c($self->cs->[-1]);
-    $self->_next_bc(pop @{$self->bcs});
+    $self->_pop_val('a', 'current');
+    $self->_pop_val('b2', 'next', 'current');
+    $self->_pop_val('b', 'next', 'current');
+    $self->_pop_val('c', 'next', 'current');
+    $self->_pop_val('bc', 'next');
     $self->_next_g(pop @{$self->gs});
     $self->_current_g($self->gs->[-1]);
     $self->_previous_g($self->gs->[-2]);
