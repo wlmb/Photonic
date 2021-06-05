@@ -51,9 +51,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Roles consumed by AllH objects to be used in a Photonic
-calculation. Estimates orthogonlization errors and makes a full
-reorthogoalization of Haydock states when required. This version works
-for Hermitian operators with real Hayock coefficients.
+calculation. Estimates orthogonalization errors and makes a full
+reorthogonalization of Haydock states when required. This version works
+for Hermitian operators with real Haydock coefficients.
 
 =head1 ATTRIBUTES
 
