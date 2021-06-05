@@ -44,9 +44,9 @@ my $B=zeroes(11)->xvals<5; #1D system
 my $g=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
 my $a=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10);
 $a->run;
-my $as=pdl $a->as;
-my $bs=pdl $a->bs;
-my $b2s=pdl $a->b2s;
+my $as=$a->as;
+my $bs=$a->bs;
+my $b2s=$a->b2s;
 ok(agree(pdl($a->iteration), 2), "Number of iterations 1D longitudinal");
 ok(agree($b2s, pdl([1, $g->f*(1-$g->f)])), "1D L b^2");
 ok(agree($as, pdl([$g->f, 1-$g->f])), "1D L a");
@@ -57,12 +57,12 @@ my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
 my $at=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10);
 $at->run;
-my $ast=pdl($a->as)->cplx;
-my $bst=pdl $a->bs;
-my $b2st=pdl $a->b2s;
+my $ast=$a->as;
+my $bst=$a->bs;
+my $b2st=$a->b2s;
 ok(agree(pdl($at->iteration), 1), "Number of iterations 1D trans");
 ok(agree($b2st->slice("(0)"), 1), "1D T b_0^2");
-ok(agree($ast->slice(",(0)")->re, $g->f), "1D T a_0");
+ok(agree($ast->slice("(0)"), $g->f), "1D T a_0");
 ok(agree($b2st, $bst**2), "1D T b2==b^2");
 
 {

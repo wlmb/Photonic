@@ -149,8 +149,8 @@ sub evaluate {
     $self->_epsA(my $epsA=shift);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $as=r2C(pdl $self->nr->as);
-    my $b2s=r2C(pdl $self->nr->b2s);
+    my $as=r2C($self->nr->as);
+    my $b2s=r2C($self->nr->b2s);
     my $min= min($self->nh, $self->nr->iteration);
     my ($fn, $n)=lentzCF($u-$as, -$b2s, $min, $self->smallE);
     # Check this logic:

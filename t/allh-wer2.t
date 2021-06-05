@@ -50,9 +50,9 @@ my $m=Photonic::WE::R2::Metric->new(geometry=>$g, epsilon=>pdl(1),
 my $a=Photonic::WE::R2::AllH->new(metric=>$m,
    polarization=>pdl([1])->r2C, nh=>10);
 $a->run;
-my $as=pdl $a->as;
-my $bs=pdl $a->bs;
-my $b2s=pdl $a->b2s;
+my $as=$a->as;
+my $bs=$a->bs;
+my $b2s=$a->b2s;
 ok(agree(pdl($a->iteration), 2), "Number of iterations 1D longitudinal");
 ok(agree($b2s, pdl([1, $g->f*(1-$g->f)])), "1D L b^2");
 ok(agree($as, pdl([$g->f, 1-$g->f])), "1D L a");

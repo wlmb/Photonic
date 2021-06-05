@@ -190,9 +190,9 @@ sub evaluate {
     # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=D^L.
     # At first take D=|0>
-    my $diag=$u - PDL->pdl($as)->(0:$nh-1);
+    my $diag=$u - $as->(0:$nh-1);
     # rotate complex zero from first to last element.
-    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->rotate(-1)->r2C;
+    my $subdiag=-$bs->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag;
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;

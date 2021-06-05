@@ -182,9 +182,9 @@ sub _checkorthogonalize {
     return unless $self->reorthogonalize;
     return if $self->fullorthogonalize_N; #already orthogonalizing
     my $n=$self->iteration;
-    my $a=PDL->pdl($self->as);
-    my $b=PDL->pdl($self->bs);
-    my $c=PDL->pdl($self->cs);
+    my $a=$self->as;
+    my $b=$self->bs;
+    my $c=$self->cs;
     if($self->_justorthogonalized){
 	$self->_write_justorthogonalized(0);
 	my $current_W=PDL->ones($n)*$self->noise;

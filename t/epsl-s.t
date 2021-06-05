@@ -87,8 +87,8 @@ ok(Cagree($ecv, $ecx, 1e-4), "Chess board");
 #diag($ecx);
 #diag($ac->iteration);
 #diag($ac->orthogonalizations);
-#diag(pdl($ac->as)->complex);
-#diag(pdl($ac->bs)->complex);
+#diag($ac->as);
+#diag($ac->bs);
 is($eco->converged,1, "Converged");
 
 #Test mortola. By Guille.

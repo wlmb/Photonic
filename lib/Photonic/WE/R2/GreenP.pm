@@ -160,8 +160,8 @@ sub evaluate {
     $self->_epsA(my $epsA=$self->haydock->epsilon->r2C);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $as=r2C(pdl $self->haydock->as);
-    my $bcs=r2C(pdl $self->haydock->bcs);
+    my $as=r2C($self->haydock->as);
+    my $bcs=r2C($self->haydock->bcs);
     my $min= min($self->nh, $self->haydock->iteration);
     #    b0+a1/b1+a2/...
     #   lo debo convertir a
@@ -172,7 +172,7 @@ sub evaluate {
     #of them were used, there is no remaining work to do, so, converged
     $self->_converged($n<$min || $self->haydock->iteration<=$self->nh);
     $self->_nhActual($n);
-    my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->[0];
+    my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->slice("(0)");
     $self->_Gpp($u*$g0b02/($epsA*$fn));
     return $self->Gpp;
 }

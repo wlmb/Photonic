@@ -50,9 +50,9 @@ my $g=Photonic::Geometry::FromEpsilon
     ->new(epsilon=>$eps, Direction0=>pdl([1]));
 my $a=Photonic::LE::S::AllH->new(geometry=>$g, nh=>10);
 $a->run;
-my $as=pdl($a->as)->cplx;
-my $bs=pdl($a->bs)->cplx;
-my $b2s=pdl($a->b2s)->cplx;
+my $as=$a->as;
+my $bs=$a->bs;
+my $b2s=$a->b2s;
 is($a->iteration, 2, "Number of iterations 1D longitudinal");
 ok(Cagree($b2s->slice(",(0)"), r2C(1)), "1D L b_0^2");
 ok(Cagree($as, pdl([$ea*(1-$f)+$eb*$f, $ea*$f+$eb*(1-$f)])->cplx, "1D L a"));
@@ -65,9 +65,9 @@ my $gt=Photonic::Geometry::FromEpsilon
    ->new(epsilon=>$epst, Direction0=>pdl([1,0])); #trans
 my $at=Photonic::LE::S::AllH->new(geometry=>$gt, nh=>10);
 $at->run;
-my $ast=pdl($a->as)->cplx;
-my $bst=pdl($a->bs)->cplx;
-my $b2st=pdl($a->b2s)->cplx;
+my $ast=$a->as;
+my $bst=$a->bs;
+my $b2st=$a->b2s;
 is($at->iteration, 1, "Number of iterations 1D trans");
 ok(Cagree($b2st->slice(",(0)"), 1), "1D T b_0^2");
 ok(Cagree($ast->slice(",(0)"), $ea*(1-$f)+$eb*$f), "1D T a_0");

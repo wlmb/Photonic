@@ -178,10 +178,10 @@ sub evaluate {
     #don't go beyond available values.
     $nh=$self->nr->iteration if $nh>$self->nr->iteration;
     # calculate using lapack for tridiag system
-    my $diag=$u - PDL->pdl($as)->(0:$nh-1);
+    my $diag=$u - $as->(0:$nh-1);
     # rotate complex zero from first to last element.
-    my $subdiag=-PDL->pdl($bs)->(0:$nh-1)->rotate(-1)->r2C;
-    my $supradiag=-PDL->pdl($cs)->(0:$nh-1)->rotate(-1)->r2C;
+    my $subdiag=-$bs->(0:$nh-1)->rotate(-1)->r2C;
+    my $supradiag=-$cs->(0:$nh-1)->rotate(-1)->r2C;
     my $rhs=PDL->zeroes($nh); #build a nh pdl
     $rhs->slice((0)).=1;
     $rhs=$rhs->r2C;

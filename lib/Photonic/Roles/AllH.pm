@@ -118,15 +118,15 @@ Array of Haydock states
 
 =item * as
 
-Array of Haydock a coefficients
+ndarray of Haydock a coefficients
 
 =item * bs
 
-Array of Haydock b coefficients.
+ndarray of Haydock b coefficients.
 
 =item * b2s
 
-Array of Haydock b coefficients squared
+ndarray of Haydock b coefficients squared
 
 =item * All the Photonic::...::OneH methods
 
@@ -155,17 +155,21 @@ has nh=>(is=>'ro', required=>1,
 has _states=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]',
          default=>sub{[]}, init_arg=>undef,
          documentation=>'Saved states');
-# why not pdl?
-has as=>(is=>'ro', default=>sub{[]}, init_arg=>undef, writer=>'_as',
+has as=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef, writer=>'_as',
+         isa=>'PDL',
          documentation=>'Saved a coefficients');
-has bs=>(is=>'ro', default=>sub{[]}, init_arg=>undef,  writer=>'_bs',
+has bs=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef,  writer=>'_bs',
+         isa=>'PDL',
          documentation=>'Saved b coefficients');
-has b2s=>(is=>'ro', default=>sub{[]}, init_arg=>undef,  writer=>'_b2s',
+has b2s=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef,  writer=>'_b2s',
+         isa=>'PDL',
          documentation=>'Saved b^2 coefficients');
-has cs=>(is=>'ro', default=>sub{[]},
+has cs=>(is=>'ro', default=>sub{PDL->null},
+         isa=>'PDL',
 	 init_arg=>undef,  writer=>'_cs',
          documentation=>'Saved c coefficients');
-has bcs=>(is=>'ro', default=>sub{[]},
+has bcs=>(is=>'ro', default=>sub{PDL->null},
+         isa=>'PDL',
 	  init_arg=>undef, writer=>'_bcs',
          documentation=>'Saved b*c coefficients');
 has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]},
@@ -296,18 +300,36 @@ sub _save_val {
     my $valnames = $valname.'s';
     my $writer = "_$valnames";
     my $value = "${method}_$valname";
-    push @{$self->$valnames}, $self->$value;
+    my $pdl = $self->$valnames;
+    my $the_value = $self->$value;
+    $the_value = pdl($the_value) if !UNIVERSAL::isa($the_value, 'PDL');
+    return $self->$writer($the_value->dummy(-1)) if $pdl->isnull;
+    $self->$writer($pdl->glue($pdl->getndims-1, $the_value));
 }
 
 sub _pop_val {
     my ($self, $valname, $pop_dest, $last_dest) = @_;
     my $valnames = $valname.'s';
     my $writer = "_$valnames";
+    my $pdl = $self->$valnames;
+    confess "popped empty" if $pdl->isnull;
+    my @dims = $pdl->dims;
+    my $slice_arg = join ',', (map ':', 0..$#dims-1), -1;
+    my $lastval = $pdl->slice($slice_arg)->copy;
     my $store = "_${pop_dest}_$valname";
-    $self->$store(pop @{$self->$valnames});
+    $self->$store($lastval);
+    $dims[-1]--; # shrink
+    my $copy;
+    if ($dims[-1]) {
+	($copy = $pdl->copy)->setdims(\@dims);
+    } else {
+	# now empty
+	$copy = PDL->null;
+    }
+    $self->$writer($copy);
     return if !$last_dest;
     my $last = "_${last_dest}_$valname";
-    $self->$last($self->$valnames->[-1]);
+    $self->$last($copy->slice($slice_arg)->copy);
 }
 
 sub _save_g {
