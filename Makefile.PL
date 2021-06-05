@@ -24,7 +24,7 @@ WriteMakefile(
 	'Moose::Role'                    => '0',
 	'Moose::Util::TypeConstraints'   => '0',
 	'MooseX::StrictConstructor'      => '0',
-	'PDL'                            => '2.045', # PDL::Complex can be assigned real values
+	'PDL'                            => '2.049', # PDL::Complex->from_native
 	'PDL::Complex'                   => '2.009',
 	'PDL::Constants'                 => '0',
 	'PDL::Core'                      => '0',
