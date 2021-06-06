@@ -319,13 +319,8 @@ sub _pop_val {
     my $store = "_${pop_dest}_$valname";
     $self->$store($lastval);
     $dims[-1]--; # shrink
-    my $copy;
-    if ($dims[-1]) {
-	($copy = $pdl->copy)->setdims(\@dims);
-    } else {
-	# now empty
-	$copy = PDL->null;
-    }
+    my $copy = PDL->null;
+    ($copy = $pdl->copy)->setdims(\@dims) if $dims[-1];
     $self->$writer($copy);
     return if !$last_dest;
     my $last = "_${last_dest}_$valname";
