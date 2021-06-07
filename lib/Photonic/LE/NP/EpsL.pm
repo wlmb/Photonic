@@ -141,8 +141,8 @@ has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
 sub BUILD {
     my $self=shift;
     $self->nr->run unless $self->nr->iteration;
-    my $as=pdl(map r2C($_), @{$self->nr->as})->cplx;
-    my $b2s=pdl(map r2C($_), @{$self->nr->b2s})->cplx;
+    my $as=$self->nr->as;
+    my $b2s=$self->nr->b2s;
     my $min= min($self->nh, $self->nr->iteration);
 #    b0+a1/b1+a2/...
 #	lo debo convertir a

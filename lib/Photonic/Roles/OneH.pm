@@ -136,7 +136,6 @@ next_b2, next_state, shifting the current values where necessary. Returns
 use Moose::Role;
 
 use PDL::Lite;
-use PDL::Complex;
 use Photonic::Types;
 use Moose::Util::TypeConstraints;
 
@@ -179,7 +178,7 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
 
 sub _cero {
     my $self=shift;
-    return r2C(0) if $self->complexCoeffs;
+    return PDL::r2C(0) if $self->complexCoeffs;
     return 0;
 }
 

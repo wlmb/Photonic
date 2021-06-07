@@ -164,7 +164,6 @@ Spectral variables
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use PDL::Complex;
 use PDL::MatrixOps;
 use PDL::IO::Storable;
 use Photonic::Utils qw(make_haydock tensor);
@@ -258,13 +257,12 @@ sub evaluate {
 	my $nrsh=Photonic::LE::NR2::SH->new(
 	    shp=>$_, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
 	    epsB2=>$epsB2, filterflag=>0);
-	# RorI, XorY,nx,ny
+	# XorY,nx,ny
 	# dipolar, quadrupolar, external, full
 	my $P2 = $nrsh->$method;
-	my $P2M=$P2->mv(0,-1)->mv(0,-1)
-	    ->clump(-3) #linear index, RorI, XorY
-	    ->mv(-2,0) #RorI, index, XorY
-	    ->sumover  #RorI, XorY
+	my $P2M=$P2->mv(0,-1)
+	    ->clump(-2) #linear index, XorY
+	    ->sumover  #XorY
 	    /$self->geometry->npoints;
 	my $k=$_->nrf->nr->geometry->Direction0;
 	my $FPChi=$epsT-identity($nd); #four pi chi linear 2w
@@ -277,10 +275,9 @@ sub evaluate {
 	    $f=$mask->sum/$self->geometry->npoints; #filling fraction
 				#of mask
 	    $P2*=$mask->(*1); #masked polarization
-	    $P2Mmask=$P2->mv(0,-1)->mv(0,-1) #masked macroscopic polarization
-	    ->clump(-3) #linear index, RorI, XorY
-	    ->mv(-2,0) #RorI, index, XorY
-	    ->sumover  #RorI, XorY
+	    $P2Mmask=$P2->mv(0,-1) #masked macroscopic polarization
+	    ->clump(-2) #linear index, XorY
+	    ->sumover  #XorY
 		/$self->geometry->npoints;
 	}
 	$P2Mmask += $f*$Dep2 if $KIND2SUBTRACT{$kind}; # subtract masked macro depolarization field
@@ -290,10 +287,10 @@ sub evaluate {
     #I have to convert from the array of polarizations for given
     #directions to the actual cartesian chi's.
     #$P2Mp has cartesian, dyad indices
-    my $P2Mp = PDL->pdl(@P2M)->complex;
+    my $P2Mp = PDL->pdl(@P2M);
     #Get cartesian indices out of the way, solve the system of
     #equations, and move the cartesian indices back
-    my $chiTensor=tensor($P2Mp->mv(1,-1), $self->geometry->unitDyadsLU, $nd, 3, sub { $_[0]->mv(-1,1) });
+    my $chiTensor=tensor($P2Mp->mv(0,-1), $self->geometry->unitDyadsLU, $nd, 3, sub { $_[0]->mv(-1,0) });
     $self->_chiTensor($chiTensor);
     return $chiTensor;
 }

@@ -32,7 +32,6 @@ use strict;
 use warnings;
 use PDL;
 use PDL::NiceSlice;
-use PDL::Complex;
 use Photonic::Geometry::FromEpsilon;
 use Photonic::LE::S::AllH;
 use Photonic::LE::S::EpsL;
@@ -87,8 +86,8 @@ ok(Cagree($ecv, $ecx, 1e-4), "Chess board");
 #diag($ecx);
 #diag($ac->iteration);
 #diag($ac->orthogonalizations);
-#diag(pdl($ac->as)->complex);
-#diag(pdl($ac->bs)->complex);
+#diag($ac->as);
+#diag($ac->bs);
 is($eco->converged,1, "Converged");
 
 #Test mortola. By Guille.
@@ -130,13 +129,12 @@ done_testing;
 
 sub checkerboard {
     my ($N, $N1, $eA, $eB, $eC, $eD) = @_;
-    $eB=($eB*ones($N,$N))->mv(0,-1);
-    my $z=$eB->glue(1,($eA*ones($N,$N1))->mv(0,-1));
-    $eC=($eC*ones($N1,$N))->mv(0,-1);
-    $z=$z->glue(0,($eC->glue(1,($eD*ones($N1,$N1))->mv(0,-1))));
-    $z=$z->mv(-1,0);
-    $z(,,$N).=($z(,,$N1)+$z(,,$N-1))/2;
-    $z(,$N,).=($z(,$N1,)+$z(,$N-1,))/2;
+    $eB=($eB*ones($N,$N));
+    my $z=$eB->glue(1,($eA*ones($N,$N1)));
+    $eC=($eC*ones($N1,$N));
+    $z=$z->glue(0,($eC->glue(1,($eD*ones($N1,$N1)))));
+    $z(,$N).=($z(,$N1)+$z(,$N-1))/2;
+    $z($N,).=($z($N1,)+$z($N-1,))/2;
     return $z;
 }
 
