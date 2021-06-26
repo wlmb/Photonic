@@ -1,5 +1,5 @@
 package Photonic::LE::S::OneH;
-$Photonic::LE::S::OneH::VERSION = '0.016';
+$Photonic::LE::S::OneH::VERSION = '0.017';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::S::OneH
 
 =head1 VERSION
 
-version 0.016
+version 0.017
 
 =head1 COPYRIGHT NOTICE
 
