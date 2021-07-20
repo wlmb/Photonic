@@ -209,7 +209,7 @@ sub evaluate {
 	       *$self->nr->polarization->conj)->sumover;
     # Normalize result so macroscopic field is 1.
     $Esp*=$e_0;
-    $Esp *= $self->filter if $self->has_filter;
+    $Esp *= $self->filter->(*1) if $self->has_filter;
     ##get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=GtoR($Esp, $ndims, 1);
     $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
