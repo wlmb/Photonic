@@ -110,7 +110,6 @@ Flags a recent orthogonalization.
 
 =back
 
-
 =cut
 
 
@@ -122,12 +121,12 @@ use Moose::Role;
 
 has 'previous_W' =>(is=>'ro',
      writer=>'_previous_W', lazy=>1, init_arg=>undef,
-     default=>sub{PDL::r2C(0)->(*1)},
+     default=>sub{PDL->pdl([0])},
      documentation=>"Row of error matrix"
 );
 has 'current_W' =>(is=>'ro',
      writer=>'_current_W', lazy=>1, init_arg=>undef,
-     default=>sub{PDL::r2C(0)->(*1)},
+     default=>sub{PDL->pdl([0])},
      documentation=>"Row of error matrix"
 );
 has 'next_W' =>(is=>'ro',
@@ -154,7 +153,7 @@ has '_justorthogonalized'=>(
 sub _build_next_W {
     my $self=shift;
     my $g_n=$self->current_g;
-    return PDL::r2C($g_n)->(*1);
+    return PDL->pdl([$g_n]);
 }
 
 around '_fullorthogonalize_indeed' => sub {
@@ -167,6 +166,7 @@ around '_fullorthogonalize_indeed' => sub {
     $self->_write_justorthogonalized(1);
     my $it=$self->state_iterator;
     for my $g(@{$self->gs}){
+	#for every saved state
 	my $s=$it->nextval;
 	$psi=$psi-$g*$self->innerProduct($s, $psi)*$s;
     }
@@ -184,29 +184,28 @@ sub _checkorthogonalize {
     my $c=$self->cs;
     if($self->_justorthogonalized){
 	$self->_write_justorthogonalized(0);
-	my $current_W=PDL->ones($n)*PDL::r2C($self->noise);
-	my $next_W=PDL->ones($n+1)*PDL::r2C($self->noise);
-	$current_W->(-1).=PDL::r2C($self->current_g);
-	$next_W->(-1).=PDL::r2C($self->next_g);
+	my $current_W=PDL->ones($n)*$self->noise;
+	my $next_W=PDL->ones($n+1)*$self->noise;
+	$current_W->(-1).=$self->current_g;
+	$next_W->(-1).=$self->next_g;
 	$self->_current_W($current_W);
 	$self->_next_W($next_W);
 	return;
     }
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
-    my $next_W;
+    my $next_W=PDL->pdl([]);
+    my $method = '_arg';
     if($n>=2){
 	$next_W= $b->(1:-1)*$current_W->(1:-1)
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
 	    - $c->(($n-1))*$previous_W;
-	$next_W->(1:-1).=$next_W->(1:-1)+
-	    $c->(1:-2)*$current_W->(0:-3) if ($n>=3);
-	$next_W=$next_W+_arg($next_W)*2*$self->normOp*$self->noise;
+	$next_W->(1:-1)+=$c->(1:-2)*$current_W->(0:-3) if ($n>=3);
+	$next_W+=$self->$method($next_W)*2*$self->normOp*$self->noise;
 	$next_W=$next_W/$self->next_b;
     }
-    $next_W=PDL::r2C($self->noise)->(*1) if $n==1;
-    $next_W=$next_W->append($self->noise) if $n>=2;
-    $next_W=$next_W->append(PDL::r2C($self->next_g));
+    $next_W=$next_W->append($self->noise) if $n>=1;
+    $next_W=$next_W->append($self->next_g);
     $self->_next_W($next_W);
     return unless $n>=2;
     my $max=$next_W->(0:-2)->abs->maximum;
@@ -226,11 +225,11 @@ sub _checkorthogonalize {
 }
 
 sub _arg {
-    my $s=shift->copy;
+    my $s=$_[1]->copy;
     my $a=$s->abs;
     $s->where($a==0).=1;
     $a->where($a==0).=1;
-    my $arg=$s/$a;
+    $s/$a;
 }
 
 no Moose::Role;

@@ -152,11 +152,8 @@ has '_justorthogonalized'=>(
 
 sub _build_next_W {
     my $self=shift;
-#    my $g_np1=$self->next_g;
-#    return PDL->pdl([$g_np1]);
     my $g_n=$self->current_g;
     return PDL->pdl([$g_n]);
-
 }
 
 around '_fullorthogonalize_indeed' => sub {
@@ -198,19 +195,20 @@ sub _checkorthogonalize {
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
+    my $method = '_sign';
     if($n>=2){
 	$next_W= $b->(1:-1)*$current_W->(1:-1)
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
 	    - $c->(($n-1))*$previous_W;
 	$next_W->(1:-1)+=$c->(1:-2)*$current_W->(0:-3) if ($n>=3);
-	$next_W=$next_W+_sign($next_W)*2*$self->normOp*$self->noise;
+	$next_W+=$self->$method($next_W)*2*$self->normOp*$self->noise;
 	$next_W=$next_W/$self->next_b;
     }
     $next_W=$next_W->append($self->noise) if $n>=1;
     $next_W=$next_W->append($self->next_g);
     $self->_next_W($next_W);
     return unless $n>=2;
-    my $max=$next_W->(0:-2)->maximum;
+    my $max=$next_W->(0:-2)->abs->maximum;
     if($max > sqrt($self->accuracy)){
 	#recalculate the last two states with full reorthogonalization
 	my $orthos=1; #number of reorthogonalizations
@@ -227,8 +225,8 @@ sub _checkorthogonalize {
 }
 
 sub _sign {
-    my $s=shift;
-    return 2*($s>=0)-1;
+    my (undef, $s)=@_;
+    2*($s>=0)-1;
 }
 
 no Moose::Role;
