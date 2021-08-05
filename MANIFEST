@@ -39,8 +39,7 @@ lib/Photonic/Roles/Geometry.pm
 lib/Photonic/Roles/KeepStates.pm
 lib/Photonic/Roles/Metric.pm
 lib/Photonic/Roles/OneH.pm
-lib/Photonic/Roles/ReorthogonalizeC.pm
-lib/Photonic/Roles/ReorthogonalizeR.pm
+lib/Photonic/Roles/Reorthogonalize.pm
 lib/Photonic/Roles/UseMask.pm
 lib/Photonic/Types.pm
 lib/Photonic/Utils.pm
@@ -102,6 +101,7 @@ t/oneh-nr2.t
 t/oneh-s.t
 t/oneh-wer2.t
 t/oneh-wes.t
+t/tensor.t
 t/utils.t
 TODO
 xt/author-pod-coverage.t

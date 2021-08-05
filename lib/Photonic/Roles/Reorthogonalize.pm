@@ -1,5 +1,5 @@
-package Photonic::Roles::ReorthogonalizeC;
-$Photonic::Roles::ReorthogonalizeC::VERSION = '0.018';
+package Photonic::Roles::Reorthogonalize;
+$Photonic::Roles::Reorthogonalize::VERSION = '0.018';
 
 =encoding UTF-8
 
@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
     package 'Mypackage';
-    with 'Photonic::Roles::ReorthogonalizeC';
+    with 'Photonic::Roles::Reorthogonalize';
     .
     .
     .
@@ -50,14 +50,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Roles consumed by AllH objects to be used in a Photonic
+Role consumed by AllH objects to be used in a Photonic
 calculation. Estimates orthogonalization errors and makes a full
 reorthogonalization of Haydock states when required. This version works
+for both Hermitian operators with real Haydock coefficients, and
 for non Hermitian operators with complex Haydock coefficients.
 
 =head1 ATTRIBUTES
 
 =over 4
+
+=item * is_hermitian
+
+Must exist in the consuming class.
 
 =item * previous_W, current_W, next_W
 
@@ -106,7 +111,13 @@ Flags a recent orthogonalization.
 
 =item * _checkorthogonalize
 
+=item * _sign
+
+Only used with Hermitian.
+
 =item * _arg
+
+Only used with non-Hermitian.
 
 =back
 
@@ -118,6 +129,8 @@ use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Moose::Role;
+
+requires 'is_hermitian';
 
 has 'previous_W' =>(is=>'ro',
      writer=>'_previous_W', lazy=>1, init_arg=>undef,
@@ -148,7 +161,7 @@ has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 has '_justorthogonalized'=>(
     is=>'ro', init_arg=>undef, default=>0,
     writer=>'_write_justorthogonalized',
-    documentation=>'Flag I just orthogonnalized');
+    documentation=>'Flag I just orthogonalized');
 
 sub _build_next_W {
     my $self=shift;
@@ -195,7 +208,7 @@ sub _checkorthogonalize {
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
-    my $method = '_arg';
+    my $method = $self->is_hermitian ? '_sign' : '_arg';
     if($n>=2){
 	$next_W= $b->(1:-1)*$current_W->(1:-1)
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
@@ -222,6 +235,11 @@ sub _checkorthogonalize {
 	    $self->_pop; #undo stack again
 	}
     }
+}
+
+sub _sign {
+    my (undef, $s)=@_;
+    2*($s>=0)-1;
 }
 
 sub _arg {

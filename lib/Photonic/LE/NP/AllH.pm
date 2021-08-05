@@ -130,8 +130,10 @@ use namespace::autoclean;
 use Moose;
 use MooseX::StrictConstructor;
 
+has 'is_hermitian'=>(is=>'ro', default=>sub{0});
+
 extends 'Photonic::LE::NP::OneH';
-with 'Photonic::Roles::AllH', 'Photonic::Roles::ReorthogonalizeC';
+with 'Photonic::Roles::AllH', 'Photonic::Roles::Reorthogonalize';
 
 __PACKAGE__->meta->make_immutable;
 

@@ -248,17 +248,11 @@ Roles factored out of the metric calculators.
 
 =item L<Photonic::Roles::OneH>
 
-Roles factored out of the calculatoin of one Haydock coefficient.
+Roles factored out of the calculation of one Haydock coefficient.
 
-=item L<Photonic::Roles::ReorthogonalizeC>
+=item L<Photonic::Roles::Reorthogonalize>
 
-Roles to keep Haydock states orthogonalized. Version for non-Hermitian
-operators and complex Haydock coefficients.
-
-=item L<Photonic::Roles::ReorthogonalizeR>
-
-Roles to keep Haydock states orthogonalized. Version for non-Hermitian
-operators and complex Haydock coefficients.
+Role to keep Haydock states orthogonalized.
 
 =item L<Photonic::Roles::UseMask>
 
