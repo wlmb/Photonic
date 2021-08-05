@@ -194,11 +194,11 @@ with 'Photonic::Roles::OneH',  'Photonic::Roles::UseMask', 'Photonic::Roles::Eps
 
 sub applyOperator {
     my $self=shift;
-    my $psi=shift; #psi is ri:xy:pm:nx:ny
+    my $psi=shift; #psi is xy:pm:nx:ny
     my $mask=undef;
     $mask=$self->mask if $self->use_mask;
     my $gpsi=$self->applyMetric($psi);
-    # gpsi is ri:xy:pm:nx:ny. Get cartesian and pm out of the way and
+    # gpsi is xy:pm:nx:ny. Get cartesian and pm out of the way and
     my $gpsi_r=GtoR($gpsi, $self->ndims, 2)->mv(0,-1)->mv(0,-1);
     #nx:ny:xy:pm
     my $H=($self->epsilonR-$self->epsilon)/$self->epsilonR;

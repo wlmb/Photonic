@@ -377,7 +377,7 @@ sub apply_longitudinal_projection {
     ($eGpsi_G*$gnorm) #^Ge^G|psi>
 	# i:nx:ny:...
 	->sumover; #^G.epsilon^G|psi>
-    #Result is ^G.epsilon^G|psi>, ri:nx:ny...
+    #Result is ^G.epsilon^G|psi>, nx:ny...
 }
 
 sub make_dyads {
@@ -464,7 +464,7 @@ the spinor dimension) before adding up.
 
 Vector-Spinor product <a|b> of two 2x...'complex' multidimensional
 pdls $a and $b in reciprocal space. For the vector-spinor field
-dimensions are like ri:xy:pm:nx:ny.
+dimensions are like xy:pm:nx:ny.
 
 =item * $psiG = RtoG($psiR, $ndims, $skip)
 

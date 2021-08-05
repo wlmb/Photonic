@@ -125,7 +125,7 @@ next_b2, next_b, shifting the current values where necessary. Returns
 =item * applyOperator($psi_G)
 
 Apply the 'Hamiltonian' operator to state $psi_G in reciprocal
-=space. State is ri:nx:ny...  The operator is the
+=space. State is nx:ny...  The operator is the
 longitudinal projection of the dielectric function
 
 =item * innerProduct($left, $right)

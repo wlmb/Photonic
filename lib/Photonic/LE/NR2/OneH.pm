@@ -119,7 +119,7 @@ next_b2, next_state, shifting the current values where necessary. Returns
 =item * applyOperator($psi_G)
 
 Apply the 'Hamiltonian' operator to state. State is
-ri:nx:ny... gnorm=i:nx:ny... The operator is the longitudinal
+nx:ny... gnorm=i:nx:ny... The operator is the longitudinal
 =component of the characteristic function.
 
 =item * innerProduct($left, $right)
