@@ -279,7 +279,7 @@ equation.
 =item L<Photonic::WE::R2>
 
 Group of modules for binary metamaterials characterized by a
-characteriztic function.
+characteristic function.
 
 =over 4
 

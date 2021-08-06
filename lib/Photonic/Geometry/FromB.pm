@@ -79,7 +79,7 @@ the values 0 for each pixel or voxel within material A and 1 within
 
 Creates a new Ph::G::FromB object
 
-$pdl is a boolean array with 1's and 0's representing the characteriztic
+$pdl is a boolean array with 1's and 0's representing the characteristic
 function within the unit cell. Its dimensions must be odd. Its number
 of dimensions is the dimension of space
 

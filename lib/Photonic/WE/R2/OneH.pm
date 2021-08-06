@@ -231,7 +231,7 @@ Returns the result of applying the metric 'g' to the state; $psi.
 =item * applyOperator($psi_G)
 
 Apply the Hamiltonian operator to state. The Hamiltonian is Bg, with g
-the metric and B the characteriztic function. Also applies an optional
+the metric and B the characteristic function. Also applies an optional
 mask in reciprocal space.
 
 =item * innerProduct($left, $right)
