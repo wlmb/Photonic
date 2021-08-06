@@ -329,7 +329,7 @@ sub _alpha {
     $alphaA1=$alphaB1 if $self->densityA==0;
     $alphaB1=$alphaA1 if $self->densityB==0;
     my $B=$self->nrf->nr->B;
-    return $alphaA1*(1-$B)+$B*$alphaB1;
+    $alphaA1*(1-$B)+$B*$alphaB1;
 }
 
 sub _build_alpha1 {
@@ -388,13 +388,12 @@ sub _build_quadrupolar {
     my $iGnaaEE_G=($iG->(,*1)*$naaEE_G)->sumover; #dot - cartesian nx ny...
     $iGnaaEE_G *= $self->nrf->filter->(*1) if $self->nrf->has_filter; # nx ny...
     #back to real space. Get cartesian out of the way and then back
-    my $P= GtoR($iGnaaEE_G, $ndims, 1); #cartesian, nx, ny...
-    return $P;
+    GtoR($iGnaaEE_G, $ndims, 1); #cartesian, nx, ny...
 }
 
 sub _build_external {
     my $self=shift;
-    return $self->dipolar+$self->quadrupolar;
+    $self->dipolar+$self->quadrupolar;
 }
 
 sub _build_external_G {
@@ -419,16 +418,12 @@ sub _build_externalL_G {
 
 sub _build_externalVecL_G {
     my $self=shift;
-    my $extG=$self->externalL_G;
-    my $result=$self->nrf->nr->geometry->LC2Vec_G($extG);
-    return $result;
+    $self->nrf->nr->geometry->LC2Vec_G($self->externalL_G);
 }
 
 sub _build_externalVecL {
     my $self=shift;
-    my $extG=$self->externalVecL_G;
-    my $result=GtoR($extG, $self->ndims, 1);
-    return $result;
+    GtoR($self->externalVecL_G, $self->ndims, 1);
 }
 
 sub _build_HP { #build haydock states for P2
@@ -465,9 +460,7 @@ sub _build_selfConsistentL_n {
     # rotate complex zero from first to last element.
     my $subdiag=-$bs->(0:$nh-1)->rotate(-1)->r2C;
     my $supradiag=$subdiag;
-    my $result = cgtsv($subdiag, $diag, $supradiag, $external);
-    $result *= $u2/$self->epsA2;
-    return $result;
+    cgtsv($subdiag, $diag, $supradiag, $external) * ($u2/$self->epsA2);
 }
 
 sub _build_selfConsistentL_G {
@@ -484,16 +477,12 @@ sub _build_selfConsistentL_G {
 
 sub _build_selfConsistentVecL_G {
     my $self=shift;
-    my $sf=$self->selfConsistentL_G;
-    my $result=$self->nrf->nr->geometry->LC2Vec_G($sf);
-    return $result;
+    $self->nrf->nr->geometry->LC2Vec_G($self->selfConsistentL_G);
 }
 
 sub _build_selfConsistentVecL {
     my $self=shift;
-    my $svf=$self->selfConsistentVecL_G;
-    my $result=GtoR($svf, $self->ndims, 1);
-    return $result;
+    GtoR($self->selfConsistentVecL_G, $self->ndims, 1);
 }
 
 sub _build_P2 {
@@ -502,8 +491,7 @@ sub _build_P2 {
     my $alpha2=$self->alpha2;
     my $PL=$self->selfConsistentVecL;
     my $Pext=$self->external;
-    my $P2=-4*PI*($alpha2*$density)->(*1)*$PL+$Pext;
-    return $P2;
+    -4*PI*($alpha2*$density)->(*1)*$PL+$Pext;
 }
 
 sub _build_P2LMCalt {
@@ -557,13 +545,12 @@ sub _build_P2LMCalt {
 
 sub _build_u1 {
     my $self=shift;
-    #return 1/(1-$self->epsB1/$self->epsA1);
-    return $self->nrf->u;
+    $self->nrf->u;
 }
 
 sub _build_u2 {
     my $self=shift;
-    return 1/(1-$self->epsB2/$self->epsA2);
+    1/(1-$self->epsB2/$self->epsA2);
 }
 
 sub _filter { #Filter complex field in reciprocal space

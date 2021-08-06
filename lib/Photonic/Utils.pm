@@ -133,9 +133,8 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
 	unless $ndims == $second->ndims;
     my $prod=$first->conj*$second;
     # clump all except skip dimensions, protecto index and sum.
-    my $result=$prod->reorder($skip..$ndims-1,0..$skip-1)->clump(-$skip-1)
+    $prod->reorder($skip..$ndims-1,0..$skip-1)->clump(-$skip-1)
 	->sumover;
-    return $result;
 }
 
 sub MHProd { #Hermitean product between two fields with metric. skip
@@ -153,9 +152,8 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     my $mprod=($metric*$sliced)->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
     my $prod=$first->conj*$mprod;
-    my $result=$prod->reorder($skip..$ndims-1,0..$skip-1)->clump(-$skip-1)
+    $prod->reorder($skip..$ndims-1,0..$skip-1)->clump(-$skip-1)
 	->sumover;
-    return $result;
 }
 
 sub EProd { #Euclidean product between two fields in reciprocal
@@ -177,11 +175,10 @@ sub EProd { #Euclidean product between two fields in reciprocal
     }
     my $prod=$first_mG*$second;
     # clump all except skip dimensions, protecto index and sum.
-    my $result=$prod #s1:s2:nx:ny
+    $prod #s1:s2:nx:ny
 	->reorder($skip..$ndims-1,0..$skip-1) #nx:ny:s1:s2
 	->clump(-$skip-1) #nx*ny:s1:s2
 	->sumover; #s1:s2
-    return $result;
 }
 
 sub SProd { #Spinor product between two fields in reciprocal
@@ -205,11 +202,10 @@ sub SProd { #Spinor product between two fields in reciprocal
     }
     my $prod=$first_mG*$second; #pmk,s1,s2,nx,ny
     # clump all except skip dimensions, protect sum.
-    my $result=$prod #rori,pmk, s1,s2,nx,ny
+    $prod #rori,pmk, s1,s2,nx,ny
 	->reorder($skip+1..$ndims-1,0..$skip) #nx,ny,pmk,s1,s2
 	->clump(-$skip-1)  #nx*ny*pmk, s1, s2
 	->sumover; #s1, s2
-    return $result;
 }
 
 sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
@@ -231,11 +227,10 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     }
     my $prod=$first_mG*$second; #xy:pm:nx:ny
     # clump all except xy.
-    my $result=$prod #xy:pm::nx:ny
+    $prod #xy:pm::nx:ny
 	->reorder(2..$ndims-1,0,1) #nx:ny:xy:pm
 	->clump(-1)  #nx*ny*xy*pm
 	->sumover;
-    return $result;
 }
 
 sub RtoG { #transform a 'complex' scalar, vector or tensorial field
