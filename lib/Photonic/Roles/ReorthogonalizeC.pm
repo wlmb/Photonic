@@ -228,7 +228,7 @@ sub _checkorthogonalize {
 sub _arg {
     my $s=shift->copy;
     my $a=$s->abs;
-    $s->re->where($a==0).=1;
+    $s->where($a==0).=1;
     $a->where($a==0).=1;
     my $arg=$s/$a;
 }
