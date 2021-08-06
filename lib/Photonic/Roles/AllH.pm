@@ -353,7 +353,7 @@ sub _pop_state {
 	$self->_nextState(pop @{$self->_states});
 	$self->_currentState($self->_states->[-1]);
 	my $s2 = $self->_states->[-2];
-	$s2 = r2C(0) if !defined $s2;
+	$s2 = PDL::r2C(0) if !defined $s2;
 	$self->_previousState($s2);
 	return;
     }
