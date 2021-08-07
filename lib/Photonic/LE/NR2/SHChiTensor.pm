@@ -166,7 +166,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::MatrixOps;
 use PDL::IO::Storable;
-use Photonic::Utils qw(make_haydock tensor);
+use Photonic::Utils qw(make_haydock tensor incarnate_as);
 use Photonic::Types;
 use Photonic::LE::NR2::EpsTensor;
 use Moose;
@@ -308,17 +308,9 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
     ), @$nr ];
 }
 
+my @EPS_ATTRS = qw(geometry nh reorthogonalize smallH smallE);
 sub _build_epsTensor {
-    my $self=shift;
-    my $geometry=$self->geometry;
-    my $nh=$self->nh; #desired number of Haydock terms
-    my $smallH=$self->smallH; #smallness
-    my $smallE=$self->smallE; #smallness
-    my $eT=Photonic::LE::NR2::EpsTensor
-	->new(geometry=>$self->geometry, nh=>$self->nh,
-	      reorthogonalize=>$self->reorthogonalize, smallH=>$self->smallH,
-	      smallE=>$self->smallE);
-    return $eT;
+    incarnate_as('Photonic::LE::NR2::EpsTensor', shift, \@EPS_ATTRS);
 }
 
 __PACKAGE__->meta->make_immutable;

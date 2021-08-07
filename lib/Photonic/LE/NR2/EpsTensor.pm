@@ -129,7 +129,7 @@ don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use Photonic::Utils qw(tensor make_haydock);
+use Photonic::Utils qw(tensor make_haydock incarnate_as);
 use List::Util qw(all);
 use Photonic::LE::NR2::AllH;
 use Photonic::LE::NR2::EpsL;
@@ -183,9 +183,10 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
     make_haydock($self, 'Photonic::LE::NR2::AllH', $self->geometry->unitPairs, 1, qw(reorthogonalize use_mask mask));
 }
 
+my @EPSL_ATTRS = qw(nh smallE);
 sub _build_epsL {
     my $self=shift;
-    [ map Photonic::LE::NR2::EpsL->new(nr=>$_, nh=>$self->nh, smallE=>$self->smallE), @{$self->nr} ];
+    [ map incarnate_as('Photonic::LE::NR2::EpsL', $self, \@EPSL_ATTRS, nr=>$_), @{$self->nr} ];
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -41,6 +41,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
+    incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
     cgtsv lu_decomp lu_solve
 );
@@ -101,11 +102,9 @@ my @HAYDOCK_PARAMS = qw(
 sub make_haydock {
   my ($self, $class, $pairs, $add_geom, @extra_attributes) = @_;
   # This must change if G is not symmetric
-  [ map $class->new(
+  [ map incarnate_as($class, $self, [ @HAYDOCK_PARAMS, @extra_attributes ],
       _haydock_extra($self, $_, $add_geom),
-      map +($_ => $self->$_), @HAYDOCK_PARAMS, @extra_attributes
-    ), $pairs->dog
-  ];
+  ), $pairs->dog ];
 }
 
 sub _haydock_extra {
@@ -119,10 +118,14 @@ my @GREENP_PARAMS = qw(nh smallE);
 sub make_greenp {
   my ($self, $class, $method) = @_;
   $method ||= 'haydock';
-  [ map $class->new(
-      haydock=>$_,
-      map +($_ => $self->$_), @GREENP_PARAMS), @{$self->$method}
+  [ map incarnate_as($class, $self, \@GREENP_PARAMS, haydock=>$_),
+      @{$self->$method}
   ];
+}
+
+sub incarnate_as {
+  my ($class, $self, $with, @extra) = @_;
+  $class->new((map +($_ => $self->$_), @$with), @extra);
 }
 
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
@@ -514,6 +517,14 @@ a wave operator.
 
 Given an object and a classname, construct an array-ref of objects of
 that class, with relevant fields copied from the object.
+
+=item * incarnate_as
+
+  my $new_obj = incarnate_as('New::Class', $obj, [qw(f1 f2)], other => $value);
+
+Given an object and a classname, an array-ref of attribute-names, and
+then key/value pairs, returns a new object of the given class, with the
+given object's given attributes plus the additional ones.
 
 =item * cgtsv
 
