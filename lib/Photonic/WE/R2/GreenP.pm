@@ -156,12 +156,13 @@ sub BUILD {
 
 sub evaluate {
     my $self=shift;
-    $self->_epsA(my $epsA=$self->haydock->epsilon->r2C);
+    my $h = $self->haydock;
+    $self->_epsA(my $epsA=$h->epsilon->r2C);
     $self->_epsB(my $epsB=shift);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $as=PDL::r2C($self->haydock->as);
-    my $bcs=PDL::r2C($self->haydock->bcs);
-    my $min= min($self->nh, $self->haydock->iteration);
+    my $as=PDL::r2C($h->as);
+    my $bcs=PDL::r2C($h->bcs);
+    my $min= min($self->nh, $h->iteration);
     #    b0+a1/b1+a2/...
     #   lo debo convertir a
     #       u-a_0-g0g1b1^2/u-a1-g1g2b2^2/...
@@ -169,9 +170,9 @@ sub evaluate {
     my ($fn, $n)=lentzCF($u-$as, -$bcs, $min, $self->smallE);
     #If there are less available coefficients than $self->nh and all
     #of them were used, there is no remaining work to do, so, converged
-    $self->_converged($n<$min || $self->haydock->iteration<=$self->nh);
+    $self->_converged($n<$min || $h->iteration<=$self->nh);
     $self->_nhActual($n);
-    my $g0b02=$self->haydock->gs->slice("(0)")*$self->haydock->b2s->slice("(0)");
+    my $g0b02=$h->gs->slice("(0)")*$h->b2s->slice("(0)");
     $self->_Gpp($u*$g0b02/($epsA*$fn));
     return $self->Gpp;
 }

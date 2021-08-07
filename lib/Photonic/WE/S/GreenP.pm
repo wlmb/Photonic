@@ -142,11 +142,12 @@ has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
 
 sub _build_Gpp {
     my $self=shift;
-    $self->haydock->run unless $self->haydock->iteration;
-    my $epsR=$self->haydock->epsilonR;
-    my $as=$self->haydock->as;
-    my $bcs=$self->haydock->bcs;
-    my $min= min($self->nh, $self->haydock->iteration);
+    my $h = $self->haydock;
+    $h->run unless $h->iteration;
+    my $epsR=$h->epsilonR;
+    my $as=$h->as;
+    my $bcs=$h->bcs;
+    my $min= min($self->nh, $h->iteration);
     #    b0+a1/b1+a2/...
     #	lo debo convertir a
     #       1-a_0-g0g1b1^2/1-a1-g1g2b2^2/...
@@ -154,9 +155,9 @@ sub _build_Gpp {
     my ($fn, $n)=lentzCF(1-$as, -$bcs, $min, $self->smallE);
     #If there are less available coefficients than $self->nh and all
     #of them were used, there is no remaining work to do, so, converged
-    $self->_converged($n<$min || $self->haydock->iteration<=$self->nh);
+    $self->_converged($n<$min || $h->iteration<=$self->nh);
     $self->_nhActual($n);
-    my $g0b02=$self->haydock->gs->slice("(0)")*$self->haydock->b2s->slice("(0)");
+    my $g0b02=$h->gs->slice("(0)")*$h->b2s->slice("(0)");
     return $g0b02/($epsR*$fn);
 }
 
