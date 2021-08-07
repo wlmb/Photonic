@@ -307,6 +307,12 @@ sub _save_val {
     $self->$writer($pdl->glue($pdl->getndims-1, $the_value));
 }
 
+sub _top_slice {
+    my ($pdl, $index) = @_;
+    my $slice_arg = join ',', (map ':', 1..($pdl->ndims-1)), "($index)";
+    $pdl->slice($slice_arg);
+}
+
 sub _pop_val {
     my ($self, $valname, $pop_dest, $last_dest) = @_;
     my $valnames = $valname.'s';
@@ -314,8 +320,7 @@ sub _pop_val {
     my $pdl = $self->$valnames;
     confess "popped empty" if $pdl->isnull;
     my @dims = $pdl->dims;
-    my $slice_arg = join ',', (map ':', 0..$#dims-1), -1;
-    my $lastval = $pdl->slice($slice_arg);
+    my $lastval = _top_slice($pdl, -1);
     my $store = "_${pop_dest}_$valname";
     $self->$store($lastval);
     $dims[-1]--; # shrink
@@ -324,7 +329,7 @@ sub _pop_val {
     $self->$writer($copy);
     return if !$last_dest;
     my $last = "_${last_dest}_$valname";
-    $self->$last($copy->slice($slice_arg));
+    $self->$last(_top_slice($copy, -1));
 }
 
 sub _save_state {
