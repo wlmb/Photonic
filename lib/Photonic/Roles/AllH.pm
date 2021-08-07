@@ -172,7 +172,7 @@ has bcs=>(is=>'ro', default=>sub{PDL->null},
          isa=>'PDL',
 	  init_arg=>undef, writer=>'_bcs',
          documentation=>'Saved b*c coefficients');
-has gs=>(is=>'ro', isa=>'ArrayRef[Num]', default=>sub{[]},
+has gs=>(is=>'ro', isa=>'PDL', default=>sub{PDL->null},
 	 init_arg=>undef,  writer=>'_gs',
          documentation=>'Saved g coefficients');
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
@@ -246,7 +246,7 @@ before '_iterate_indeed' => sub {
     $self->_save_val('b2', 'next');
     $self->_save_val('bc', 'next');
     $self->_save_val('c', 'next');
-    $self->_save_g;
+    $self->_save_val('g', 'next');
     $self->_save_state;
 };
 after '_iterate_indeed' => sub {
@@ -327,11 +327,6 @@ sub _pop_val {
     $self->$last($copy->slice($slice_arg)->copy);
 }
 
-sub _save_g {
-    my $self=shift;
-    push @{$self->gs}, $self->next_g;
-}
-
 sub _save_state {
     my $self=shift;
     return unless $self->keepStates; #noop
@@ -376,8 +371,7 @@ sub _pop { # undo the changes done after, in and before iteration, for
     $self->_pop_val('b', 'next', 'current');
     $self->_pop_val('c', 'next', 'current');
     $self->_pop_val('bc', 'next');
-    $self->_next_g(pop @{$self->gs});
-    $self->_current_g($self->gs->[-1]);
+    $self->_pop_val('g', 'next', 'current');
     $self->_iteration($self->iteration-1); #decrement counter
 }
 

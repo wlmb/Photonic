@@ -178,7 +178,7 @@ around '_fullorthogonalize_indeed' => sub {
     $self->_orthogonalizations($self->orthogonalizations+1);
     $self->_write_justorthogonalized(1);
     my $it=$self->state_iterator;
-    for my $g(@{$self->gs}){
+    for my $g($self->gs->dog){
 	#for every saved state
 	my $s=$it->nextval;
 	$psi=$psi-$g*$self->innerProduct($s, $psi)*$s;

@@ -171,7 +171,7 @@ sub evaluate {
     #of them were used, there is no remaining work to do, so, converged
     $self->_converged($n<$min || $self->haydock->iteration<=$self->nh);
     $self->_nhActual($n);
-    my $g0b02=$self->haydock->gs->[0]*$self->haydock->b2s->slice("(0)");
+    my $g0b02=$self->haydock->gs->slice("(0)")*$self->haydock->b2s->slice("(0)");
     $self->_Gpp($u*$g0b02/($epsA*$fn));
     return $self->Gpp;
 }
