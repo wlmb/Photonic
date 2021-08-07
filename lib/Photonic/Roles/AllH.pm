@@ -194,7 +194,7 @@ requires qw(iterate _iterate_indeed magnitude innerProduct
     _checkorthogonalize);
 
 my @allfields= qw(iteration keepStates as bs b2s cs bcs gs current_a next_b
-    next_b2 next_bc next_c current_g next_g previousState currentState
+    next_b2 next_bc next_c current_g next_g currentState
     nextState);  # Fields to store and restore
 
 
@@ -347,19 +347,15 @@ sub _pop_state {
     unless(defined $self->stateFN){
 	$self->_nextState(pop @{$self->_states});
 	$self->_currentState($self->_states->[-1]);
-	my $s2 = $self->_states->[-2];
-	$s2 = PDL::r2C(0) if !defined $s2;
-	$self->_previousState($s2);
 	return;
     }
     pop @{$self->_statePos};
-    my ($snm3, $snm2, $snm1)=map {
+    my ($snm2, $snm1)=map {
 	seek($self->_stateFD, $self->_statePos->[-$_], SEEK_SET);
 	fd_retrieve($self->_stateFD);
-    } (3,2,1);
+    } (2,1);
     $self->_nextState($$snm1);
     $self->_currentState($$snm2);
-    $self->_previousState($$snm3);
 }
 
 sub _pop { # undo the changes done after, in and before iteration, for

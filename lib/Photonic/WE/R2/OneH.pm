@@ -187,9 +187,9 @@ b^2 coefficients are taken to be zero.
 
 Accesors handled by metric (see Photonic::Metric::R2)
 
-=item * previousState currentState nextState
+=item * currentState nextState
 
-The n-1-th, n-th and n+1-th Haydock states; a complex vector for each
+The n-th and n+1-th Haydock states; a complex vector for each
 reciprocal wavevector
 
 =item * current_a

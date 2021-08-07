@@ -63,9 +63,9 @@ b^2 coefficients are taken to be zero. From L<Photonic::Roles::EpsParams>.
 
 Accesors handled by metric (see L<Photonic::WE::S::Metric>)
 
-=item * previousState currentState nextState
+=item * currentState nextState
 
-The n-1-th, n-th and n+1-th Haydock states at the n-th iteration; a complex vector-spinor for each
+The n-th and n+1-th Haydock states at the n-th iteration; a complex vector-spinor for each
 reciprocal wavevector. Dimensions ri,xy,pm,nx,ny...
 
 =item * current_a

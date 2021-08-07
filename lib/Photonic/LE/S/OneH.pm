@@ -94,9 +94,9 @@ Accesors handled by geometry (see Photonic::Geometry)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero.
 
-=item * previousState currentState nextState
+=item * currentState nextState
 
-The n-1-th, n-th and n+1-th Haydock states; a complex 2-spinor for each
+The n-th and n+1-th Haydock states; a complex 2-spinor for each
 reciprocal vector.
 
 =item * current_a

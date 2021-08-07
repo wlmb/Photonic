@@ -88,9 +88,9 @@ Accesors handled by geometry (see Photonic::Roles::Geometry)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero.
 
-=item * previousState currentState nextState
+=item * currentState nextState
 
-The n-1-th, n-th and n+1-th Haydock states; a complex number for each pixel
+The n-th and n+1-th Haydock states; a complex number for each pixel
 
 =item * current_a
 

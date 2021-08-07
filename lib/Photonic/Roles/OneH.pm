@@ -101,9 +101,9 @@ Accesors handled by geometry (see Photonic::Roles::Geometry)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero.
 
-=item * previousState currentState nextState
+=item * currentState nextState
 
-The n-1-th, n-th and n+1-th Haydock states
+The n-th and n+1-th Haydock states
 
 =item * current_a
 
@@ -148,8 +148,6 @@ requires
     'changesign'; #change sign of $b2
 has 'firstState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1,
 		    builder=>'_firstState');
-has 'previousState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_previousState',
-    init_arg=>undef);
 has 'currentState' => (is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_currentState',
       lazy=>1, init_arg=>undef,  default=>sub {PDL::r2C(0)});
 has 'nextState' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
@@ -197,7 +195,7 @@ sub _fullorthogonalize_indeed {
 sub _iterate_indeed {
     my $self=shift;
     #Notation: nm1 is n-1, np1 is n+1
-    $self->_previousState(my $psi_nm1=$self->currentState);
+    my $psi_nm1=$self->currentState;
     $self->_currentState(my $psi_n=$self->nextState);
     $self->_current_b2($self->next_b2);
     $self->_current_b(my $b_n=$self->next_b);
