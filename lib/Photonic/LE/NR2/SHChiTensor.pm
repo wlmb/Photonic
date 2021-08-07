@@ -300,17 +300,12 @@ sub evaluate {
 sub _build_nrshp { # One Haydock coefficients calculator per direction0
     my $self=shift;
     my $nr = make_haydock($self, 'Photonic::LE::NR2::AllH', $self->geometry->unitPairs, 1, qw(reorthogonalize use_mask mask));
-    my @nrshp;
-    foreach(@$nr){
-	my @args=(nr=>$_, nh=>$self->nhf, smallE=>$self->smallE);
-	push @args, filter=>$self->filter if $self->has_filter;
-	my $nrf=Photonic::LE::NR2::Field->new(@args);
-	my $nrshp=Photonic::LE::NR2::SHP->
-	    new(nrf=>$nrf, densityA=>$self->densityA,
-		densityB=>$self->densityB);
-	push @nrshp, $nrshp;
-    }
-    \@nrshp;
+    my @args=(nh=>$self->nhf, smallE=>$self->smallE);
+    push @args, filter=>$self->filter if $self->has_filter;
+    [ map Photonic::LE::NR2::SHP->new(
+	    nrf=>Photonic::LE::NR2::Field->new(@args, nr=>$_),
+	    densityA=>$self->densityA, densityB=>$self->densityB,
+    ), @$nr ];
 }
 
 sub _build_epsTensor {
@@ -325,7 +320,6 @@ sub _build_epsTensor {
 	      smallE=>$self->smallE);
     return $eT;
 }
-
 
 __PACKAGE__->meta->make_immutable;
 
