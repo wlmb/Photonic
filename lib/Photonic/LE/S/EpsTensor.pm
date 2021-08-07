@@ -54,127 +54,25 @@ Calculates the dielectric tensor for a given fixed
 Photonic::Geometry structure as a function of the dielectric
 functions of the components.
 
-=head1 METHODS
-
-=over 4
-
-=item * new(epsilon=>$e, geometry=>$g, nh=>$nh, smallH=>$smallH,
-            smallE=>$smallE, keepStates=>$k)
-
-Initializes the structure.
-
-$e complex PDL is the dielectric function as a complex scalar field
-
-$g Photonic::Geometry describing the structure
-
-$nh is the maximum number of Haydock coefficients to use.
-
-$smallH and $smallE are the criteria of convergence (default 1e-7) for
-the Haydock coefficients and the tensor calculations.
-
-$k is a flag to keep states in Haydock calculations (default 0)
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * epsilon
-
-A complex PDL giving the value of the dielectric function epsilon
-for each pixel of the system
-
-=item * keepStates
-
-Value of flag to keep Haydock states
-
-=item * nr
-
-Array of Photonic::LE::S::AllH structures, one for each direction
-
-=item * epsL
-
-Array of Photonic::LE::S::EpsL structures, one for each direction.
-
-=item * epsTensor
-
-The evaluated dielectric tensor
-
-=item * nh
-
-The maximum number of Haydock coefficients to use.
-
-=item * converged
-
-Flags that the last calculation converged before using up all coefficients
-
-=item * smallH smallE
-
-Criteria of convergence for Haydock and epsilon calculations. 0 means
-don't check.
-
-    *Check last remark*
-
-=back
+Consumes L<Photonic::Roles::EpsTensor>, L<Photonic::Roles::KeepStates>,
+L<Photonic::Roles::UseMask>, L<Photonic::Roles::EpsFromGeometry>
+- please see those for attributes.
 
 =cut
 
 use namespace::autoclean;
-use PDL::Lite;
-use Photonic::Utils qw(tensor make_haydock incarnate_as);
-use List::Util qw(all);
 use Photonic::LE::S::AllH;
 use Photonic::LE::S::EpsL;
-use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
-    handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
-);
-has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
-         documentation=>'Reorthogonalize haydock flag');
-has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::S::AllH]',
-            init_arg=>undef, lazy=>1, builder=>'_build_nr',
-            documentation=>'Array of Haydock calculators');
-has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::LE::S::EpsL]',
-             init_arg=>undef, lazy=>1, builder=>'_build_epsL',
-             documentation=>'Array of epsilon calculators');
-has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
-		  builder=>'_build_epsTensor',
-		  documentation=>'Dielectric Tensor');
-has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
-             documentation=>
-                  'All EpsL evaluations converged in last evaluation');
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
-	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
-    documentation=>'Spectral variable');
+has allh_class=>(is=>'ro', default=>'Photonic::LE::S::AllH');
+has allh_attrs=>(is=>'ro', default=>sub{[qw(reorthogonalize use_mask mask)]});
+has epsl_class=>(is=>'ro', default=>'Photonic::LE::S::EpsL');
+has epsl_attrs=>(is=>'ro', default=>sub{[qw(nh smallE)]});
 
+with 'Photonic::Roles::EpsTensor';
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
-
-sub _build_epsTensor {
-    my $self=shift;
-    my @epsLs = map $_->epsL, my @objs = @{$self->epsL};
-    $self->_converged(all { $_->converged } @objs);
-    tensor(pdl(\@epsLs), $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
-}
-
-sub _build_nr { # One Haydock coefficients calculator per direction0
-    my $self=shift;
-    make_haydock($self, 'Photonic::LE::S::AllH', $self->geometry->unitPairs, 1, qw(reorthogonalize use_mask mask));
-}
-
-my @EPSL_ATTRS = qw(nh smallE);
-sub _build_epsL {
-    my $self=shift;
-    [ map incarnate_as('Photonic::LE::S::EpsL', $self, \@EPSL_ATTRS, nr=>$_), @{$self->nr} ];
-}
 
 __PACKAGE__->meta->make_immutable;
 
