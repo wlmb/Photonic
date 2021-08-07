@@ -80,9 +80,9 @@ The n-th and n+1-th b^2 and b Haydock coefficients
 
 The n+1-th c Haydock coefficient
 
-=item * previous_g current_g next_g
+=item * current_g next_g
 
-The n-1-th n-th and n+1-th g Haydock coefficients
+The n-th and n+1-th g Haydock coefficients
 
 =item * iteration
 

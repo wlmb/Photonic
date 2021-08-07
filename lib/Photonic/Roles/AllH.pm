@@ -378,7 +378,6 @@ sub _pop { # undo the changes done after, in and before iteration, for
     $self->_pop_val('bc', 'next');
     $self->_next_g(pop @{$self->gs});
     $self->_current_g($self->gs->[-1]);
-    $self->_previous_g($self->gs->[-2]);
     $self->_iteration($self->iteration-1); #decrement counter
 }
 

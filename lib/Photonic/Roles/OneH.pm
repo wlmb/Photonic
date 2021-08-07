@@ -167,7 +167,6 @@ has 'next_c' => (is=>'ro', writer=>'_next_c', init_arg=>undef,
 		 builder=>'_cero');
 has 'next_bc' => (is=>'ro', writer=>'_next_bc', init_arg=>undef,
 		  builder=>'_cero');
-has 'previous_g' => (is=>'ro', writer=>'_previous_g', init_arg=>undef);
 has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef,
      builder=>'_cero');
 has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef);
@@ -203,7 +202,6 @@ sub _iterate_indeed {
     $self->_current_b2($self->next_b2);
     $self->_current_b(my $b_n=$self->next_b);
     $self->_current_c(my $c_n=$self->next_c);
-    $self->_previous_g(my $g_nm1=$self->current_g);
     $self->_current_g(my $g_n=$self->next_g);
     #Make sure to increment counter before orthogonalizing.
     $self->_iteration($self->iteration+1); #increment counter
