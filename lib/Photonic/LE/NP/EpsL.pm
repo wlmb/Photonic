@@ -119,11 +119,6 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
-    documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
-        documentation=>'Dielectric function of inclusions');
-
 with 'Photonic::Roles::EpsL';
 
 sub BUILD {
