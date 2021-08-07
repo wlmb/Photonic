@@ -69,7 +69,7 @@ sub linearCombineIt { #complex linear combination of states from iterator
 }
 
 sub any_complex {
-    grep ref $_ && !$_->type->real, @_;
+    grep ref $_ && ($_->isnull || !$_->type->real), @_;
 }
 
 sub wave_operator {
