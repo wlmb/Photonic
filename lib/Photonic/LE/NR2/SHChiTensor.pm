@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    my $chi=Photonic::LE::NR2::SHChiTensor->new(geometry=>$g,
            densityA=>$dA, densityB=>$dB, nh=>$nh, nhf=>$nhf,
            filter=>$f, filterflag=>$ff);
-   my $chiTensor=$chi->evaluate($epsA1, $epsB1, $epsA2, $epsB2);
+   my $chiTensor=$chi->evaluate($epsA, $epsB);
 
 =head1 DESCRIPTION
 
@@ -76,7 +76,7 @@ $ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geome
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
 haydock coefficients and continued fraction.
 
-=item * evaluate($epsA1, $epsB1, $epsA2, $epsB2, [kind=>$kind,] [mask=>$mask] )
+=item * evaluate($epsA, $epsB, [kind=>$kind,] [mask=>$mask] )
 
 Returns the macroscopic second Harmonic susceptibility function for a
 given value of the dielectric functions of the host $epsA and the
@@ -244,8 +244,8 @@ sub evaluate {
     my $self=shift;
     $self->_epsA1(my $epsA1=shift);
     $self->_epsB1(my $epsB1=shift);
-    $self->_epsA2(my $epsA2=shift);
-    $self->_epsB2(my $epsB2=shift);
+    $self->_epsA2(my $epsA2=$epsA1*$epsA1);
+    $self->_epsB2(my $epsB2=$epsB1*$epsB1);
     my %options=@_; #the rest are options. Currently, kind and mask.
     my $kind=lc($options{kind}//'f');
     my $mask=$options{mask};
