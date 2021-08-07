@@ -50,7 +50,7 @@ version 0.018
     say $nr->iteration;
     say $nr->current_a;
     say $nr->next_b2;
-    my $state=$nr->nextState;
+    my $state=$nr->next_state;
 
 =head1 DESCRIPTION
 
@@ -94,7 +94,7 @@ Accesors handled by geometry (see L<Photonic::Geometry>)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero.
 
-=item * currentState nextState
+=item * current_state next_state
 
 The n-th and n+1-th Haydock states; a complex number for each pixel
 
@@ -175,7 +175,7 @@ with 'Photonic::Roles::OneH', 'Photonic::Roles::EpsFromGeometry';
 #and depends on a particular initial state. Otherwise, use the
 #Roles::OneH attribute.
 
-has '+nextState' =>(init_arg=>undef);
+has '+next_state' =>(init_arg=>undef);
 
 #Required by Photonic::Roles::OneH
 

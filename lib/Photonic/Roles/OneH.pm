@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     say $nr->iteration;
     say $nr->current_a;
     say $nr->next_b2;
-    my $state=$nr->nextState;
+    my $state=$nr->next_state;
 
 =over 4
 
@@ -101,7 +101,7 @@ Accesors handled by geometry (see Photonic::Roles::Geometry)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero.
 
-=item * currentState nextState
+=item * current_state next_state
 
 The n-th and n+1-th Haydock states
 
@@ -148,10 +148,10 @@ requires
     'changesign'; #change sign of $b2
 has 'firstState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1,
 		    builder=>'_firstState');
-has 'currentState' => (is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_currentState',
+has 'current_state' => (is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_current_state',
       lazy=>1, init_arg=>undef,  default=>sub {PDL::r2C(0)});
-has 'nextState' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
-		   writer=>'_nextState',  lazy=>1,
+has 'next_state' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
+		   writer=>'_next_state',  lazy=>1,
 		   builder=>'_firstRState', init_arg=>undef);
 has 'current_a' => (is=>'ro', writer=>'_current_a',  init_arg=>undef);
 has 'current_b2' => (is=>'ro', writer=>'_current_b2', init_arg=>undef);
@@ -183,7 +183,7 @@ sub iterate { #single Haydock iteration
     my $self=shift;
     #Note: calculate Current a, next b2, next b, next state
     #Done if there is no next state
-    return 0 unless defined $self->nextState;
+    return 0 unless defined $self->next_state;
     $self->_iterate_indeed;
 }
 
@@ -195,8 +195,8 @@ sub _fullorthogonalize_indeed {
 sub _iterate_indeed {
     my $self=shift;
     #Notation: nm1 is n-1, np1 is n+1
-    my $psi_nm1=$self->currentState;
-    $self->_currentState(my $psi_n=$self->nextState);
+    my $psi_nm1=$self->current_state;
+    $self->_current_state(my $psi_n=$self->next_state);
     $self->_current_b2($self->next_b2);
     $self->_current_b(my $b_n=$self->next_b);
     $self->_current_c(my $c_n=$self->next_c);
@@ -222,7 +222,7 @@ sub _iterate_indeed {
     $self->_next_g($g_np1);
     $self->_next_c($self->_coerce($c_np1));
     $self->_next_bc($self->_coerce($bc_np1));
-    $self->_nextState($psi_np1);
+    $self->_next_state($psi_np1);
     return 1;
 }
 
@@ -240,7 +240,7 @@ sub _firstRState {
     $self->_next_c($self->_cero); #no c0
     $self->_next_bc($self->_cero); #no bc0
     $self->_next_g($g);
-    return $phi; #goes into _nextState
+    return $phi; #goes into _next_state
 }
 
 sub _coerce {

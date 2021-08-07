@@ -188,7 +188,7 @@ around '_fullorthogonalize_indeed' => sub {
 
 sub _checkorthogonalize {
     my $self=shift;
-    return unless defined $self->nextState;
+    return unless defined $self->next_state;
     return unless $self->reorthogonalize;
     return if $self->fullorthogonalize_N; #already orthogonalizing
     my $n=$self->iteration;

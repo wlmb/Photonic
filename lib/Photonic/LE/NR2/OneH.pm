@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     say $nr->iteration;
     say $nr->current_a;
     say $nr->next_b2;
-    my $state=$nr->nextState;
+    my $state=$nr->next_state;
 
 =head1 DESCRIPTION
 
@@ -88,7 +88,7 @@ Accesors handled by geometry (see Photonic::Roles::Geometry)
 A small number used as tolerance to end the iteration. Small negative
 b^2 coefficients are taken to be zero.
 
-=item * currentState nextState
+=item * current_state next_state
 
 The n-th and n+1-th Haydock states; a complex number for each pixel
 

@@ -194,8 +194,8 @@ requires qw(iterate _iterate_indeed magnitude innerProduct
     _checkorthogonalize);
 
 my @allfields= qw(iteration keepStates as bs b2s cs bcs gs current_a next_b
-    next_b2 next_bc next_c current_g next_g currentState
-    nextState);  # Fields to store and restore
+    next_b2 next_bc next_c current_g next_g current_state
+    next_state);  # Fields to store and restore
 
 
 sub BUILD {
@@ -273,10 +273,10 @@ sub loadall {
     map {my $k="_".$_;$self->$k($all->{$_})} @allfields;
     return unless $self->keepStates;
     foreach(0..$self->iteration-1){
-	$self->_nextState(fd_retrieve($fh)); #note: clobber nextState
+	$self->_next_state(fd_retrieve($fh)); #note: clobber next_state
 	$self->_save_state;
     }
-    $self->_nextState($all->{nextState}); #restore nextState
+    $self->_next_state($all->{next_state}); #restore next_state
 }
 
 sub storeall {
@@ -330,12 +330,12 @@ sub _pop_val {
 sub _save_state {
     my $self=shift;
     return unless $self->keepStates; #noop
-    push(@{$self->_states}, $self->nextState), return
+    push(@{$self->_states}, $self->next_state), return
 	unless defined $self->stateFN;
     my $fh=$self->_stateFD;
     my $lastpos=$self->_statePos->[-1];
     seek($fh, $lastpos, SEEK_SET);
-    store_fd \$self->nextState, $fh or croak "Couldn't store state: $!";
+    store_fd \$self->next_state, $fh or croak "Couldn't store state: $!";
     my $pos=tell($fh);
     push @{$self->_statePos}, $pos;
 }
@@ -345,8 +345,8 @@ sub _pop_state {
     croak "Can't pop state without keepStates=>1" unless
 	$self->keepStates;
     unless(defined $self->stateFN){
-	$self->_nextState(pop @{$self->_states});
-	$self->_currentState($self->_states->[-1]);
+	$self->_next_state(pop @{$self->_states});
+	$self->_current_state($self->_states->[-1]);
 	return;
     }
     pop @{$self->_statePos};
@@ -354,8 +354,8 @@ sub _pop_state {
 	seek($self->_stateFD, $self->_statePos->[-$_], SEEK_SET);
 	fd_retrieve($self->_stateFD);
     } (2,1);
-    $self->_nextState($$snm1);
-    $self->_currentState($$snm2);
+    $self->_next_state($$snm1);
+    $self->_current_state($$snm2);
 }
 
 sub _pop { # undo the changes done after, in and before iteration, for

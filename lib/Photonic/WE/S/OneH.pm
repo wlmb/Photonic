@@ -19,7 +19,7 @@ version 0.018
     say $nr->iteration;
     say $nr->current_a;
     say $nr->next_b2;
-    my $state=$nr->nextState;
+    my $state=$nr->next_state;
 
 =head1 DESCRIPTION
 
@@ -63,7 +63,7 @@ b^2 coefficients are taken to be zero. From L<Photonic::Roles::EpsParams>.
 
 Accesors handled by metric (see L<Photonic::WE::S::Metric>)
 
-=item * currentState nextState
+=item * current_state next_state
 
 The n-th and n+1-th Haydock states at the n-th iteration; a complex vector-spinor for each
 reciprocal wavevector. Dimensions ri,xy,pm,nx,ny...
