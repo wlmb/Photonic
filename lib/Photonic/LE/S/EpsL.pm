@@ -120,11 +120,6 @@ use Moose;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nr' =>(is=>'ro', isa=>'Photonic::LE::S::AllH', required=>1);
-has 'epsL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsL');
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
-                 writer=>'_nhActual');
-has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
 with 'Photonic::Roles::EpsL';
 
 after BUILD => sub {
