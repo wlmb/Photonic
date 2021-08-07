@@ -142,7 +142,7 @@ use Photonic::WE::R2::GreenP;
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
-use Photonic::Utils qw(make_haydock);
+use Photonic::Utils qw(make_haydock make_greenp);
 use List::Util qw(any);
 
 extends 'Photonic::WE::R2::GreenS';
@@ -202,8 +202,7 @@ sub _build_cHaydock {
 }
 
 sub _build_cGreenP {
-    my $self=shift;
-    [ map Photonic::WE::R2::GreenP->new(haydock=>$_, nh=>$self->nh, smallE=>$self->smallE), @{$self->cHaydock} ];
+    make_greenp(shift, 'Photonic::WE::R2::GreenP', 'cHaydock');
 }
 
 __PACKAGE__->meta->make_immutable;

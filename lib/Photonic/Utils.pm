@@ -117,10 +117,11 @@ sub _haydock_extra {
 
 my @GREENP_PARAMS = qw(nh smallE);
 sub make_greenp {
-  my ($self, $class) = @_;
+  my ($self, $class, $method) = @_;
+  $method ||= 'haydock';
   [ map $class->new(
       haydock=>$_,
-      map +($_ => $self->$_), @GREENP_PARAMS), @{$self->haydock}
+      map +($_ => $self->$_), @GREENP_PARAMS), @{$self->$method}
   ];
 }
 
