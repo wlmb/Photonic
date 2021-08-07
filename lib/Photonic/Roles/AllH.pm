@@ -152,8 +152,8 @@ use Moose::Role;
 
 has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
-has states=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]',
-         default=>sub{[]}, init_arg=>undef,
+has states=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
+         default=>sub{PDL->null}, init_arg=>undef,
          writer=>'_states',
          documentation=>'Saved states');
 has as=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef, writer=>'_as',
@@ -215,7 +215,7 @@ sub state_iterator {
     #. $self->iteration;
     return Photonic::Iterator->new(sub { #closure
 	return if $n>=$self->iteration;
-	return $s->[$n++];
+	return _top_slice($s, $n++);
     }) unless defined $self->stateFN;
     my $fh=$self->_stateFD;
     return Photonic::Iterator->new(sub {
@@ -336,8 +336,7 @@ sub _pop_val {
 sub _save_state {
     my $self=shift;
     return unless $self->keepStates; #noop
-    push(@{$self->states}, $self->next_state), return
-	unless defined $self->stateFN;
+    return $self->_save_val('state', 'next') unless defined $self->stateFN;
     my $fh=$self->_stateFD;
     my $lastpos=$self->_statePos->[-1];
     seek($fh, $lastpos, SEEK_SET);
@@ -350,11 +349,8 @@ sub _pop_state {
     my $self=shift;
     croak "Can't pop state without keepStates=>1" unless
 	$self->keepStates;
-    unless(defined $self->stateFN){
-	$self->_next_state(pop @{$self->states});
-	$self->_current_state($self->states->[-1]);
-	return;
-    }
+    return $self->_pop_val('state', 'next', 'current')
+        unless defined $self->stateFN;
     pop @{$self->_statePos};
     my ($snm2, $snm1)=map {
 	seek($self->_stateFD, $self->_statePos->[-$_], SEEK_SET);
