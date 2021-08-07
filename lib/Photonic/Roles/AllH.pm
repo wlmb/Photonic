@@ -315,7 +315,7 @@ sub _pop_val {
     confess "popped empty" if $pdl->isnull;
     my @dims = $pdl->dims;
     my $slice_arg = join ',', (map ':', 0..$#dims-1), -1;
-    my $lastval = $pdl->slice($slice_arg)->copy;
+    my $lastval = $pdl->slice($slice_arg);
     my $store = "_${pop_dest}_$valname";
     $self->$store($lastval);
     $dims[-1]--; # shrink
@@ -324,7 +324,7 @@ sub _pop_val {
     $self->$writer($copy);
     return if !$last_dest;
     my $last = "_${last_dest}_$valname";
-    $self->$last($copy->slice($slice_arg)->copy);
+    $self->$last($copy->slice($slice_arg));
 }
 
 sub _save_state {
