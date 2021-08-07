@@ -255,8 +255,8 @@ sub evaluate {
     my $method = $KIND2METHOD{$kind};
     foreach(@{$self->nrshp}){
 	my $nrsh=Photonic::LE::NR2::SH->new(
-	    shp=>$_, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
-	    epsB2=>$epsB2, filterflag=>0);
+	    shp=>$_, epsA=>$epsA1, epsB=>$epsB1,
+	    filterflag=>0);
 	# XorY,nx,ny
 	# dipolar, quadrupolar, external, full
 	my $P2 = $nrsh->$method;
