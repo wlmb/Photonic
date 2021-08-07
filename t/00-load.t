@@ -91,7 +91,6 @@ BEGIN {
 	     Photonic::Roles::KeepStates
 	     Photonic::Roles::Reorthogonalize
 	     Photonic::Roles::EpsL
-	     Photonic::Roles::EpsParams
 	     Photonic::Roles::UseMask
 	     Photonic::Roles::Metric
 	     Photonic::Roles::AllH

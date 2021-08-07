@@ -34,7 +34,6 @@ lib/Photonic/LE/S/OneH.pm
 lib/Photonic/Roles/AllH.pm
 lib/Photonic/Roles/EpsFromGeometry.pm
 lib/Photonic/Roles/EpsL.pm
-lib/Photonic/Roles/EpsParams.pm
 lib/Photonic/Roles/Geometry.pm
 lib/Photonic/Roles/KeepStates.pm
 lib/Photonic/Roles/Metric.pm

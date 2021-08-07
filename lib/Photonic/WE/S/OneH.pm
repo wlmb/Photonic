@@ -57,7 +57,7 @@ field.
 =item * smallH
 
 A small number used as tolerance to end the iteration. Small enough
-b^2 coefficients are taken to be zero. From L<Photonic::Roles::EpsParams>.
+b^2 coefficients are taken to be zero. From L<Photonic::Roles::OneH>.
 
 =item * B ndims dims epsilon
 
