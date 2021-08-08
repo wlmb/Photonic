@@ -259,7 +259,7 @@ sub evaluate {
     my $kind=lc($options{kind}//'f');
     my $mask=$options{mask};
     my $nd=$self->geometry->B->ndims;
-    my $epsT=$self->epsTensor->evaluate;
+    my $epsT=$self->epsTensor->epsTensor;
     my @P2M; #array of longitudinal polarizations along different directions.
     my $method = $KIND2METHOD{$kind};
     foreach(@{$self->nrshp}){

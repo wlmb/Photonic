@@ -144,8 +144,8 @@ has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::AllH]',
 has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::EpsL]',
              init_arg=>undef, lazy=>1, builder=>'_build_epsL',
              documentation=>'Array of epsilon calculators');
-has 'epsTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_epsTensor',
-             documentation=>'Dielectric Tensor from last evaluation');
+has 'epsTensor'=>(is=>'ro', isa=>'PDL', lazy=>1, builder=>'_build_epsTensor',
+             documentation=>'Dielectric Tensor');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All EpsL evaluations converged in last evaluation');
@@ -162,7 +162,7 @@ has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
-sub evaluate {
+sub _build_epsTensor {
     my $self=shift;
     my @epsLs = map $_->epsL, my @objs = @{$self->epsL};
     $self->_converged(all { $_->converged } @objs);
