@@ -66,24 +66,16 @@ Calculates the macroscopic longitudinal dielectric function for a
 given fixed Photonic::...::AllH structure as a function of the
 dielectric functions of the components.
 
-=head1 METHODS
+The consuming class needs to supply these methods to inform lazy-building
+of C<epsL>:
 
 =over 4
 
-=item * new(nr=>$nr, nh=>$nh, smallE=>$smallE)
-
-Initializes the structure.
-
-$nr is a Photonic::...::AllH structure (required).
-
-$nh is the maximum number of Haydock coefficients to use (required).
-
-$smallE is the criteria of convergence for the continued fraction
-(defaults to 1e-7)
+=item * _build_epsL
 
 =back
 
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
@@ -91,22 +83,17 @@ $smallE is the criteria of convergence for the continued fraction
 
 The ...::AllH structure
 
-=item * epsA epsB
-
-The dielectric functions of host component A and particle component B
-used in the calculation.
-
 =item * epsL
 
-The longitudinal macroscopic function calculated from the parameters.
+The longitudinal macroscopic function calculated from the parameters (lazy-built).
 
 =item * nh
 
-The maximum number of Haydock coefficients to use.
+The maximum number of Haydock coefficients to use (required).
 
 =item * nhActual
 
-The actual number of Haydock coefficients used in the last calculation
+The actual number of Haydock coefficients used in the calculation
 
 =item * converged
 
@@ -116,6 +103,7 @@ Flags that the last calculation converged before using up all coefficients
 
 Criteria of convergence for continued fraction. 0 means don't
 check.
+(defaults to 1e-7)
 
 =back
 

@@ -53,53 +53,8 @@ Calculates the macroscopic longitudinal dielectric function for a given fixed
 Photonic::LE::S::AllH structure as a function of the dielectric
 functions of the components.
 
-=head1 METHODS
-
-=over 4
-
-=item * new(nr=>$nr, nh=>$nh, smallE=>$smallE)
-
-Initializes the structure.
-
-$nr is a Photonic::LE::S::AllH structure (required).
-
-$nh is the maximum number of Haydock coefficients to use (required).
-
-$smallE is the criteria of convergence for the continued fraction
-(defaults to 1e-7)
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * epsL
-
-The longitudinal macroscopic function.
-
-=item * nr
-
-The NonRetarded::LE::S::AllH structure
-
-=item * nh
-
-The maximum number of Haydock coefficients to use.
-
-=item * nhActual
-
-The actual number of Haydock coefficients used in the last calculation
-
-=item * converged
-
-Flags that the last calculation converged before using up all coefficients
-
-=item * smallE
-
-Criteria of convergence for continued fraction. 0 means don't
-check.
-
-=back
+Consumes L<Photonic::Roles::EpsL>
+- please see those for attributes.
 
 =cut
 

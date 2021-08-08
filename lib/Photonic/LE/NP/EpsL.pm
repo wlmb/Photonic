@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::LE::NP::EpsL;
    my $eps=Photonic::LE::NP::EpsL->new(nr=>$nr, nh=>$nh);
-   my $epsilonLongitudinal=$eps->evaluate($epsA, $epsB);
+   my $epsilonLongitudinal=$eps->epsL;
 
 =head1 DESCRIPTION
 
@@ -53,53 +53,8 @@ Calculates the macroscopic longitudinal dielectric function for a given fixed
 Photonic::LE::NP::AllH structure as a function of the dielectric
 functions of the components.
 
-=head1 METHODS
-
-=over 4
-
-=item * new(nr=>$nr, nh=>$nh, smallE=>$smallE)
-
-Initializes the structure.
-
-$nr is a Photonic::LE::NP::AllH structure (required).
-
-$nh is the maximum number of Haydock coefficients to use (required).
-
-$smallE is the criteria of convergence for the continued fraction and
-determines the precision of the results. It defaults to 1e-7.
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * epsL
-
-The longitudinal macroscopic function.
-
-=item * nr
-
-The LE::NP::AllH structure
-
-=item * nh
-
-The maximum number of Haydock coefficients to use.
-
-=item * nhActual
-
-The actual number of Haydock coefficients used in the last calculation
-
-=item * converged
-
-Flags that the last calculation converged before using up all coefficients
-
-=item * smallE
-
-Criteria of convergence for continued fraction. 0 means don't
-check.
-
-=back
+Consumes L<Photonic::Roles::EpsL>
+- please see those for attributes.
 
 =cut
 
