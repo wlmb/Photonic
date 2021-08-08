@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::EpsL;
-   my $eps=Photonic::LE::NR2::EpsL->new(nr=>$nr, nh=>$nh);
-   my $epsilonLongitudinal=$eps->evaluate($epsA, $epsB);
+   my $eps=Photonic::LE::NR2::EpsL->new(nr=>$nr, nh=>$nh, epsA=>$eA, epsB=>$eb);
+   my $epsilonLongitudinal=$eps->epsL;
 
 =over 4
 
@@ -81,11 +81,6 @@ $nh is the maximum number of Haydock coefficients to use (required).
 $smallE is the criteria of convergence for the continued fraction
 (defaults to 1e-7)
 
-=item * evaluate($epsA, $epsB)
-
-Returns the macroscopic dielectric function for a given value of the
-dielectric functions of the host $epsA and the particle $epsB.
-
 =back
 
 =head1 ACCESSORS (read only)
@@ -98,16 +93,12 @@ The ...::AllH structure
 
 =item * epsA epsB
 
-The dielectric functions of component A and component B used in the
-last calculation.
-
-=item * u
-
-The spectral variable used in the last calculation
+The dielectric functions of host component A and particle component B
+used in the calculation.
 
 =item * epsL
 
-The longitudinal macroscopic function obtained in the last calculation.
+The longitudinal macroscopic function calculated from the parameters.
 
 =item * nh
 
@@ -139,13 +130,14 @@ check.
 use Moose::Role;
 use Photonic::Types;
 
+requires '_build_epsL';
+
 has 'nr' =>(is=>'ro', isa=>'Photonic::Types::AllH', required=>1);
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1, lazy=>1, builder=>'_nh',
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'epsL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
-	     writer=>'_epsL',
+has 'epsL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy => 1, builder => '_build_epsL',
 	     documentation=>'Value of dielectric function'  );
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
 		 writer=>'_nhActual',

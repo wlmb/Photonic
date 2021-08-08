@@ -115,18 +115,9 @@ check.
 
 =back
 
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
-
 =cut
 
 use namespace::autoclean;
-use PDL::Lite;
-use PDL::NiceSlice;
-use Photonic::LE::NR2::AllH;
 use Photonic::Types;
 use Photonic::Utils qw(lentzCF);
 
@@ -135,28 +126,30 @@ use List::Util qw(min);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
-    documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
-        documentation=>'Dielectric function of inclusions');
-has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
-    documentation=>'Spectral variable');
 with 'Photonic::Roles::EpsL';
 
-sub evaluate {
+has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+    documentation=>'Dielectric function of host');
+has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+        documentation=>'Dielectric function of inclusions');
+has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy => 1, builder => '_build_u',
+    documentation=>'Spectral variable');
+
+sub _build_u {
     my $self=shift;
-    $self->_epsA(my $epsA=shift);
-    $self->_epsB(my $epsB=shift);
-    $self->_u(my $u=1/(1-$epsB/$epsA));
+    1/(1-$self->epsB/$self->epsA);
+}
+
+sub _build_epsL {
+    my $self=shift;
     my $as=PDL::r2C($self->nr->as);
     my $b2s=PDL::r2C($self->nr->b2s);
     my $min= min($self->nh, $self->nr->iteration);
-    my ($fn, $n)=lentzCF($u-$as, -$b2s, $min, $self->smallE);
+    my ($fn, $n)=lentzCF((my $u = $self->u)-$as, -$b2s, $min, $self->smallE);
     # Check this logic:
     $self->_converged($n<$min || $self->nr->iteration<=$self->nh);
     $self->_nhActual($n);
-    $self->_epsL($epsA*$fn/$u);
-    return $self->epsL;
+    $self->epsA*$fn/$u;
 }
 
 __PACKAGE__->meta->make_immutable;

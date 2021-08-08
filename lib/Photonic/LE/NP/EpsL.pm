@@ -101,29 +101,18 @@ check.
 
 =back
 
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
-
 =cut
 
 use namespace::autoclean;
-use PDL::Lite;
-use PDL::NiceSlice;
-use Photonic::LE::NP::AllH;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
-use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
 with 'Photonic::Roles::EpsL';
 
-sub BUILD {
+sub _build_epsL {
     my $self=shift;
-    $self->nr->run unless $self->nr->iteration;
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
     my $min= min($self->nh, $self->nr->iteration);
@@ -136,7 +125,7 @@ sub BUILD {
     #of them were used, there is no remaining work to do, so, converged
     $self->_converged($n<$min || $self->nr->iteration<=$self->nh);
     $self->_nhActual($n);
-    $self->_epsL($fn);
+    $fn;
 }
 
 __PACKAGE__->meta->make_immutable;

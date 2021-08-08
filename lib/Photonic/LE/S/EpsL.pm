@@ -101,28 +101,17 @@ check.
 
 =back
 
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
-
 =cut
 
 use namespace::autoclean;
-use PDL::Lite;
-use PDL::NiceSlice;
-use Photonic::LE::S::AllH;
-use Photonic::Types;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
-use Moose;
 use Moose;
 use MooseX::StrictConstructor;
 
 with 'Photonic::Roles::EpsL';
 
-after BUILD => sub {
+sub _build_epsL {
     my $self=shift;
     my $as=$self->nr->as;
     my $b2s=$self->nr->b2s;
@@ -131,7 +120,6 @@ after BUILD => sub {
     # Check this logic:
     $self->_converged($n<$min || $self->nr->iteration<=$self->nh);
     $self->_nhActual($n);
-    $self->_epsL($fn);
     return $fn;
 };
 

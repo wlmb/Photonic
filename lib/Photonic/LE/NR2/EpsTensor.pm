@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::EpsTensor;
-   my $eps=Photonic::LE::NR2::EpsTensor->new(geometry=>$g);
-   my $epsilonTensor=$eps->evaluate($epsA, $epsB);
+   my $eps=Photonic::LE::NR2::EpsTensor->new(geometry=>$g, epsA=>$epsA, epsB=>$epsB);
+   my $epsilonTensor=$eps->epsTensor;
 
 =head1 DESCRIPTION
 
@@ -69,11 +69,6 @@ $smallH and $smallE are the criteria of convergence (default 1e-7) for
 the Haydock coefficients and the tensor calculations.
 
 $k is a flag to keep states in Haydock calculations (default 0)
-
-=item * evaluate($epsA, $epsB)
-
-Returns the macroscopic dielectric function for a given value of the
-dielectric functions of the host $epsA and the particle $epsB.
 
 =back
 
@@ -107,7 +102,8 @@ Array of Photonic::LE::NR2::EpsL structures, one for each direction.
 
 =item * epsTensor
 
-The dielectric tensor
+The the macroscopic dielectric function for a given value of the
+dielectric functions of the host epsA and the particle epsB.
 
 =item * nh
 
@@ -168,11 +164,9 @@ with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 sub evaluate {
     my $self=shift;
-    my $epsA=$self->epsA;
-    my $epsB=$self->epsB;
-    my $epsTensor=tensor(pdl([map $_->evaluate($epsA, $epsB), @{$self->epsL}]), $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
-    $self->_converged(all { $_->converged } @{$self->epsL});
-    return $epsTensor;
+    my @epsLs = map $_->epsL, my @objs = @{$self->epsL};
+    $self->_converged(all { $_->converged } @objs);
+    tensor(pdl(\@epsLs), $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
 }
 
 sub _build_nr { # One Haydock coefficients calculator per direction0
@@ -180,7 +174,7 @@ sub _build_nr { # One Haydock coefficients calculator per direction0
     make_haydock($self, 'Photonic::LE::NR2::AllH', $self->geometry->unitPairs, 1, qw(reorthogonalize use_mask mask));
 }
 
-my @EPSL_ATTRS = qw(nh smallE);
+my @EPSL_ATTRS = qw(nh smallE epsA epsB);
 sub _build_epsL {
     my $self=shift;
     [ map incarnate_as('Photonic::LE::NR2::EpsL', $self, \@EPSL_ATTRS, nr=>$_), @{$self->nr} ];
