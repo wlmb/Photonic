@@ -46,7 +46,7 @@ version 0.018
    use Photonic::LE::NP::EpsTensor;
    my $eps=Photonic::LE::NP::EpsTensor->new(
                      epsilon=>$e, geometry=>$g);
-   my $epsilonTensor=$epsTensor;
+   my $epsilonTensor=$eps->epsTensor;
 
 =head1 DESCRIPTION
 
@@ -136,6 +136,12 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
 );
 with 'Photonic::Roles::KeepStates';
 
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+            documentation=>'Desired no. of Haydock coefficients');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+            documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+            documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
 has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NP::AllH]',
@@ -159,7 +165,7 @@ sub _build_epsTensor {
 
 sub _build_nr { # One Haydock coefficients calculator per direction0
     my $self=shift;
-    make_haydock($self, 'Photonic::LE::NP::AllH', $self->geometry->unitPairs, 1, qw(epsilon reorthogonalize use_mask mask));
+    make_haydock($self, 'Photonic::LE::NP::AllH', $self->geometry->unitPairs, 1, qw(epsilon reorthogonalize));
 }
 
 my @EPSL_ATTRS = qw(nh smallE);
