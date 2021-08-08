@@ -63,7 +63,7 @@ my $fn = make_fn(); #output file name
 	push @readstates, fd_retrieve($fh);
 	push @savedstates, $si->nextval;
     }
-    ok(agree(pdl(@readstates), pdl(@savedstates)), "1D L states");
+    ok(Cagree(pdl(@readstates), pdl(@savedstates)), "1D L states");
 }
 
 {
@@ -82,7 +82,7 @@ my $fn = make_fn(); #output file name
 	push @readstates, fd_retrieve($fh);
 	push @savedstates, $si->nextval;
     }
-    ok(agree(pdl(@readstates), pdl(@savedstates)), "1D L restored states");
+    ok(Cagree(pdl(@readstates), pdl(@savedstates)), "1D L restored states");
 }
 
 {
@@ -104,7 +104,7 @@ my $fn = make_fn(); #output file name
 	push @states2, $si2->nextval;
 	push @states3, $si3->nextval;
     }
-    ok(agree(pdl(@states2), pdl(@states3)), "1D L restored states");
+    ok(Cagree(pdl(@states2), pdl(@states3)), "1D L restored states");
 }
 
 {
