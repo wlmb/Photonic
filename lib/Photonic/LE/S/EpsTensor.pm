@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    use Photonic::LE::S::EpsTensor;
    my $eps=Photonic::LE::S::EpsTensor->new(
                      epsilon=>$e, geometry=>$g);
-   my $epsilonTensor=$epsTensor;
+   my $epsilonTensor=$eps->epsTensor;
 
 =head1 DESCRIPTION
 
@@ -153,10 +153,6 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
-    documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
-        documentation=>'Dielectric function of inclusions');
 has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
 
@@ -182,5 +178,3 @@ sub _build_epsL {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-__END__
