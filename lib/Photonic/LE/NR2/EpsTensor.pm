@@ -163,8 +163,6 @@ has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writ
     documentation=>'Dielectric function of host');
 has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
         documentation=>'Dielectric function of inclusions');
-has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
-    documentation=>'Spectral variable');
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
@@ -172,7 +170,6 @@ sub evaluate {
     my $self=shift;
     $self->_epsA(my $epsA=shift);
     $self->_epsB(my $epsB=shift);
-    $self->_u(my $u=1/(1-$epsB/$epsA));
     my $epsTensor=tensor(pdl([map $_->evaluate($epsA, $epsB), @{$self->epsL}]), $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
     $self->_converged(all { $_->converged } @{$self->epsL});
     return $epsTensor;
