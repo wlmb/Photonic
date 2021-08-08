@@ -54,7 +54,7 @@ my $bs=$a->bs;
 my $b2s=$a->b2s;
 is($a->iteration, 2, "Number of iterations 1D longitudinal");
 ok(Cagree($b2s->slice("(0)"), r2C(1)), "1D L b_0^2");
-ok(Cagree($as, pdl([$ea*(1-$f)+$eb*$f, $ea*$f+$eb*(1-$f)]), "1D L a"));
+ok(Cagree($as, pdl([$ea*(1-$f)+$eb*$f, $ea*$f+$eb*(1-$f)])), "1D L a");
 ok(Cagree($b2s->slice("(1)"), ($eb-$ea)**2*$f*(1-$f)), "1D L b_1^2");
 ok(Cagree($b2s, $bs**2), "1D L b2==b^2");
 

@@ -59,7 +59,7 @@ my $bs=$a->bs;
 my $b2s=$a->b2s;
 is($a->iteration, 2, "Number of iterations 1D longitudinal x");
 ok(Cagree($b2s, pdl([1, ($eb-$ea)**2*$f*(1-$f)])), "1D L b^2");
-ok(Cagree($as, pdl([(1-$ea)*(1-$f)+(1-$eb)*$f, (1-$ea)*$f+(1-$eb)*(1-$f)]), "1D L a"));
+ok(Cagree($as, pdl([(1-$ea)*(1-$f)+(1-$eb)*$f, (1-$ea)*$f+(1-$eb)*(1-$f)])), "1D L a");
 ok(Cagree($b2s, $bs**2), "1D L b2==b^2");
 
 #Check haydock coefficients for simple 1D system other longitudinal y
