@@ -46,8 +46,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    use Photonic::LE::NR2::SHChiTensor;
    my $chi=Photonic::LE::NR2::SHChiTensor->new(geometry=>$g,
            densityA=>$dA, densityB=>$dB, nh=>$nh, nhf=>$nhf,
+           epsA=>$epsA, epsB=>$epsB,
            filter=>$f, filterflag=>$ff);
-   my $chiTensor=$chi->evaluate($epsA, $epsB);
+   my $chiTensor=$chi->evaluate;
 
 =head1 DESCRIPTION
 
@@ -121,9 +122,9 @@ Maximum number of Haydock coefficients for field calculation
 
 Optional filter to multiply by in reciprocal space
 
-=item * epsA1, epsB1, epsA2, epsB2
+=item * epsA, epsB
 
-Dielectric functions of components A and B at fundamental and SH frequency
+Dielectric functions of components A and B at fundamental frequency
 
 =item * nrshp
 
@@ -204,13 +205,13 @@ has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 
 #accesors
-has 'epsA1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA1',
+has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
     documentation=>'Dielectric function of host');
-has 'epsB1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB1',
+has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
         documentation=>'Dielectric function of inclusions');
-has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA2',
+has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1, builder => '_build_epsA2',
     documentation=>'Dielectric function of host');
-has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB2',
+has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1, builder => '_build_epsB2',
         documentation=>'Dielectric function of inclusions');
 has 'nrshp' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::SHP]',
             init_arg=>undef, lazy=>1, builder=>'_build_nrshp',
@@ -240,12 +241,22 @@ my %KIND2METHOD = (
 );
 my %KIND2SUBTRACT = map +($_=>1), qw(f l a);
 
+sub _build_epsA2 {
+    my $self=shift;
+    $self->epsA * $self->epsA;
+}
+
+sub _build_epsB2 {
+    my $self=shift;
+    $self->epsB * $self->epsB;
+}
+
 sub evaluate {
     my $self=shift;
-    $self->_epsA1(my $epsA1=shift);
-    $self->_epsB1(my $epsB1=shift);
-    $self->_epsA2(my $epsA2=$epsA1*$epsA1);
-    $self->_epsB2(my $epsB2=$epsB1*$epsB1);
+    my $epsA1=$self->epsA;
+    my $epsB1=$self->epsB;
+    my $epsA2=$self->epsA2;
+    my $epsB2=$self->epsB2;
     my %options=@_; #the rest are options. Currently, kind and mask.
     my $kind=lc($options{kind}//'f');
     my $mask=$options{mask};
