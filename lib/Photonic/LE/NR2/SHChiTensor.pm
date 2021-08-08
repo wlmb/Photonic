@@ -255,13 +255,11 @@ sub evaluate {
     my $self=shift;
     my $epsA1=$self->epsA;
     my $epsB1=$self->epsB;
-    my $epsA2=$self->epsA2;
-    my $epsB2=$self->epsB2;
     my %options=@_; #the rest are options. Currently, kind and mask.
     my $kind=lc($options{kind}//'f');
     my $mask=$options{mask};
     my $nd=$self->geometry->B->ndims;
-    my $epsT=$self->epsTensor->evaluate($epsA2, $epsB2);
+    my $epsT=$self->epsTensor->evaluate;
     my @P2M; #array of longitudinal polarizations along different directions.
     my $method = $KIND2METHOD{$kind};
     foreach(@{$self->nrshp}){
@@ -321,7 +319,8 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
 
 my @EPS_ATTRS = qw(geometry nh reorthogonalize smallH smallE);
 sub _build_epsTensor {
-    incarnate_as('Photonic::LE::NR2::EpsTensor', shift, \@EPS_ATTRS);
+    my $self=shift;
+    incarnate_as('Photonic::LE::NR2::EpsTensor', $self, \@EPS_ATTRS, epsA=>$self->epsA2, epsB=>$self->epsB2);
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -159,17 +159,17 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
+has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
     documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
+has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
         documentation=>'Dielectric function of inclusions');
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 sub evaluate {
     my $self=shift;
-    $self->_epsA(my $epsA=shift);
-    $self->_epsB(my $epsB=shift);
+    my $epsA=$self->epsA;
+    my $epsB=$self->epsB;
     my $epsTensor=tensor(pdl([map $_->evaluate($epsA, $epsB), @{$self->epsL}]), $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
     $self->_converged(all { $_->converged } @{$self->epsL});
     return $epsTensor;
