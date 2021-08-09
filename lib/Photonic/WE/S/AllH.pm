@@ -119,8 +119,6 @@ use namespace::autoclean;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'is_hermitian'=>(is=>'ro', default=>sub{0});
-
 extends 'Photonic::WE::S::Haydock';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::Reorthogonalize';
 

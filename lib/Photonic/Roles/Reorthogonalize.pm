@@ -60,9 +60,7 @@ for non Hermitian operators with complex Haydock coefficients.
 
 =over 4
 
-=item * is_hermitian
-
-Must exist in the consuming class.
+=item * complexCoeffs
 
 =item * previous_W, current_W, next_W
 
@@ -113,11 +111,11 @@ Flags a recent orthogonalization.
 
 =item * _sign
 
-Only used with Hermitian.
+Only used with real coefficients.
 
 =item * _arg
 
-Only used with non-Hermitian.
+Only used with complex coefficients.
 
 =back
 
@@ -130,7 +128,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use Moose::Role;
 
-requires 'is_hermitian';
+requires 'complexCoeffs';
 
 has 'previous_W' =>(is=>'ro',
      writer=>'_previous_W', lazy=>1, init_arg=>undef,
@@ -208,7 +206,7 @@ sub _checkorthogonalize {
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
-    my $method = $self->is_hermitian ? '_sign' : '_arg';
+    my $method = $self->complexCoeffs ? '_arg' : '_sign';
     if($n>=2){
 	$next_W= $b->(1:-1)*$current_W->(1:-1)
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
