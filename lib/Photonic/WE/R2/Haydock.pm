@@ -1,5 +1,5 @@
-package Photonic::WE::R2::OneH;
-$Photonic::WE::R2::OneH::VERSION = '0.018';
+package Photonic::WE::R2::Haydock;
+$Photonic::WE::R2::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
@@ -50,7 +50,7 @@ has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
-with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
+with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask';
 
 sub applyOperator {
     my $self=shift;
@@ -128,7 +128,7 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 
-Photonic::WE::R2::OneH
+Photonic::WE::R2::Haydock
 
 =head1 VERSION
 
@@ -136,8 +136,8 @@ version 0.018
 
 =head1 SYNOPSIS
 
-    use Photonic::WE::R2::OneH;
-    my $nr=Photonic::WE::R2::OneH->new(metric=>$g, polarization=>$p);
+    use Photonic::WE::R2::Haydock;
+    my $nr=Photonic::WE::R2::Haydock->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -151,7 +151,7 @@ the calculation of the retarded dielectric function of arbitrary
 periodic two component systems in arbitrary number of dimentions. One
 Haydock coefficient at a time.
 
-Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::UseMask>
+Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::UseMask>
 - please see those for attributes.
 
 =head1 ATTRIBUTES

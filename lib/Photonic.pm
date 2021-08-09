@@ -135,7 +135,7 @@ Calculate the longitudinal dielectric response.
 
 Calculate the dielectric tensor.
 
-=item L<Photonic::LE::NP::OneH>
+=item L<Photonic::LE::NP::Haydock>
 
 Calculator for one Haydock coefficient.
 
@@ -165,7 +165,7 @@ Calculate the dielectric tensor.
 
 Calculate the microscopic field.
 
-=item L<Photonic::LE::NR2::OneH>
+=item L<Photonic::LE::NR2::Haydock>
 
 Calculator for one Haydock coefficient.
 
@@ -208,7 +208,7 @@ Calculate the dielectric tensor.
 
 Calculate the microscopic field.
 
-=item L<Photonic::LE::S::OneH>
+=item L<Photonic::LE::S::Haydock>
 
 Calculator for one Haydock coefficient.
 
@@ -246,7 +246,7 @@ Flag to keepstates.
 
 Roles factored out of the metric calculators.
 
-=item L<Photonic::Roles::OneH>
+=item L<Photonic::Roles::Haydock>
 
 Roles factored out of the calculation of one Haydock coefficient.
 
@@ -316,7 +316,7 @@ Calculates the macroscopic Green tensor assuming it is symmetric.
 Retarded metric tensor of binary metamaterial with a non-dissipative
 host.
 
-=item L<Photonic::WE::R2::OneH>
+=item L<Photonic::WE::R2::Haydock>
 
 Calculate one Haydock coefficient.
 
@@ -367,7 +367,7 @@ Calculate the macroscopic Green tensor projected onto some direction.
 Retarded metric tensor of binary metamaterial with a non-dissipative
 host.
 
-=item L<Photonic::WE::S::OneH>
+=item L<Photonic::WE::S::Haydock>
 
 Calculate one Haydock coefficient.
 

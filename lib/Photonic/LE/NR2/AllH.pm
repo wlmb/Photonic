@@ -64,17 +64,17 @@ in a binary metamaterial.
 
 Initializes an Ph::LE::NR2::AllH object.
 $nh is the maximum number of desired coefficients.
-All other arguments are as in Photonic::LE::NR2::OneH.
+All other arguments are as in Photonic::LE::NR2::Haydock.
 
 =item * run
 
 Runs the iteration to completion. Calculates and saves Haydock
 coefficients and states (if desired).
 
-=item * All the Photonic::LE::NR2::OneH methods
+=item * All the Photonic::LE::NR2::Haydock methods
 
 They implement the calculation of one Haydock coefficient and state at
-a time. See L<Photonic::LE::NR2::OneH> methods.
+a time. See L<Photonic::LE::NR2::Haydock> methods.
 
 =item * All the Photonic::Roles::AllH methods
 
@@ -113,7 +113,7 @@ use MooseX::StrictConstructor;
 
 has 'is_hermitian'=>(is=>'ro', default=>sub{1});
 
-extends 'Photonic::LE::NR2::OneH';
+extends 'Photonic::LE::NR2::Haydock';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::Reorthogonalize';
 
 __PACKAGE__->meta->make_immutable;

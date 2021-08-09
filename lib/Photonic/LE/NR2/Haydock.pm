@@ -1,11 +1,11 @@
-package Photonic::LE::NR2::OneH;
-$Photonic::LE::NR2::OneH::VERSION = '0.018';
+package Photonic::LE::NR2::Haydock;
+$Photonic::LE::NR2::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::LE::NR2::OneH;
+Photonic::LE::NR2::Haydock;
 
 =head1 VERSION
 
@@ -43,8 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-    use Photonic::LE::NR2::OneH;
-    my $nr=Photonic::LE::NR2::OneH->new(geometry=>$geometry);
+    use Photonic::LE::NR2::Haydock;
+    my $nr=Photonic::LE::NR2::Haydock->new(geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -58,7 +58,7 @@ the calculation of the non retarded dielectric function of arbitrary
 periodic two component systems in arbitrary number of dimentions. One
 Haydock coefficient at a time.
 
-Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::UseMask>
+Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::UseMask>
 - please see those for attributes.
 
 =head1 ATTRIBUTES
@@ -117,7 +117,7 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
-with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
+with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask';
 
 sub _firstState { #\delta_{G0}
     my $self=shift;

@@ -64,13 +64,13 @@ them for later retrieval.
 
 Initializes an Ph::NR::NP::AllH object. $nh is the maximum number of desired
 coefficients, $k is a flag, non zero to save the Haydock states. All
-other arguments are as in Photonic::LE::S::OneH.
+other arguments are as in Photonic::LE::S::Haydock.
 
 =item * run
 
 Runs the iteration to completion
 
-=item * All the Photonic::LE::S::OneH methods
+=item * All the Photonic::LE::S::Haydock methods
 
 =back
 
@@ -103,7 +103,7 @@ Array of Haydock b coefficients
 
 Array of Haydock b coefficients squared
 
-=item * All the Photonic::LE::S::OneH methods
+=item * All the Photonic::LE::S::Haydock methods
 
 =back
 
@@ -121,7 +121,7 @@ use MooseX::StrictConstructor;
 
 has 'is_hermitian'=>(is=>'ro', default=>sub{0});
 
-extends 'Photonic::WE::S::OneH';
+extends 'Photonic::WE::S::Haydock';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::Reorthogonalize';
 
 __PACKAGE__->meta->make_immutable;

@@ -70,13 +70,13 @@ state. firstState should not be modified.
 
 Initializes an Ph::NR::NP::AllH object. $nh is the maximum number of
 desired coefficients, $k is a flag, non zero to save the Haydock
-states. All other arguments are as in Photonic::LE::NP::OneH.
+states. All other arguments are as in Photonic::LE::NP::Haydock.
 
 =item * run
 
 Runs the iteration to completion.
 
-=item * All the Photonic::LE::NP::OneH methods
+=item * All the Photonic::LE::NP::Haydock methods
 
 Implements calculation of Haydock coefficients and states. See implementation documentation.
 
@@ -132,7 +132,7 @@ use MooseX::StrictConstructor;
 
 has 'is_hermitian'=>(is=>'ro', default=>sub{0});
 
-extends 'Photonic::LE::NP::OneH';
+extends 'Photonic::LE::NP::Haydock';
 with 'Photonic::Roles::AllH', 'Photonic::Roles::Reorthogonalize';
 
 __PACKAGE__->meta->make_immutable;

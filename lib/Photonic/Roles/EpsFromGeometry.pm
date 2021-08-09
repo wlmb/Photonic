@@ -56,7 +56,7 @@ version 0.018
 
 =head1 SYNOPSIS
 
-    package Photonic::LE::NP::OneH;
+    package Photonic::LE::NP::Haydock;
     use Moose;
     with 'Photonic::Roles::EpsFromGeometry';
 

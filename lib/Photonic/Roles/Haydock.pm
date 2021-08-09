@@ -1,11 +1,11 @@
-package Photonic::Roles::OneH;
-$Photonic::Roles::OneH::VERSION = '0.018';
+package Photonic::Roles::Haydock;
+$Photonic::Roles::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::Roles::OneH
+Photonic::Roles::Haydock
 
 =head1 VERSION
 
@@ -43,8 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-    use Photonic::LE::NR2::OneH;
-    my $nr=Photonic::LE::NR2::OneH->new(geometry=>$geometry);
+    use Photonic::LE::NR2::Haydock;
+    my $nr=Photonic::LE::NR2::Haydock->new(geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -55,12 +55,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =item (for developers)
 
-    package Photonic::LE::NR2::OneH.pm;
-    $Photonic::LE::NR2::OneH::VERSION= '0.018';
+    package Photonic::LE::NR2::Haydock.pm;
+    $Photonic::LE::NR2::Haydock::VERSION= '0.018';
     use namespace::autoclean;
     use Moose;
     has...
-    with 'Photonic::Roles::OneH';
+    with 'Photonic::Roles::Haydock';
 
 =back
 

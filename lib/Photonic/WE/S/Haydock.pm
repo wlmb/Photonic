@@ -1,11 +1,11 @@
-package Photonic::WE::S::OneH;
-$Photonic::WE::S::OneH::VERSION = '0.018';
+package Photonic::WE::S::Haydock;
+$Photonic::WE::S::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::WE::S::OneH
+Photonic::WE::S::Haydock
 
 =head1 VERSION
 
@@ -13,8 +13,8 @@ version 0.018
 
 =head1 SYNOPSIS
 
-    use Photonic::WE::S::OneH;
-    my $nr=Photonic::WE::S::OneH->new(metric=>$g, polarization=>$p);
+    use Photonic::WE::S::Haydock;
+    my $nr=Photonic::WE::S::Haydock->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -28,7 +28,7 @@ the calculation of the retarded dielectric function of arbitrary
 periodic systems in arbitrary number of dimensions,  one
 Haydock coefficient at a time. It uses the wave equation and the spinor representation.
 
-Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::UseMask>,
+Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::UseMask>,
 L<Photonic::Roles::EpsFromGeometry>
 - please see those for attributes.
 
@@ -138,7 +138,7 @@ has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH',  'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
+with 'Photonic::Roles::Haydock',  'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
 
 sub applyOperator {
     my $self=shift;

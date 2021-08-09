@@ -1,11 +1,11 @@
-package Photonic::LE::NP::OneH;
-$Photonic::LE::NP::OneH::VERSION = '0.018';
+package Photonic::LE::NP::Haydock;
+$Photonic::LE::NP::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::LE::NP::OneH
+Photonic::LE::NP::Haydock
 
 =head1 COPYRIGHT NOTICE
 
@@ -43,8 +43,8 @@ version 0.018
 
 =head1 SYNOPSIS
 
-    use Photonic::LE::NP::OneH;
-    my $nr=Photonic::LE::NP::OneH->new(epsilon=>$epsilon,
+    use Photonic::LE::NP::Haydock;
+    my $nr=Photonic::LE::NP::Haydock->new(epsilon=>$epsilon,
            geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
@@ -59,7 +59,7 @@ the calculation of the non retarded dielectric function of arbitrary
 periodic many component systems in arbitrary number of dimentions. One
 Haydock coefficient at a time. The starting state is homogenous.
 
-Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::EpsFromGeometry>
+Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::EpsFromGeometry>
 - please see those for attributes.
 
 =head1 ATTRIBUTES SUPPLIED FOR ROLE
@@ -113,11 +113,11 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
 );
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH', 'Photonic::Roles::EpsFromGeometry';
+with 'Photonic::Roles::Haydock', 'Photonic::Roles::EpsFromGeometry';
 
 #don't allow initialization of next state, as this module is fragile
 #and depends on a particular initial state. Otherwise, use the
-#Roles::OneH attribute.
+#Roles::Haydock attribute.
 has '+next_state' =>(init_arg=>undef);
 
 sub _firstState { #\delta_{G0}

@@ -58,7 +58,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     use namespace::autoclean;
     use Moose;
     has...
-    with 'Photonic::Roles::OneH';
+    with 'Photonic::Roles::Haydock';
 
 =back
 
@@ -76,7 +76,7 @@ calculation of Haydock coefficients and states and saves them for later retrieva
 
 Initializes an Ph::...::AllH object. $nh is the maximum number of desired
 coefficients, $k is a flag, non zero to save the Haydock
-states. All other arguments are as in Photonic::...::OneH.
+states. All other arguments are as in Photonic::...::Haydock.
 
 =item * run
 
@@ -90,7 +90,7 @@ Load previously saved state from file, if provided.
 
 Store final state to file, if provided.
 
-=item * All the Photonic::...::OneH methods
+=item * All the Photonic::...::Haydock methods
 
 =back
 
@@ -128,7 +128,7 @@ ndarray of Haydock b coefficients.
 
 ndarray of Haydock b coefficients squared
 
-=item * All the Photonic::...::OneH methods
+=item * All the Photonic::...::Haydock methods
 
 =back
 

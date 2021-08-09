@@ -1,11 +1,11 @@
-package Photonic::LE::S::OneH;
-$Photonic::LE::S::OneH::VERSION = '0.018';
+package Photonic::LE::S::Haydock;
+$Photonic::LE::S::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::LE::S::OneH
+Photonic::LE::S::Haydock
 
 =head1 VERSION
 
@@ -43,8 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-    use Photonic::LE::S::OneH;
-    my $nr=Photonic::LE::S::OneH->new(epsilon=>$epsilon,
+    use Photonic::LE::S::Haydock;
+    my $nr=Photonic::LE::S::Haydock->new(epsilon=>$epsilon,
            geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
@@ -59,7 +59,7 @@ the calculation of the non retarded dielectric function of arbitrary
 periodic N component systems in arbitrary number of dimensions. One
 Haydock coefficient at a time. Use k,-k spinors. MQ notes.
 
-Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::UseMask>,
+Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::UseMask>,
 L<Photonic::Roles::EpsFromGeometry>
 - please see those for attributes.
 
@@ -116,9 +116,9 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     );
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
+with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
 
-#Required by Photonic::Roles::OneH
+#Required by Photonic::Roles::Haydock
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
