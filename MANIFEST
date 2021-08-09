@@ -34,6 +34,7 @@ lib/Photonic/LE/S/OneH.pm
 lib/Photonic/Roles/AllH.pm
 lib/Photonic/Roles/EpsFromGeometry.pm
 lib/Photonic/Roles/EpsL.pm
+lib/Photonic/Roles/EpsTensor.pm
 lib/Photonic/Roles/Geometry.pm
 lib/Photonic/Roles/KeepStates.pm
 lib/Photonic/Roles/Metric.pm
@@ -81,6 +82,7 @@ t/characteristic-functions.t
 t/epsl-nr2-nc.t
 t/epsl-nr2.t
 t/epsl-s.t
+t/epst-np.t
 t/epst-nr2-keller.t
 t/epst-nr2.t
 t/epst-s.t
