@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::EpsL;
-   my $eps=Photonic::LE::NR2::EpsL->new(nr=>$nr, nh=>$nh);
+   my $eps=Photonic::LE::NR2::EpsL->new(haydock=>$haydock, nh=>$nh);
    my $epsilonLongitudinal=$eps->evaluate($epsA, $epsB);
 
 =head1 DESCRIPTION
@@ -98,12 +98,12 @@ sub _build_u {
 
 sub _build_epsL {
     my $self=shift;
-    my $as=PDL::r2C($self->nr->as);
-    my $b2s=PDL::r2C($self->nr->b2s);
-    my $min= min($self->nh, $self->nr->iteration);
+    my $as=PDL::r2C($self->haydock->as);
+    my $b2s=PDL::r2C($self->haydock->b2s);
+    my $min= min($self->nh, $self->haydock->iteration);
     my ($fn, $n)=lentzCF((my $u = $self->u)-$as, -$b2s, $min, $self->smallE);
     # Check this logic:
-    $self->_converged($n<$min || $self->nr->iteration<=$self->nh);
+    $self->_converged($n<$min || $self->haydock->iteration<=$self->nh);
     $self->_nhActual($n);
     $self->epsA*$fn/$u;
 }

@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::LE::NP::EpsL;
-   my $eps=Photonic::LE::NP::EpsL->new(nr=>$nr, nh=>$nh);
+   my $eps=Photonic::LE::NP::EpsL->new(haydock=>$nr, nh=>$nh);
    my $epsilonLongitudinal=$eps->epsL;
 
 =head1 DESCRIPTION
@@ -68,9 +68,9 @@ with 'Photonic::Roles::EpsL';
 
 sub _build_epsL {
     my $self=shift;
-    my $as=$self->nr->as;
-    my $b2s=$self->nr->b2s;
-    my $min= min($self->nh, $self->nr->iteration);
+    my $as=$self->haydock->as;
+    my $b2s=$self->haydock->b2s;
+    my $min= min($self->nh, $self->haydock->iteration);
 #    b0+a1/b1+a2/...
 #	lo debo convertir a
 #	a0-b1^2/a1-b2^2/
@@ -78,7 +78,7 @@ sub _build_epsL {
     my ($fn, $n)=lentzCF($as, -$b2s, $min, $self->smallE);
     #If there are less available coefficients than $self->nh and all
     #of them were used, there is no remaining work to do, so, converged
-    $self->_converged($n<$min || $self->nr->iteration<=$self->nh);
+    $self->_converged($n<$min || $self->haydock->iteration<=$self->nh);
     $self->_nhActual($n);
     $fn;
 }

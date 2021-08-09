@@ -78,7 +78,7 @@ and B materials at the fundamental frequency
 
 Invariant part of SHG calculator.
 
-=item * ndims nrf densityA densityB density nr
+=item * ndims nrf densityA densityB density haydock
 
 Accessors handled by shp
 
@@ -195,7 +195,7 @@ use Moose;
 use MooseX::StrictConstructor;
 
 has 'shp'=>(is=>'ro', 'isa'=>'Photonic::LE::NR2::SHP', required=>1,
-    handles=>[qw(ndims nrf densityA densityB density nr)],
+    handles=>[qw(ndims nrf densityA densityB density haydock)],
     documentation=>'Object with invariant part of SHG calculation');
 has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
     documentation=>'Fundamental dielectric function of host');
@@ -321,7 +321,7 @@ sub _alpha {
 	$self->densityB==0;
     $alphaA1=$alphaB1 if $self->densityA==0;
     $alphaB1=$alphaA1 if $self->densityB==0;
-    my $B=$self->nrf->nr->B;
+    my $B=$self->nrf->haydock->B;
     $alphaA1*(1-$B)+$B*$alphaB1;
 }
 
@@ -356,7 +356,7 @@ sub _build_dipolar {
     my $Esquare_R=($field*$field)->sumover; #result is RorI, nx, ny...
     #Fourier transform
     my $Esquare_G=RtoG($Esquare_R, $ndims, 0); # nx ny...
-    my $G=$self->nrf->nr->G; #cartesian, nx, ny...
+    my $G=$self->nrf->haydock->G; #cartesian, nx, ny...
     my $iG=i2C $G; #cartesian nx ny
     my $iGE2=$iG*$Esquare_G->(*1); #cartesian nx ny...
     #back to real space. Get cartesian out of the way and then back
@@ -376,7 +376,7 @@ sub _build_quadrupolar {
     my $naa=$self->density*$self->alpha1*$self->alpha1/2; #nx, ny...
     my $naaEE_R=$naa->(*1,*1)*$EE_R; #cartesian cartesian nx ny...
     my $naaEE_G=RtoG($naaEE_R, $ndims, 2); # cartesian cartesian nx ny...
-    my $G=$self->nrf->nr->G; #cartesian, nx, ny...
+    my $G=$self->nrf->haydock->G; #cartesian, nx, ny...
     my $iG=i2C $G; #cartesian nx ny...
     my $iGnaaEE_G=($iG->(,*1)*$naaEE_G)->sumover; #dot - cartesian nx ny...
     $iGnaaEE_G *= $self->nrf->filter->(*1) if $self->nrf->has_filter; # nx ny...
@@ -403,7 +403,7 @@ sub _build_externalL_G {
     my $self=shift;
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
-    my $result=$self->nrf->nr->geometry->Vec2LC_G($self->external_G); # RoI cartesian nx ny...
+    my $result=$self->nrf->haydock->geometry->Vec2LC_G($self->external_G); # RoI cartesian nx ny...
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0) if $filterflag;
     return $result;
@@ -411,7 +411,7 @@ sub _build_externalL_G {
 
 sub _build_externalVecL_G {
     my $self=shift;
-    $self->nrf->nr->geometry->LC2Vec_G($self->externalL_G);
+    $self->nrf->haydock->geometry->LC2Vec_G($self->externalL_G);
 }
 
 sub _build_externalVecL {
@@ -425,7 +425,7 @@ sub _build_HP { #build haydock states for P2
     my $normext=sqrt(PDL::abs2($ext)->sum);
     my $extnorm=$ext/$normext;
     my $hp=Photonic::LE::NR2::AllH->new(nh=>$self->nrf->nh,
-	geometry=>$self->nrf->nr->geometry, smallH=>$self->nrf->nr->smallH,
+	geometry=>$self->nrf->haydock->geometry, smallH=>$self->nrf->haydock->smallH,
 		keepStates=>1, firstState=>$extnorm);
     $hp->run;
     return $hp;
@@ -470,7 +470,7 @@ sub _build_selfConsistentL_G {
 
 sub _build_selfConsistentVecL_G {
     my $self=shift;
-    $self->nrf->nr->geometry->LC2Vec_G($self->selfConsistentL_G);
+    $self->nrf->haydock->geometry->LC2Vec_G($self->selfConsistentL_G);
 }
 
 sub _build_selfConsistentVecL {
@@ -492,19 +492,19 @@ sub _build_P2LMCalt {
     my $PexL_G=$self->externalL_G; #external long 2w polarization
     my $PexM=$self->external_G->(:,(0),(0)); #macroscopic external.
     my $nrf=$self->nrf;
-    my $nr=$nrf->nr;
-    my $geom=$nr->geometry;
+    my $haydock=$nrf->haydock;
+    my $geom=$haydock->geometry;
     my $ndims=$geom->ndims;
     my $nelem=$geom->npoints;
     my $k=$geom->Direction0;
     my $epsA2=$self->epsA2;
     my $u2=$self->u2;
     my $B=$geom->B;
-    my $as=$nr->as;
-    my $bs=$nr->bs;
+    my $as=$haydock->as;
+    my $bs=$haydock->bs;
     my $nh=$nrf->nh; #desired number of Haydock terms
     #don't go beyond available values.
-    $nh=$nr->iteration if $nh>=$nr->iteration;
+    $nh=$haydock->iteration if $nh>=$haydock->iteration;
     # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=|0>.
     my $diag=$self->u2->conj - $as->(0:$nh-1);
@@ -515,20 +515,20 @@ sub _build_P2LMCalt {
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
     my $phi_n = cgtsv($subdiag, $diag, $supradiag, $rhs);
-    my $states=$nr->state_iterator;
+    my $states=$haydock->state_iterator;
     my $phi_G=linearCombineIt($phi_n, $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
 
-    my $beta_G=RtoG($B*GtoR($nr->firstState,$ndims,0), $ndims,0);
+    my $beta_G=RtoG($B*GtoR($haydock->firstState,$ndims,0), $ndims,0);
     my $betaV_G=$beta_G->(*1)*$geom->GNorm;
-    $states=$nr->state_iterator;
+    $states=$haydock->state_iterator;
     my $betaV_n=PDL->pdl(
 	[map {HProd($betaV_G,$states->nextval->(*1), 1)} (0..$nh-1)]
 	);
     my $Ppsi = PDL->zeroes($ndims)->r2C;
     foreach(0..$ndims-1){
 	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(($_))); # nx ny .... cartesian
-	$states=$nr->state_iterator;
+	$states=$haydock->state_iterator;
 	my $psi_G=linearCombineIt($psi_n, $states);
 	$Ppsi->(($_)) .= HProd($psi_G, $PexL_G);
     }

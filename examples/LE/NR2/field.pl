@@ -59,7 +59,7 @@ my $L=pdl($l,$l);
 my $B=ellipse($N,$f,.7);
 my $circle=Photonic::Geometry::FromB->new(B=>$B,L=>$L,Direction0=>$pdir);
 my $nr=Photonic::LE::NR2::AllH->new(geometry=>$circle,nh=>$nh,keepStates=>1);
-my $nrf=Photonic::LE::NR2::Field->new(nr=>$nr, nh=>$nh);
+my $nrf=Photonic::LE::NR2::Field->new(haydock=>$nr, nh=>$nh);
 my $field=$nrf->evaluate($epsA, $epsB);
 
 my $wf=gpwin('x11', size=>[8,8],persist=>1,wait=>60); #initialice windows

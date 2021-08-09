@@ -44,9 +44,9 @@ my $eb=3+4*i;
 my $B=zeroes(11)->xvals<5; #1D system
 my $epsilon=$ea*(1-$B)+$eb*$B;
 my $gl=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
-my $nr=Photonic::LE::S::AllH->new(geometry=>$gl, nh=>10,
+my $haydock=Photonic::LE::S::AllH->new(geometry=>$gl, nh=>10,
    keepStates=>1, epsilon=>$epsilon);
-my $flo=Photonic::LE::S::Field->new(nr=>$nr, nh=>10);
+my $flo=Photonic::LE::S::Field->new(haydock=>$haydock, nh=>10);
 my $flv=$flo->evaluate;
 my $fla=1/$ea;
 my $flb=1/$eb;
@@ -61,7 +61,7 @@ my $epsilont=$ea*(1-$Bt)+$eb*$Bt;
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
 my $nt=Photonic::LE::S::AllH->new(geometry=>$gt, nh=>10,
 				  keepStates=>1, epsilon=>$epsilont);
-my $fto=Photonic::LE::S::Field->new(nr=>$nt, nh=>10);
+my $fto=Photonic::LE::S::Field->new(haydock=>$nt, nh=>10);
 my $ftv=$fto->evaluate;
 my $ftx=r2C(pdl [1, 0]);
 ok(Cagree($ftv, $ftx), "1D trans field");

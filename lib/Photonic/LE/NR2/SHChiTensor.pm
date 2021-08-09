@@ -273,7 +273,7 @@ sub evaluate {
 	    ->clump(-2) #linear index, XorY
 	    ->sumover  #XorY
 	    /$self->geometry->npoints;
-	my $k=$_->nrf->nr->geometry->Direction0;
+	my $k=$_->nrf->haydock->geometry->Direction0;
 	my $FPChi=$epsT-identity($nd); #four pi chi linear 2w
 	my $P2MLC=($k*$P2M)->sumover; #Longitudinal component
 	my $P2ML=$k*$P2MLC; #longitudinal projection
@@ -308,13 +308,13 @@ sub evaluate {
 
 sub _build_nrshp { # One Haydock coefficients calculator per direction0
     my $self=shift;
-    my $nr = make_haydock($self, 'Photonic::LE::NR2::AllH', $self->geometry->unitPairs, 1, qw(reorthogonalize use_mask mask));
+    my $haydock = make_haydock($self, 'Photonic::LE::NR2::AllH', $self->geometry->unitPairs, 1, qw(reorthogonalize use_mask mask));
     my @args=(nh=>$self->nhf, smallE=>$self->smallE);
     push @args, filter=>$self->filter if $self->has_filter;
     [ map Photonic::LE::NR2::SHP->new(
-	    nrf=>Photonic::LE::NR2::Field->new(@args, nr=>$_),
+	    nrf=>Photonic::LE::NR2::Field->new(@args, haydock=>$_),
 	    densityA=>$self->densityA, densityB=>$self->densityB,
-    ), @$nr ];
+    ), @$haydock ];
 }
 
 my @EPS_ATTRS = qw(geometry nh reorthogonalize smallH smallE);

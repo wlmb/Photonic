@@ -57,11 +57,11 @@ the components.
 
 =over 4
 
-=item * new(nr=>$nr, nh=>$nh, smallE=>$smallE)
+=item * new(haydock=>$haydock, nh=>$nh, smallE=>$smallE)
 
 Initializes the structure.
 
-$nr Photonic::WE::R2::AllH is a Haydock calculator for the
+$haydock Photonic::WE::R2::AllH is a Haydock calculator for the
 structure, *initialized* with the flag keepStates=>1
 (Photonic::Types::AllHSave, as defined in Photonic::Types).
 
@@ -81,7 +81,7 @@ dielectric functions of the host $epsA and the particle $epsB.
 
 =over 4
 
-=item * nr
+=item * haydock
 
 Photonic::WE::R2::AllH structure
 
@@ -138,7 +138,7 @@ use Photonic::Iterator;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
+has 'haydock'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
            documentation=>'Haydock recursion calculator');
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]', init_arg=>undef,
            writer=>'_Es', documentation=>'Field coefficients');
@@ -161,21 +161,21 @@ has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=
 
 sub BUILD {
     my $self=shift;
-    $self->nr->run unless $self->nr->iteration;
+    $self->haydock->run unless $self->haydock->iteration;
 }
 
 sub evaluate {
     my $self=shift;
     $self->_epsB(my $epsB=shift);
-    $self->_epsA(my $epsA=$self->nr->epsilon->r2C);
+    $self->_epsA(my $epsA=$self->haydock->epsilon->r2C);
     $self->_u(my $u=1/(1-$epsB/$epsA));
-    my $as=$self->nr->as;
-    my $bs=$self->nr->bs;
-    my $cs=$self->nr->cs;
-    my $stateit=$self->nr->state_iterator;
+    my $as=$self->haydock->as;
+    my $bs=$self->haydock->bs;
+    my $cs=$self->haydock->cs;
+    my $stateit=$self->haydock->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
-    $nh=$self->nr->iteration if $nh>$self->nr->iteration;
+    $nh=$self->haydock->iteration if $nh>$self->haydock->iteration;
     # calculate using lapack for tridiag system
     my $diag=$u - $as->(0:$nh-1);
     # rotate complex zero from first to last element.
@@ -188,7 +188,7 @@ sub evaluate {
     my $giEs = cgtsv($subdiag, $diag, $supradiag, $rhs);
     #states are xy,nx,ny...
     #field is xy,nx,ny...
-    my @dims=$self->nr->B->dims; # actual dims of space
+    my @dims=$self->haydock->B->dims; # actual dims of space
     my $ndims=@dims; # num. of dims of space
     my $field_G=PDL->zeroes($ndims, @dims)->r2C;
     #print $field_G->info, "\n";
@@ -198,15 +198,15 @@ sub evaluate {
 	$field_G+=$giE_G;
     }
     #
-    my $Es=$self->nr->applyMetric($field_G);
+    my $Es=$self->haydock->applyMetric($field_G);
     my $e_0=1/($Es->slice(":" . ",(0)" x $ndims)
-	       *$self->nr->polarization->conj)->sumover;
+	       *$self->haydock->polarization->conj)->sumover;
     # Normalize result so macroscopic field is 1.
     $Es*=$e_0;
     $Es *= $self->filter->(*1) if $self->has_filter;
     ##get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=GtoR($Es, $ndims, 1);
-    $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
+    $field_R*=$self->haydock->B->nelem; #scale to have unit macroscopic field
     #result is cartesian, nx, ny,...
     $self->_field($field_R);
     return $field_R;

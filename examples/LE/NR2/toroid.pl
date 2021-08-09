@@ -72,8 +72,8 @@ my $nrz=Photonic::LE::NR2::AllH->new(geometry=>$gz, nh=>$Nh);
 say "#ratio Nxy Nz Nh f-nom f-act medium torus epsxx epszz";
 foreach(0..@eps_a-1){
     my ($ea, $eb)=(pdl($eps_a[$_])->r2C, pdl($eps_b[$_])->r2C);
-    my $epsx_calc=Photonic::LE::NR2::EpsL->new(nr=>$nrx, nh=>$Nh, epsA=>$ea, epsB=>$eb);
-    my $epsz_calc=Photonic::LE::NR2::EpsL->new(nr=>$nrz, nh=>$Nh, epsA=>$ea, epsB=>$eb);
+    my $epsx_calc=Photonic::LE::NR2::EpsL->new(haydock=>$nrx, nh=>$Nh, epsA=>$ea, epsB=>$eb);
+    my $epsz_calc=Photonic::LE::NR2::EpsL->new(haydock=>$nrz, nh=>$Nh, epsA=>$ea, epsB=>$eb);
     my $resultx=$epsx_calc->epsL;
     my $resultz=$epsz_calc->epsL;
     say sprintf "%.4f %d %d %d %.4f %.4f %.4f %.4f %.4f %.4f",

@@ -77,7 +77,7 @@ my %dir=(xx=>pdl(1,0),yy=>pdl(0,1));
 foreach my $x (keys %dir){
     my $g=Photonic::Geometry::FromEpsilon->new(epsilon=>$e,L=>pdl($l,$l),Direction0=>$dir{$x});
     my $allh=Photonic::LE::S::AllH->new(geometry=>$g, nh=>$nh);
-    my $nr=Photonic::LE::S::EpsL->new(nr=>$allh,nh=>$nh);
+    my $nr=Photonic::LE::S::EpsL->new(haydock=>$allh,nh=>$nh);
     say OUT join " ", $x, $epsM{$x}->re, $epsM{$x}->im, $nr->epsL->re, $nr->epsL->im;
 
 }

@@ -68,7 +68,7 @@ given fixed Photonic::Geometry structure as a function of the dielectric
 functions of the components.
 
 The consuming class needs to supply these methods to inform lazy-building
-of C<nr> and C<epsL>:
+of C<haydock> and C<epsL>:
 
 =over 4
 
@@ -105,7 +105,7 @@ the tensor calculations.
 
 Flag to keep states in Haydock calculations (default 0)
 
-=item * nr
+=item * haydock
 
 Array of L<Photonic::Role::AllH> structures, one for each direction
 (lazy-built from geometry if not given). Since this is expensive, once
@@ -149,8 +149,8 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
 );
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
-has 'nr' =>(is=>'ro', isa=>'ArrayRef[Photonic::Roles::AllH]',
-            init_arg=>undef, lazy=>1, builder=>'_build_nr',
+has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::Roles::AllH]',
+            init_arg=>undef, lazy=>1, builder=>'_build_haydock',
             documentation=>'Array of Haydock calculators');
 has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::Roles::EpsL]',
              init_arg=>undef, lazy=>1, builder=>'_build_epsL',
@@ -174,14 +174,14 @@ sub _build_epsTensor {
     tensor(pdl(\@epsLs), $self->geometry->unitDyadsLU, $self->geometry->B->ndims, 2);
 }
 
-sub _build_nr { # One Haydock coefficients calculator per direction0
+sub _build_haydock { # One Haydock coefficients calculator per direction0
     my $self=shift;
     make_haydock($self, $self->allh_class, $self->geometry->unitPairs, 1, @{$self->allh_attrs});
 }
 
 sub _build_epsL {
     my $self=shift;
-    [ map incarnate_as($self->epsl_class, $self, $self->epsl_attrs, nr=>$_), @{$self->nr} ];
+    [ map incarnate_as($self->epsl_class, $self, $self->epsl_attrs, haydock=>$_), @{$self->haydock} ];
 }
 
 no Moose::Role;

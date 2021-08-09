@@ -101,7 +101,7 @@ $L=pdl($l,$l);
 my $gmtnr=Photonic::Geometry::FromB->new(B=>$B,L=>$L,Direction0=>$pdir);
 # object $allh has access to Haydock's coefficients
 my $allh=Photonic::LE::NR2::AllH->new(geometry=>$gmtnr, nh=>$nh);
-# object $nr has access to longitudinal components of macroscopic
+# object $epsM_L has access to longitudinal components of macroscopic
 # tensor via EpsL attribute
 # where $epsM_L is a EpsL object that will be used to calculate the
 # macroscopic dielectric tensor component in Direction0 polarization
@@ -120,7 +120,7 @@ for(my $j=0;$j<$elem;$j++){
 #----------------------------------------------------------------------------------
 # with the NR2 evaluate method the same Haydock coefficients are used
 # for all frequencies. The object $epsM_L knows about it.
-    my $epsM_L=Photonic::LE::NR2::EpsL->new(nr=>$allh, nh=>$nh, epsA=>$epsA->r2C, epsB=>$epsB);
+    my $epsM_L=Photonic::LE::NR2::EpsL->new(haydock=>$allh, nh=>$nh, epsA=>$epsA->r2C, epsB=>$epsB);
     my $epsM_pdir=$epsM_L->epsL;
 # $epsM_L is the macroscopic dielectric tensor (complex number) in \hat y=(0,1) Direction0
 #----------------------------------------------------------------------------------

@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::EpsL;
-   my $eps=Photonic::LE::NR2::EpsL->new(nr=>$nr, nh=>$nh, epsA=>$eA, epsB=>$eb);
+   my $eps=Photonic::LE::NR2::EpsL->new(haydock=>$haydock, nh=>$nh, epsA=>$eA, epsB=>$eb);
    my $epsilonLongitudinal=$eps->epsL;
 
 =over 4
@@ -79,7 +79,7 @@ of C<epsL>:
 
 =over 4
 
-=item * nr
+=item * haydock
 
 The ...::AllH structure
 
@@ -120,7 +120,7 @@ use Photonic::Types;
 
 requires '_build_epsL';
 
-has 'nr' =>(is=>'ro', isa=>'Photonic::Types::AllH', required=>1);
+has 'haydock' =>(is=>'ro', isa=>'Photonic::Types::AllH', required=>1);
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1, lazy=>1, builder=>'_nh',
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
@@ -136,12 +136,12 @@ has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef,
 
 sub BUILD {
     my $self=shift;
-    $self->nr->run unless $self->nr->iteration;
+    $self->haydock->run unless $self->haydock->iteration;
 }
 
 sub _nh { #build desired number of Haydock coeffs to use.
     my $self=shift;
-    return $self->nr->nh; #defaults to coefficients desired
+    return $self->haydock->nh; #defaults to coefficients desired
 }
 
 no Moose::Role;

@@ -57,11 +57,11 @@ the components.
 
 =over 4
 
-=item * new(nr=>$nr, nh=>$nh, smallE=>$smallE)
+=item * new(haydock=>$haydock, nh=>$nh, smallE=>$smallE)
 
 Initializes the structure.
 
-$nr Photonic::LE::S::AllH is a Haydock calculator for the
+$haydock Photonic::LE::S::AllH is a Haydock calculator for the
 structure, *initialized* with the flag keepStates=>1
 (Photonic::Types::AllHSave, as defined in Photonic::Types).
 
@@ -80,7 +80,7 @@ Returns the microscopic electric field.
 
 =over 4
 
-=item * nr
+=item * haydock
 
 Photonic::LE::S::AllH structure
 
@@ -142,7 +142,7 @@ use Photonic::Iterator;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nr'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
+has 'haydock'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
            documentation=>'Haydock recursion calculator');
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]', init_arg=>undef,
            writer=>'_Es', documentation=>'Field coefficients');
@@ -169,17 +169,17 @@ has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
 
 sub BUILD {
     my $self=shift;
-    $self->nr->run unless $self->nr->iteration;
+    $self->haydock->run unless $self->haydock->iteration;
 }
 
 sub evaluate {
     my $self=shift;
-    my $as=$self->nr->as;
-    my $bs=$self->nr->bs;
-    my $stateit=$self->nr->state_iterator;
+    my $as=$self->haydock->as;
+    my $bs=$self->haydock->bs;
+    my $stateit=$self->haydock->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
-    $nh=$self->nr->iteration if $nh>$self->nr->iteration;
+    $nh=$self->haydock->iteration if $nh>$self->haydock->iteration;
     # calculate using lapack for tridiag system
     # solve \epsilon^LL \vec E^L=D^L.
     # At first take D=|0>
@@ -198,14 +198,14 @@ sub evaluate {
     my $Es = $result*$epsL;
     #states are nx,ny...
     #field is xy,pm,nx,ny...
-    my @dims=$self->nr->B->dims; # actual dims of space
+    my @dims=$self->haydock->B->dims; # actual dims of space
     my $ndims=@dims; # num. of dims of space
     my $field_G=PDL->zeroes($ndims, 2, @dims)->r2C;
     for(my $n=0; $n<$nh; ++$n){
 	#state is pm,nx,ny...
 	#pmGnorm is xy,pm,nx,ny...
 	#$Gpsi_G is xy,pm,nx,ny
-	my $GPsi_G=($self->nr->pmGNorm->mv(0,-1)*$stateit->nextval)
+	my $GPsi_G=($self->haydock->pmGNorm->mv(0,-1)*$stateit->nextval)
 	    ->mv(-1,0); #^G|psi_n>
 	my $EnGPsi_G=$Es->($n)*$GPsi_G; #En ^G|psi_n>
 	$field_G+=$EnGPsi_G; #xy,pm,nx,ny...
@@ -215,7 +215,7 @@ sub evaluate {
     $Esp *= $self->filter->(*1) if $self->has_filter;
     #get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=GtoR($Esp, $ndims, 1);
-    $field_R*=$self->nr->B->nelem; #scale to have unit macroscopic field
+    $field_R*=$self->haydock->B->nelem; #scale to have unit macroscopic field
     #result is xy,nx,ny,...
     $self->_field($field_R);
     return $field_R;

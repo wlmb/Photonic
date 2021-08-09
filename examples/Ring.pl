@@ -137,7 +137,7 @@ for(my $j=0;$j<$elem;$j++){
 # with the NR2 evaluate method the same Haydock coefficients are used
 # for all frequencies. The object $nr knows about it.
 # First argument is the host (epsA)
-    my $nr=Photonic::LE::NR2::EpsL->new(nr=>$allh, nh=>$nh, epsA=>$epsA->r2C, epsB=>$epsB);
+    my $nr=Photonic::LE::NR2::EpsL->new(haydock=>$allh, nh=>$nh, epsA=>$epsA->r2C, epsB=>$epsB);
     my $enr=$nr->epsL;
 # $enr is the macroscopic dielectric tensor (complex number) in \hat y=(0,1) Direction0
 #----------------------------------------------------------------------------------
