@@ -57,7 +57,6 @@ WriteMakefile(
         prereqs => {
             develop => {
                 requires => {
-                    'Pod::Coverage::TrustPod' => '0',
                     'Test::Pod' => '1.22',
                     'Test::Pod::Coverage' => '1.08',
                     'Test::Version' => '1.003001',
