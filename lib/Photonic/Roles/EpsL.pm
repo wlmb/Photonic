@@ -63,7 +63,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Calculates the macroscopic longitudinal dielectric function for a
-given fixed Photonic::...::AllH structure as a function of the
+given fixed Photonic::...::Haydock structure as a function of the
 dielectric functions of the components.
 
 The consuming class needs to supply these methods to inform lazy-building
@@ -81,7 +81,7 @@ of C<epsL>:
 
 =item * haydock
 
-The ...::AllH structure
+The ...::Haydock structure
 
 =item * epsL
 
@@ -120,7 +120,7 @@ use Photonic::Types;
 
 requires '_build_epsL';
 
-has 'haydock' =>(is=>'ro', isa=>'Photonic::Types::AllH', required=>1);
+has 'haydock' =>(is=>'ro', isa=>'Photonic::Types::Haydock', required=>1);
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1, lazy=>1, builder=>'_nh',
 	    documentation=>'Desired no. of Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,

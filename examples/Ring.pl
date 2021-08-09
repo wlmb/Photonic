@@ -40,9 +40,9 @@ use constant PI=>4*atan2(1,1);
 
 use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::EpsL;
-use Photonic::LE::NR2::AllH;
+use Photonic::LE::NR2::Haydock;
 use Photonic::WE::R2::Metric;
-use Photonic::WE::R2::AllH;
+use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::EpsilonP;
 use PDL;
 use PDL::NiceSlice;
@@ -103,7 +103,7 @@ my $elem=$epsBall->dim(0); # how many frequencies for calculation
 # is very large compared with L
 my $gmtnr=Photonic::Geometry::FromB->new(B=>$B,L=>pdl($l*$a,$l*$a),Direction0=>pdl(0,1));
 # object $allh has access to Haydock's coefficients
-my $allh=Photonic::LE::NR2::AllH->new(geometry=>$gmtnr, nh=>$nh);
+my $allh=Photonic::LE::NR2::Haydock->new(geometry=>$gmtnr, nh=>$nh);
 # object $nr has access to longitudinal components of macroscopic
 # tensor via EpsL attribute
 # that will be used to evaluate $er for different frequency below
@@ -151,7 +151,7 @@ for(my $j=0;$j<$elem;$j++){
     my $m=Photonic::WE::R2::Metric->new(geometry=>$gmtr, epsilon=>$epsA,
 					  wavenumber=>pdl($q),
 					  wavevector=>pdl([$k,0]));
-    my $h=Photonic::WE::R2::AllH->new(metric=>$m,
+    my $h=Photonic::WE::R2::Haydock->new(metric=>$m,
 					polarization=>pdl(0,1)->r2C, nh=>$nh);
     my $e=Photonic::WE::R2::EpsilonP->new(haydock=>$h, nh=>$nh);
     my $er=$e->evaluate($epsB);

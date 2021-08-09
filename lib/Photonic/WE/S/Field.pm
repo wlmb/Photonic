@@ -61,9 +61,9 @@ the components.
 
 Initializes the structure.
 
-$haydock Photonic::WE::S::AllH is a Haydock calculator for the
+$haydock Photonic::WE::S::Haydock is a Haydock calculator for the
 structure, *initialized* with the flag keepStates=>1
-(Photonic::Types::AllHSave, as defined in Photonic::Types).
+(Photonic::Types::HaydockSave, as defined in Photonic::Types).
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -83,7 +83,7 @@ dielectric functions of the host $epsA and the particle $epsB.
 
 =item * haydock
 
-Photonic::WE::S::AllH structure
+Photonic::WE::S::Haydock structure
 
 =item * nh
 
@@ -137,14 +137,14 @@ evaluation of the field
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use Photonic::WE::S::AllH;
+use Photonic::WE::S::Haydock;
 use Photonic::Utils qw(cgtsv GtoR);
 use Photonic::Types;
 use Photonic::Iterator;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'haydock'=>(is=>'ro', isa=>'Photonic::Types::AllHSave', required=>1,
+has 'haydock'=>(is=>'ro', isa=>'Photonic::Types::HaydockSave', required=>1,
            documentation=>'Haydock recursion calculator');
 has 'Es'=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]', init_arg=>undef,
            writer=>'_Es', documentation=>'Field coefficients');

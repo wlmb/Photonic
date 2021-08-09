@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use Photonic::WE::S::AllH;
+use Photonic::WE::S::Haydock;
 use Photonic::WE::S::Metric;
 use Photonic::WE::S::Field;
 
@@ -48,7 +48,7 @@ my $epsilon=$ea*(1-$B)+$eb*$B;
 my $gl=Photonic::Geometry::FromB->new(B=>$B); #long
 my $ml=Photonic::WE::S::Metric->new(geometry=>$gl, epsilon=>pdl(1),
    wavenumber=>pdl(1), wavevector=>pdl([0.01]));
-my $haydock=Photonic::WE::S::AllH->new(
+my $haydock=Photonic::WE::S::Haydock->new(
    metric=>$ml, nh=>10, keepStates=>1, polarization=>pdl([1])->r2C,
    epsilon=>$epsilon);
 my $flo=Photonic::WE::S::Field->new(haydock=>$haydock, nh=>10);
@@ -66,7 +66,7 @@ my $epsilont=$ea*(1-$Bt)+$eb*$Bt;
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt); #trans
 my $mt=Photonic::WE::S::Metric->new(geometry=>$gt, epsilon=>pdl(1),
    wavenumber=>pdl(0.001), wavevector=>pdl([0,0.0001]));
-my $nt=Photonic::WE::S::AllH->new(
+my $nt=Photonic::WE::S::Haydock->new(
    metric=>$mt, nh=>10, keepStates=>1, polarization=>pdl([1,0])->r2C,
    epsilon=>$epsilont);
 my $fto=Photonic::WE::S::Field->new(haydock=>$nt, nh=>10);

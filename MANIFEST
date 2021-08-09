@@ -14,11 +14,9 @@ lib/Photonic/Geometry/FromB.pm
 lib/Photonic/Geometry/FromEpsilon.pm
 lib/Photonic/Geometry/FromImage2D.pm
 lib/Photonic/Iterator.pm
-lib/Photonic/LE/NP/AllH.pm
 lib/Photonic/LE/NP/EpsL.pm
 lib/Photonic/LE/NP/EpsTensor.pm
 lib/Photonic/LE/NP/Haydock.pm
-lib/Photonic/LE/NR2/AllH.pm
 lib/Photonic/LE/NR2/EpsL.pm
 lib/Photonic/LE/NR2/EpsTensor.pm
 lib/Photonic/LE/NR2/Field.pm
@@ -26,12 +24,10 @@ lib/Photonic/LE/NR2/Haydock.pm
 lib/Photonic/LE/NR2/SH.pm
 lib/Photonic/LE/NR2/SHChiTensor.pm
 lib/Photonic/LE/NR2/SHP.pm
-lib/Photonic/LE/S/AllH.pm
 lib/Photonic/LE/S/EpsL.pm
 lib/Photonic/LE/S/EpsTensor.pm
 lib/Photonic/LE/S/Field.pm
 lib/Photonic/LE/S/Haydock.pm
-lib/Photonic/Roles/AllH.pm
 lib/Photonic/Roles/EpsFromGeometry.pm
 lib/Photonic/Roles/EpsL.pm
 lib/Photonic/Roles/EpsTensor.pm
@@ -43,7 +39,6 @@ lib/Photonic/Roles/Reorthogonalize.pm
 lib/Photonic/Roles/UseMask.pm
 lib/Photonic/Types.pm
 lib/Photonic/Utils.pm
-lib/Photonic/WE/R2/AllH.pm
 lib/Photonic/WE/R2/EpsilonP.pm
 lib/Photonic/WE/R2/EpsilonTensor.pm
 lib/Photonic/WE/R2/Field.pm
@@ -54,7 +49,6 @@ lib/Photonic/WE/R2/Haydock.pm
 lib/Photonic/WE/R2/Metric.pm
 lib/Photonic/WE/R2/Wave.pm
 lib/Photonic/WE/R2/WaveP.pm
-lib/Photonic/WE/S/AllH.pm
 lib/Photonic/WE/S/EpsilonP.pm
 lib/Photonic/WE/S/EpsilonTensor.pm
 lib/Photonic/WE/S/Field.pm

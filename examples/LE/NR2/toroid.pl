@@ -22,7 +22,7 @@ use PDL;
 use PDL::NiceSlice;
 use PDL::Constants qw(PI);
 use Photonic::Geometry::FromB;
-use Photonic::LE::NR2::AllH;
+use Photonic::LE::NR2::Haydock;
 use Photonic::LE::NR2::EpsL;
 
 my $ratio; # b/a for torus
@@ -67,8 +67,8 @@ my $r=zeroes($Nxy2, $Nxy2, $Nz2)->ndcoords-pdl($Nxy, $Nxy, $Nz); #positions arra
 my $B=(sqrt($r((0))**2+$r((1))**2)-$large_radius)**2+$r((2))**2 < $small_radius**2;
 my $gx=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl(1,0,0));
 my $gz=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl(0,0,1));
-my $nrx=Photonic::LE::NR2::AllH->new(geometry=>$gx, nh=>$Nh);
-my $nrz=Photonic::LE::NR2::AllH->new(geometry=>$gz, nh=>$Nh);
+my $nrx=Photonic::LE::NR2::Haydock->new(geometry=>$gx, nh=>$Nh);
+my $nrz=Photonic::LE::NR2::Haydock->new(geometry=>$gz, nh=>$Nh);
 say "#ratio Nxy Nz Nh f-nom f-act medium torus epsxx epszz";
 foreach(0..@eps_a-1){
     my ($ea, $eb)=(pdl($eps_a[$_])->r2C, pdl($eps_b[$_])->r2C);

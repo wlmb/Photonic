@@ -132,7 +132,7 @@ Longitudinal projection of external polarization field in reciprocal space
 
 =item * HP
 
-Photonic::LE::NR2::AllH structure to calculate Haydock basis for
+Photonic::LE::NR2::Haydock structure to calculate Haydock basis for
 non linear polarization
 
 =item * externalL_n
@@ -186,7 +186,7 @@ polarization using the field (nrf) filter.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use Photonic::LE::NR2::AllH;
+use Photonic::LE::NR2::Haydock;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv);
 use Photonic::Iterator;
 use Photonic::Types;
@@ -250,7 +250,7 @@ has 'externalVecL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>und
          lazy=>1, builder=>'_build_externalVecL',
          documentation=>
              'SH ext. longitudinal polarization proj. in real space');
-has 'HP' =>(is=>'ro', isa=>'Photonic::LE::NR2::AllH', init_arg=>undef,
+has 'HP' =>(is=>'ro', isa=>'Photonic::LE::NR2::Haydock', init_arg=>undef,
          lazy=>1, builder=>'_build_HP',
          documentation=>
          'Structure to calculate Haydock basis for non linear polarization');
@@ -424,7 +424,7 @@ sub _build_HP { #build haydock states for P2
     my $ext=$self->externalL_G;
     my $normext=sqrt(PDL::abs2($ext)->sum);
     my $extnorm=$ext/$normext;
-    my $hp=Photonic::LE::NR2::AllH->new(nh=>$self->nrf->nh,
+    my $hp=Photonic::LE::NR2::Haydock->new(nh=>$self->nrf->nh,
 	geometry=>$self->nrf->haydock->geometry, smallH=>$self->nrf->haydock->smallH,
 		keepStates=>1, firstState=>$extnorm);
     $hp->run;

@@ -42,7 +42,7 @@ my $eb=3+4*i;
 #Check haydock coefficients for simple 1D system
 my $B=zeroes(11)->xvals<5; #1D system
 my $gl=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
-my $al=Photonic::LE::NR2::AllH->new(geometry=>$gl, nh=>10);
+my $al=Photonic::LE::NR2::Haydock->new(geometry=>$gl, nh=>10);
 my $elo=Photonic::LE::NR2::EpsL->new(haydock=>$al, epsA => $ea, epsB => $eb);
 my $elv=$elo->epsL;
 my $elx=1/((1-$gl->f)/$ea+$gl->f/$eb);
@@ -52,7 +52,7 @@ is($elo->converged,1, "Converged");
 #View 1D system as 2D. Transverse direction
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
-my $at=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10);
+my $at=Photonic::LE::NR2::Haydock->new(geometry=>$gt, nh=>10);
 my $eto=Photonic::LE::NR2::EpsL->new(haydock=>$at, nh=>10, epsA => $ea, epsB => $eb);
 my $etv=$eto->epsL;
 my $etx=(1-$gt->f)*$ea+$gt->f*$eb;
@@ -65,7 +65,7 @@ my $Bc=zeroes(2*$N,2*$N);
 $Bc=((($Bc->xvals<$N) & ($Bc->yvals<$N))
    | (($Bc->xvals>=$N) & ($Bc->yvals>=$N)));
 my $gc=Photonic::Geometry::FromB->new(B=>$Bc, Direction0=>pdl([1,0]));
-my $ac=Photonic::LE::NR2::AllH->new(geometry=>$gc, nh=>2000,
+my $ac=Photonic::LE::NR2::Haydock->new(geometry=>$gc, nh=>2000,
 				    reorthogonalize=>1);
 my $eco=Photonic::LE::NR2::EpsL->new(haydock=>$ac, nh=>10000, epsA => $ea, epsB => $eb);
 my $ecv=$eco->epsL;

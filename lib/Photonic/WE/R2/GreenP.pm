@@ -60,7 +60,7 @@ Based on the wave equation for a binary metamaterial, with a non-dissipative hos
 
 Initializes the structure.
 
-$h is a Photonic::WE::R2::AllH structure (required).
+$h is a Photonic::WE::R2::Haydock structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
@@ -79,7 +79,7 @@ value of the  dielectric functions of the particle $epsB.
 
 =item * haydock
 
-The WE::R2::AllH structure
+The WE::R2::Haydock structure
 
 =item * epsA epsB
 
@@ -123,7 +123,7 @@ Criteria of convergence. 0 means don't check.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use Photonic::WE::R2::AllH;
+use Photonic::WE::R2::Haydock;
 use Photonic::Types;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
@@ -143,7 +143,7 @@ has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writ
 has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
 
-has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::R2::AllH', required=>1);
+has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::R2::Haydock', required=>1);
 has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_Gpp');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');

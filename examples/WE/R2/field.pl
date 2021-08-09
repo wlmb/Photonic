@@ -41,7 +41,7 @@ use PDL::Graphics::Gnuplot;
 use Photonic::Geometry::FromB;
 use Photonic::CharacteristicFunctions qw(triangle isosceles ellipse);
 use Photonic::WE::R2::Metric;
-use Photonic::WE::R2::AllH;
+use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::Field;
 use Photonic::Utils qw(tile vectors2Dlist);
 
@@ -61,9 +61,9 @@ my $circle=Photonic::Geometry::FromB->new(B=>$B,L=>$L,Direction0=>$pdir);
 my $m=Photonic::WE::R2::Metric->new(geometry=>$circle, epsilon=>$epsA,
 					  wavenumber=>pdl(0.1),
 					  wavevector=>pdl([0.01,0]));
-my $nr=Photonic::WE::R2::AllH->new(metric=>$m,keepStates=>1,
+my $nr=Photonic::WE::R2::Haydock->new(metric=>$m,keepStates=>1,
 					polarization=>$pdir->r2C, nh=>$nh);
-#my $nr=Photonic::WE::R2::AllH->new(geometry=>$circle,nh=>$nh,keepStates=>1);
+#my $nr=Photonic::WE::R2::Haydock->new(geometry=>$circle,nh=>$nh,keepStates=>1);
 my $nrf=Photonic::WE::R2::Field->new(haydock=>$nr, nh=>$nh, smallE=>$small);
 my $field=$nrf->evaluate($epsA->r2C, $epsB);
 say $field->info;

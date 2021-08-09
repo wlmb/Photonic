@@ -42,11 +42,9 @@ Photonic::Geometry::FromB
 Photonic::Geometry::FromEpsilon
 Photonic::Geometry::FromImage2D
 Photonic::Iterator
-Photonic::LE::NP::AllH
 Photonic::LE::NP::EpsL
 Photonic::LE::NP::EpsTensor
 Photonic::LE::NP::Haydock
-Photonic::LE::NR2::AllH
 Photonic::LE::NR2::EpsL
 Photonic::LE::NR2::EpsTensor
 Photonic::LE::NR2::Field
@@ -54,12 +52,10 @@ Photonic::LE::NR2::Haydock
 Photonic::LE::NR2::SH
 Photonic::LE::NR2::SHChiTensor
 Photonic::LE::NR2::SHP
-Photonic::LE::S::AllH
 Photonic::LE::S::EpsL
 Photonic::LE::S::EpsTensor
 Photonic::LE::S::Field
 Photonic::LE::S::Haydock
-Photonic::Roles::AllH
 Photonic::Roles::EpsFromGeometry
 Photonic::Roles::EpsL
 Photonic::Roles::EpsTensor
@@ -71,7 +67,6 @@ Photonic::Roles::Reorthogonalize
 Photonic::Roles::UseMask
 Photonic::Types
 Photonic::Utils
-Photonic::WE::R2::AllH
 Photonic::WE::R2::EpsilonP
 Photonic::WE::R2::EpsilonTensor
 Photonic::WE::R2::Field
@@ -82,7 +77,6 @@ Photonic::WE::R2::Haydock
 Photonic::WE::R2::Metric
 Photonic::WE::R2::Wave
 Photonic::WE::R2::WaveP
-Photonic::WE::S::AllH
 Photonic::WE::S::EpsilonP
 Photonic::WE::S::EpsilonTensor
 Photonic::WE::S::Field

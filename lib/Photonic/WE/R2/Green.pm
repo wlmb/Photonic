@@ -103,7 +103,7 @@ Spectral variable
 
 =item * haydock
 
-Array of Photonic::WE::R2::AllH structures, one for each polarization
+Array of Photonic::WE::R2::Haydock structures, one for each polarization
 
 =item * greenP
 
@@ -137,7 +137,7 @@ fraction. 0 means don't check.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use Photonic::WE::R2::AllH;
+use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
 use Moose;
@@ -148,7 +148,7 @@ use List::Util qw(any);
 extends 'Photonic::WE::R2::GreenS';
 
 has 'cHaydock' =>(
-    is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::AllH]',
+    is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::Haydock]',
     init_arg=>undef, lazy=>1, builder=>'_build_cHaydock',
     documentation=>'Array of Haydock calculators for complex projection');
 
@@ -198,7 +198,7 @@ around 'evaluate' => sub {
 sub _build_cHaydock {
     # One Haydock coefficients calculator per complex polarization
     my $self=shift;
-    make_haydock($self, 'Photonic::WE::R2::AllH', $self->geometry->cUnitPairs, 0);
+    make_haydock($self, 'Photonic::WE::R2::Haydock', $self->geometry->cUnitPairs, 0);
 }
 
 sub _build_cGreenP {

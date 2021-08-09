@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Calculates the macroscopic projected wave operator for a given fixed
-Photonic::WE::R2::AllH structure as a function of the dielectric
+Photonic::WE::R2::Haydock structure as a function of the dielectric
 functions of the components.
 
 NOTE: Only works along principal directions, as it treats Green's
@@ -64,7 +64,7 @@ function as scalar.
 
 Initializes the structure.
 
-$h is Photonic::WE::R2::AllH structure (required).
+$h is Photonic::WE::R2::Haydock structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 

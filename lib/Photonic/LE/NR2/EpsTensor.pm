@@ -73,13 +73,13 @@ Dielectric function of component B
 =cut
 
 use namespace::autoclean;
-use Photonic::LE::NR2::AllH;
+use Photonic::LE::NR2::Haydock;
 use Photonic::LE::NR2::EpsL;
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-has allh_class=>(is=>'ro', default=>'Photonic::LE::NR2::AllH');
+has allh_class=>(is=>'ro', default=>'Photonic::LE::NR2::Haydock');
 has allh_attrs=>(is=>'ro', default=>sub{[qw(reorthogonalize use_mask mask)]});
 has epsl_class=>(is=>'ro', default=>'Photonic::LE::NR2::EpsL');
 has epsl_attrs=>(is=>'ro', default=>sub{[qw(nh smallE epsA epsB)]});

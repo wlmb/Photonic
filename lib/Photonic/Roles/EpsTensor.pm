@@ -107,7 +107,7 @@ Flag to keep states in Haydock calculations (default 0)
 
 =item * haydock
 
-Array of L<Photonic::Role::AllH> structures, one for each direction
+Array of L<Photonic::Role::Haydock> structures, one for each direction
 (lazy-built from geometry if not given). Since this is expensive, once
 calculated you are encouraged to use the accessor to pass the value to
 construct other C<EpsTensor> with different epsilon.
@@ -149,7 +149,7 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
 );
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
-has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::Roles::AllH]',
+has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::Roles::Haydock]',
             init_arg=>undef, lazy=>1, builder=>'_build_haydock',
             documentation=>'Array of Haydock calculators');
 has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::Roles::EpsL]',

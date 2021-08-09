@@ -71,12 +71,12 @@ for each pixel of the system
 =cut
 
 use namespace::autoclean;
-use Photonic::LE::NP::AllH;
+use Photonic::LE::NP::Haydock;
 use Photonic::LE::NP::EpsL;
 use Moose;
 use MooseX::StrictConstructor;
 
-has allh_class=>(is=>'ro', default=>'Photonic::LE::NP::AllH');
+has allh_class=>(is=>'ro', default=>'Photonic::LE::NP::Haydock');
 has allh_attrs=>(is=>'ro', default=>sub{[qw(reorthogonalize epsilon)]});
 has epsl_class=>(is=>'ro', default=>'Photonic::LE::NP::EpsL');
 has epsl_attrs=>(is=>'ro', default=>sub{[qw(nh smallE)]});

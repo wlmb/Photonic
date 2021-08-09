@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use Photonic::LE::NR2::AllH;
+use Photonic::LE::NR2::Haydock;
 use Photonic::LE::NR2::Field;
 use Photonic::LE::NR2::SHP;
 use Photonic::LE::NR2::SH;
@@ -46,7 +46,7 @@ my $eb=3+4*i;
 #Check field for simple 1D system
 my $B=zeroes(11)->xvals<5; #1D system
 my $gl=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
-my $haydock=Photonic::LE::NR2::AllH->new(geometry=>$gl, nh=>10, keepStates=>1);
+my $haydock=Photonic::LE::NR2::Haydock->new(geometry=>$gl, nh=>10, keepStates=>1);
 my $flo=Photonic::LE::NR2::Field->new(haydock=>$haydock, nh=>10);
 my $flv=$flo->evaluate($ea, $eb);
 my $fla=1/$ea;
@@ -59,7 +59,7 @@ ok(Cagree($flv, $flx), "1D long field") or diag "got: $flv\nexpected: $flx";
 #View 2D from 1D superlattice.
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
-my $nt=Photonic::LE::NR2::AllH->new(geometry=>$gt, nh=>10, keepStates=>1);
+my $nt=Photonic::LE::NR2::Haydock->new(geometry=>$gt, nh=>10, keepStates=>1);
 my $fto=Photonic::LE::NR2::Field->new(haydock=>$nt, nh=>10, filter=>ones(1));
 my $ftv=$fto->evaluate($ea, $eb);
 my $ftx=pdl(r2C(1), r2C(0));

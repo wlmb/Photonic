@@ -123,7 +123,7 @@ field of one Fourier component.
 
 =over 4
 
-=item L<Photonic::LE::NP::AllH>
+=item L<Photonic::LE::NP::Haydock>
 
 Obtain all the Haydock coefficients.
 
@@ -149,7 +149,7 @@ characteristic function.
 
 =over 4
 
-=item L<Photonic::LE::NR2::AllH>
+=item L<Photonic::LE::NR2::Haydock>
 
 Obtain all the Haydock coefficients.
 
@@ -192,7 +192,7 @@ arbitrary number of phases, using the spinor representation.
 
 =over 4
 
-=item L<Photonic::LE::S::AllH>
+=item L<Photonic::LE::S::Haydock>
 
 Obtain all the Haydock coefficients.
 
@@ -222,7 +222,7 @@ Group of roles to factor out related behavior.
 
 =over 4
 
-=item L<Photonic::Roles::AllH>
+=item L<Photonic::Roles::Haydock>
 
 Obtain all the Haydock coefficients.
 
@@ -283,7 +283,7 @@ characteristic function.
 
 =over 4
 
-=item L<Photonic::WE::R2::AllH>
+=item L<Photonic::WE::R2::Haydock>
 
 Obtain all the Haydock coefficients.
 
@@ -338,7 +338,7 @@ dielectric function, using the spinor representation.
 
 =over 4
 
-=item L<Photonic::WE::S::AllH>
+=item L<Photonic::WE::S::Haydock>
 
 Obtain all the Haydock coefficients.
 

@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use strict;
 use warnings;
 use PDL;
-use Photonic::WE::R2::AllH;
+use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::Metric;
 use Photonic::WE::R2::Field;
 
@@ -47,7 +47,7 @@ my $B=zeroes(11)->xvals<5; #1D system
 my $gl=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
 my $ml=Photonic::WE::R2::Metric->new(geometry=>$gl, epsilon=>$ea->re,
    wavenumber=>pdl(1), wavevector=>pdl([0.01]));
-my $haydock=Photonic::WE::R2::AllH->new(metric=>$ml, nh=>10, keepStates=>1,
+my $haydock=Photonic::WE::R2::Haydock->new(metric=>$ml, nh=>10, keepStates=>1,
 				   polarization=>pdl([1])->r2C);
 my $flo=Photonic::WE::R2::Field->new(haydock=>$haydock, nh=>10);
 my $flv=$flo->evaluate($eb);
@@ -63,7 +63,7 @@ my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
 my $mt=Photonic::WE::R2::Metric->new(geometry=>$gt, epsilon=>pdl(1),
    wavenumber=>pdl(0.001), wavevector=>pdl([0,0.0001]));
-my $nt=Photonic::WE::R2::AllH->new(metric=>$mt, nh=>10, keepStates=>1,
+my $nt=Photonic::WE::R2::Haydock->new(metric=>$mt, nh=>10, keepStates=>1,
 				   polarization=>pdl([1,0])->r2C);
 my $fto=Photonic::WE::R2::Field->new(haydock=>$nt, nh=>10);
 my $ftv=$fto->evaluate($eb);

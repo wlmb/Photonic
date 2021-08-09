@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Calculates the dielectric function for a given fixed
-Photonic::WE::S::AllH structure as a function of the dielectric
+Photonic::WE::S::Haydock structure as a function of the dielectric
 functions of the components.
 
 =head1 METHODS
@@ -61,7 +61,7 @@ functions of the components.
 
 Initializes the structure.
 
-$h is a Photonic::WE::S::AllH structure (required).
+$h is a Photonic::WE::S::Haydock structure (required).
 
 $nh is the maximum number of Haydock coefficients to use (required).
 
@@ -80,7 +80,7 @@ value of the  dielectric functions of the particle $epsB.
 
 =item * haydock
 
-The WE::S::AllH structure
+The WE::S::Haydock structure
 
 =item * epsA epsB
 
@@ -119,7 +119,7 @@ Criteria of convergence. 0 means don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
-use Photonic::WE::S::AllH;
+use Photonic::WE::S::Haydock;
 use Photonic::Types;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
@@ -132,7 +132,7 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::S::AllH', required=>1);
+has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::S::Haydock', required=>1);
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');

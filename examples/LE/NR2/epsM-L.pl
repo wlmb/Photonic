@@ -37,7 +37,7 @@ use feature qw(say);
 
 use Photonic::Geometry::FromB;
 use Photonic::LE::NR2::EpsL;
-use Photonic::LE::NR2::AllH;
+use Photonic::LE::NR2::Haydock;
 
 use PDL;
 use PDL::NiceSlice;
@@ -100,7 +100,7 @@ $L=pdl($l,$l);
 
 my $gmtnr=Photonic::Geometry::FromB->new(B=>$B,L=>$L,Direction0=>$pdir);
 # object $allh has access to Haydock's coefficients
-my $allh=Photonic::LE::NR2::AllH->new(geometry=>$gmtnr, nh=>$nh);
+my $allh=Photonic::LE::NR2::Haydock->new(geometry=>$gmtnr, nh=>$nh);
 # object $epsM_L has access to longitudinal components of macroscopic
 # tensor via EpsL attribute
 # where $epsM_L is a EpsL object that will be used to calculate the
