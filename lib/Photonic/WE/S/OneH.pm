@@ -61,7 +61,7 @@ b^2 coefficients are taken to be zero. From L<Photonic::Roles::OneH>.
 
 =item * B ndims dims epsilon
 
-Accesors handled by metric (see L<Photonic::WE::S::Metric>)
+Accessors handled by metric (see L<Photonic::WE::S::Metric>)
 
 =item * current_state next_state
 

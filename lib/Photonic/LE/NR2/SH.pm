@@ -80,7 +80,7 @@ Invariant part of SHG calculator.
 
 =item * ndims nrf densityA densityB density nr
 
-Accesors handled by shp
+Accessors handled by shp
 
 =item * epsA, epsB
 

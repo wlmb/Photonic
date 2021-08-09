@@ -108,7 +108,7 @@ metamaterial
 
 =item * B dims r G GNorm L scale f
 
-Accesors handled by geometry.
+Accessors handled by geometry.
 
 =item * densityA, densityB
 
@@ -204,7 +204,7 @@ has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
 has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 
-#accesors
+#accessors
 has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
     documentation=>'Dielectric function of host');
 has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,

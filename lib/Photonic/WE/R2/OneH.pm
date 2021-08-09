@@ -185,7 +185,7 @@ b^2 coefficients are taken to be zero.
 
 =item * B ndims dims epsilon
 
-Accesors handled by metric (see Photonic::Metric::R2)
+Accessors handled by metric (see Photonic::Metric::R2)
 
 =item * current_state next_state
 

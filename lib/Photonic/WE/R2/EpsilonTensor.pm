@@ -87,7 +87,7 @@ response $epsA is taken from the metric.
 
 The macroscopic dielectric tensor of the last operation
 
-=item * All accesors of Photonic::WE::R2::Wave
+=item * All accessors of Photonic::WE::R2::Wave
 
 
 =back

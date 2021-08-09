@@ -94,7 +94,7 @@ be given in the initializer.
 
 =item * B dims r G GNorm L scale f
 
-Accesors handled by geometry (see Photonic::Roles::Geometry)
+Accessors handled by geometry (see Photonic::Roles::Geometry)
 
 =item * smallH
 

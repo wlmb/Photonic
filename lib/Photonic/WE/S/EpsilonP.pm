@@ -90,7 +90,7 @@ NOTE: Only works along principal directions.
 
 The macroscopic dielectric projection of the last operation
 
-=item * All accesors of Photonic::WE::S::Wave
+=item * All accessors of Photonic::WE::S::Wave
 
 
 =back

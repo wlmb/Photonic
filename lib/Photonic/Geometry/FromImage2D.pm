@@ -83,7 +83,7 @@ inverted: 1 means invert, 0 don't invert. Default: 0
 
 The filename containing the image
 
-=item * For the other accesors, see Photonic::Geometry
+=item * For the other accessors, see Photonic::Geometry
 
 =back
 
