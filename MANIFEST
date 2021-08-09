@@ -105,9 +105,3 @@ t/oneh-wes.t
 t/tensor.t
 t/utils.t
 TODO
-xt/author-pod-coverage.t
-xt/author-pod-syntax.t
-xt/manifest.t
-xt/pod-coverage.t
-xt/pod.t
-xt/version.t

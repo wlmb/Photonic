@@ -91,3 +91,4 @@
 ^TAGS$
 # others
 ^dist\.ini$
+^xt/
