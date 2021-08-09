@@ -312,7 +312,7 @@ version 0.018
     use namespace::autoclean;
     use Moose;
     has 'B' =>(is=>'ro', isa=>'PDL', required=>1,
-	       documentation=>'charateristic function');
+	       documentation=>'characteristic function');
     with 'Photonic::Roles::Geometry';
 
 =back

@@ -170,7 +170,7 @@ field along the complex direction $e and with smallness parameter  $s.
 =item * metric Photonic::Metric::R2
 
 A Photonic::Metric::R2 object defining the geometry of the
-system, the charateristic function, the wavenumber, wavevector and
+system, the characteristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
 
 =item * polarization

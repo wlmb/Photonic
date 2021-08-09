@@ -82,7 +82,7 @@ for each pixel of the system
 =item * geometry Photonic::Types::GeometryG0
 
 A Photonic::Geometry object defining the geometry of the system,
-the charateristic function and the direction of the G=0 vector. Should
+the characteristic function and the direction of the G=0 vector. Should
 be given in the initializer.
 
 =item * B ndims dims r G GNorm L scale f
