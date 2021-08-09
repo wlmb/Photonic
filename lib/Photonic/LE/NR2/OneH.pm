@@ -58,63 +58,29 @@ the calculation of the non retarded dielectric function of arbitrary
 periodic two component systems in arbitrary number of dimentions. One
 Haydock coefficient at a time.
 
-=head1 METHODS
+Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::UseMask>
+- please see those for attributes.
+
+=head1 ATTRIBUTES
 
 =over 4
 
-=item * new(geometry=>$g[, smallH=>$s])
+=item * geometry
 
-Create a new Ph::LE::NR2::OneH object with GeometryG0 $g and optional
-smallness parameter  $s.
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * geometry Photonic::Types::GeometryG0
-
-A Photonic::Geometry object defining the geometry of the system,
-the characteristic function and the direction of the G=0 vector. Should
-be given in the initializer.
+A Photonic::Types::GeometryG0 object defining the geometry of the system,
+the characteristic function and the direction of the G=0 vector. Required.
 
 =item * B ndims dims r G GNorm L scale f
 
 Accessors handled by geometry (see Photonic::Roles::Geometry)
 
-=item * smallH
-
-A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero.
-
-=item * current_state next_state
-
-The n-th and n+1-th Haydock states; a complex number for each pixel
-
-=item * current_a
-
-The n-th Haydock coefficient a
-
-=item * current_b2 next_b2 current_b next_b
-
-The n-th and n+1-th b^2 and b Haydock coefficients
-
-=item * iteration
-
-Number of completed iterations
-
 =back
 
-=head1 METHODS
+=head1 ATTRIBUTES SUPPLIED FOR ROLE
+
+These are provided for roles:
 
 =over 4
-
-=item * iterate
-
-Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_state, shifting the current values where necessary. Returns
-0 when unable to continue iterating.
 
 =item * applyOperator($psi_G)
 
@@ -134,16 +100,6 @@ Returns the magnitude of a state as the square root of the inner
 =item * changesign
 
 Return 0, as there is no need to change sign.
-
-=back
-
-=head1 INTERNAL METHODS
-
-=over 4
-
-item * _firstState
-
-Returns the first state $v.
 
 =back
 

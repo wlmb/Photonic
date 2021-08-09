@@ -52,7 +52,6 @@ has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
 with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
 
-
 sub applyOperator {
     my $self=shift;
     my $psi=shift;
@@ -129,7 +128,7 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 
-Photonic::OneH::R2
+Photonic::WE::R2::OneH
 
 =head1 VERSION
 
@@ -137,8 +136,8 @@ version 0.018
 
 =head1 SYNOPSIS
 
-    use Photonic::OneH::R2;
-    my $nr=Photonic::OneH::R2->new(metric=>$g, polarization=>$p);
+    use Photonic::WE::R2::OneH;
+    my $nr=Photonic::WE::R2::OneH->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -152,81 +151,43 @@ the calculation of the retarded dielectric function of arbitrary
 periodic two component systems in arbitrary number of dimentions. One
 Haydock coefficient at a time.
 
-=head1 METHODS
+Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::UseMask>
+- please see those for attributes.
+
+=head1 ATTRIBUTES
 
 =over 4
 
-=item * new(metric=>$m, polarization=>$e, [, smallH=>$s])
-
-Create a new Ph::OneH::R2 object with PDL::Metric::R2 $m, with a
-field along the complex direction $e and with smallness parameter  $s.
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * metric Photonic::Metric::R2
+=item * metric
 
 A Photonic::Metric::R2 object defining the geometry of the
 system, the characteristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
+
+=item * B ndims dims epsilon
+
+Accessors handled by metric (see Photonic::Metric::R2)
 
 =item * polarization
 
 A non null vector defining the complex direction of the macroscopic
 field.
 
-=item * smallH
-
-A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero.
-
-=item * B ndims dims epsilon
-
-Accessors handled by metric (see Photonic::Metric::R2)
-
-=item * current_state next_state
-
-The n-th and n+1-th Haydock states; a complex vector for each
-reciprocal wavevector
-
-=item * current_a
-
-The n-th Haydock coefficient a
-
-=item * current_b2 next_b2 current_b next_b
-
-The n-th and n+1-th b^2 and b Haydock coefficients
-
-=item * next_c
-
-The n+1-th c Haydock coefficient
-
-=item * current_g next_g
-
-The n-th and n+1-th g Haydock coefficients
-
-=item * iteration
-
-Number of completed iterations
-
 =back
 
 =head1 METHODS
 
 =over 4
 
-=item * iterate
-
-Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_c, next_g, next_state, shifting the current values where
-necessary. Returns 0 when unable to continue iterating.
-
 =item * applyMetric($psi)
 
 Returns the result of applying the metric 'g' to the state; $psi.
+
+=back
+
+=head1 ATTRIBUTES SUPPLIED FOR ROLE
+
+=over 4
 
 =item * applyOperator($psi_G)
 
@@ -246,16 +207,6 @@ the inner product of the state with itself.
 =item * changesign
 
 Returns 1 if sign change is required to ensure b^2 is positive.
-
-=back
-
-=head1 INTERNAL METHODS
-
-=over 4
-
-=item *  _firstState
-
-Returns the first state $v.
 
 =back
 

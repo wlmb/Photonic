@@ -66,35 +66,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Roles consumed by OneH objects to be used in a Photonic
+Role consumed by OneH objects to be used in a Photonic
 calculation. Basic scheme for the calculation of one Haydock
 coefficient and one Haydock state at a time.
-See also the specific implementations.
 
-=head1 METHODS
-
-=over 4
-
-=item * new(geometry=>$g[, smallH=>$s])
-
-Create a new Photonic::...::OneH object with GeometryG0 $g and optional
-smallness parameter  $s.
-
-=back
-
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
-
-=item * geometry Photonic::Types::GeometryG0
-
-A Photonic::Geometry object defining the geometry of the system,
-the characteristic function and the direction of the G=0 vector. Should
-be given in the initializer.
-
-=item * B dims r G GNorm L scale f
-
-Accessors handled by geometry (see Photonic::Roles::Geometry)
 
 =item * smallH
 
@@ -116,6 +94,34 @@ The n-th and n+1-th b^2 and b Haydock coefficients
 =item * iteration
 
 Number of completed iterations
+
+=back
+
+=head1 REQUIRED ATTRIBUTES
+
+These must be supplied by the consuming class:
+
+=over 4
+
+=item * applyOperator($psi_G)
+
+Apply the relevant operator to state $psi_G.
+
+=item * innerProduct($left, $right)
+
+Returns the inner product between states $left and $right.
+
+=item * magnitude($psi_G)
+
+Returns the magnitude of state $psi_G.
+
+=item * changesign
+
+Whether there is a need to change sign.
+
+=item * complexCoeffs
+
+Whether the coefficients are complex.
 
 =back
 

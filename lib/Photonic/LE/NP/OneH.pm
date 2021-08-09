@@ -59,100 +59,44 @@ the calculation of the non retarded dielectric function of arbitrary
 periodic many component systems in arbitrary number of dimentions. One
 Haydock coefficient at a time. The starting state is homogenous.
 
-=head1 METHODS
+Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::EpsFromGeometry>
+- please see those for attributes.
+
+=head1 ATTRIBUTES SUPPLIED FOR ROLE
+
+These are provided for roles:
 
 =over 4
 
-=item * new(epsilon=>$e, geometry=>$g[, smallH=>$s])
+=item * geometry
 
-Create a new Ph::NR::NP::OneH object with GeometryG0 $g, dielectric
-function $e and optional smallness parameter  $s.
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * epsilon
-
-A complex PDL giving the value of the dielectric function epsilon
-for each pixel of the system
-
-=item * geometry Photonic::Types::GeometryG0
-
-A Photonic::Geometry object defining the geometry of the system,
-the characteristic function and the direction of the G=0 vector. Should
-be given in the initializer.
+A Photonic::Types::GeometryG0 object defining the geometry of the system,
+the characteristic function and the direction of the G=0 vector. Required.
 
 =item * B ndims dims r G GNorm L scale f
 
 Accessors handled by geometry (see L<Photonic::Geometry>)
 
-=item * smallH
-
-A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero.
-
-=item * current_state next_state
-
-The n-th and n+1-th Haydock states; a complex number for each pixel
-
-=item * current_a
-
-The n-th Haydock coefficient a
-
-=item * current_b2 next_b2 current_b next_b
-
-The n-th and n+1-th b^2 and b Haydock coefficients
-
-=item * iteration
-
-Number of completed iterations
-
-=back
-
-=head1 METHODS
-
-=over 4
-
-=item * iterate
-
-Performs a single Haydock iteration and updates current_a, next_state,
-next_b2, next_b, shifting the current values where necessary. Returns
-0 when unable to continue iterating.
-
-=item * applyOperator($psi_G)
+=item * applyOperator
 
 Apply the 'Hamiltonian' operator to state $psi_G in reciprocal
-=space. State is nx:ny...  The operator is the
+space. State is nx:ny...  The operator is the
 longitudinal projection of the dielectric function
 
-=item * innerProduct($left, $right)
+=item * innerProduct
 
 Returns the inner (Euclidean) product between states $left and $right.
 
-=item * magnitude($psi_G)
+=item * magnitude
 
-Returns the magnitude of state $psi_G in reciprocal space by taking the square root of
-the inner product of the state with itself.
+Returns the magnitude of state $psi_G in reciprocal space by taking the
+square root of the inner product of the state with itself.
 
 =item * changesign
 
 Returns zero, as there is no need to change sign.
 
 =back
-
-=head1 INTERNAL METHODS
-
-=over 4
-
-=item * _firstState
-
-Returns the first state.
-
-=back
-
 
 =cut
 
@@ -174,10 +118,7 @@ with 'Photonic::Roles::OneH', 'Photonic::Roles::EpsFromGeometry';
 #don't allow initialization of next state, as this module is fragile
 #and depends on a particular initial state. Otherwise, use the
 #Roles::OneH attribute.
-
 has '+next_state' =>(init_arg=>undef);
-
-#Required by Photonic::Roles::OneH
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
@@ -217,12 +158,6 @@ sub magnitude {
 sub changesign { # change sign
     return 0;
 }
-
-#after _iterate_indeed => sub { # perform sign magick. Notes MQ
-#    my $self=shift;
-#    $self->_next_g(-1);
-#};
-
 
 __PACKAGE__->meta->make_immutable;
 

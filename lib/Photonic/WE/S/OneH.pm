@@ -28,18 +28,11 @@ the calculation of the retarded dielectric function of arbitrary
 periodic systems in arbitrary number of dimensions,  one
 Haydock coefficient at a time. It uses the wave equation and the spinor representation.
 
-=head1 METHODS
+Consumes L<Photonic::Roles::OneH>, L<Photonic::Roles::UseMask>,
+L<Photonic::Roles::EpsFromGeometry>
+- please see those for attributes.
 
-=over 4
-
-=item * new(metric=>$m, polarization=>$e, [, smallH=>$s])
-
-Create a new Ph::OneH::R2 object with PDL::Metric::R2 $m, with a
-field along the complex direction $e and with small convergence parameter $s.
-
-=back
-
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
@@ -49,44 +42,14 @@ A L<Photonic::WE::S::Metric> object defining the geometry of the
 system, the characteristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
 
-=item * polarization complex PDL
-
-A non null vector defining the complex direction of the macroscopic
-field.
-
-=item * smallH
-
-A small number used as tolerance to end the iteration. Small enough
-b^2 coefficients are taken to be zero. From L<Photonic::Roles::OneH>.
-
 =item * B ndims dims epsilon
 
 Accessors handled by metric (see L<Photonic::WE::S::Metric>)
 
-=item * current_state next_state
+=item * polarization complex PDL
 
-The n-th and n+1-th Haydock states at the n-th iteration; a complex vector-spinor for each
-reciprocal wavevector. Dimensions ri,xy,pm,nx,ny...
-
-=item * current_a
-
-The n-th Haydock coefficient a
-
-=item * current_b2 next_b2 current_b next_b
-
-The n-th and n+1-th b^2 and b Haydock coefficients
-
-=item * next_c
-
-The n+1-th c Haydock coefficient
-
-=item * current_g next_g
-
-The n-th and n+1-th g Haydock coefficients
-
-=item * iteration
-
-Number n of completed iterations
+A non null vector defining the complex direction of the macroscopic
+field.
 
 =back
 
@@ -94,15 +57,15 @@ Number n of completed iterations
 
 =over 4
 
-=item * iterate
-
-Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_c, next_g, next_state, shifting the current values where
-necessary. Returns 0 when unable to continue iterating.
-
 =item * applyMetric($psi)
 
 Returns the result of applying the metric to the state $psi.
+
+=back
+
+=head1 ATTRIBUTES SUPPLIED FOR ROLE
+
+=over 4
 
 =item * applyOperator($psi_G)
 
@@ -125,19 +88,7 @@ Returns 0, as there is no need to change sign.
 
 =back
 
-=head1 INTERNAL METHODS
-
-=over 4
-
-=item * $s= _firstState($self)
-
-Returns the first state $v.
-
-=back
-
 =cut
-
-
 
 =head1 COPYRIGHT NOTICE
 
@@ -169,7 +120,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
-
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -189,8 +139,6 @@ has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
 with 'Photonic::Roles::OneH',  'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
-
-#Required by Photonic::Roles::OneH
 
 sub applyOperator {
     my $self=shift;
@@ -262,7 +210,6 @@ sub _firstState { #\delta_{G0}
                        # xy:pm:nx:ny
     return $phi;
 }
-
 
 __PACKAGE__->meta->make_immutable;
 
