@@ -318,19 +318,15 @@ sub _iterate_indeed {
     my $self=shift;
     #a[n] is calculated together
     #with b[n+1] in each iteration
-    $self->_save_val('b', 'next');
-    $self->_save_val('b2', 'next');
+    my $b_n=$self->_save_val('b', 'next', 'current');
+    $self->_save_val('b2', 'next', 'current');
     $self->_save_val('bc', 'next');
-    $self->_save_val('c', 'next');
-    $self->_save_val('g', 'next');
-    $self->_save_state;
+    my $c_n=$self->_save_val('c', 'next', 'current');
+    my $g_n=$self->_save_val('g', 'next', 'current');
     #Notation: nm1 is n-1, np1 is n+1
     my $psi_nm1=$self->current_state;
-    $self->_current_state(my $psi_n=$self->next_state);
-    $self->_current_b2($self->next_b2);
-    $self->_current_b(my $b_n=$self->next_b);
-    $self->_current_c(my $c_n=$self->next_c);
-    $self->_current_g(my $g_n=$self->next_g);
+    my $psi_n=$self->_save_state;
+    $self->_current_state($self->next_state);
     #Make sure to increment counter before orthogonalizing.
     $self->_iteration($self->iteration+1); #increment counter
     my $opPsi=$self->applyOperator($psi_n);
@@ -461,15 +457,18 @@ sub storeall {
 }
 
 sub _save_val {
-    my ($self, $valname, $method) = @_;
+    my ($self, $valname, $method, $dest) = @_;
     my $valnames = $valname.'s';
     my $writer = "_$valnames";
     my $value = "${method}_$valname";
     my $pdl = $self->$valnames;
     my $the_value = $self->$value;
     $the_value = pdl($the_value) if !UNIVERSAL::isa($the_value, 'PDL');
-    return $self->$writer($the_value->dummy(-1)) if $pdl->isnull;
-    $self->$writer($pdl->glue($pdl->getndims-1, $the_value));
+    my $to_save = $pdl->isnull ? $the_value->dummy(-1) : $pdl->glue($pdl->getndims-1, $the_value);
+    $self->$writer($to_save);
+    return $the_value if !$dest;
+    my $dest_writer = "_${dest}_$valname";
+    $self->$dest_writer($the_value); # writer returns value
 }
 
 sub _top_slice {
@@ -499,14 +498,15 @@ sub _pop_val {
 
 sub _save_state {
     my $self=shift;
-    return unless $self->keepStates; #noop
+    return $self->next_state unless $self->keepStates; #noop
     return $self->_save_val('state', 'next') unless defined $self->stateFN;
     my $fh=$self->_stateFD;
     my $lastpos=$self->_statePos->[-1];
     seek($fh, $lastpos, SEEK_SET);
-    store_fd \$self->next_state, $fh or croak "Couldn't store state: $!";
+    store_fd \(my $state=$self->next_state), $fh or croak "Couldn't store state: $!";
     my $pos=tell($fh);
     push @{$self->_statePos}, $pos;
+    $state;
 }
 
 sub _pop_state {
