@@ -121,7 +121,7 @@ with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask';
 
 sub _firstState { #\delta_{G0}
     my $self=shift;
-    my $v=PDL->zeroes(@{$self->dims})->r2C; #RorI, nx, ny...
+    my $v=PDL->zeroes(@{$self->dims})->r2C; #nx, ny...
     my $arg=join ',', ("(0)") x ($self->ndims); #(0),(0),... ndims times
     $v->slice($arg).=1; #delta_{G0}
     return $v;

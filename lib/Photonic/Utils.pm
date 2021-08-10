@@ -151,7 +151,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     my $ndims=$first->ndims;
     die "Dimensions should be equal" unless $ndims == $second->ndims;
     carp "We don't trust the skip argument in MHProd yet" if $skip;
-    # I'm not sure about the skiped dimensions in the next line. Is it right?
+    # I'm not sure about the skipped dimensions in the next line. Is it right?
     my $sliced = $second->dummy(1);
     my $mprod=($metric*$sliced)->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
@@ -206,7 +206,7 @@ sub SProd { #Spinor product between two fields in reciprocal
     }
     my $prod=$first_mG*$second; #pmk,s1,s2,nx,ny
     # clump all except skip dimensions, protect sum.
-    $prod #rori,pmk, s1,s2,nx,ny
+    $prod #pmk, s1,s2,nx,ny
 	->reorder($skip+1..$ndims-1,0..$skip) #nx,ny,pmk,s1,s2
 	->clump(-$skip-1)  #nx*ny*pmk, s1, s2
 	->sumover; #s1, s2
@@ -435,33 +435,33 @@ ndarray and $it is an iterator for the corresponding states.
 
 =item * $p=HProd($a, $b, $skip)
 
-Hermitean product <a|b> of two 2x.... 'complex' multidimensional
-pdls $a and $b. If $skip is present, preserve the first 1+$skip
-_dimensions (the first dimension is RorI) before adding up.
+Hermitean product <a|b> of two 'complex' multidimensional
+pdls $a and $b. If $skip is present, preserve the first $skip
+dimensions before adding up.
 
 =item * $p=MHProd($a, $b, $m, $skip)
 
-Hermitean product <a|m|b> of two 2x.... 'complex' multidimensional
+Hermitean product <a|m|b> of two 'complex' multidimensional
 pdls $a and $b representing vector fields using metric $m. If $skip is
-present, preserve the first 1+$skip dimensions (the first dimension
-is RorI) before adding up. (Might not be functional yet, or might be wrong)
+present, preserve the first $skip dimensions before adding up.
+(Might not be functional yet, or might be wrong)
 
 =item * $p=EProd($a, $b, $skip)
 
-Euclidean product <a|b> of two 2x.... 'complex' multidimensional
+Euclidean product <a|b> of two 'complex' multidimensional
 pdls $a and $b in reciprocal space. If $skip is present, preserve the
-first 1+$skip dimensions (the first dimension is RorI) before adding up.
+first $skip dimensions before adding up.
 
 =item * $p=SProd($a, $b, $skip)
 
-Spinor product <a|b> of two 2x.... 'complex' multidimensional
+Spinor product <a|b> of two 'complex' multidimensional
 pdls $a and $b in reciprocal space. If $skip is present, preserve the
-first 2+$skip dimensions (the first dimension is RorI and the second
+first 1+$skip dimensions (the first dimension is
 the spinor dimension) before adding up.
 
 =item * $p=VSProd($a, $b)
 
-Vector-Spinor product <a|b> of two 2x...'complex' multidimensional
+Vector-Spinor product <a|b> of two 'complex' multidimensional
 pdls $a and $b in reciprocal space. For the vector-spinor field
 dimensions are like xy:pm:nx:ny.
 
@@ -469,9 +469,9 @@ dimensions are like xy:pm:nx:ny.
 
 Transforms a $ndims-dimensional 'complex' scalar, vector or tensor
 field $psiR that is a function of position within the unit cell to a
-complex field $psiG that is a function of the reciprocal vectors. The
-first dimension must be 2, as the values are complex. The next $skip
-dimensions are skiped (0 for a scalar, 1 for a vector, 2 for a
+complex field $psiG that is a function of the reciprocal vectors.
+The first $skip
+dimensions are skipped (0 for a scalar, 1 for a vector, 2 for a
 2-tensor field). The Fourier transform is performed over the
 following $ndims dimensions.
 
@@ -532,9 +532,9 @@ Solves a general complex tridiagonal system of equations.
 
        $b = cgtsv($c, $d, $e, $b);
 
-where C<$c(2,0..$n-2)> is the subdiagonal, C<$d(2,0..$n-1)> the diagonal and
-C<$e(2,0..$n-2)> the supradiagonal of an $nX$n tridiagonal complex
-double precision matrix. C<$b(2,0..$n-1)> is the right hand side
+where C<$c(0..$n-2)> is the subdiagonal, C<$d(0..$n-1)> the diagonal and
+C<$e(0..$n-2)> the supradiagonal of an $nX$n tridiagonal complex
+double precision matrix. C<$b(0..$n-1)> is the right hand side
 vector. C<$b> is replaced by the solution. Dies if gets an error.
 
 =item * lu_decomp

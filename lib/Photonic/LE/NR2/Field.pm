@@ -121,7 +121,7 @@ Real space field in format ri,xy,nx,ny,...
 
 =item * epsL
 
-Longitudinal dielectric response, obtained colateraly from last
+Longitudinal dielectric response, obtained colaterally from last
 evaluation of the field
 
 =back

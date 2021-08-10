@@ -115,7 +115,7 @@ optional reciprocal space filter
 
 =item * field
 
-real space field in format RorI, cartesian, nx, ny,...
+real space field in format cartesian, nx, ny,...
 
 =back
 

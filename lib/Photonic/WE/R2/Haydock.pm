@@ -118,7 +118,7 @@ sub _firstState {
     $e=$e/sqrt($modulus2);
     $self->_normalizedPolarization($e);
     my $phi=$e*$v(*1); #initial state ordinarily normalized
-                       # RorI xyz nx ny nz
+                       # xyz nx ny nz
     return $phi;
 }
 
