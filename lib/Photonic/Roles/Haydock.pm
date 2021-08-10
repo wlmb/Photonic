@@ -214,6 +214,7 @@ use PDL::IO::Storable;
 use Carp;
 
 requires
+    '_fullorthogonalize_indeed',
     '_firstState', #default first state
     'applyOperator', #Apply Hamiltonian to state
     'innerProduct', #Inner product between states
@@ -307,11 +308,6 @@ sub iterate { #single Haydock iteration
     #Done if there is no next state
     return 0 unless defined $self->next_state;
     $self->_iterate_indeed;
-}
-
-sub _fullorthogonalize_indeed {
-    #stub for Reorthogonalize do nothing in OneH
-    return $_[1];
 }
 
 sub _iterate_indeed {

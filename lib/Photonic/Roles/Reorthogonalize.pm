@@ -167,8 +167,7 @@ sub _build_next_W {
     return PDL->pdl([$g_n]);
 }
 
-around '_fullorthogonalize_indeed' => sub {
-    my $orig=shift; #won't use
+sub _fullorthogonalize_indeed {
     my $self=shift;
     my $psi=shift; #state to orthogonalize
     return $psi unless $self->fullorthogonalize_N;
