@@ -186,7 +186,6 @@ sub _fullorthogonalize_indeed {
 # returns the number of states to unwind
 sub _checkorthogonalize {
     my $self=shift;
-    return 0 unless defined $self->next_state;
     return 0 if $self->fullorthogonalize_N; #already orthogonalizing
     my $n=$self->iteration;
     my $a=$self->as;

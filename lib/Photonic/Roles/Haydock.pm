@@ -314,7 +314,7 @@ sub iterate { #single Haydock iteration
     $self->_next_bc($self->_coerce($bc_np1));
     $self->_next_state($psi_np1);
     $self->_save_val('a', 'current');
-    return 1 if !$self->reorthogonalize;
+    return 1 if !$self->reorthogonalize or !defined $self->next_state;
     my $to_unwind = $self->_checkorthogonalize;
     $self->_pop while $to_unwind-- > 0; #undoes stack
     return 1;
