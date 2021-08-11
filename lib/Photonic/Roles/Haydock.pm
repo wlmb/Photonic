@@ -229,16 +229,9 @@ has 'next_state' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
 		   writer=>'_next_state',  lazy=>1,
 		   builder=>'_firstRState', init_arg=>undef);
 has 'current_a' => (is=>'ro', writer=>'_current_a',  init_arg=>undef);
-has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef,
-		  builder=>'_cero');
-has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef,
-		 builder=>'_cero');
-has 'next_c' => (is=>'ro', writer=>'_next_c', init_arg=>undef,
-		 builder=>'_cero');
-has 'next_bc' => (is=>'ro', writer=>'_next_bc', init_arg=>undef,
-		  builder=>'_cero');
-has 'current_g' => (is=>'ro', writer=>'_current_g', init_arg=>undef,
-     builder=>'_cero');
+my @cero_fields = qw(next_b2 next_b next_c next_bc current_g);
+has $_ => (is=>'ro', writer=>"_$_", init_arg=>undef, builder=>'_cero')
+  for @cero_fields;
 has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef);
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
@@ -251,26 +244,10 @@ has states=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
          default=>sub{PDL->null}, init_arg=>undef,
          writer=>'_states',
          documentation=>'Saved states');
-has as=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef, writer=>'_as',
-         isa=>'PDL',
-         documentation=>'Saved a coefficients');
-has bs=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef,  writer=>'_bs',
-         isa=>'PDL',
-         documentation=>'Saved b coefficients');
-has b2s=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef,  writer=>'_b2s',
-         isa=>'PDL',
-         documentation=>'Saved b^2 coefficients');
-has cs=>(is=>'ro', default=>sub{PDL->null},
-         isa=>'PDL',
-	 init_arg=>undef,  writer=>'_cs',
-         documentation=>'Saved c coefficients');
-has bcs=>(is=>'ro', default=>sub{PDL->null},
-         isa=>'PDL',
-	  init_arg=>undef, writer=>'_bcs',
-         documentation=>'Saved b*c coefficients');
-has gs=>(is=>'ro', isa=>'PDL', default=>sub{PDL->null},
-	 init_arg=>undef,  writer=>'_gs',
-         documentation=>'Saved g coefficients');
+my @poly_coeffs = (['a'], ['b'], [qw(b2 b^2)], ['c'], [qw(bc b*c)], ['g']);
+has "$_->[0]s"=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef, writer=>"_$_->[0]s",
+         isa=>'PDL', documentation=>"Saved @{[$_->[1]||$_->[0].'s']} coefficients")
+         for @poly_coeffs;
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag');
 has 'stateFN'=>(is=>'ro', required=>1, default=>undef,
@@ -289,9 +266,9 @@ requires qw(iterate magnitude innerProduct
     _checkorthogonalize);
 with 'Photonic::Roles::Reorthogonalize';
 
-my @allfields= qw(iteration keepStates as bs b2s cs bcs gs current_a next_b
-    next_b2 next_bc next_c current_g next_g current_state
-    next_state);  # Fields to store and restore
+my @allfields= (@cero_fields, (map "$_->[0]s", @poly_coeffs),
+    qw(iteration keepStates current_a next_g current_state
+    next_state));  # Fields to store and restore
 
 sub _cero {
     my $self=shift;
