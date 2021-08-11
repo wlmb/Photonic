@@ -100,9 +100,9 @@ The n-th and n+1-th Haydock states
 
 The n-th Haydock coefficient a
 
-=item * current_b2 next_b2 current_b next_b
+=item * next_b2 next_b
 
-The n-th and n+1-th b^2 and b Haydock coefficients
+The n+1-th b^2 and b Haydock coefficients
 
 =item * iteration
 
@@ -229,13 +229,10 @@ has 'next_state' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
 		   writer=>'_next_state',  lazy=>1,
 		   builder=>'_firstRState', init_arg=>undef);
 has 'current_a' => (is=>'ro', writer=>'_current_a',  init_arg=>undef);
-has 'current_b2' => (is=>'ro', writer=>'_current_b2', init_arg=>undef);
 has 'next_b2' => (is=>'ro', writer=>'_next_b2', init_arg=>undef,
 		  builder=>'_cero');
-has 'current_b' => (is=>'ro', writer=>'_current_b', init_arg=>undef);
 has 'next_b' => (is=>'ro', writer=>'_next_b', init_arg=>undef,
 		 builder=>'_cero');
-has 'current_c' => (is=>'ro', writer=>'_current_c', init_arg=>undef);
 has 'next_c' => (is=>'ro', writer=>'_next_c', init_arg=>undef,
 		 builder=>'_cero');
 has 'next_bc' => (is=>'ro', writer=>'_next_bc', init_arg=>undef,
@@ -314,10 +311,10 @@ sub _iterate_indeed {
     my $self=shift;
     #a[n] is calculated together
     #with b[n+1] in each iteration
-    my $b_n=$self->_save_val('b', 'next', 'current');
-    $self->_save_val('b2', 'next', 'current');
+    my $b_n=$self->_save_val('b', 'next');
+    $self->_save_val('b2', 'next');
     $self->_save_val('bc', 'next');
-    my $c_n=$self->_save_val('c', 'next', 'current');
+    my $c_n=$self->_save_val('c', 'next');
     my $g_n=$self->_save_val('g', 'next', 'current');
     #Notation: nm1 is n-1, np1 is n+1
     my $psi_nm1=$self->current_state;
@@ -525,9 +522,9 @@ sub _pop { # undo the changes done after, in and before iteration, for
     my $self=shift;
     $self->_pop_state;
     $self->_pop_val('a', 'current');
-    $self->_pop_val('b2', 'next', 'current');
-    $self->_pop_val('b', 'next', 'current');
-    $self->_pop_val('c', 'next', 'current');
+    $self->_pop_val('b2', 'next');
+    $self->_pop_val('b', 'next');
+    $self->_pop_val('c', 'next');
     $self->_pop_val('bc', 'next');
     $self->_pop_val('g', 'next', 'current');
     $self->_iteration($self->iteration-1); #decrement counter
