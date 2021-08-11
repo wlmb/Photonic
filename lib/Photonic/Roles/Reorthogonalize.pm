@@ -200,14 +200,21 @@ sub _checkorthogonalize {
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
     my $next_W=PDL->pdl([]);
-    my $method = $self->complexCoeffs ? '_arg' : '_sign';
     if($n>=2){
 	$next_W= $b->(1:-1)*$current_W->(1:-1)
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
 	    - $c->(($n-1))*$previous_W;
 	$next_W->(1:-1)+=$c->(1:-2)*$current_W->(0:-3) if ($n>=3);
-	$next_W+=$self->$method($next_W)*2*$self->normOp*$self->noise;
-	$next_W=$next_W/$b_np1;
+	my $diff;
+	if ($self->complexCoeffs) {
+	    my $s=$next_W->copy;
+	    $s->where(my $indexes=(my $a=$s->abs)==0).=1;
+	    $a->where($indexes).=1;
+	    $diff=$s/$a; # arg
+	} else {
+	    $diff=2*($next_W>=0)-1; # sign
+	}
+	$next_W=($next_W+($diff*2*$self->normOp*$self->noise))/$b_np1;
     }
     $next_W=$next_W->append($self->noise) if $n>=1;
     $next_W=$next_W->append($g_np1);
@@ -219,19 +226,6 @@ sub _checkorthogonalize {
     my $orthos=$n>3 ? 2 : 1; #number of reorthogonalizations
     $self->_fullorthogonalize_N($orthos); #$ortho states, but check until that+1 state
     $orthos;
-}
-
-sub _sign {
-    my (undef, $s)=@_;
-    2*($s>=0)-1;
-}
-
-sub _arg {
-    my $s=$_[1]->copy;
-    my $a=$s->abs;
-    $s->where($a==0).=1;
-    $a->where($a==0).=1;
-    $s/$a;
 }
 
 no Moose::Role;
