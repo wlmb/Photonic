@@ -219,19 +219,17 @@ sub _checkorthogonalize {
     $self->_next_W($next_W);
     return unless $n>=2;
     my $max=$next_W->(0:-2)->abs->maximum;
-    if($max > sqrt($self->accuracy)){
-	#recalculate the last two states with full reorthogonalization
-	my $orthos=1; #number of reorthogonalizations
-	$self->_fullorthogonalize_N($orthos); #1 states, but check
-				#until 2nd state
-	$self->_pop; #undoes stack
-	if($n>3){ #usual case
-	    ++$orthos;
-	    $self->_fullorthogonalize_N($orthos); #2 states, but
-				#check until 3d state
-	    $self->_pop; #undo stack again
-	}
-    }
+    return unless $max > sqrt($self->accuracy);
+    #recalculate the last two states with full reorthogonalization
+    my $orthos=1; #number of reorthogonalizations
+    $self->_fullorthogonalize_N($orthos); #1 states, but check
+			    #until 2nd state
+    $self->_pop; #undoes stack
+    return unless $n>3;
+    #usual case
+    ++$orthos;
+    $self->_fullorthogonalize_N($orthos); #2 states, but check until 3rd state
+    $self->_pop; #undo stack again
 }
 
 sub _sign {
