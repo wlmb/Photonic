@@ -168,17 +168,17 @@ sub _build_next_W {
 }
 
 sub _fullorthogonalize_indeed {
-    my $self=shift;
-    my $psi=shift; #state to orthogonalize
-    return $psi unless $self->fullorthogonalize_N;
-    $self->_fullorthogonalize_N($self->fullorthogonalize_N-1);
+    my ($self, $psi, $gs)=@_;
+    return $psi unless my $fo_N = $self->fullorthogonalize_N;
+    $self->_fullorthogonalize_N($fo_N-1);
     $self->_orthogonalizations($self->orthogonalizations+1);
     $self->_write_justorthogonalized(1);
     my $it=$self->state_iterator;
-    for my $g($self->gs->dog){
+    $psi=$psi->copy; # no mutate inputs
+    for my $g ($gs->dog) {
 	#for every saved state
 	my $s=$it->nextval;
-	$psi=$psi-$g*$self->innerProduct($s, $psi)*$s;
+	$psi-=$g*$self->innerProduct($s, $psi)*$s;
     }
     return $psi;
 };

@@ -296,7 +296,7 @@ sub iterate { #single Haydock iteration
     my $opPsi=$self->applyOperator($psi_n);
     my $a_n=$g_n*$self->innerProduct($psi_n, $opPsi);
     my $bpsi_np1=$opPsi-$a_n*$psi_n-$c_n*$psi_nm1;
-    $bpsi_np1=$self->_fullorthogonalize_indeed($bpsi_np1) if $self->reorthogonalize;
+    $bpsi_np1=$self->_fullorthogonalize_indeed($bpsi_np1, $self->gs) if $self->reorthogonalize;
     my $b2_np1=$self->innerProduct($bpsi_np1, $bpsi_np1);
     my $g_np1=1;
     $g_np1=-1, $b2_np1=-$b2_np1 if $self->changesign($b2_np1);
