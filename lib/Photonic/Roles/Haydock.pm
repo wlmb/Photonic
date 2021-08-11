@@ -364,7 +364,7 @@ sub state_iterator {
     #. $self->iteration;
     return Photonic::Iterator->new(sub { #closure
 	return if $n>=$self->iteration;
-	return _top_slice($s, $n++);
+	return _top_slice($s, '('.$n++.')');
     }) unless defined $self->stateFN;
     my $fh=$self->_stateFD;
     return Photonic::Iterator->new(sub {
@@ -443,7 +443,7 @@ sub _save_val {
 
 sub _top_slice {
     my ($pdl, $index) = @_;
-    my $slice_arg = join ',', (map ':', 1..($pdl->ndims-1)), "($index)";
+    my $slice_arg = join ',', (map ':', 1..($pdl->ndims-1)), $index;
     $pdl->slice($slice_arg);
 }
 
@@ -454,7 +454,7 @@ sub _pop_val {
     my $pdl = $self->$valnames;
     confess "popped empty" if $pdl->isnull;
     my @dims = $pdl->dims;
-    my $lastval = _top_slice($pdl, -1);
+    my $lastval = _top_slice($pdl, "(-1)");
     my $store = "_${pop_dest}_$valname";
     $self->$store($lastval);
     $dims[-1]--; # shrink
@@ -463,7 +463,7 @@ sub _pop_val {
     $self->$writer($copy);
     return if !$last_dest;
     my $last = "_${last_dest}_$valname";
-    $self->$last(_top_slice($copy, -1));
+    $self->$last(_top_slice($copy, "(-1)"));
 }
 
 sub _save_state {
