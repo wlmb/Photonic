@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::R2::Field;
    my $nrf=Photonic::WE::R2::Field->new(...);
-   my $field=$nrf->evaluate($epsA, $epsB);
+   my $field=$nrf->evaluate($epsB);
 
 =head1 DESCRIPTION
 
@@ -70,10 +70,11 @@ $nh is the maximum number of Haydock coefficients to use.
 $smallE is the criteria of convergence (default 1e-7) for
 Field calculations
 
-=item * evaluate($epsA, $epsB...)
+=item * evaluate($epsB)
 
 Returns the microscopic electric field for given
-dielectric functions of the host $epsA and the particle $epsB.
+dielectric functions of the host (which it gets from the Haydock
+calculator's epsilon) and the particle $epsB.
 
 =back
 
@@ -95,7 +96,8 @@ Criteria of convergence. 0 means don't check.
 
 =item * epsA
 
-Dielectric function of component A
+Dielectric function of component A, which it gets from the Haydock
+calculator's epsilon.
 
 =item * epsB
 
