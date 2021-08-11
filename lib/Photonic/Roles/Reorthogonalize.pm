@@ -185,18 +185,14 @@ sub _fullorthogonalize_indeed {
 
 # returns the number of states to unwind
 sub _checkorthogonalize {
-    my $self=shift;
+    my ($self, $n, $a, $b, $c, $b_np1, $g_n, $g_np1)=@_;
     return 0 if $self->fullorthogonalize_N; #already orthogonalizing
-    my $n=$self->iteration;
-    my $a=$self->as;
-    my $b=$self->bs;
-    my $c=$self->cs;
     if($self->_justorthogonalized){
 	$self->_write_justorthogonalized(0);
 	my $current_W=PDL->ones($n)*$self->noise;
 	my $next_W=PDL->ones($n+1)*$self->noise;
-	$current_W->(-1).=$self->current_g;
-	$next_W->(-1).=$self->next_g;
+	$current_W->(-1).=$g_n;
+	$next_W->(-1).=$g_np1;
 	$self->_current_W($current_W);
 	$self->_next_W($next_W);
 	return 0;
@@ -211,10 +207,10 @@ sub _checkorthogonalize {
 	    - $c->(($n-1))*$previous_W;
 	$next_W->(1:-1)+=$c->(1:-2)*$current_W->(0:-3) if ($n>=3);
 	$next_W+=$self->$method($next_W)*2*$self->normOp*$self->noise;
-	$next_W=$next_W/$self->next_b;
+	$next_W=$next_W/$b_np1;
     }
     $next_W=$next_W->append($self->noise) if $n>=1;
-    $next_W=$next_W->append($self->next_g);
+    $next_W=$next_W->append($g_np1);
     $self->_next_W($next_W);
     return 0 unless $n>=2;
     my $max=$next_W->(0:-2)->abs->maximum;
