@@ -96,13 +96,17 @@ b^2 coefficients are taken to be zero.
 
 The n-th and n+1-th Haydock states
 
-=item * current_a
+=item * current_a next_a
 
-The n-th Haydock coefficient a
+The n-th and n+1-th Haydock coefficient a
 
-=item * next_b2 next_b
+=item * current_b2 next_b2 current_b next_b
 
-The n+1-th b^2 and b Haydock coefficients
+The n-th and n+1-th b^2 and b Haydock coefficients
+
+=item * current_bc next_bc current_c next_c current_g next_g
+
+The n-th and n+1-th b*c, c, and g Haydock coefficients
 
 =item * iteration
 
@@ -124,7 +128,7 @@ take the states from memory or from a file if provided.
 
 =item * states
 
-Array of Haydock states
+ndarray of Haydock states
 
 =item * as
 
@@ -137,6 +141,18 @@ ndarray of Haydock b coefficients.
 =item * b2s
 
 ndarray of Haydock b coefficients squared
+
+=item * bcs
+
+ndarray of Haydock b*c coefficients
+
+=item * cs
+
+ndarray of Haydock c coefficients
+
+=item * gs
+
+ndarray of Haydock g coefficients
 
 =back
 
@@ -228,11 +244,6 @@ has 'current_state' => (is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_
 has 'next_state' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
 		   writer=>'_next_state',  lazy=>1,
 		   builder=>'_firstRState', init_arg=>undef);
-has 'current_a' => (is=>'ro', writer=>'_current_a',  init_arg=>undef);
-my @cero_fields = qw(next_b2 next_b next_c next_bc current_g);
-has $_ => (is=>'ro', writer=>"_$_", init_arg=>undef, builder=>'_cero')
-  for @cero_fields;
-has 'next_g' => (is=>'ro', writer=>'_next_g', init_arg=>undef);
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
@@ -244,9 +255,8 @@ has states=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
          default=>sub{PDL->null}, init_arg=>undef,
          writer=>'_states',
          documentation=>'Saved states');
-my @poly_coeffs = (['a'], ['b'], [qw(b2 b^2)], ['c'], [qw(bc b*c)], ['g']);
-has "$_->[0]s"=>(is=>'ro', default=>sub{PDL->null}, init_arg=>undef, writer=>"_$_->[0]s",
-         isa=>'PDL', documentation=>"Saved @{[$_->[1]||$_->[0].'s']} coefficients")
+my @poly_coeffs = qw(a b b2 c bc g);
+has "_${_}_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_coeff_pdl', init_arg=>undef, isa=>'PDL')
          for @poly_coeffs;
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag');
@@ -265,14 +275,28 @@ with 'Photonic::Roles::KeepStates', 'Photonic::Roles::Reorthogonalize';
 requires qw(iterate magnitude innerProduct
     _checkorthogonalize);
 
-my @allfields= (@cero_fields, (map "$_->[0]s", @poly_coeffs),
-    qw(iteration keepStates current_a next_g current_state
-    next_state));  # Fields to store and restore
+my @allfields= qw(iteration keepStates current_state
+    next_state);  # Fields to store and restore
 
-sub _cero {
-    my $self=shift;
-    return PDL::r2C(0) if $self->complexCoeffs;
-    return 0;
+for (@poly_coeffs) {
+  no strict 'refs';
+  no warnings 'redefine';
+  my $pdl_method = "_${_}_pdl";
+  # iteration is the quantity finished, so zero-based needs -1
+  # the temp var is to avoid a problem on at least 5.14.1
+  *{"current_$_"} = sub :lvalue { my ($self)=@_; my $t=_top_slice($self->$pdl_method, '('.($self->iteration-1).')'); };
+  *{"next_$_"} = sub :lvalue { my ($self)=@_; my $t=_top_slice($self->$pdl_method, '('.($self->iteration).')'); };
+  *{$_."s"} = sub {
+    my ($self)=@_;
+    my $i=$self->iteration;
+    $i ? _top_slice($self->$pdl_method, '0:'.($i-1)) : PDL->null;
+  };
+}
+
+sub _build_coeff_pdl {
+    my ($self) = @_;
+    my $pdl = PDL->zeroes($self->nh+1); # +1 to capture "next" coefficients
+    $self->complexCoeffs ? $pdl->r2C : $pdl;
 }
 
 sub iterate { #single Haydock iteration
@@ -282,17 +306,14 @@ sub iterate { #single Haydock iteration
     return 0 unless defined $self->next_state;
     #a[n] is calculated together
     #with b[n+1] in each iteration
-    my $b_n=$self->_save_val('b', 'next');
-    $self->_save_val('b2', 'next');
-    $self->_save_val('bc', 'next');
-    my $c_n=$self->_save_val('c', 'next');
-    my $g_n=$self->_save_val('g', 'next', 'current');
+    $self->_iteration($self->iteration+1); # inc at start so = one we're on
+    my $b_n=$self->current_b;
+    my $c_n=$self->current_c;
+    my $g_n=$self->current_g;
     #Notation: nm1 is n-1, np1 is n+1
     my $psi_nm1=$self->current_state;
     my $psi_n=$self->_save_state;
     $self->_current_state($self->next_state);
-    #Make sure to increment counter before orthogonalizing.
-    $self->_iteration($self->iteration+1); #increment counter
     my $opPsi=$self->applyOperator($psi_n);
     my $a_n=$g_n*$self->innerProduct($psi_n, $opPsi);
     my $bpsi_np1=$opPsi-$a_n*$psi_n-$c_n*$psi_nm1;
@@ -306,14 +327,13 @@ sub iterate { #single Haydock iteration
     my $psi_np1;
     $psi_np1=$bpsi_np1/$b_np1 unless PDL::all($b2_np1->abs<=$self->smallH);
     #save values
-    $self->_current_a($self->_coerce($a_n));
-    $self->_next_b2($self->_coerce($b2_np1));
-    $self->_next_b($self->_coerce($b_np1));
-    $self->_next_g($g_np1);
-    $self->_next_c($self->_coerce($c_np1));
-    $self->_next_bc($self->_coerce($bc_np1));
+    $self->current_a .= $self->_coerce($a_n);
+    $self->next_b2 .= $self->_coerce($b2_np1);
+    $self->next_b .= $self->_coerce($b_np1);
+    $self->next_g .= $g_np1;
+    $self->next_c .= $self->_coerce($c_np1);
+    $self->next_bc .= $self->_coerce($bc_np1);
     $self->_next_state($psi_np1);
-    $self->_save_val('a', 'current');
     if ($self->reorthogonalize and defined $self->next_state) {
 	my $to_unwind = $self->_checkorthogonalize(
 	    map $self->$_, qw(iteration as bs cs next_b current_g next_g)
@@ -332,11 +352,9 @@ sub _firstRState {
     $b=sqrt($b2);
     $phi=$phi/$b; #first state normalized with metric;
     #skip $self->current_a;
-    $self->_next_b2($self->_coerce($b2));
-    $self->_next_b($self->_coerce($b));
-    $self->_next_c($self->_cero); #no c0
-    $self->_next_bc($self->_cero); #no bc0
-    $self->_next_g($g);
+    $self->next_b2 .= $self->_coerce($b2);
+    $self->next_b .= $self->_coerce($b);
+    $self->next_g .= $g;
     return $phi; #goes into _next_state
 }
 
@@ -400,9 +418,14 @@ sub loadall {
     my $fh=IO::File->new($fn, "r")
 	or croak "Couldn't open $fn for reading: $!";
     my $all=fd_retrieve($fh);
-    map {my $k="_".$_;$self->$k($all->{$_})} @allfields;
+    map {my $k="_$_";$self->$k($all->{$_})} @allfields;
+    my $i = $self->iteration; # not "-1" to capture "next" values calculated
+    for (@poly_coeffs) {
+	my $pdl_method = "_${_}_pdl";
+	(my $t=_top_slice($self->$pdl_method, "0:$i")) .= $all->{$_}; # avoid 5.14.1 oddity
+    }
     return unless $self->keepStates;
-    foreach(0..$self->iteration-1){
+    foreach (1..$i) {
 	$self->_next_state(fd_retrieve($fh)); #note: clobber next_state
 	$self->_save_state;
     }
@@ -416,7 +439,12 @@ sub storeall {
     my $fh=IO::File->new($fn, "w")
 	or croak "Couldn't open $fn for writing: $!";
     #save all results but states
-    my %all=  map {($_=>$self->$_)} @allfields;
+    my %all=map +($_=>$self->$_), @allfields;
+    my $i = $self->iteration; # not "-1" to capture "next" values calculated
+    for (@poly_coeffs) {
+	my $pdl_method = "_${_}_pdl";
+	$all{$_}=_top_slice($self->$pdl_method, "0:$i")->copy;
+    }
     store_fd \%all, $fh or croak "Couldn't store all info; $!";
     return unless $self->keepStates;
     my $si=$self->state_iterator;
@@ -440,7 +468,7 @@ sub _save_val {
     $self->$dest_writer($the_value); # writer returns value
 }
 
-sub _top_slice {
+sub _top_slice :lvalue {
     my ($pdl, $index) = @_;
     my $slice_arg = join ',', (map ':', 1..($pdl->ndims-1)), $index;
     $pdl->slice($slice_arg);
@@ -497,12 +525,6 @@ sub _pop { # undo the changes done after, in and before iteration, for
 	   # reorthogonalization, in reverse order
     my $self=shift;
     $self->_pop_state;
-    $self->_pop_val('a', 'current');
-    $self->_pop_val('b2', 'next');
-    $self->_pop_val('b', 'next');
-    $self->_pop_val('c', 'next');
-    $self->_pop_val('bc', 'next');
-    $self->_pop_val('g', 'next', 'current');
     $self->_iteration($self->iteration-1); #decrement counter
 }
 
