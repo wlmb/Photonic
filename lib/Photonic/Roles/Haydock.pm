@@ -281,11 +281,6 @@ sub iterate { #single Haydock iteration
     #Note: calculate Current a, next b2, next b, next state
     #Done if there is no next state
     return 0 unless defined $self->next_state;
-    $self->_iterate_indeed;
-}
-
-sub _iterate_indeed {
-    my $self=shift;
     #a[n] is calculated together
     #with b[n+1] in each iteration
     my $b_n=$self->_save_val('b', 'next');
