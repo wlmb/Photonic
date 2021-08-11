@@ -44,7 +44,7 @@ has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
 		documentation=>'Dielectric function as function of position');
 
 has 'B' =>(is=>'ro', isa=>'PDL', init_arg=>undef, builder=>'_B', lazy=>1,
-	   documentation=>'Charateristic function');
+	   documentation=>'Characteristic function');
 
 with 'Photonic::Roles::Geometry';
 

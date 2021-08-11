@@ -39,7 +39,7 @@ use Moose;
 use MooseX::StrictConstructor;
 
 has 'B' =>(is=>'ro', isa=>'PDL', required=>1,
-	   documentation=>'Charateristic function');
+	   documentation=>'Characteristic function');
 
 with 'Photonic::Roles::Geometry';
 
