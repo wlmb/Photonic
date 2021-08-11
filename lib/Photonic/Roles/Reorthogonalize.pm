@@ -183,11 +183,12 @@ sub _fullorthogonalize_indeed {
     return $psi;
 };
 
+# returns the number of states to unwind
 sub _checkorthogonalize {
     my $self=shift;
-    return unless defined $self->next_state;
-    return unless $self->reorthogonalize;
-    return if $self->fullorthogonalize_N; #already orthogonalizing
+    return 0 unless defined $self->next_state;
+    return 0 unless $self->reorthogonalize;
+    return 0 if $self->fullorthogonalize_N; #already orthogonalizing
     my $n=$self->iteration;
     my $a=$self->as;
     my $b=$self->bs;
@@ -200,7 +201,7 @@ sub _checkorthogonalize {
 	$next_W->(-1).=$self->next_g;
 	$self->_current_W($current_W);
 	$self->_next_W($next_W);
-	return;
+	return 0;
     }
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
@@ -217,19 +218,13 @@ sub _checkorthogonalize {
     $next_W=$next_W->append($self->noise) if $n>=1;
     $next_W=$next_W->append($self->next_g);
     $self->_next_W($next_W);
-    return unless $n>=2;
+    return 0 unless $n>=2;
     my $max=$next_W->(0:-2)->abs->maximum;
-    return unless $max > sqrt($self->accuracy);
-    #recalculate the last two states with full reorthogonalization
-    my $orthos=1; #number of reorthogonalizations
-    $self->_fullorthogonalize_N($orthos); #1 states, but check
-			    #until 2nd state
-    $self->_pop; #undoes stack
-    return unless $n>3;
-    #usual case
-    ++$orthos;
-    $self->_fullorthogonalize_N($orthos); #2 states, but check until 3rd state
-    $self->_pop; #undo stack again
+    return 0 unless $max > sqrt($self->accuracy);
+    #recalculate the last $ortho states with full reorthogonalization
+    my $orthos=$n>3 ? 2 : 1; #number of reorthogonalizations
+    $self->_fullorthogonalize_N($orthos); #$ortho states, but check until that+1 state
+    $orthos;
 }
 
 sub _sign {

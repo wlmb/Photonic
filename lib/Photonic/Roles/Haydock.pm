@@ -320,7 +320,8 @@ sub _iterate_indeed {
     $self->_next_bc($self->_coerce($bc_np1));
     $self->_next_state($psi_np1);
     $self->_save_val('a', 'current');
-    $self->_checkorthogonalize;
+    my $to_unwind = $self->_checkorthogonalize;
+    $self->_pop while $to_unwind-- > 0; #undoes stack
     return 1;
 }
 
