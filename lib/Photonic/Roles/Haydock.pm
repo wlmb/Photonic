@@ -302,7 +302,7 @@ sub _iterate_indeed {
     my $opPsi=$self->applyOperator($psi_n);
     my $a_n=$g_n*$self->innerProduct($psi_n, $opPsi);
     my $bpsi_np1=$opPsi-$a_n*$psi_n-$c_n*$psi_nm1;
-    $bpsi_np1=$self->_fullorthogonalize_indeed($bpsi_np1);
+    $bpsi_np1=$self->_fullorthogonalize_indeed($bpsi_np1) if $self->reorthogonalize;
     my $b2_np1=$self->innerProduct($bpsi_np1, $bpsi_np1);
     my $g_np1=1;
     $g_np1=-1, $b2_np1=-$b2_np1 if $self->changesign($b2_np1);
@@ -320,6 +320,7 @@ sub _iterate_indeed {
     $self->_next_bc($self->_coerce($bc_np1));
     $self->_next_state($psi_np1);
     $self->_save_val('a', 'current');
+    return 1 if !$self->reorthogonalize;
     my $to_unwind = $self->_checkorthogonalize;
     $self->_pop while $to_unwind-- > 0; #undoes stack
     return 1;
