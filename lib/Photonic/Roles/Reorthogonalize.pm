@@ -121,8 +121,6 @@ Only used with complex coefficients.
 
 =cut
 
-
-use Photonic::Iterator;
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;

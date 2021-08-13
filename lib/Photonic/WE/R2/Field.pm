@@ -136,7 +136,6 @@ use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
 use Photonic::Utils qw(cgtsv GtoR);
 use Photonic::Types;
-use Photonic::Iterator;
 use Moose;
 use MooseX::StrictConstructor;
 
