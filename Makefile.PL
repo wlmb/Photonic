@@ -30,6 +30,7 @@ WriteMakefile(
 	'PDL::Core::Dev'                 => '0',
 	'PDL::IO::Pic'                   => '0',
 	'PDL::IO::Storable'              => '0',
+	'PDL::IO::FastRaw'               => '0',
 	'PDL::Lite'                      => '0',
 	'PDL::MatrixOps'                 => '0',
 	'PDL::NiceSlice'                 => '0',

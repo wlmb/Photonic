@@ -89,7 +89,9 @@ Consumes L<Photonic::Roles::KeepStates>, L<Photonic::Roles::Reorthogonalize>
 
 =item * stateFN
 
-File where the states will be read from and stored.
+File where the states will be read from and stored, memory-mapped.
+See L<PDL::IO::FastRaw> for more information. Ensure that the geometry
+dimensions are the same as the states'.
 
 =item * storeAllFN
 
@@ -100,7 +102,8 @@ be assumed that is this value suffixed with C<.states>.
 =item * loadAllFN
 
 File from which the attributes, coefficients and states will be loaded.
-The states will be expected in a file suffixed with C<.states>.
+The states will be expected in a file suffixed with C<.states>, and
+needs to have been memory-mapped as above.
 
 =item * smallH
 
@@ -275,11 +278,6 @@ has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag');
 has 'stateFN'=>(is=>'ro', required=>1, default=>undef,
 		documentation=>'Filename to save Haydock states');
-has '_stateFD'=>(is=>'ro', init_arg=>undef, builder=>'_build_stateFD',
-		lazy=>1, documentation=>'Filedescriptor to save
-		Haydock states');
-has '_statePos'=>(is=>'ro', init_arg=>undef, default=>sub {[0]},
-		 lazy=>1, documentation=>'Position of each state in file');
 has 'storeAllFN' =>(is=>'ro', required=>1, default=>undef,
 		    documentation=>'Name of file to store everything');
 has 'loadAllFN' =>(is=>'ro', required=>1, default=>undef,
@@ -333,7 +331,16 @@ sub states {
 sub _build_state_pdl {
     my ($self) = @_;
     my $fs = $self->_firstRState;
-    my $pdl = PDL->zeroes($fs->type, $fs->dims, $self->nh+1); # +1 to capture "next"
+    my $pdl;
+    if (my $fn=$self->stateFN) {
+	require PDL::IO::FastRaw;
+	$pdl = PDL::IO::FastRaw::mapfraw(
+	    $fn,
+	    {Datatype=>$fs->type, Dims=>[$fs->dims, $self->nh+1], Creat=>!-f $fn},
+	);
+    } else {
+	$pdl = PDL->zeroes($fs->type, $fs->dims, $self->nh+1); # +1 to capture "next"
+    }
     (my $t=_top_slice($pdl, '(0)')) .= $fs;
     $pdl;
 }
@@ -371,7 +378,6 @@ sub iterate { #single Haydock iteration
     $self->next_c .= $self->_coerce($c_np1);
     $self->next_bc .= $self->_coerce($bc_np1);
     $self->next_state .= $psi_np1 if defined $psi_np1;
-    $self->_save_state($self->iteration-1);
     if ($self->reorthogonalize and defined $psi_np1) {
 	my $to_unwind = $self->_checkorthogonalize(
 	    map $self->$_, qw(iteration as bs cs next_b current_g next_g)
@@ -424,31 +430,10 @@ sub state_iterator {
 	unless $self->keepStates;
     my $n=0;
     my $s=$self->_state_pdl;
-    #warn "statePos: " . scalar(@{$self->_statePos}) . " iteration: "
-    #. $self->iteration;
     return Photonic::Iterator->new(sub { #closure
 	return if $n>=$self->iteration;
 	return _top_slice($s, '('.$n++.')');
-    }) unless defined $self->stateFN;
-    my $fh=$self->_stateFD;
-    return Photonic::Iterator->new(sub {
-	return if $n>=$self->iteration;
-	#return if $n>=@{$self->_statePos}-1;
-	my $pos=$self->_statePos->[$n++];
-	seek($fh, $pos, SEEK_SET);
-	my $ref=fd_retrieve($fh);
-	return $$ref;
     });
-}
-
-sub _build_stateFD {
-    my $self=shift;
-    my $fn=$self->stateFN;
-    croak "You didn't provide a stateFN" unless defined $fn;
-    my $fh=IO::File->new($fn, "w+")
-	or croak "Couldn't open ".$self->stateFN.": $!";
-    $fh->autoflush(1);
-    return $fh;
 }
 
 sub run { #run the iteration
@@ -474,14 +459,10 @@ sub loadall {
     }
     return unless $self->keepStates;
     $fn .= ".states";
-    $fh=IO::File->new($fn, "r")
-	or croak "Couldn't open $fn for reading states: $!";
+    require PDL::IO::FastRaw;
+    my $pdl = PDL::IO::FastRaw::mapfraw($fn);
     my $s=$self->_state_pdl;
-    foreach (0..$i-1) {
-	(my $t=_top_slice($s, "($_)")) .= ${fd_retrieve($fh)};
-	$self->_save_state($_);
-    }
-    (my $t=_top_slice($s, "($i)")) .= ${fd_retrieve($fh)}; # catch stored "next" state
+    (my $t=_top_slice($s, "0:$i")) .= _top_slice($pdl, "0:$i");
 }
 
 sub storeall {
@@ -498,8 +479,6 @@ sub storeall {
 	$all{$_}=_top_slice($self->$pdl_method, "0:$i")->copy;
     }
     store_fd \%all, $fh or croak "Couldn't store all info; $!";
-    return unless $self->keepStates;
-    $self->_save_state($self->iteration); # store "next" state
 }
 
 sub _top_slice :lvalue {
@@ -508,29 +487,9 @@ sub _top_slice :lvalue {
     $pdl->slice($slice_arg);
 }
 
-sub _save_state {
-    my ($self, $i) = @_; # zero-based
-    return unless $self->keepStates and defined $self->stateFN;
-    my $fh=$self->_stateFD;
-    my $lastpos=$self->_statePos->[-1];
-    seek($fh, $lastpos, SEEK_SET);
-    store_fd \_top_slice($self->_state_pdl, "($i)"), $fh or croak "Couldn't store state: $!";
-    my $pos=tell($fh);
-    push @{$self->_statePos}, $pos;
-}
-
-sub _pop_state {
-    my $self=shift;
-    croak "Can't pop state without keepStates=>1" unless
-	$self->keepStates;
-    return unless defined $self->stateFN;
-    pop @{$self->_statePos};
-}
-
 sub _pop { # undo the changes done after, in and before iteration, for
 	   # reorthogonalization, in reverse order
     my $self=shift;
-    $self->_pop_state;
     $self->_iteration($self->iteration-1); #decrement counter
 }
 

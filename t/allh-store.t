@@ -65,6 +65,7 @@ my ($all_stash, @states_stash) = {};
     my $si=$a->state_iterator;
     my @readstates = map $si->nextval, 1..$a->iteration;
     ok(Cagree(pdl(@readstates), pdl(@states_stash)), "1D L restored states");
+    ok(Cagree($a->states, pdl(@states_stash)), "1D L states method");
 }
 
 {
@@ -86,23 +87,6 @@ my ($all_stash, @states_stash) = {};
 	push @states3, $si3->nextval;
     }
     ok(Cagree(pdl(@states2), pdl(@states3)), "1D L restarted states");
-}
-
-($all_stash, @states_stash) = {}; # reset
-{
-    #View 1D system as 2D. Transverse direction
-    my ($at) = make_default_store($fn);
-    $all_stash->{$_} = $at->$_ for @all_vars;
-    my $si=$at->state_iterator;
-    push @states_stash, $si->nextval for 1..$at->iteration;
-    #full restore allh from previous calculation
-    ($at) = make_store(zeroes(1,11)->yvals<5, [1,0], 10, {loadAllFN=>$fn});
-    is($all_stash->{iteration}, $at->iteration,
-       "Number of iterations 2D transverse");
-    ok(agree(pdl($all_stash->{$_}), pdl($at->$_)), "2D T restored $_") for @coeffs;
-    $si=$at->state_iterator;
-    my @readstates = map $si->nextval, 1..$at->iteration;
-    ok(Cagree(pdl(@readstates), pdl(@states_stash)), "2D T restored states");
 }
 
 done_testing;

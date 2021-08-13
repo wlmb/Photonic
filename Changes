@@ -1,4 +1,5 @@
 - separate storeAllFN from stateFN
+- Haydock states stored in memory-mapped files rather than using Storable
 
 0.021 2021-10-01
 - Add example of honeycomb lattice for LE::NR2
