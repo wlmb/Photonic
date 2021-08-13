@@ -458,7 +458,7 @@ sub _build_selfConsistentL_G {
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
     my $PLn=$self->selfConsistentL_n;
-    my $stateit=$self->HP->state_iterator;
+    my $stateit=$self->HP->states;
     my $result=linearCombineIt($PLn, $stateit);
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0)  if $filterflag;
@@ -512,7 +512,7 @@ sub _build_P2LMCalt {
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
     my $phi_n = cgtsv($subdiag, $diag, $supradiag, $rhs);
-    my $states=$haydock->state_iterator;
+    my $states=$haydock->states;
     my $phi_G=linearCombineIt($phi_n, $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G);
 
@@ -525,7 +525,7 @@ sub _build_P2LMCalt {
     my $Ppsi = PDL->zeroes($ndims)->r2C;
     foreach(0..$ndims-1){
 	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(($_))); # nx ny .... cartesian
-	$states=$haydock->state_iterator;
+	$states=$haydock->states;
 	my $psi_G=linearCombineIt($psi_n, $states);
 	$Ppsi->(($_)) .= HProd($psi_G, $PexL_G);
     }

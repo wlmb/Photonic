@@ -48,7 +48,6 @@ require Exporter;
 use PDL::LiteF;
 use PDL::FFTW3;
 require PDL::MatrixOps;
-use Photonic::Iterator qw(nextval);
 use Carp;
 use Storable qw(dclone);
 require PDL::LinearAlgebra::Real;
@@ -56,17 +55,10 @@ require PDL::LinearAlgebra::Complex;
 use warnings;
 use strict;
 
-sub linearCombineIt { #complex linear combination of states from iterator
-    my $coefficients=shift; #arrayref of complex coefficients
-    my $stateit=shift; #iterator of complex states
-    my $numCoeff=$coefficients->dim(-1);
-    my $result=r2C(0);
-    foreach(0..$numCoeff-1){
-	my $s=nextval($stateit);
-	croak "More coefficients than states in basis" unless defined $s;
-	$result = $result + $coefficients->slice($_)*$s;
-    }
-    return $result;
+sub linearCombineIt { #complex linear combination of states
+    my ($coefficients, $states)=@_; #complex states, ndarray of complex coefficients
+    $coefficients=$coefficients->dummy(0) while $coefficients->ndims < $states->ndims;
+    ($coefficients*$states)->mv(-1,0)->sumover;
 }
 
 sub any_complex {
@@ -430,8 +422,8 @@ Utility functions that may be useful.
 
 =item * $r=linearCombineIt($c, $it)
 
-Complex linear combination of states from iterator. $c is a 'complex'
-ndarray and $it is an iterator for the corresponding states.
+Complex linear combination of states. $c is a 'complex'
+ndarray and $it is an ndarray of states from a L<Photonic::Roles::Haydock>.
 
 =item * $p=HProd($a, $b, $skip)
 
