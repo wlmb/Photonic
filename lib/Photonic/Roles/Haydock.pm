@@ -87,6 +87,21 @@ Consumes L<Photonic::Roles::KeepStates>, L<Photonic::Roles::Reorthogonalize>
 
 =over 4
 
+=item * stateFN
+
+File where the states will be read from and stored.
+
+=item * storeAllFN
+
+File in which important attributes will be stored, plus the
+calculated coefficients. If no C<stateFN> as above is given, one will
+be assumed that is this value suffixed with C<.states>.
+
+=item * loadAllFN
+
+File from which the attributes, coefficients and states will be loaded.
+The states will be expected in a file suffixed with C<.states>.
+
 =item * smallH
 
 A small number used as tolerance to end the iteration. Small negative
@@ -398,6 +413,8 @@ around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
     # Can't reorthogonalize without previous states
     $args{keepStates} = 1 if $args{reorthogonalize};
+    $args{stateFN} = "$args{storeAllFN}.states"
+	if $args{keepStates} and defined $args{storeAllFN} and !defined $args{stateFN};
     $class->$orig(%args);
 };
 
@@ -430,6 +447,7 @@ sub _build_stateFD {
     croak "You didn't provide a stateFN" unless defined $fn;
     my $fh=IO::File->new($fn, "w+")
 	or croak "Couldn't open ".$self->stateFN.": $!";
+    $fh->autoflush(1);
     return $fh;
 }
 
@@ -455,12 +473,15 @@ sub loadall {
 	(my $t=_top_slice($self->$pdl_method, "0:$i")) .= $all->{$_}; # avoid 5.14.1 oddity
     }
     return unless $self->keepStates;
+    $fn .= ".states";
+    $fh=IO::File->new($fn, "r")
+	or croak "Couldn't open $fn for reading states: $!";
     my $s=$self->_state_pdl;
     foreach (0..$i-1) {
-	(my $t=_top_slice($s, "($_)")) .= fd_retrieve($fh);
+	(my $t=_top_slice($s, "($_)")) .= ${fd_retrieve($fh)};
 	$self->_save_state($_);
     }
-    (my $t=_top_slice($s, "($i)")) .= fd_retrieve($fh); # catch stored "next" state
+    (my $t=_top_slice($s, "($i)")) .= ${fd_retrieve($fh)}; # catch stored "next" state
 }
 
 sub storeall {
@@ -478,11 +499,7 @@ sub storeall {
     }
     store_fd \%all, $fh or croak "Couldn't store all info; $!";
     return unless $self->keepStates;
-    my $si=$self->state_iterator;
-    while(defined (my $s=$si->nextval)){
-	store_fd $s, $fh or croak "Couldn't store a state: $!";
-    }
-    store_fd _top_slice($self->_state_pdl, "($i)"), $fh or croak "Couldn't store a state: $!"; # store "next" state
+    $self->_save_state($self->iteration); # store "next" state
 }
 
 sub _top_slice :lvalue {

@@ -1,3 +1,5 @@
+- separate storeAllFN from stateFN
+
 0.021 2021-10-01
 - Add example of honeycomb lattice for LE::NR2
 - Admit 'haydock' as an optional parameter in P::Roles::EpsTensor
