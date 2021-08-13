@@ -63,6 +63,8 @@ the calculation of the non retarded dielectric function of arbitrary
 periodic many component systems in arbitrary number of dimentions. One
 Haydock coefficient at a time. The starting state is homogenous.
 
+Warning: this module is fragile and depends on a particular initial state.
+
 Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::EpsFromGeometry>
 - please see those for attributes.
 
@@ -118,11 +120,6 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
 with 'Photonic::Roles::Haydock', 'Photonic::Roles::EpsFromGeometry';
-
-#don't allow initialization of next state, as this module is fragile
-#and depends on a particular initial state. Otherwise, use the
-#Roles::Haydock attribute.
-has '+next_state' =>(init_arg=>undef);
 
 sub _firstState { #\delta_{G0}
     my $self=shift;

@@ -243,11 +243,6 @@ requires
     'changesign'; #change sign of $b2
 has 'firstState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1,
 		    builder=>'_firstState');
-has 'current_state' => (is=>'ro', isa=>'Photonic::Types::PDLComplex', writer=>'_current_state',
-      lazy=>1, init_arg=>undef,  default=>sub {PDL::r2C(0)});
-has 'next_state' =>(is=>'ro', isa=>maybe_type('Photonic::Types::PDLComplex'),
-		   writer=>'_next_state',  lazy=>1,
-		   builder=>'_firstRState', init_arg=>undef);
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
 has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
@@ -255,10 +250,7 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
 
 has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
-has states=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
-         default=>sub{PDL->null}, init_arg=>undef,
-         writer=>'_states',
-         documentation=>'Saved states');
+has "_state_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_state_pdl', init_arg=>undef, isa=>'Photonic::Types::PDLComplex');
 my @poly_coeffs = qw(a b b2 c bc g);
 has "_${_}_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_coeff_pdl', init_arg=>undef, isa=>'PDL')
          for @poly_coeffs;
@@ -282,8 +274,8 @@ has 'converged'=>(is=>'ro', isa=>'Bool', init_arg=>undef,
 requires qw(iterate magnitude innerProduct
     _checkorthogonalize);
 
-my @allfields= qw(iteration keepStates converged current_state
-    next_state);  # Fields to store and restore
+# Fields to store and restore
+my @allfields= qw(iteration keepStates converged);
 
 for (@poly_coeffs) {
   no strict 'refs';
@@ -306,20 +298,42 @@ sub _build_coeff_pdl {
     $self->complexCoeffs ? $pdl->r2C : $pdl;
 }
 
+sub current_state :lvalue {
+    my ($self)=@_;
+    my $i=$self->iteration;
+    my $t=$i ? _top_slice($self->_state_pdl, '('.($i-1).')') : PDL::r2C(0);
+}
+sub next_state :lvalue {
+    my ($self)=@_;
+    my $t=_top_slice($self->_state_pdl, '('.($self->iteration).')');
+}
+sub states {
+    my ($self)=@_;
+    my $i=$self->iteration;
+    $i ? _top_slice($self->_state_pdl, '0:'.($i-1)) : PDL->null;
+}
+
+sub _build_state_pdl {
+    my ($self) = @_;
+    my $fs = $self->_firstRState;
+    my $pdl = PDL->zeroes($fs->type, $fs->dims, $self->nh+1); # +1 to capture "next"
+    (my $t=_top_slice($pdl, '(0)')) .= $fs;
+    $pdl;
+}
+
 sub iterate { #single Haydock iteration
     my $self=shift;
     return 0 if $self->converged;
     #Note: calculate Current a, next b2, next b, next state
     #a[n] is calculated together
     #with b[n+1] in each iteration
+    #Notation: nm1 is n-1, np1 is n+1
+    my $psi_nm1=$self->current_state;
     $self->_iteration($self->iteration+1); # inc at start so = one we're on
     my $b_n=$self->current_b;
     my $c_n=$self->current_c;
     my $g_n=$self->current_g;
-    #Notation: nm1 is n-1, np1 is n+1
-    my $psi_nm1=$self->current_state;
-    my $psi_n=$self->_save_state;
-    $self->_current_state($self->next_state);
+    my $psi_n=$self->current_state;
     my $opPsi=$self->applyOperator($psi_n);
     my $a_n=$g_n*$self->innerProduct($psi_n, $opPsi);
     my $bpsi_np1=$opPsi-$a_n*$psi_n-$c_n*$psi_nm1;
@@ -339,7 +353,8 @@ sub iterate { #single Haydock iteration
     $self->next_g .= $g_np1;
     $self->next_c .= $self->_coerce($c_np1);
     $self->next_bc .= $self->_coerce($bc_np1);
-    $self->_next_state($psi_np1);
+    $self->next_state .= $psi_np1 if defined $psi_np1;
+    $self->_save_state($self->iteration-1);
     if ($self->reorthogonalize and defined $psi_np1) {
 	my $to_unwind = $self->_checkorthogonalize(
 	    map $self->$_, qw(iteration as bs cs next_b current_g next_g)
@@ -362,7 +377,7 @@ sub _firstRState {
     $self->next_b2 .= $self->_coerce($b2);
     $self->next_b .= $self->_coerce($b);
     $self->next_g .= $g;
-    return $phi; #goes into _next_state
+    $phi;
 }
 
 sub _coerce {
@@ -376,7 +391,7 @@ sub BUILD {
     my $self=shift;
     # Can't reorthogonalize without previous states
     $self->_keepStates(1) if  $self->reorthogonalize;
-    $self->next_state; # trigger build which sets b, b2, g
+    $self->_state_pdl; # trigger build which sets b2, b, g
 }
 
 sub state_iterator {
@@ -384,7 +399,7 @@ sub state_iterator {
     confess "Can't return states unless keepStates!=0"
 	unless $self->keepStates;
     my $n=0;
-    my $s=$self->states;
+    my $s=$self->_state_pdl;
     #warn "statePos: " . scalar(@{$self->_statePos}) . " iteration: "
     #. $self->iteration;
     return Photonic::Iterator->new(sub { #closure
@@ -433,11 +448,12 @@ sub loadall {
 	(my $t=_top_slice($self->$pdl_method, "0:$i")) .= $all->{$_}; # avoid 5.14.1 oddity
     }
     return unless $self->keepStates;
-    foreach (1..$i) {
-	$self->_next_state(fd_retrieve($fh)); #note: clobber next_state
-	$self->_save_state;
+    my $s=$self->_state_pdl;
+    foreach (0..$i-1) {
+	(my $t=_top_slice($s, "($_)")) .= fd_retrieve($fh);
+	$self->_save_state($_);
     }
-    $self->_next_state($all->{next_state}); #restore next_state
+    (my $t=_top_slice($s, "($i)")) .= fd_retrieve($fh); # catch stored "next" state
 }
 
 sub storeall {
@@ -459,21 +475,7 @@ sub storeall {
     while(defined (my $s=$si->nextval)){
 	store_fd $s, $fh or croak "Couldn't store a state: $!";
     }
-}
-
-sub _save_val {
-    my ($self, $valname, $method, $dest) = @_;
-    my $valnames = $valname.'s';
-    my $writer = "_$valnames";
-    my $value = "${method}_$valname";
-    my $pdl = $self->$valnames;
-    my $the_value = $self->$value;
-    $the_value = pdl($the_value) if !UNIVERSAL::isa($the_value, 'PDL');
-    my $to_save = $pdl->isnull ? $the_value->dummy(-1) : $pdl->glue($pdl->getndims-1, $the_value);
-    $self->$writer($to_save);
-    return $the_value if !$dest;
-    my $dest_writer = "_${dest}_$valname";
-    $self->$dest_writer($the_value); # writer returns value
+    store_fd _top_slice($self->_state_pdl, "($i)"), $fh or croak "Couldn't store a state: $!"; # store "next" state
 }
 
 sub _top_slice :lvalue {
@@ -482,51 +484,23 @@ sub _top_slice :lvalue {
     $pdl->slice($slice_arg);
 }
 
-sub _pop_val {
-    my ($self, $valname, $pop_dest, $last_dest) = @_;
-    my $valnames = $valname.'s';
-    my $writer = "_$valnames";
-    my $pdl = $self->$valnames;
-    confess "popped empty" if $pdl->isnull;
-    my @dims = $pdl->dims;
-    my $lastval = _top_slice($pdl, "(-1)");
-    my $store = "_${pop_dest}_$valname";
-    $self->$store($lastval);
-    $dims[-1]--; # shrink
-    my $copy = PDL->null;
-    ($copy = $pdl->copy)->setdims(\@dims) if $dims[-1];
-    $self->$writer($copy);
-    return if !$last_dest;
-    my $last = "_${last_dest}_$valname";
-    $self->$last(_top_slice($copy, "(-1)"));
-}
-
 sub _save_state {
-    my $self=shift;
-    return $self->next_state unless $self->keepStates; #noop
-    return $self->_save_val('state', 'next') unless defined $self->stateFN;
+    my ($self, $i) = @_; # zero-based
+    return unless $self->keepStates and defined $self->stateFN;
     my $fh=$self->_stateFD;
     my $lastpos=$self->_statePos->[-1];
     seek($fh, $lastpos, SEEK_SET);
-    store_fd \(my $state=$self->next_state), $fh or croak "Couldn't store state: $!";
+    store_fd \_top_slice($self->_state_pdl, "($i)"), $fh or croak "Couldn't store state: $!";
     my $pos=tell($fh);
     push @{$self->_statePos}, $pos;
-    $state;
 }
 
 sub _pop_state {
     my $self=shift;
     croak "Can't pop state without keepStates=>1" unless
 	$self->keepStates;
-    return $self->_pop_val('state', 'next', 'current')
-        unless defined $self->stateFN;
+    return unless defined $self->stateFN;
     pop @{$self->_statePos};
-    my ($snm2, $snm1)=map {
-	seek($self->_stateFD, $self->_statePos->[-$_], SEEK_SET);
-	fd_retrieve($self->_stateFD);
-    } (2,1);
-    $self->_next_state($$snm1);
-    $self->_current_state($$snm2);
 }
 
 sub _pop { # undo the changes done after, in and before iteration, for
