@@ -154,6 +154,10 @@ ndarray of Haydock c coefficients
 
 ndarray of Haydock g coefficients
 
+=item * converged
+
+Flag that the calculation converged
+
 =back
 
 =head1 REQUIRED ATTRIBUTES
@@ -192,7 +196,7 @@ Whether the coefficients are complex.
 
 Performs a single Haydock iteration and updates current_a, next_b,
 next_b2, next_state, shifting the current values where necessary. Returns
-0 when unable to continue iterating.
+false when b^2 <= smallH.
 
 =item * run
 
@@ -272,10 +276,13 @@ has 'storeAllFN' =>(is=>'ro', required=>1, default=>undef,
 has 'loadAllFN' =>(is=>'ro', required=>1, default=>undef,
 		    documentation=>'Name of file to load everything from');
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::Reorthogonalize';
+has 'converged'=>(is=>'ro', isa=>'Bool', init_arg=>undef,
+                  writer=>'_converged',
+                  documentation=>'The calculation did converge');
 requires qw(iterate magnitude innerProduct
     _checkorthogonalize);
 
-my @allfields= qw(iteration keepStates current_state
+my @allfields= qw(iteration keepStates converged current_state
     next_state);  # Fields to store and restore
 
 for (@poly_coeffs) {
@@ -301,9 +308,8 @@ sub _build_coeff_pdl {
 
 sub iterate { #single Haydock iteration
     my $self=shift;
+    return 0 if $self->converged;
     #Note: calculate Current a, next b2, next b, next state
-    #Done if there is no next state
-    return 0 unless defined $self->next_state;
     #a[n] is calculated together
     #with b[n+1] in each iteration
     $self->_iteration($self->iteration+1); # inc at start so = one we're on
@@ -334,13 +340,14 @@ sub iterate { #single Haydock iteration
     $self->next_c .= $self->_coerce($c_np1);
     $self->next_bc .= $self->_coerce($bc_np1);
     $self->_next_state($psi_np1);
-    if ($self->reorthogonalize and defined $self->next_state) {
+    if ($self->reorthogonalize and defined $psi_np1) {
 	my $to_unwind = $self->_checkorthogonalize(
 	    map $self->$_, qw(iteration as bs cs next_b current_g next_g)
 	);
 	$self->_pop while $to_unwind-- > 0; #undoes stack
     }
-    return 1;
+    $self->_converged(1) if !defined $psi_np1;
+    defined $psi_np1; #Done if there is no next state
 }
 
 sub _firstRState {
@@ -369,6 +376,7 @@ sub BUILD {
     my $self=shift;
     # Can't reorthogonalize without previous states
     $self->_keepStates(1) if  $self->reorthogonalize;
+    $self->next_state; # trigger build which sets b, b2, g
 }
 
 sub state_iterator {
