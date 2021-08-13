@@ -216,6 +216,8 @@ Store final state to file, if provided.
 
 =head2 BUILD
 
+=head2 BUILDARGS
+
 =end Pod::Coverage
 
 =cut
@@ -389,10 +391,15 @@ sub _coerce {
 
 sub BUILD {
     my $self=shift;
-    # Can't reorthogonalize without previous states
-    $self->_keepStates(1) if  $self->reorthogonalize;
     $self->_state_pdl; # trigger build which sets b2, b, g
 }
+
+around BUILDARGS => sub {
+    my ($orig, $class, %args) = @_;
+    # Can't reorthogonalize without previous states
+    $args{keepStates} = 1 if $args{reorthogonalize};
+    $class->$orig(%args);
+};
 
 sub state_iterator {
     my $self=shift;
