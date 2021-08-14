@@ -197,25 +197,28 @@ sub _checkorthogonalize {
     }
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
-    my $next_W=PDL->pdl([]);
+    my $next_W=PDL->zeroes(
+        $self->complexCoeffs ? PDL::cdouble() : PDL::double(),
+        $n+1
+    );
     if($n>=2){
-	$next_W= $b->(1:-1)*$current_W->(1:-1)
+	$next_W->(0:-3) .= $b->(1:-1)*$current_W->(1:-1)
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
 	    - $c->(($n-1))*$previous_W;
-	$next_W->(1:-1)+=$c->(1:-2)*$current_W->(0:-3) if ($n>=3);
+	$next_W->(1:-3)+=$c->(1:-2)*$current_W->(0:-3) if ($n>=3);
 	my $diff;
 	if ($self->complexCoeffs) {
-	    my $s=$next_W->copy;
+	    my $s=$next_W->(0:-3)->copy;
 	    $s->where(my $indexes=(my $a=$s->abs)==0).=1;
 	    $a->where($indexes).=1;
 	    $diff=$s/$a; # arg
 	} else {
-	    $diff=2*($next_W>=0)-1; # sign
+	    $diff=2*($next_W->(0:-3)>=0)-1; # sign
 	}
-	$next_W=($next_W+($diff*2*$self->normOp*$self->noise))/$b_np1;
+	$next_W->(0:-3) .= ($next_W->(0:-3)+($diff*2*$self->normOp*$self->noise))/$b_np1;
     }
-    $next_W=$next_W->append($self->noise);
-    $next_W=$next_W->append($g_np1);
+    $next_W->((-2)) .= $self->noise;
+    $next_W->((-1)) .= $g_np1;
     $self->_next_W($next_W);
     return 0 unless $n>=2;
     my $max=$next_W->(0:-2)->abs->maximum;
