@@ -247,6 +247,7 @@ use Photonic::Types;
 use Moose::Util::TypeConstraints;
 use Fcntl;
 use Photonic::Iterator qw(:all);
+use Photonic::Utils qw(top_slice);
 use PDL::NiceSlice;
 use IO::File;
 use Storable qw(store_fd fd_retrieve);
@@ -298,12 +299,12 @@ for (@poly_coeffs) {
   my $pdl_method = "_${_}_pdl";
   # iteration is the quantity finished, so zero-based needs -1
   # the temp var is to avoid a problem on at least 5.14.1
-  *{"current_$_"} = sub :lvalue { my ($self)=@_; my $t=_top_slice($self->$pdl_method, '('.($self->iteration-1).')'); };
-  *{"next_$_"} = sub :lvalue { my ($self)=@_; my $t=_top_slice($self->$pdl_method, '('.($self->iteration).')'); };
+  *{"current_$_"} = sub :lvalue { my ($self)=@_; my $t=top_slice($self->$pdl_method, '('.($self->iteration-1).')'); };
+  *{"next_$_"} = sub :lvalue { my ($self)=@_; my $t=top_slice($self->$pdl_method, '('.($self->iteration).')'); };
   *{$_."s"} = sub {
     my ($self)=@_;
     my $i=$self->iteration;
-    $i ? _top_slice($self->$pdl_method, '0:'.($i-1)) : PDL->null;
+    $i ? top_slice($self->$pdl_method, '0:'.($i-1)) : PDL->null;
   };
 }
 
@@ -316,16 +317,16 @@ sub _build_coeff_pdl {
 sub current_state :lvalue {
     my ($self)=@_;
     my $i=$self->iteration;
-    my $t=$i ? _top_slice($self->_state_pdl, '('.($i-1).')') : PDL::r2C(0);
+    my $t=$i ? top_slice($self->_state_pdl, '('.($i-1).')') : PDL::r2C(0);
 }
 sub next_state :lvalue {
     my ($self)=@_;
-    my $t=_top_slice($self->_state_pdl, '('.($self->iteration).')');
+    my $t=top_slice($self->_state_pdl, '('.($self->iteration).')');
 }
 sub states {
     my ($self)=@_;
     my $i=$self->iteration;
-    $i ? _top_slice($self->_state_pdl, '0:'.($i-1)) : PDL->null;
+    $i ? top_slice($self->_state_pdl, '0:'.($i-1)) : PDL->null;
 }
 
 sub _build_state_pdl {
@@ -341,7 +342,7 @@ sub _build_state_pdl {
     } else {
 	$pdl = PDL->zeroes($fs->type, $fs->dims, $self->nh+1); # +1 to capture "next"
     }
-    (my $t=_top_slice($pdl, '(0)')) .= $fs;
+    (my $t=top_slice($pdl, '(0)')) .= $fs;
     $pdl;
 }
 
@@ -432,7 +433,7 @@ sub state_iterator {
     my $s=$self->_state_pdl;
     return Photonic::Iterator->new(sub { #closure
 	return if $n>=$self->iteration;
-	return _top_slice($s, '('.$n++.')');
+	return top_slice($s, '('.$n++.')');
     });
 }
 
@@ -455,14 +456,14 @@ sub loadall {
     my $i = $self->iteration; # not "-1" to capture "next" values calculated
     for (@poly_coeffs) {
 	my $pdl_method = "_${_}_pdl";
-	(my $t=_top_slice($self->$pdl_method, "0:$i")) .= $all->{$_}; # avoid 5.14.1 oddity
+	(my $t=top_slice($self->$pdl_method, "0:$i")) .= $all->{$_}; # avoid 5.14.1 oddity
     }
     return unless $self->keepStates;
     $fn .= ".states";
     require PDL::IO::FastRaw;
     my $pdl = PDL::IO::FastRaw::mapfraw($fn);
     my $s=$self->_state_pdl;
-    (my $t=_top_slice($s, "0:$i")) .= _top_slice($pdl, "0:$i");
+    (my $t=top_slice($s, "0:$i")) .= top_slice($pdl, "0:$i");
 }
 
 sub storeall {
@@ -476,15 +477,9 @@ sub storeall {
     my $i = $self->iteration; # not "-1" to capture "next" values calculated
     for (@poly_coeffs) {
 	my $pdl_method = "_${_}_pdl";
-	$all{$_}=_top_slice($self->$pdl_method, "0:$i")->copy;
+	$all{$_}=top_slice($self->$pdl_method, "0:$i")->copy;
     }
     store_fd \%all, $fh or croak "Couldn't store all info; $!";
-}
-
-sub _top_slice :lvalue {
-    my ($pdl, $index) = @_;
-    my $slice_arg = join ',', (map ':', 1..($pdl->ndims-1)), $index;
-    $pdl->slice($slice_arg);
 }
 
 sub _pop { # undo the changes done after, in and before iteration, for

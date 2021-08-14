@@ -33,13 +33,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
-
 # Collection of subroutines. Thus, no Moose
 require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
     HProd MHProd EProd VSProd SProd
-    linearCombineIt lentzCF any_complex tensor
+    top_slice linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
     incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
@@ -54,6 +53,12 @@ require PDL::LinearAlgebra::Real;
 require PDL::LinearAlgebra::Complex;
 use warnings;
 use strict;
+
+sub top_slice :lvalue {
+    my ($pdl, $index) = @_;
+    my $slice_arg = join ',', (map ':', 1..($pdl->ndims-1)), $index;
+    $pdl->slice($slice_arg);
+}
 
 sub linearCombineIt { #complex linear combination of states
     my ($coefficients, $states)=@_; #complex states, ndarray of complex coefficients
@@ -419,6 +424,11 @@ Utility functions that may be useful.
 =head1 Exportable Functions
 
 =over 4
+
+=item * $slice=top_slice($pdl, $slice_arg)
+
+Applies the given C<$slice_arg> to the highest dimension of the given
+ndarray.
 
 =item * $r=linearCombineIt($c, $it)
 
