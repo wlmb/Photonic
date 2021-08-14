@@ -139,7 +139,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::LE::NR2::Haydock;
-use Photonic::Utils qw(cgtsv GtoR);
+use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
@@ -181,7 +181,6 @@ sub evaluate {
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my $as=$self->haydock->as;
     my $bs=$self->haydock->bs;
-    my $stateit=$self->haydock->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->haydock->iteration if $nh>=$self->haydock->iteration;
@@ -199,23 +198,15 @@ sub evaluate {
     # Obtain longitudinal macroscopic response from result
     $self->_epsL(my $epsL=1/$result->((0)));
     # Normalize result so macroscopic field is 1.
-    my $Es= $result*$epsL;
     #states are nx,ny...
+    my $stateit=$self->haydock->states->dummy(0);
+    my $Es= $result*$epsL;
+    my $nrGnorm = $self->haydock->GNorm;
     #field is cartesian,nx,ny...
-    my @dims=$self->haydock->B->dims; # actual dims of space
-    my $ndims=@dims; # num. of dims of space
-    my $field_G=PDL->zeroes($ndims, @dims)->r2C;
-    #field is cartesian, nx, ny...
-    my $nrGnorm = $self->haydock->GNorm->r2C;
-    for(my $n=0; $n<$nh; ++$n){
-	my $GPsi_G=($stateit->nextval->dummy(0) * $nrGnorm);#^G|psi_n>
-	#the result is cartesian, nx, ny,...
-	my $EnGPsi_G=$GPsi_G*$Es->($n); #En ^G|psi_n>
-	$field_G+=$EnGPsi_G;
-    }
+    my $field_G=linearCombineIt($Es, $nrGnorm*$stateit); #En ^G|psi_n>
     $field_G *= $self->filter->(*1) if $self->has_filter;
     #get cartesian out of the way, fourier transform, put cartesian.
-    my $field_R=GtoR($field_G, $ndims, 1);
+    my $field_R=GtoR($field_G, $self->haydock->ndims, 1);
     $field_R*=$self->haydock->B->nelem; #scale to have unit macroscopic field
     #result is cartesian, nx, ny,...
     $self->_field($field_R);

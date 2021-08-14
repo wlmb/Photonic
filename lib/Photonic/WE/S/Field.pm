@@ -138,7 +138,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::WE::S::Haydock;
-use Photonic::Utils qw(cgtsv GtoR);
+use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
@@ -174,7 +174,6 @@ sub evaluate {
     my $as=$self->haydock->as;
     my $bs=$self->haydock->bs;
     my $cs=$self->haydock->cs;
-    my $stateit=$self->haydock->state_iterator;
     my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$self->haydock->iteration if $nh>$self->haydock->iteration;
@@ -189,17 +188,10 @@ sub evaluate {
     #coefficients of g^{-1}E
     my $giEs= cgtsv($subdiag, $diag, $supradiag, $rhs);
     #states are xy,pm,nx,ny...
-    my @dims=$self->haydock->B->dims; # actual dims of space
-    my $ndims=@dims; # num. of dims of space
+    my $stateit=$self->haydock->states;
+    my $ndims=$self->haydock->B->ndims; # num. of dims of space
     #field is xy,pm,nx,ny...
-    my $field_G=PDL->zeroes($ndims, 2, @dims)->r2C;
-    #print $field_G->info, "\n";
-    #field is xy,pm,nx,ny...
-    for(my $n=0; $n<$nh; ++$n){
-	my $giE_G=$giEs->($n)*$stateit->nextval; #En ^G|psi_n>
-	$field_G+=$giE_G;
-    }
-    #
+    my $field_G=linearCombineIt($giEs, $stateit); #En ^G|psi_n>
     my $Es=$self->haydock->applyMetric($field_G);
     #Comment as normalization below makes it useless
     #$Es*=$bs->((0))/$self->haydock->metric->epsilon;
