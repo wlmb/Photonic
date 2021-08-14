@@ -43,7 +43,7 @@ my @all_vars = (qw(iteration), @coeffs);
 
 my $fn = make_fn(); #output file name
 
-my ($all_stash, @states_stash) = {};
+my ($all_stash, $states_stash) = {};
 {
     #Check haydock coefficients for simple 1D system
     my ($a) = make_store(
@@ -52,8 +52,7 @@ my ($all_stash, @states_stash) = {};
 	{ keepStates=>1, storeAllFN=>$fn },
     );
     $all_stash->{$_} = $a->$_ for @all_vars;
-    my $si=$a->state_iterator;
-    push @states_stash, $si->nextval for 1..$a->iteration;
+    $states_stash = $a->states->copy;
 }
 
 {
@@ -62,10 +61,8 @@ my ($all_stash, @states_stash) = {};
     is($all_stash->{iteration}, $a->iteration,
        "Number of iterations 1D longitudinal");
     ok(agree(pdl($all_stash->{$_}), pdl($a->$_)), "1D L restored $_") for @coeffs;
-    my $si=$a->state_iterator;
-    my @readstates = map $si->nextval, 1..$a->iteration;
-    ok(Cagree(pdl(@readstates), pdl(@states_stash)), "1D L restored states");
-    ok(Cagree($a->states, pdl(@states_stash)), "1D L states method");
+    my $readstates = $a->states;
+    ok(Cagree($readstates, $states_stash), "1D L restored states");
 }
 
 {
@@ -79,14 +76,7 @@ my ($all_stash, @states_stash) = {};
     $a3->run;
     is $a2->iteration, $a3->iteration, 'same number of iterations';
     ok(agree(pdl($a2->$_), pdl($a3->$_)), "1D L restarted $_") for @all_vars;
-    my $si2=$a2->state_iterator;
-    my $si3=$a3->state_iterator;
-    my (@states2, @states3);
-    foreach(1..$a3->iteration){
-	push @states2, $si2->nextval;
-	push @states3, $si3->nextval;
-    }
-    ok(Cagree(pdl(@states2), pdl(@states3)), "1D L restarted states");
+    ok(Cagree($a2->states, $a3->states), "1D L restarted states");
 }
 
 done_testing;
