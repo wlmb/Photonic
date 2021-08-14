@@ -214,7 +214,7 @@ sub _checkorthogonalize {
 	}
 	$next_W=($next_W+($diff*2*$self->normOp*$self->noise))/$b_np1;
     }
-    $next_W=$next_W->append($self->noise) if $n>=1;
+    $next_W=$next_W->append($self->noise);
     $next_W=$next_W->append($g_np1);
     $self->_next_W($next_W);
     return 0 unless $n>=2;
