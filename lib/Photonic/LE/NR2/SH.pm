@@ -521,10 +521,11 @@ sub _build_P2LMCalt {
     my $betaV_n=PDL->pdl(
 	[map {HProd($betaV_G,top_slice($states, "($_)"), 1)} (0..$nh-1)]
 	);
+    my $psi = cgtsv($subdiag, $diag, $supradiag, $betaV_n->mv(0,-1)); # nx ny .... cartesian nh - threading
     my $Ppsi = PDL->zeroes($ndims)->r2C;
+    $states=$haydock->states;
     foreach(0..$ndims-1){
-	my $psi_n = cgtsv($subdiag, $diag, $supradiag, $betaV_n->(($_))); # nx ny .... cartesian
-	$states=$haydock->states;
+	my $psi_n = top_slice($psi, "($_)"); # nx ny .... cartesian
 	my $psi_G=linearCombineIt($psi_n, $states);
 	$Ppsi->(($_)) .= HProd($psi_G, $PexL_G);
     }
