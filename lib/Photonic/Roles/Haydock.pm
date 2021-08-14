@@ -139,11 +139,6 @@ number of b coefficients is one less (but it starts with a dummy zero).
 
 Flag to keep (1) or discard (0) Haydock states
 
-=item * state_iterator
-
-Iterator to provide the previously calculated and saved states. It may
-take the states from memory or from a file if provided.
-
 =item * states
 
 ndarray of Haydock states
@@ -246,7 +241,6 @@ use PDL::Lite;
 use Photonic::Types;
 use Moose::Util::TypeConstraints;
 use Fcntl;
-use Photonic::Iterator qw(:all);
 use Photonic::Utils qw(top_slice);
 use PDL::NiceSlice;
 use IO::File;
@@ -424,18 +418,6 @@ around BUILDARGS => sub {
 	if $args{keepStates} and defined $args{storeAllFN} and !defined $args{stateFN};
     $class->$orig(%args);
 };
-
-sub state_iterator {
-    my $self=shift;
-    confess "Can't return states unless keepStates!=0"
-	unless $self->keepStates;
-    my $n=0;
-    my $s=$self->_state_pdl;
-    return Photonic::Iterator->new(sub { #closure
-	return if $n>=$self->iteration;
-	return top_slice($s, '('.$n++.')');
-    });
-}
 
 sub run { #run the iteration
     my $self=shift;

@@ -102,11 +102,6 @@ Geometrical attributes, obtained from a 2D image.
 
 =back
 
-=item L<Photonic::Iterator>
-
-Facilitate the creation of iterators. Useful to iterate over large
-amounts of data, such as states, without keeping them in memory.
-
 =item L<Photonic::LE>
 
 Group of modules for non retarded calculations based on the

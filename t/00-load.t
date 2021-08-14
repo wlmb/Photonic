@@ -41,7 +41,6 @@ Photonic::CharacteristicFunctions
 Photonic::Geometry::FromB
 Photonic::Geometry::FromEpsilon
 Photonic::Geometry::FromImage2D
-Photonic::Iterator
 Photonic::LE::NP::EpsL
 Photonic::LE::NP::EpsTensor
 Photonic::LE::NP::Haydock
