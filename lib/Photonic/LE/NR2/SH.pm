@@ -194,7 +194,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::LE::NR2::Haydock;
-use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv top_slice);
 use Photonic::Types;
 use PDL::Constants qw(PI);
 use Moose;
@@ -430,11 +430,11 @@ sub _build_HP { #build haydock states for P2
 sub _build_externalL_n {
     my $self=shift;
     my $pol=$self->externalL_G;
-    my $stateit=$self->HP->state_iterator;
+    my $stateit=$self->HP->states;
     my $nh=$self->HP->iteration;
     # innecesario: \propto \delta_{n0}
     my $Pn=PDL::r2C(PDL->zeroes($nh));
-    $Pn->((0)).=HProd($stateit->nextval,$pol);
+    $Pn->((0)).=HProd(top_slice($stateit, "(0)"),$pol);
     $Pn;
 }
 
@@ -517,9 +517,9 @@ sub _build_P2LMCalt {
 
     my $beta_G=RtoG($B*GtoR($haydock->firstState,$ndims,0), $ndims,0);
     my $betaV_G=$beta_G->(*1)*$geom->GNorm;
-    $states=$haydock->state_iterator;
+    $states=$haydock->states->dummy(0);
     my $betaV_n=PDL->pdl(
-	[map {HProd($betaV_G,$states->nextval->(*1), 1)} (0..$nh-1)]
+	[map {HProd($betaV_G,top_slice($states, "($_)"), 1)} (0..$nh-1)]
 	);
     my $Ppsi = PDL->zeroes($ndims)->r2C;
     foreach(0..$ndims-1){
