@@ -114,9 +114,8 @@ use strict;
 use warnings;
 
 use base "Exporter";
-our @EXPORT_OK=qw(iterator nextval);
+our @EXPORT_OK=qw(nextval);
 our %EXPORT_TAGS=(all=>\@EXPORT_OK);
 
 sub nextval ($) { $_[0]->(); }
-sub iterator(&) { return $_[0] }
 sub new(&) { return bless $_[1]=>$_[0] }

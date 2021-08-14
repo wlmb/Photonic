@@ -124,6 +124,7 @@ Only used with complex coefficients.
 use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
+use Photonic::Utils qw(top_slice);
 use Moose::Role;
 
 requires 'complexCoeffs';
@@ -171,12 +172,11 @@ sub _fullorthogonalize_indeed {
     $self->_fullorthogonalize_N($fo_N-1);
     $self->_orthogonalizations($self->orthogonalizations+1);
     $self->_write_justorthogonalized(1);
-    my $it=$self->state_iterator;
+    my $it=$self->states;
     $psi=$psi->copy; # no mutate inputs
-    for my $g ($gs->dog) {
-	#for every saved state
-	my $s=$it->nextval;
-	$psi-=$g*$self->innerProduct($s, $psi)*$s;
+    for my $n (0..$gs->dim(-1)-1) {
+	my $s=top_slice($it, "($n)");
+	$psi-=top_slice($gs, "($n)")*$self->innerProduct($s, $psi)*$s;
     }
     return $psi;
 };
