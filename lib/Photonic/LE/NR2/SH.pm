@@ -182,12 +182,6 @@ polarization using the field (nrf) filter.
 
 =back
 
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
-
 =cut
 
 use namespace::autoclean;

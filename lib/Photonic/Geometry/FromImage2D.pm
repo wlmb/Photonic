@@ -87,12 +87,6 @@ The filename containing the image
 
 =back
 
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
-
 =head1 SEE ALSO
 
 L<Photonic::Roles::Geometry>

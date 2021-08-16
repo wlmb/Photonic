@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::S::EpsilonP;
    my $eps=Photonic::WE::S::EpsilonP->new(haydock=>$h, nh=>$nh);
-   my $EpsTensor=$W->evaluate($epsB);
+   my $EpsTensor=$W->epsilon;
 
 =head1 DESCRIPTION
 
@@ -72,14 +72,6 @@ Haydock coefficients and for the continued fraction.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
-=item * evaluate($epsB)
-
-Returns the macroscopic dielectric component for a given value of the
-dielectric function of the particle $epsB. The host's
-response $epsA is taken from the AllH structure.
-
-NOTE: Only works along principal directions.
-
 =back
 
 =head1 ACCESSORS (read only)
@@ -88,10 +80,11 @@ NOTE: Only works along principal directions.
 
 =item * epsilon
 
-The macroscopic dielectric projection of the last operation
+The macroscopic dielectric projection
 
-=item * All accessors of Photonic::WE::S::Wave
+NOTE: Only works along principal directions.
 
+=item * All accessors of Photonic::WE::S::WaveP
 
 =back
 

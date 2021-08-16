@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::S::GreenP;
    my $green=Photonic::WE::S::GreepP(haydock=>$h, nh=>$nh);
-   my $greenProjection=$green->evaluate($epsB);
+   my $greenProjection=$green->Gpp;
 
 =head1 DESCRIPTION
 
@@ -67,11 +67,6 @@ $nh is the maximum number of Haydock coefficients to use (required).
 
 $smallE is the criteria of convergence (defaults to 1e-7)
 
-=item * evaluate($epsB)
-
-Returns the macroscopic projected green'S function for a given complex
-value of the  dielectric functions of the particle $epsB.
-
 =back
 
 =head1 ACCESSORS (read only)
@@ -81,11 +76,6 @@ value of the  dielectric functions of the particle $epsB.
 =item * haydock
 
 The WE::S::Haydock structure
-
-=item * epsA epsB
-
-The dielectric functions of component A and component B used in the
-last calculation.
 
 =item * u
 
@@ -108,12 +98,6 @@ Flags that the last calculation converged before using up all coefficients
 Criteria of convergence. 0 means don't check.
 
 =back
-
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
 
 =cut
 
@@ -160,7 +144,6 @@ sub _build_Gpp {
     my $g0b02=$h->gs->slice("(0)")*$h->b2s->slice("(0)");
     return $g0b02/($epsR*$fn);
 }
-
 
 __PACKAGE__->meta->make_immutable;
 

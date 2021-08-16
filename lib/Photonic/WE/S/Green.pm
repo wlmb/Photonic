@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::S::Green;
    my $G=Photonic::WE::S::Green->new(metric=>$m, nh=>$nh);
-   my $GreenTensor=$G->evaluate($epsB);
+   my $GreenTensor=$G->greenTensor;
 
 =head1 DESCRIPTION
 
@@ -70,12 +70,6 @@ $smallH and $smallE are the criteria of convergence (default 1e-7) for
 Haydock coefficients and continued fraction
 
 $k is a flag to keep states in Haydock calculations (default 0)
-
-=item * evaluate($epsB)
-
-Returns the macroscopic Green's operator for a given value of the
-dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.
 
 =back
 
@@ -109,7 +103,7 @@ Array of Photonic::WE::S::GreenP structures, one for each direction.
 
 =item * greenTensor
 
-The Green's tensor of the last evaluation
+The Green's tensor calculated
 
 =item * nh
 

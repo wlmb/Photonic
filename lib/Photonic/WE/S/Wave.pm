@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::S::Wave;
    my $W=Photonic::WE::S::Wave->new(metric=>$m, nh=>$nh);
-   my $WaveTensor=$W->evaluate($epsB);
+   my $WaveTensor=$W->waveOperator;
 
 =head1 DESCRIPTION
 
@@ -69,12 +69,6 @@ $smallH and $smallE are the criteria of convergence (default 1e-7) for
 Haydock coefficients and for continued fraction.
 
 $k is a flag to keep states in Haydock calculations (default 0)
-
-=item * evaluate($epsB)
-
-Returns the macroscopic wave operator for a given value of the
-dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.
 
 =back
 

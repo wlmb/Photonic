@@ -51,12 +51,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-  use Photonic::Geometry;
-  use Photonic::NonRetarded::EpsTensor;
-
-  my $g=Photonic::Geometry->new(B=>$b);
-  my $eps=Photonic::Nonretarded::EpsTensor->new(geometry=>$g, nh=>$N);
-  my $epsValue=$eps->evaluate($epsA, $epsB);
+  use Photonic::LE::NR2::EpsTensor;
+  use Photonic::Geometry::FromB;
+  my $g=Photonic::Geometry::FromB->new(B=>$B);
+  my $eps=Photonic::LE::NR2::EpsTensor->new(geometry=>$g, epsA=>$epsA, epsB=>$epsB, nh=>$N);
+  my $epsilonTensor=$eps->epsTensor;
 
 Calculates the dielectric tensor of a metamaterial made up of two
 materials with dielectric functions $epsA and $epsB with a geometry $g

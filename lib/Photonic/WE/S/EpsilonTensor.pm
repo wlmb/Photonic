@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::S::EpsilonTensor;
    my $epsT=Photonic::WE::S::EpsilonTensor->new(metric=>$m, nh=>$nh);
-   my $EpsTensor=$W->evaluate($epsB);
+   my $EpsTensor=$W->epsilonTensor;
 
 =head1 DESCRIPTION
 
@@ -71,12 +71,6 @@ Haydock coefficients and for the continued fraction.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
-=item * evaluate($epsB)
-
-Returns the macroscopic dielectric tensor for a given value of the
-dielectric function of the particle $epsB. The host's
-response $epsA is taken from the metric.
-
 =back
 
 =head1 ACCESSORS (read only)
@@ -85,7 +79,7 @@ response $epsA is taken from the metric.
 
 =item * epsilonTensor
 
-The macroscopic dielectric tensor of the last operation
+The macroscopic dielectric tensor
 
 =item * All accessors of Photonic::WE::S::Wave
 

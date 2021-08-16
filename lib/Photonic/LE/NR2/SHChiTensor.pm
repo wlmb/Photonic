@@ -77,7 +77,7 @@ $ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geome
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
 haydock coefficients and continued fraction.
 
-=item * evaluate([kind=>$kind,] [mask=>$mask] )
+=item * evaluate([kind=>$kind,] [mask=>$mask])
 
 Returns the macroscopic second Harmonic susceptibility function for a
 given value of the dielectric functions of the host $epsA and the

@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::S::WaveP;
    my $W=Photonic::WE::S::WaveP->new(haydock=>$h, nh=>$nh, smallE=>$s);
-   my $WaveProjection=$W->evaluate($epsB);
+   my $WaveProjection=$W->waveOperator;
 
 =head1 DESCRIPTION
 
@@ -70,12 +70,6 @@ $nh is the maximum number of Haydock coefficients to use (required).
 
 $smallE is the criteria of convergence (default 1e-7).
 
-=item * evaluate($epsB)
-
-Returns the macroscopic wave operator for a given value of the
-dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.
-
 =back
 
 =head1 ACCESSORS (read only)
@@ -84,10 +78,9 @@ response $epsA is taken from the metric.
 
 =item * waveOperator
 
-The macroscopic wave operator of the last operation
+The macroscopic wave operator calculated from the metric.
 
 =item * All accessors of Photonic::WE::S::GreenP
-
 
 =back
 

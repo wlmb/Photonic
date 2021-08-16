@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::LE::NR2::EpsL;
    my $eps=Photonic::LE::NR2::EpsL->new(haydock=>$haydock, nh=>$nh);
-   my $epsilonLongitudinal=$eps->evaluate($epsA, $epsB);
+   my $epsilonLongitudinal=$eps->epsL;
 
 =head1 DESCRIPTION
 
