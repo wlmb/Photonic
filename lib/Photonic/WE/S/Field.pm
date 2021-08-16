@@ -98,7 +98,7 @@ Dielectric function of component A
 
 =item * epsB
 
-Dielectric function of componente B
+Dielectric function of component B
 
 =item * u
 

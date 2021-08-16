@@ -62,7 +62,7 @@ keepStates=>$k)
 
 Initializes the structure.
 
-$m Photonic::WE::R2::Metric describing the structure and some parametres.
+$m Photonic::WE::R2::Metric describing the structure and some parameters.
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -94,7 +94,7 @@ Dielectric function of component A
 
 =item * epsB
 
-Dielectric function of componente B
+Dielectric function of component B
 
 =item * u
 

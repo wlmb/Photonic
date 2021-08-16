@@ -101,7 +101,7 @@ calculator's epsilon.
 
 =item * epsB
 
-Dielectric function of componente B
+Dielectric function of component B
 
 =item * u
 

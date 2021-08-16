@@ -61,7 +61,7 @@ functions of the components.
 
 Initializes the structure.
 
-$m Photonic::WE::S::Metric describing the structure and some parametres.
+$m Photonic::WE::S::Metric describing the structure and some parameters.
 
 $nh is the maximum number of Haydock coefficients to use.
 

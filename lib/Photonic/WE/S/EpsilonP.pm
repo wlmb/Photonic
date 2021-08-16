@@ -63,7 +63,7 @@ NOTE: Only works for polarizations along principal directions.
 
 Initializes the structure.
 
-$h Photonic::WE::S::Haydock describing the structure and some parametres.
+$h Photonic::WE::S::Haydock describing the structure and some parameters.
 
 $nh is the maximum number of Haydock coefficients to use.
 
