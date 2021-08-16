@@ -104,22 +104,19 @@ use MooseX::StrictConstructor;
 extends 'Photonic::WE::R2::Wave';
 
 has 'epsilonTensor' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
-             writer=>'_epsilonTensor',
+             lazy=>1, builder=>'_build_epsilonTensor',
              documentation=>'Wave operator from last evaluation');
 
-around 'evaluate' => sub {
-    my $orig=shift;
+sub _build_epsilonTensor {
     my $self=shift;
-    my $wave=$self->$orig(@_);
+    my $wave=$self->waveOperator;
     my $q=$self->metric->wavenumber;
     my $q2=$q*$q;
     my $k=$self->metric->wavevector;
     my $k2=$k->inner($k);
     my $kk=$k->outer($k);
     my $id=identity($k);
-    my $eps=$wave+$k2/$q2*$id - $kk/$q2;
-    $self->_epsilonTensor($eps);
-    return $eps;
+    $wave+$k2/$q2*$id - $kk/$q2;
 };
 
 __PACKAGE__->meta->make_immutable;

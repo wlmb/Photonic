@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::WE::R2::EpsilonP;
-   my $eps=Photonic::WE::R2::EpsilonP->new(haydock=>$h, nh=>$nh);
-   my $EpsP=$eps->evaluate($epsB);
+   my $eps=Photonic::WE::R2::EpsilonP->new(haydock=>$h, nh=>$nh, epsB=>$epsB);
+   my $EpsP=$eps->epsilon;
 
 =head1 DESCRIPTION
 
@@ -72,26 +72,15 @@ Haydock coefficients and for the continued fraction.
 
 $k is a flag to keep states in Haydock calculations (default 0)
 
-=item * evaluate($epsB)
+=item * epsilon
 
 Returns the macroscopic dielectric component for a given value of the
-dielectric function of the particle $epsB. The host's
-response $epsA is taken from the AllH structure.
+dielectric function of the particle C<epsB>. The host's
+response C<epsA> is taken from the Haydock structure.
 
 NOTE: Only works along principal directions.
 
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * epsilon
-
-The macroscopic dielectric projection of the last operation
-
-=item * All accessors of Photonic::WE::R2::Wave
-
+=item * All accessors of Photonic::WE::R2::WaveP
 
 =back
 
@@ -106,13 +95,12 @@ use MooseX::StrictConstructor;
 extends 'Photonic::WE::R2::WaveP';
 
 has 'epsilon' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
-             writer=>'_epsilon',
-             documentation=>'Wave projection from last evaluation');
+             lazy=>1, builder=>'_build_epsilon',
+             documentation=>'Wave projection from evaluation');
 
-around 'evaluate' => sub {
-    my $orig=shift;
+sub _build_epsilon {
     my $self=shift;
-    my $wave=$self->$orig(@_);
+    my $wave=$self->waveOperator;
     my $q=$self->haydock->metric->wavenumber;
     my $q2=$q*$q;
     my $k=$self->haydock->metric->wavevector;
@@ -123,9 +111,7 @@ around 'evaluate' => sub {
     my $p2=($p*$p)->sumover;
     my $pk=($p*$k)->sumover;
     my $proj=$p2*$k2/$q2 - $pk*$pk/$q2;
-    my $eps=$wave+$proj;
-    $self->_epsilon($eps);
-    return $eps;
+    $wave+$proj;
 };
 
 __PACKAGE__->meta->make_immutable;

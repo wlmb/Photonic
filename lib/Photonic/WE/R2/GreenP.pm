@@ -44,71 +44,54 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::WE::R2::GreenP;
-   my $green=Photonic::WE::R2::GreepP(haydock=>$h, nh=>$nh);
-   my $greenProjection=$green->evaluate($epsB);
+   my $green=Photonic::WE::R2::GreepP->new(haydock=>$h, nh=>$nh, epsB=>$epsB);
+   my $greenProjection=$green->Gpp;
 
 =head1 DESCRIPTION
 
 Calculates the macroscopic Green's function projected along some direction.
 Based on the wave equation for a binary metamaterial, with a non-dissipative host.
 
-=head1 METHODS
-
-=over 4
-
-=item * new(haydock=>$h, nh=>$nh, smallE=>$smallE)
-
-Initializes the structure.
-
-$h is a Photonic::WE::R2::Haydock structure (required).
-
-$nh is the maximum number of Haydock coefficients to use (required).
-
-$smallE is the criteria of convergence (defaults to 1e-7)
-
-=item * evaluate($epsB)
-
-Returns the macroscopic projected green'S function for a given complex
-value of the  dielectric functions of the particle $epsB.
-
-=back
-
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
 =item * haydock
 
-The WE::R2::Haydock structure
-
-=item * epsA epsB
-
-The dielectric functions of component A and component B used in the
-last calculation.
-
-=item * u
-
-The spectral variable used in the last calculation
-
-=item * Gpp
-
-The projected Green's function of the last calculation.
+Photonic::WE::R2::Haydock structure (required).
 
 =item * nh
 
-The maximum number of Haydock coefficients to use.
+Maximum number of Haydock coefficients to use (required).
 
-=item * nhActual
+=item * epsB
 
-The actual number of Haydock coefficients used in the last calculation
-
-=item * converged
-
-Flags that the last calculation converged before using up all coefficients
+The dielectric functions of component B (required)
 
 =item * smallE
 
-Criteria of convergence. 0 means don't check.
+criteria of convergence (defaults to 1e-7)
+
+=item * epsA
+
+The dielectric functions of component A, got from the Haydock's epsilon
+
+=item * u
+
+The spectral variable from the calculation
+
+=item * Gpp
+
+Returns the macroscopic projected green'S function for a given complex
+value of the dielectric functions of the particle C<epsB>.
+
+=item * nhActual
+
+The actual number of Haydock coefficients used in the calculation
+
+=item * converged
+
+Flags that the calculation converged before using up all coefficients
 
 =back
 
@@ -138,13 +121,13 @@ has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
     documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
+has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
         documentation=>'Dielectric function of inclusions');
 has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
 
 has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::R2::Haydock', required=>1);
-has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_Gpp');
+has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, lazy=>1, builder=>'_build_Gpp');
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
@@ -154,11 +137,11 @@ sub BUILD {
     $self->haydock->run unless $self->haydock->iteration;
 }
 
-sub evaluate {
+sub _build_Gpp {
     my $self=shift;
     my $h = $self->haydock;
-    $self->_epsA(my $epsA=$h->epsilon->r2C);
-    $self->_epsB(my $epsB=shift);
+    my $epsA=$h->epsilon->r2C;
+    my $epsB=$self->epsB;
     $self->_u(my $u=1/(1-$epsB/$epsA));
     my $as=PDL::r2C($h->as);
     my $bcs=PDL::r2C($h->bcs);
@@ -173,8 +156,7 @@ sub evaluate {
     $self->_converged($n<$min || $h->iteration<=$self->nh);
     $self->_nhActual($n);
     my $g0b02=$h->gs->slice("(0)")*$h->b2s->slice("(0)");
-    $self->_Gpp($u*$g0b02/($epsA*$fn));
-    return $self->Gpp;
+    $u*$g0b02/($epsA*$fn);
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -44,58 +44,53 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::WE::R2::Green;
-   my $G=Photonic::WE::R2::Green->new(metric=>$m, nh=>$nh);
-   my $GreenTensor=$G->evaluate($epsB);
+   my $G=Photonic::WE::R2::Green->new(metric=>$m, nh=>$nh, epsB=>$epsB);
+   my $GreenTensor=$G->greenTensor;
 
 =head1 DESCRIPTION
 
 Calculates the retarded green's tensor for a given fixed
-Photonic::WE::R2::Metric structure as a function of the dielectric
+L<Photonic::WE::R2::Metric> structure as a function of the dielectric
 functions of the components. Includes the antysimmetric part, unless
 it is not desired.
 
-=head1 METHODS
+=head1 ATTRIBUTES
 
 =over 4
 
-=item * new(metric=>$m, nh=>$nh, smallH=>$smallH, smallE=>$smallE, symmetric=>$s, keepStates=>$k)
+=item * metric
 
-Initializes the structure.
-
-$m Photonic::WE::R2::Metric describing the structure and some parameters.
-
-$nh is the maximum number of Haydock coefficients to use.
-
-$smallH and $smallE are the criteria of convergence (default 1e-7) for
-Haydock coefficients and continued fraction
-
-$s flags that you only want the symmetric part of the Green's tensor
-
-$k is a flag to keep states in Haydock calculations (default 0)
-
-=item * evaluate($epsB)
-
-Returns the macroscopic Green's operator for a given value of the
-dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * keepStates
-
-Value of flag to keep Haydock states
-
-=item * epsA
-
-Dielectric function of component A
+L<Photonic::WE::R2::Metric> describing the structure and some parameters. (required)
 
 =item * epsB
 
-Dielectric function of component B
+Dielectric function of component B (particle) (required)
+
+=item * nh
+
+The maximum number of Haydock coefficients to use.
+
+=item * smallH, smallE
+
+Criteria of convergence (default 1e-7) for Haydock coefficients and
+continued fraction
+
+=item * keepStates
+
+Value of flag to keep Haydock states (default 0)
+
+=item * symmetry
+
+Flags that you only want the symmetric part of the Green's tensor, default 0.
+
+=item * greenTensor
+
+Macroscopic Green's operator for the dielectric functions of the particle
+C<epsB>. The host's response C<epsA> is taken from the metric.
+
+=item * epsA
+
+Dielectric function of component A (host) taken from the metric.
 
 =item * u
 
@@ -103,32 +98,20 @@ Spectral variable
 
 =item * haydock
 
-Array of Photonic::WE::R2::Haydock structures, one for each polarization
+Array of L<Photonic::WE::R2::Haydock> structures, one for each
+polarization, from the geometry.
 
 =item * greenP
 
-Array of Photonic::WE::R2::GreenP structures, one for each direction.
-
-=item * greenTensor
-
-The Green's tensor of the last evaluation
-
-=item * nh
-
-The maximum number of Haydock coefficients to use.
+Array of L<Photonic::WE::R2::GreenP> structures, one for each direction
 
 =item * nhActual
 
-The actual number of Haydock coefficients used in the last calculation
+The actual number of Haydock coefficients used in the calculation
 
 =item * converged
 
-Flags that the last calculation converged before using up all coefficients
-
-=item * smallH, smallE
-
-Criteria of convergence of Haydock coefficients and continued
-fraction. 0 means don't check.
+Flags that the calculation converged before using up all coefficients
 
 =back
 
@@ -154,7 +137,7 @@ has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::GreenP]',
              init_arg=>undef, lazy=>1, builder=>'_build_greenP',
              documentation=>'Array of projected G calculators');
 has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
-             writer=>'_greenTensor',
+             lazy=>1, builder=>'_build_greenTensor',
              documentation=>"Green's Tensor from last evaluation");
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
@@ -169,7 +152,7 @@ has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
 	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
     documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
+has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
         documentation=>'Dielectric function of inclusions');
 has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
@@ -190,16 +173,16 @@ has 'symmetric' => (
     is=>'ro', required=>1, default=>0,
     documentation=>'Flags only symmetric part required');
 
-sub evaluate {
+sub _build_greenTensor {
     my $self=shift;
     $self->_epsA(my $epsA=$self->metric->epsilon->r2C);
-    $self->_epsB(my $epsB=shift);
+    my $epsB=$self->epsB;
     $self->_u(my $u=1/(1-$epsB/$epsA));
     $self->_converged(all { $_->converged } @{$self->greenP});
-    my $greenTensor = tensor(pdl([map $_->evaluate($epsB), @{$self->greenP}]), $self->geometry->unitDyadsLU, $self->geometry->ndims, 2);
+    my $greenTensor = tensor(pdl([map $_->Gpp, @{$self->greenP}]), $self->geometry->unitDyadsLU, $self->geometry->ndims, 2);
     #That's all unless you want the antisymmetric part
-    return $self->_greenTensor($greenTensor) if $self->symmetric;
-    my @greenPc = map $_->evaluate($epsB), @{$self->cGreenP}; ; #array of Green's projections along complex directions.
+    return $greenTensor if $self->symmetric;
+    my @greenPc = map $_->Gpp, @{$self->cGreenP}; ; #array of Green's projections along complex directions.
     $self->_converged(any { $_->converged } $self, @{$self->cGreenP});
     my $nd=$self->geometry->B->ndims;
     my $asy=$greenTensor->zeroes; #xy,xy, $ndx$nd
@@ -220,9 +203,7 @@ sub evaluate {
 	}
      }
     #print $asy, "\n";
-    $greenTensor+=$asy;
-    $self->_greenTensor($greenTensor);
-    return $greenTensor;
+    $greenTensor+$asy;
 }
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0
@@ -231,7 +212,7 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
 }
 
 sub _build_greenP {
-    make_greenp(shift, 'Photonic::WE::R2::GreenP');
+    make_greenp(shift, 'Photonic::WE::R2::GreenP', undef, qw(epsB));
 }
 
 sub _build_cHaydock {
@@ -241,7 +222,7 @@ sub _build_cHaydock {
 }
 
 sub _build_cGreenP {
-    make_greenp(shift, 'Photonic::WE::R2::GreenP', 'cHaydock');
+    make_greenp(shift, 'Photonic::WE::R2::GreenP', 'cHaydock', qw(epsB));
 }
 
 __PACKAGE__->meta->make_immutable;

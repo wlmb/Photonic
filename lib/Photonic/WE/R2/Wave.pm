@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::WE::R2::Wave;
-   my $W=Photonic::WE::R2::Wave->new(metric=>$m, nh=>$nh);
-   my $WaveTensor=$W->evaluate($epsB);
+   my $W=Photonic::WE::R2::Wave->new(metric=>$m, nh=>$nh, epsB=>$epsB);
+   my $WaveTensor=$W->waveOperator;
 
 =head1 DESCRIPTION
 
@@ -53,40 +53,16 @@ Calculates the macroscopic wave operator for a given fixed
 Photonic::WE::R2::Metric structure as a function of the dielectric
 functions of the components.
 
-=head1 METHODS
+Extends L<Photonic::WE::R2::Green>, please refer.
 
-=over 4
-
-=item * new(metric=>$m, nh=>$nh, smallH=>$smallH, smallE=>$smallE, keepStates=>$k)
-
-Initializes the structure.
-
-$m Photonic::WE::R2::Metric describing the structure and some parameters.
-
-$nh is the maximum number of Haydock coefficients to use.
-
-$smallH and $smallE are the criteria of convergence (default 1e-7) for
-Haydock coefficients and for continued fraction.
-
-$k is a flag to keep states in Haydock calculations (default 0)
-
-=item * evaluate($epsB)
-
-Returns the macroscopic wave operator for a given value of the
-dielectric functions of the particle $epsB. The host's
-response $epsA is taken from the metric.
-
-=back
-
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
 =item * waveOperator
 
-The macroscopic wave operator of the last operation
-
-=item * All accessors of L<Photonic::WE::R2::Green>
+Returns the macroscopic wave operator for the dielectric functions of the
+particle C<epsB>. The host's response C<epsA> is taken from the metric.
 
 =back
 
@@ -101,17 +77,13 @@ use MooseX::StrictConstructor;
 extends 'Photonic::WE::R2::Green';
 
 has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
-             writer=>'_waveOperator',
+             lazy=>1, builder=>'_build_waveOperator',
              documentation=>'Wave operator from last evaluation');
 
-around 'evaluate' => sub {
-    my $orig=shift;
+sub _build_waveOperator {
     my $self=shift;
-    my $green=$self->$orig(@_);
-    my $wave = wave_operator($green, $self->geometry->ndims);
-    $self->_waveOperator($wave);
-    $wave;
-};
+    wave_operator($self->greenTensor, $self->geometry->ndims);
+}
 
 __PACKAGE__->meta->make_immutable;
 

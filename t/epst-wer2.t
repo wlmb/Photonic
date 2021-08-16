@@ -50,8 +50,8 @@ my $g=Photonic::Geometry::FromB->new(B=>$B);
 my $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea, wavenumber=>pdl(2e-5),
     wavevector=>pdl([1,0])*2.1e-5);
-my $et=Photonic::WE::R2::EpsilonTensor->new(nh=>10, metric=>$m);
-my $etv=$et->evaluate($eb);
+my $et=Photonic::WE::R2::EpsilonTensor->new(nh=>10, metric=>$m, epsB=>$eb);
+my $etv=$et->epsilonTensor;
 ok(Cagree($etv->((0),(0)), 1/((1-$f)/$ea+$f/$eb)),
 			     "Long. perp. non retarded");
 ok(Cagree($etv->((1),(1)), (1-$f)*$ea+$f*$eb),
@@ -62,8 +62,8 @@ ok(Cagree($etv->((1),(0)), 0), "yx k perp");
 $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea, wavenumber=>pdl(2e-5),
     wavevector=>pdl([0,1])*2.1e-5);
-$et=Photonic::WE::R2::EpsilonTensor->new(nh=>10, metric=>$m);
-$etv=$et->evaluate($eb);
+$et=Photonic::WE::R2::EpsilonTensor->new(nh=>10, metric=>$m, epsB=>$eb);
+$etv=$et->epsilonTensor;
 ok(Cagree($etv->((0),(0)), 1/((1-$f)/$ea+$f/$eb)),
 			     "Trans. perp. non retarded");
 ok(Cagree($etv->((1),(1)), (1-$f)*$ea+$f*$eb),
@@ -94,14 +94,14 @@ $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea->re, wavenumber=>pdl($q),
     wavevector=>pdl([$pd,0]));
 $et=Photonic::WE::R2::EpsilonTensor->new(nh=>1000, metric=>$m,
-						  reorthogonalize=>1);
-$etv=$et->evaluate($eb)->((1),(1));
+  reorthogonalize=>1, epsB=>$eb);
+$etv=$et->epsilonTensor->((1),(1));
 ok(Cagree($etv, $epstm), "Epsilon agrees with transfer matrix");
 
 my $h=Photonic::WE::R2::Haydock->new(nh=>1000, metric=>$m,
    polarization=>r2C(pdl [0,1]), reorthogonalize=>1);
-$et=Photonic::WE::R2::EpsilonP->new(nh=>1000, haydock=>$h);
-$etv=$et->evaluate($eb);
+$et=Photonic::WE::R2::EpsilonP->new(nh=>1000, haydock=>$h, epsB=>$eb);
+$etv=$et->epsilon;
 ok(Cagree($etv, $epstm, 1e-4), "Projected eps agrees with trans mat. Complex case.");
 
 done_testing;
