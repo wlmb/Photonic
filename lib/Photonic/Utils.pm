@@ -113,9 +113,9 @@ sub _haydock_extra {
 
 my @GREENP_PARAMS = qw(nh smallE);
 sub make_greenp {
-  my ($self, $class, $method) = @_;
+  my ($self, $class, $method, @extra_attributes) = @_;
   $method ||= 'haydock';
-  [ map incarnate_as($class, $self, \@GREENP_PARAMS, haydock=>$_),
+  [ map incarnate_as($class, $self, [ @GREENP_PARAMS, @extra_attributes ], haydock=>$_),
       @{$self->$method}
   ];
 }
