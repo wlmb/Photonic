@@ -45,7 +45,6 @@ lib/Photonic/WE/R2/EpsilonTensor.pm
 lib/Photonic/WE/R2/Field.pm
 lib/Photonic/WE/R2/Green.pm
 lib/Photonic/WE/R2/GreenP.pm
-lib/Photonic/WE/R2/GreenS.pm
 lib/Photonic/WE/R2/Haydock.pm
 lib/Photonic/WE/R2/Metric.pm
 lib/Photonic/WE/R2/Wave.pm

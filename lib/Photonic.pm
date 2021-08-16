@@ -285,10 +285,6 @@ Calculate the macroscopic Green tensor.
 
 Calculate the macroscopic Green tensor projected onto some direction.
 
-=item L<Photonic::WE::R2::GreenS>
-
-Calculates the macroscopic Green tensor assuming it is symmetric.
-
 =item L<Photonic::WE::R2::Metric>
 
 Retarded metric tensor of binary metamaterial with a non-dissipative

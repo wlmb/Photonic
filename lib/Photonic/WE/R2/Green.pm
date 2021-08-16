@@ -140,12 +140,41 @@ use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
+use Photonic::Utils qw(tensor make_haydock make_greenp);
+use List::Util qw(all any);
 use Moose;
 use MooseX::StrictConstructor;
-use Photonic::Utils qw(make_haydock make_greenp);
-use List::Util qw(any);
 
-extends 'Photonic::WE::R2::GreenS';
+has 'metric'=>(is=>'ro', isa => 'Photonic::WE::R2::Metric',
+       handles=>[qw(geometry B dims ndims r G GNorm L scale f)],required=>1);
+has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::Haydock]',
+            init_arg=>undef, lazy=>1, builder=>'_build_haydock',
+	    documentation=>'Array of Haydock calculators');
+has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::GreenP]',
+             init_arg=>undef, lazy=>1, builder=>'_build_greenP',
+             documentation=>'Array of projected G calculators');
+has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
+             writer=>'_greenTensor',
+             documentation=>"Green's Tensor from last evaluation");
+has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
+             documentation=>
+                  'All greenP evaluations converged in last evaluation');
+has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
+         documentation=>'Reorthogonalize haydock flag');
+has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+	    documentation=>'Desired no. of Haydock coefficients');
+has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+	    documentation=>'Convergence criterium for Haydock coefficients');
+has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+	    documentation=>'Convergence criterium for use of Haydock coeff.');
+has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
+    documentation=>'Dielectric function of host');
+has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
+        documentation=>'Dielectric function of inclusions');
+has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
+    documentation=>'Spectral variable');
+
+with 'Photonic::Roles::KeepStates',  'Photonic::Roles::UseMask';
 
 has 'cHaydock' =>(
     is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::Haydock]',
@@ -161,17 +190,19 @@ has 'symmetric' => (
     is=>'ro', required=>1, default=>0,
     documentation=>'Flags only symmetric part required');
 
-around 'evaluate' => sub {
-    my $orig=shift;
+sub evaluate {
     my $self=shift;
-    my $epsB=shift;
-    my $sym=$self->$orig($epsB);
+    $self->_epsA(my $epsA=$self->metric->epsilon->r2C);
+    $self->_epsB(my $epsB=shift);
+    $self->_u(my $u=1/(1-$epsB/$epsA));
+    $self->_converged(all { $_->converged } @{$self->greenP});
+    my $greenTensor = tensor(pdl([map $_->evaluate($epsB), @{$self->greenP}]), $self->geometry->unitDyadsLU, $self->geometry->ndims, 2);
     #That's all unless you want the antisymmetric part
-    return $sym if $self->symmetric;
+    return $self->_greenTensor($greenTensor) if $self->symmetric;
     my @greenPc = map $_->evaluate($epsB), @{$self->cGreenP}; ; #array of Green's projections along complex directions.
     $self->_converged(any { $_->converged } $self, @{$self->cGreenP});
     my $nd=$self->geometry->B->ndims;
-    my $asy=$sym->zeroes; #xy,xy, $ndx$nd
+    my $asy=$greenTensor->zeroes; #xy,xy, $ndx$nd
     my $cpairs=$self->geometry->cUnitPairs;
     my $m=0;
     for my $i(0..$nd-2){
@@ -182,18 +213,26 @@ around 'evaluate' => sub {
 		$greenPc[$m]-
 		($pair->conj->(*1) # column, row
 		 *$pair->(:,*1)
-		 *$sym)->sumover->sumover
+		 *$greenTensor)->sumover->sumover
 		);
 	    $asy(($j), ($i)).=-$asy(($i),($j));
 	    $m++
 	}
      }
     #print $asy, "\n";
-    my $greenTensor= $sym+$asy;
+    $greenTensor+=$asy;
     $self->_greenTensor($greenTensor);
     return $greenTensor;
-};
+}
 
+sub _build_haydock { # One Haydock coefficients calculator per direction0
+    my ($self) = @_;
+    make_haydock($self, 'Photonic::WE::R2::Haydock', $self->geometry->unitPairs, 0, qw(reorthogonalize use_mask mask));
+}
+
+sub _build_greenP {
+    make_greenp(shift, 'Photonic::WE::R2::GreenP');
+}
 
 sub _build_cHaydock {
     # One Haydock coefficients calculator per complex polarization
@@ -208,5 +247,3 @@ sub _build_cGreenP {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-__END__
