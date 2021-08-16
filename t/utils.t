@@ -541,4 +541,8 @@ $expected = pdl(<<'EOF');
 EOF
 ok all(approx($got, $expected)), 'make_dyads' or diag "got:$got\nexpected:$expected";
 
+$data = sequence(1, 2, 3, 4, 5, 6);
+is_deeply [reorderN($data, 1, 2)->dims], [1,4,5,6,2,3], 'reorderN';
+is_deeply [reorderN(reorderN($data, 1, 2), 1, 2, 1)->dims], [1,2,3,4,5,6], 'reorderN reversed';
+
 done_testing;

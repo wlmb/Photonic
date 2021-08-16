@@ -38,7 +38,7 @@ require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
     HProd MHProd EProd VSProd SProd
-    top_slice linearCombineIt lentzCF any_complex tensor
+    reorderN top_slice linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
     incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
@@ -125,6 +125,16 @@ sub incarnate_as {
   $class->new((map +($_ => $self->$_), @$with), @extra);
 }
 
+sub reorderN {
+  my ($pdl, $start, $end, $reverse) = @_;
+  my $ndims=$pdl->ndims;
+  my $length = $end-$start+1;
+  $pdl->reorder(0..$start-1, ($reverse
+    ? (($ndims-$length)..($ndims-1), $start..($ndims-$length-1))
+    : ($end+1..$ndims-1, $start..$end)
+  ));
+}
+
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
     my $first=shift;
     my $second=shift;
@@ -134,8 +144,7 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
 	unless $ndims == $second->ndims;
     my $prod=$first->conj*$second;
     # clump all except skip dimensions, protecto index and sum.
-    $prod->reorder($skip..$ndims-1,0..$skip-1)->clump(-$skip-1)
-	->sumover;
+    reorderN($prod, 0, $skip-1)->clump(-$skip-1)->sumover;
 }
 
 sub MHProd { #Hermitean product between two fields with metric. skip
@@ -153,8 +162,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     my $mprod=($metric*$sliced)->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
     my $prod=$first->conj*$mprod;
-    $prod->reorder($skip..$ndims-1,0..$skip-1)->clump(-$skip-1)
-	->sumover;
+    reorderN($prod, 0, $skip-1)->clump(-$skip-1)->sumover;
 }
 
 sub EProd { #Euclidean product between two fields in reciprocal
@@ -174,10 +182,9 @@ sub EProd { #Euclidean product between two fields in reciprocal
     foreach($skip..$ndims-1){
 	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
     }
-    my $prod=$first_mG*$second;
+    my $prod=$first_mG*$second; #s1:s2:nx:ny
     # clump all except skip dimensions, protecto index and sum.
-    $prod #s1:s2:nx:ny
-	->reorder($skip..$ndims-1,0..$skip-1) #nx:ny:s1:s2
+    reorderN($prod, 0, $skip-1) #nx:ny:s1:s2
 	->clump(-$skip-1) #nx*ny:s1:s2
 	->sumover; #s1:s2
 }
@@ -203,8 +210,7 @@ sub SProd { #Spinor product between two fields in reciprocal
     }
     my $prod=$first_mG*$second; #pmk,s1,s2,nx,ny
     # clump all except skip dimensions, protect sum.
-    $prod #pmk, s1,s2,nx,ny
-	->reorder($skip+1..$ndims-1,0..$skip) #nx,ny,pmk,s1,s2
+    reorderN($prod, 0, $skip) #nx,ny,pmk,s1,s2
 	->clump(-$skip-1)  #nx*ny*pmk, s1, s2
 	->sumover; #s1, s2
 }
@@ -228,8 +234,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     }
     my $prod=$first_mG*$second; #xy:pm:nx:ny
     # clump all except xy.
-    $prod #xy:pm::nx:ny
-	->reorder(2..$ndims-1,0,1) #nx:ny:xy:pm
+    reorderN($prod, 0, 1) #nx:ny:xy:pm
 	->clump(-1)  #nx*ny*xy*pm
 	->sumover;
 }
@@ -239,12 +244,9 @@ sub RtoG { #transform a 'complex' scalar, vector or tensorial field
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $moved=$field;
-    $moved=$moved->mv(0,-1) foreach(0..$skip-1);
+    my $moved=reorderN($field, 0, $skip-1);
     my $transformed=fftn($moved, $ndims);
-    my $result=$transformed;
-    $result=$result->mv(-1,0) foreach(0..$skip-1);
-    return $result;
+    reorderN($transformed, 0, $skip-1, 1);
 }
 
 sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
@@ -252,12 +254,9 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $moved=$field;
-    $moved=$moved->mv(0,-1) foreach(0..$skip-1);
+    my $moved=reorderN($field, 0, $skip-1);
     my $transformed=ifftn($moved, $ndims);
-    my $result=$transformed;
-    $result=$result->mv(-1,0) foreach(0..$skip-1);
-    return $result;
+    reorderN($transformed, 0, $skip-1, 1);
 }
 
 sub lentzCF {
@@ -434,6 +433,15 @@ ndarray.
 
 Complex linear combination of states. $c is a 'complex'
 ndarray and $it is an ndarray of states from a L<Photonic::Roles::Haydock>.
+
+=item * $reordered=reorderN($pdl, $start, $end[, $reverse])
+
+Reorder given ndarray's dimensions, moving dimensions starting C<$start>
+and ending C<$end> to the end if $reverse is false or not given, or
+those dimensions from the end back to the C<$start> otherwise:
+
+    $reordered=reorderN($pdl, 0, $skip-1);
+    $original=reorderN($reordered, 0, $skip-1, 1);
 
 =item * $p=HProd($a, $b, $skip)
 

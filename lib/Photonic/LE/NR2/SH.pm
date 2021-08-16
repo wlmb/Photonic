@@ -194,7 +194,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::LE::NR2::Haydock;
-use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv top_slice);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv top_slice reorderN);
 use Photonic::Types;
 use PDL::Constants qw(PI);
 use Moose;
@@ -550,11 +550,9 @@ sub _filter { #Filter complex field in reciprocal space
 		    #for tensor,  etc.
     return $field unless $self->nrf->has_filter;
     my $filter=$self->nrf->filter;
-    $field=$field->mv(1,-1) foreach(0..$skip-1); #mv cartesian out of
-                                                 #the way
+    $field=reorderN($field, 1, $skip); #mv cartesian out of the way
     $field *=$filter;
-    $field=$field->mv(-1,1) foreach(0..$skip-1); #mv cartesians back
-    return $field;
+    reorderN($field, 1, $skip, 1); #mv cartesians back
 }
 
 __PACKAGE__->meta->make_immutable;
