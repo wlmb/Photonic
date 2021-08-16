@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::WE::S::Field;
    my $nrf=Photonic::WE::S::Field->new(...);
-   my $field=$nrf->evaluate($epsA, $epsB);
+   my $field=$nrf->evaluate;
 
 =head1 DESCRIPTION
 
@@ -70,10 +70,9 @@ $nh is the maximum number of Haydock coefficients to use.
 $smallE is the criteria of convergence (default 1e-7) for
 Field calculations
 
-=item * evaluate($epsA, $epsB...)
+=item * evaluate
 
-Returns the microscopic electric field for given
-dielectric functions of the host $epsA and the particle $epsB.
+Returns the microscopic electric field
 
 =back
 
@@ -132,8 +131,6 @@ evaluation of the field
 
 =cut
 
-
-
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -157,12 +154,6 @@ has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-#has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
-#    documentation=>'Dielectric function of host');
-#has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsB',
-#        documentation=>'Dielectric function of inclusions');
-#has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
-#    documentation=>'Spectral variable');
 
 sub BUILD {
     my $self=shift;
