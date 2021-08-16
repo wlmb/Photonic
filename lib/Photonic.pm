@@ -120,7 +120,7 @@ field of one Fourier component.
 
 =item L<Photonic::LE::NP::Haydock>
 
-Obtain all the Haydock coefficients.
+Obtain one, or all, Haydock coefficients.
 
 =item L<Photonic::LE::NP::EpsL>
 
@@ -129,10 +129,6 @@ Calculate the longitudinal dielectric response.
 =item L<Photonic::LE::NP::EpsTensor>
 
 Calculate the dielectric tensor.
-
-=item L<Photonic::LE::NP::Haydock>
-
-Calculator for one Haydock coefficient.
 
 =back
 
@@ -146,7 +142,7 @@ characteristic function.
 
 =item L<Photonic::LE::NR2::Haydock>
 
-Obtain all the Haydock coefficients.
+Obtain one, or all, Haydock coefficients.
 
 =item L<Photonic::LE::NR2::EpsL>
 
@@ -159,10 +155,6 @@ Calculate the dielectric tensor.
 =item L<Photonic::LE::NR2::Field>
 
 Calculate the microscopic field.
-
-=item L<Photonic::LE::NR2::Haydock>
-
-Calculator for one Haydock coefficient.
 
 =item L<Photonic::LE::NR2::SH>
 
@@ -189,7 +181,7 @@ arbitrary number of phases, using the spinor representation.
 
 =item L<Photonic::LE::S::Haydock>
 
-Obtain all the Haydock coefficients.
+Obtain one, or all, Haydock coefficients.
 
 =item L<Photonic::LE::S::EpsL>
 
@@ -203,10 +195,6 @@ Calculate the dielectric tensor.
 
 Calculate the microscopic field.
 
-=item L<Photonic::LE::S::Haydock>
-
-Calculator for one Haydock coefficient.
-
 =back
 
 =back
@@ -219,7 +207,7 @@ Group of roles to factor out related behavior.
 
 =item L<Photonic::Roles::Haydock>
 
-Obtain all the Haydock coefficients.
+Obtain one, or all, Haydock coefficients.
 
 =item L<Photonic::Roles::EpsL>
 
@@ -240,10 +228,6 @@ Flag to keepstates.
 =item L<Photonic::Roles::Metric>
 
 Roles factored out of the metric calculators.
-
-=item L<Photonic::Roles::Haydock>
-
-Roles factored out of the calculation of one Haydock coefficient.
 
 =item L<Photonic::Roles::Reorthogonalize>
 
@@ -280,7 +264,7 @@ characteristic function.
 
 =item L<Photonic::WE::R2::Haydock>
 
-Obtain all the Haydock coefficients.
+Obtain one, or all, Haydock coefficients.
 
 =item L<Photonic::WE::R2::EpsilonP>
 
@@ -311,10 +295,6 @@ Calculates the macroscopic Green tensor assuming it is symmetric.
 Retarded metric tensor of binary metamaterial with a non-dissipative
 host.
 
-=item L<Photonic::WE::R2::Haydock>
-
-Calculate one Haydock coefficient.
-
 =item L<Photonic::WE::R2::Wave>
 
 Macroscopic wave tensor.
@@ -335,7 +315,7 @@ dielectric function, using the spinor representation.
 
 =item L<Photonic::WE::S::Haydock>
 
-Obtain all the Haydock coefficients.
+Obtain one, or all, Haydock coefficients.
 
 =item L<Photonic::WE::S::EpsilonP>
 
@@ -361,10 +341,6 @@ Calculate the macroscopic Green tensor projected onto some direction.
 
 Retarded metric tensor of binary metamaterial with a non-dissipative
 host.
-
-=item L<Photonic::WE::S::Haydock>
-
-Calculate one Haydock coefficient.
 
 =item L<Photonic::WE::S::Wave>
 
@@ -400,7 +376,6 @@ Investigaciones en Óptica, México C<bms@cio.mx>
 =item * Lucila Juárez-Reyes, Centro de Investigaciones en Óptica ,
 México, C<lucilajr@icf.unam.mx>
 
-
 =item * José Samuel Pérez-Huerta, Unidad Académica de Física,
 Universidad Autónoma de Zacatecas, México  C<jsperez@fisica.uaz.edu.mx>
 
@@ -409,9 +384,7 @@ Físicas, Universidad Nacional Autónoma de México and Centro de
 Investigación en Ciencias, Universidad Autónoma del Estado de
 Morelos, México C<merlynj@icf.unam.mx>
 
-
 =back
-
 
 =head1 ACKNOWLEDGMENTS
 
@@ -738,8 +711,6 @@ MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 The End
 
-
 =cut
-
 
 1;
