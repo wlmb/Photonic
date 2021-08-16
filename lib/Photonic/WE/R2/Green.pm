@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    use Photonic::WE::R2::Green;
    my $G=Photonic::WE::R2::Green->new(metric=>$m, nh=>$nh, epsB=>$epsB);
    my $GreenTensor=$G->greenTensor;
+   my $WaveTensor=$G->waveOperator;
 
 =head1 DESCRIPTION
 
@@ -53,6 +54,8 @@ Calculates the retarded green's tensor for a given fixed
 L<Photonic::WE::R2::Metric> structure as a function of the dielectric
 functions of the components. Includes the antysimmetric part, unless
 it is not desired.
+
+Can also calculate the macroscopic wave operator.
 
 =head1 ATTRIBUTES
 
@@ -113,6 +116,10 @@ The actual number of Haydock coefficients used in the calculation
 
 Flags that the calculation converged before using up all coefficients
 
+=item * waveOperator
+
+Returns the macroscopic wave operator for the Green tensor.
+
 =back
 
 =cut
@@ -123,7 +130,8 @@ use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
-use Photonic::Utils qw(tensor make_haydock make_greenp);
+use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator);
+
 use List::Util qw(all any);
 use Moose;
 use MooseX::StrictConstructor;
@@ -138,10 +146,10 @@ has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::R2::GreenP]',
              documentation=>'Array of projected G calculators');
 has 'greenTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef,
              lazy=>1, builder=>'_build_greenTensor',
-             documentation=>"Green's Tensor from last evaluation");
+             documentation=>"Green's Tensor");
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
-                  'All greenP evaluations converged in last evaluation');
+                  'All greenP evaluations converged in evaluation');
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
 has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
@@ -156,6 +164,9 @@ has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
         documentation=>'Dielectric function of inclusions');
 has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
+has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+             lazy=>1, builder=>'_build_waveOperator',
+             documentation=>'Wave operator from evaluation');
 
 with 'Photonic::Roles::KeepStates',  'Photonic::Roles::UseMask';
 
@@ -223,6 +234,11 @@ sub _build_cHaydock {
 
 sub _build_cGreenP {
     make_greenp(shift, 'Photonic::WE::R2::GreenP', 'cHaydock', qw(epsB));
+}
+
+sub _build_waveOperator {
+    my $self=shift;
+    wave_operator($self->greenTensor, $self->geometry->ndims);
 }
 
 __PACKAGE__->meta->make_immutable;

@@ -279,7 +279,7 @@ Calculate the microscopic field.
 
 =item L<Photonic::WE::R2::Green>
 
-Calculate the macroscopic Green tensor.
+Calculate the macroscopic Green tensor or macroscopic wave tensor.
 
 =item L<Photonic::WE::R2::GreenP>
 
@@ -289,10 +289,6 @@ Calculate the macroscopic Green tensor projected onto some direction.
 
 Retarded metric tensor of binary metamaterial with a non-dissipative
 host.
-
-=item L<Photonic::WE::R2::Wave>
-
-Macroscopic wave tensor.
 
 =item L<Photonic::WE::R2::WaveP>
 

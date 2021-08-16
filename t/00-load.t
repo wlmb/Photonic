@@ -73,7 +73,6 @@ Photonic::WE::R2::Green
 Photonic::WE::R2::GreenP
 Photonic::WE::R2::Haydock
 Photonic::WE::R2::Metric
-Photonic::WE::R2::Wave
 Photonic::WE::R2::WaveP
 Photonic::WE::S::EpsilonP
 Photonic::WE::S::EpsilonTensor

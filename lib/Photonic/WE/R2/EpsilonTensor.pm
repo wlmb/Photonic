@@ -87,7 +87,7 @@ response $epsA is taken from the metric.
 
 The macroscopic dielectric tensor of the last operation
 
-=item * All accessors of Photonic::WE::R2::Wave
+=item * All accessors of Photonic::WE::R2::Green
 
 
 =back
@@ -101,11 +101,11 @@ use Photonic::Types;
 use Moose;
 use MooseX::StrictConstructor;
 
-extends 'Photonic::WE::R2::Wave';
+extends 'Photonic::WE::R2::Green';
 
 has 'epsilonTensor' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
              lazy=>1, builder=>'_build_epsilonTensor',
-             documentation=>'Wave operator from last evaluation');
+             documentation=>'Wave operator');
 
 sub _build_epsilonTensor {
     my $self=shift;
