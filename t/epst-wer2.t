@@ -46,7 +46,6 @@ use TestUtils;
 my ($ea, $eb)=(pdl(1),3+4*i);
 my $f=6/11;
 my $B=zeroes(11,1)->xvals>=5;
-#my $eps=r2C($ea*(zeroes(11,1)->xvals<5)+ $eb*(zeroes(11)->xvals>=5));
 my $g=Photonic::Geometry::FromB->new(B=>$B);
 my $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea, wavenumber=>pdl(2e-5),
@@ -97,6 +96,12 @@ $m=Photonic::WE::R2::Metric->new(
 $et=Photonic::WE::R2::EpsilonTensor->new(nh=>1000, metric=>$m,
 						  reorthogonalize=>1);
 $etv=$et->evaluate($eb)->((1),(1));
-ok(Cagree($epstm, $etv), "Epsilon agrees with transfer matrix");
+ok(Cagree($etv, $epstm), "Epsilon agrees with transfer matrix");
+
+my $h=Photonic::WE::R2::Haydock->new(nh=>1000, metric=>$m,
+   polarization=>r2C(pdl [0,1]), reorthogonalize=>1);
+$et=Photonic::WE::R2::EpsilonP->new(nh=>1000, haydock=>$h);
+$etv=$et->evaluate($eb);
+ok(Cagree($etv, $epstm, 1e-4), "Projected eps agrees with trans mat. Complex case.");
 
 done_testing;
