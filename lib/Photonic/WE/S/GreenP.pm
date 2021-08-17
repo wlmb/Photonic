@@ -44,58 +44,57 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::WE::S::GreenP;
-   my $green=Photonic::WE::S::GreepP(haydock=>$h, nh=>$nh);
+   my $green=Photonic::WE::S::GreepP->new(haydock=>$h, nh=>$nh);
    my $greenProjection=$green->Gpp;
+   my $WaveProjection=$green->waveOperator;
+   my $EpsTensor=$green->epsilon;
 
 =head1 DESCRIPTION
 
 Calculates the dielectric function for a given fixed
-Photonic::WE::S::Haydock structure as a function of the dielectric
+L<Photonic::WE::S::Haydock> structure as a function of the dielectric
 functions of the components.
 
-=head1 METHODS
-
-=over 4
-
-=item * new(haydock=>$h, nh=>$nh, smallE=>$smallE)
-
-Initializes the structure.
-
-$h is a Photonic::WE::S::Haydock structure (required).
-
-$nh is the maximum number of Haydock coefficients to use (required).
-
-$smallE is the criteria of convergence (defaults to 1e-7)
-
-=back
-
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
 =item * haydock
 
-The WE::S::Haydock structure
-
-=item * u
-
-The spectral variable used in the last calculation
+The L<Photonic::WE::S::Haydock> structure (required).
 
 =item * nh
 
 The maximum number of Haydock coefficients to use.
 
+=item * smallE
+
+Criteria of convergence. 0 means don't check. (defaults to 1e-7)
+
+=item * u
+
+The spectral variable used in the calculation
+
 =item * nhActual
 
-The actual number of Haydock coefficients used in the last calculation
+The actual number of Haydock coefficients used in the calculation
 
 =item * converged
 
-Flags that the last calculation converged before using up all coefficients
+Flags that the calculation converged before using up all coefficients
 
-=item * smallE
+=item * waveOperator
 
-Criteria of convergence. 0 means don't check.
+The macroscopic wave operator calculated from the metric.
+
+NOTE: Only works along principal directions, as it treats Green's
+function as scalar.
+
+=item * epsilon
+
+The macroscopic dielectric projection
+
+NOTE: Only works for polarizations along principal directions.
 
 =back
 
@@ -123,6 +122,12 @@ has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
 has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
 	    lazy=>1, builder=>'_build_Gpp',
 	      documentation=>'Value of projected Greens function');
+has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+             lazy=>1, builder=>'_build_waveOperator',
+             documentation=>'Wave operator');
+has 'epsilon' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+                   lazy=>1, builder=>'_build_epsilon',
+                   documentation=>'Projected dielectric function');
 
 sub _build_Gpp {
     my $self=shift;
@@ -143,6 +148,29 @@ sub _build_Gpp {
     $self->_nhActual($n);
     my $g0b02=$h->gs->slice("(0)")*$h->b2s->slice("(0)");
     return $g0b02/($epsR*$fn);
+}
+
+sub _build_waveOperator {
+    my $self=shift;
+    my $greenP=$self->Gpp;
+    my $wave=1/$greenP; #only works along principal directions!!
+    return $wave;
+}
+
+sub _build_epsilon {
+    my $self=shift;
+    my $wave=$self->waveOperator;
+    my $q=$self->haydock->metric->wavenumber;
+    my $q2=$q*$q;
+    my $k=$self->haydock->metric->wavevector;
+    my $k2=($k*$k)->sumover; #inner. my $k2=$k->inner($k); only works on real
+    my $p=$self->haydock->normalizedPolarization;
+    #Note $p->inner($p) might be complex, so is not necessarily 1.
+    my $p2=($p*$p)->sumover;
+    my $pk=($p*$k)->sumover;
+    my $proj=$p2*$k2/$q2 - $pk*$pk/$q2;
+    my $eps=$wave+$proj;
+    return $eps;
 }
 
 __PACKAGE__->meta->make_immutable;

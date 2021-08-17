@@ -35,7 +35,7 @@ use PDL::NiceSlice;
 use Photonic::Geometry::FromEpsilon;
 use Photonic::WE::S::Metric;
 use Photonic::WE::S::Haydock;
-use Photonic::WE::S::EpsilonP;
+use Photonic::WE::S::GreenP;
 use Photonic::WE::S::Green;
 
 use Test::More;
@@ -130,7 +130,7 @@ ok(Cagree($epstm, $etv, 1e-4), "Epsilon agrees with transfer matrix. Complex cas
 
 my $h=Photonic::WE::S::Haydock->new(nh=>1000, metric=>$m,
    polarization=>r2C(pdl [0,1]), reorthogonalize=>1);
-$et=Photonic::WE::S::EpsilonP->new(nh=>1000, haydock=>$h);
+$et=Photonic::WE::S::GreenP->new(nh=>1000, haydock=>$h);
 $etv=$et->epsilon;
 ok(Cagree($epstm, $etv, 1e-4), "Projected eps agrees with trans mat. Complex case.");
 
