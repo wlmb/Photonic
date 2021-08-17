@@ -80,17 +80,17 @@ sub tensor {
     my $backsub = lu_solve($decomp, reorderN($data, 0, ($skip||0)-1));
     $backsub = reorderN($backsub, 0, ($skip||0)-1, 1);
     my $tensor = PDL->zeroes(($nd) x $dims)->r2C;
+    $tensor = reorderN($tensor, 0, $dims-3); # avoid a slice prefix
     my $n = 0;
-    my $slice_prefix = ':,' x ($dims-2);
     for my $i(0..$nd-1){
         for my $j($i..$nd-1){
             my $bslice = $backsub->slice("($n)");
-            $tensor->slice("$slice_prefix($i),($j)") .= $bslice;
-            $tensor->slice("$slice_prefix($j),($i)") .= $bslice;
+            $tensor->slice("($i),($j)") .= $bslice;
+            $tensor->slice("($j),($i)") .= $bslice;
             ++$n;
         }
     }
-    $tensor;
+    reorderN($tensor, 0, $dims-3, 1);
 }
 
 my @HAYDOCK_PARAMS = qw(
