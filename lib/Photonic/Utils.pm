@@ -38,7 +38,7 @@ require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
     HProd MHProd EProd VSProd SProd
-    reorderN top_slice linearCombineIt lentzCF any_complex tensor
+    corner_rotate reorderN top_slice linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
     incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
@@ -165,6 +165,12 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     reorderN($prod, 0, $skip-1)->clump(-$skip-1)->sumover;
 }
 
+sub corner_rotate {
+  my ($pdl, $start, $end) = @_;
+  $pdl = $pdl->mv($_,0)->rotate(1)->mv(0,$_) for $start..$end;
+  $pdl;
+}
+
 sub EProd { #Euclidean product between two fields in reciprocal
 	    #space. Have to map G->-G. skip
 	    #first 'skip' dims
@@ -177,11 +183,7 @@ sub EProd { #Euclidean product between two fields in reciprocal
     my $sl=join ',',
 	((":") x $skip), #skip dimensions
 	(("-1:0") x ($ndims-$skip)); #and reverse the rest
-    my $first_mG=$first->slice($sl);
-    #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
-    foreach($skip..$ndims-1){
-	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
-    }
+    my $first_mG=corner_rotate($first->slice($sl), $skip, $ndims-1); #rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     my $prod=$first_mG*$second; #s1:s2:nx:ny
     # clump all except skip dimensions, protecto index and sum.
     reorderN($prod, 0, $skip-1) #nx:ny:s1:s2
@@ -204,10 +206,7 @@ sub SProd { #Spinor product between two fields in reciprocal
 	((":") x $skip), #keep skip dimensions
 	(("-1:0") x ($ndims-1-$skip)); #and reverse G indices
     my $first_mG=$first->slice($sl); #pmk,s1,s2,nx,ny
-    #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
-    foreach($skip+1..$ndims-1){
-	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
-    }
+    $first_mG=corner_rotate($first_mG, $skip+1, $ndims-1); #rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     my $prod=$first_mG*$second; #pmk,s1,s2,nx,ny
     # clump all except skip dimensions, protect sum.
     reorderN($prod, 0, $skip) #nx,ny,pmk,s1,s2
@@ -228,10 +227,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
 	"-1:0", #interchange spinor components +- to -+
 	(("-1:0") x ($ndims-2)); #and reverse G indices
     my $first_mG=$first->slice($sl); #xy:pm:nx:ny
-    #Then rotate psi_{G=0} to opposite corner with coords. (0,0,...)
-    foreach(2..$ndims-1){ # G indices start after xy:pm
-	$first_mG=$first_mG->mv($_,0)->rotate(1)->mv(0,$_);
-    }
+    $first_mG=corner_rotate($first_mG, 2, $ndims-1); #rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     my $prod=$first_mG*$second; #xy:pm:nx:ny
     # clump all except xy.
     reorderN($prod, 0, 1) #nx:ny:xy:pm
@@ -442,6 +438,10 @@ those dimensions from the end back to the C<$start> otherwise:
 
     $reordered=reorderN($pdl, 0, $skip-1);
     $original=reorderN($reordered, 0, $skip-1, 1);
+
+=item * $pdl=corner_rotate($pdl, $start, $end)
+
+Rotates each dimension from C<$start> to C<$end> by 1, to opposite corner.
 
 =item * $p=HProd($a, $b, $skip)
 
