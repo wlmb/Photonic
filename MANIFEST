@@ -41,7 +41,6 @@ lib/Photonic/Roles/UseMask.pm
 lib/Photonic/Types.pm
 lib/Photonic/Utils.pm
 lib/Photonic/WE/R2/EpsilonP.pm
-lib/Photonic/WE/R2/EpsilonTensor.pm
 lib/Photonic/WE/R2/Field.pm
 lib/Photonic/WE/R2/Green.pm
 lib/Photonic/WE/R2/GreenP.pm

@@ -35,7 +35,7 @@ use PDL::NiceSlice;
 use Photonic::WE::R2::Metric;
 use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::EpsilonP;
-use Photonic::WE::R2::EpsilonTensor;
+use Photonic::WE::R2::Green;
 
 use Test::More;
 use lib 't/lib';
@@ -50,7 +50,7 @@ my $g=Photonic::Geometry::FromB->new(B=>$B);
 my $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea, wavenumber=>pdl(2e-5),
     wavevector=>pdl([1,0])*2.1e-5);
-my $et=Photonic::WE::R2::EpsilonTensor->new(nh=>10, metric=>$m, epsB=>$eb);
+my $et=Photonic::WE::R2::Green->new(nh=>10, metric=>$m, epsB=>$eb);
 my $etv=$et->epsilonTensor;
 ok(Cagree($etv->((0),(0)), 1/((1-$f)/$ea+$f/$eb)),
 			     "Long. perp. non retarded");
@@ -62,7 +62,7 @@ ok(Cagree($etv->((1),(0)), 0), "yx k perp");
 $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea, wavenumber=>pdl(2e-5),
     wavevector=>pdl([0,1])*2.1e-5);
-$et=Photonic::WE::R2::EpsilonTensor->new(nh=>10, metric=>$m, epsB=>$eb);
+$et=Photonic::WE::R2::Green->new(nh=>10, metric=>$m, epsB=>$eb);
 $etv=$et->epsilonTensor;
 ok(Cagree($etv->((0),(0)), 1/((1-$f)/$ea+$f/$eb)),
 			     "Trans. perp. non retarded");
@@ -93,7 +93,7 @@ my $epstm=($pd/$q)**2;
 $m=Photonic::WE::R2::Metric->new(
     geometry=>$g, epsilon=>$ea->re, wavenumber=>pdl($q),
     wavevector=>pdl([$pd,0]));
-$et=Photonic::WE::R2::EpsilonTensor->new(nh=>1000, metric=>$m,
+$et=Photonic::WE::R2::Green->new(nh=>1000, metric=>$m,
   reorthogonalize=>1, epsB=>$eb);
 $etv=$et->epsilonTensor->((1),(1));
 ok(Cagree($etv, $epstm), "Epsilon agrees with transfer matrix");

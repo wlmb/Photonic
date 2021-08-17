@@ -67,7 +67,6 @@ Photonic::Roles::UseMask
 Photonic::Types
 Photonic::Utils
 Photonic::WE::R2::EpsilonP
-Photonic::WE::R2::EpsilonTensor
 Photonic::WE::R2::Field
 Photonic::WE::R2::Green
 Photonic::WE::R2::GreenP

@@ -269,17 +269,14 @@ Obtain one, or all, Haydock coefficients.
 
 Calculate the dielectric function projected along some direction.
 
-=item L<Photonic::WE::R2::EpsilonTensor>
-
-Calculate the dielectric tensor.
-
 =item L<Photonic::WE::R2::Field>
 
 Calculate the microscopic field.
 
 =item L<Photonic::WE::R2::Green>
 
-Calculate the macroscopic Green tensor or macroscopic wave tensor.
+Calculate the macroscopic Green tensor, macroscopic wave tensor,
+or dielectric tensor.
 
 =item L<Photonic::WE::R2::GreenP>
 

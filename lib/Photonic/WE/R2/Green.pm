@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    my $G=Photonic::WE::R2::Green->new(metric=>$m, nh=>$nh, epsB=>$epsB);
    my $GreenTensor=$G->greenTensor;
    my $WaveTensor=$G->waveOperator;
+   my $EpsTensor=$W->epsilonTensor;
 
 =head1 DESCRIPTION
 
@@ -120,6 +121,10 @@ Flags that the calculation converged before using up all coefficients
 
 Returns the macroscopic wave operator for the Green tensor.
 
+=item * epsilonTensor
+
+Returns the macroscopic dielectric tensor from the wave operator.
+
 =back
 
 =cut
@@ -167,6 +172,9 @@ has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=
 has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
              lazy=>1, builder=>'_build_waveOperator',
              documentation=>'Wave operator from evaluation');
+has 'epsilonTensor' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+             lazy=>1, builder=>'_build_epsilonTensor',
+             documentation=>'Macroscopic dielectric tensor');
 
 with 'Photonic::Roles::KeepStates',  'Photonic::Roles::UseMask';
 
@@ -240,6 +248,18 @@ sub _build_waveOperator {
     my $self=shift;
     wave_operator($self->greenTensor, $self->geometry->ndims);
 }
+
+sub _build_epsilonTensor {
+    my $self=shift;
+    my $wave=$self->waveOperator;
+    my $q=$self->metric->wavenumber;
+    my $q2=$q*$q;
+    my $k=$self->metric->wavevector;
+    my $k2=$k->inner($k);
+    my $kk=$k->outer($k);
+    my $id=PDL::MatrixOps::identity($k);
+    $wave+$k2/$q2*$id - $kk/$q2;
+};
 
 __PACKAGE__->meta->make_immutable;
 
