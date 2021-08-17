@@ -39,7 +39,7 @@ use Moose::Role;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::Types;
-use Photonic::Utils qw(any_complex lu_decomp make_dyads);
+use Photonic::Utils qw(any_complex lu_decomp make_dyads triangle_coords);
 use PDL::MatrixOps qw();
 use Carp;
 use constant PI=>4*atan2(1,1);
@@ -209,13 +209,12 @@ sub _build_unitPairs {
     my $nd=$self->ndims;
     my $units=$self->units;
     my $pairs = PDL->zeroes($nd, $nd * ($nd + 1) / 2);
-    my $n = 0;
-    for my $i(0..$nd-1){ #build pairs of vectors
-	for my $j($i..$nd-1){
-	    $pairs->(:,($n)) .= ($units->(($i))+$units->(($j)))->norm;
-	    $n++;
-	}
-    }
+    my $pairs_slice = $pairs->mv(1, 0);
+    my $indexes = triangle_coords($nd, 1);
+    $pairs_slice .= (
+      $units->indexND($indexes(0))+
+      $units->indexND($indexes(1))
+    )->transpose->norm->transpose;
     $pairs;
 }
 
@@ -224,15 +223,13 @@ sub _build_cUnitPairs {
     my $nd=$self->ndims;
     my $units=$self->units;
     my $cpairs = PDL->zeroes($nd, $nd * ($nd - 1) / 2)->r2C;
-    my $n = 0;
-    for my $i(0..$nd-1){ #build pairs of vectors
-	for my $j($i+1..$nd-1){
-	    my $vc=PDL::czip($units->(($i)), $units->(($j)));
-	    my $vcn=sqrt($vc->abs2->sumover);
-	    $cpairs->(:,($n)) .= $vc*(1/$vcn);
-	    $n++;
-	}
-    }
+    my $cpairs_slice = $cpairs->mv(1, 0);
+    my $indexes = triangle_coords($nd);
+    $cpairs_slice .= PDL::czip(
+      $units->indexND($indexes(0)),
+      $units->indexND($indexes(1))
+    );
+    $cpairs_slice /= sqrt($cpairs_slice->abs2->transpose->sumover);
     $cpairs;
 }
 

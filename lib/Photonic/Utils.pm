@@ -40,7 +40,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     corner_rotate reorderN top_slice linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
-    incarnate_as
+    triangle_coords incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
     cgtsv lu_decomp lu_solve
 );
@@ -75,21 +75,23 @@ sub wave_operator {
     lu_solve([lu_decomp($green)], r2C(PDL::MatrixOps::identity($nd)));
 }
 
+sub triangle_coords {
+  my ($n, $inc_diag) = @_;
+  my $x = xvals($n, $n);
+  my $y = yvals($n, $n);
+  my $mask = $inc_diag ? $x >= $y : $x > $y;
+  $mask->whichND->slice('-1:0');
+}
+
 sub tensor {
     my ($data, $decomp, $nd, $dims, $skip) = @_;
     my $backsub = lu_solve($decomp, reorderN($data, 0, ($skip||0)-1));
     $backsub = reorderN($backsub, 0, ($skip||0)-1, 1);
     my $tensor = PDL->zeroes(($nd) x $dims)->r2C;
     $tensor = reorderN($tensor, 0, $dims-3); # avoid a slice prefix
-    my $n = 0;
-    for my $i(0..$nd-1){
-        for my $j($i..$nd-1){
-            my $bslice = $backsub->slice("($n)");
-            $tensor->slice("($i),($j)") .= $bslice;
-            $tensor->slice("($j),($i)") .= $bslice;
-            ++$n;
-        }
-    }
+    my $indexes = triangle_coords($nd, 1);
+    $tensor->indexND($indexes) .= $backsub;
+    $tensor->indexND($indexes->slice('-1:0')) .= $backsub;
     reorderN($tensor, 0, $dims-3, 1);
 }
 
@@ -443,6 +445,11 @@ those dimensions from the end back to the C<$start> otherwise:
 =item * $pdl=corner_rotate($pdl, $start, $end)
 
 Rotates each dimension from C<$start> to C<$end> by 1, to opposite corner.
+
+=item * $pdl=triangle_coords($n, $include_diag)
+
+Returns ndarray of coordinates of the lower triangle of a square $n*$n
+matrix, either with or without the diagonal. Ordered by column, then row.
 
 =item * $p=HProd($a, $b, $skip)
 

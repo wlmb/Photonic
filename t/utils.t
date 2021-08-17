@@ -545,4 +545,7 @@ $data = sequence(1, 2, 3, 4, 5, 6);
 is_deeply [reorderN($data, 1, 2)->dims], [1,4,5,6,2,3], 'reorderN';
 is_deeply [reorderN(reorderN($data, 1, 2), 1, 2, 1)->dims], [1,2,3,4,5,6], 'reorderN reversed';
 
+is_deeply triangle_coords(3, 1)->unpdl, [[0,0], [0,1], [0,2], [1,1], [1,2], [2,2]], 'triangle_coords with diag';
+is_deeply triangle_coords(3)->unpdl, [[0,1], [0,2], [1,2]], 'triangle_coords without diag';
+
 done_testing;

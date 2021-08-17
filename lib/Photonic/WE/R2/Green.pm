@@ -135,7 +135,7 @@ use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
-use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator top_slice);
+use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator triangle_coords);
 
 use List::Util qw(all any);
 use Moose;
@@ -204,23 +204,17 @@ sub _build_greenTensor {
     my $greenPc = pdl map $_->Gpp, my @cGP=@{$self->cGreenP}; #Green's projections along complex directions.
     $self->_converged(any { $_->converged } $self, @cGP);
     my $asy=$greenTensor->zeroes; #xy,xy, $ndx$nd
-    my $cpairs=$self->geometry->cUnitPairs;
-    my $m=0;
-    for my $i(0..$nd-2){
-	for my $j($i+1..$nd-1){
-	    my $pair=$cpairs->(:,($m));
-	    #$asy is xy,xy. First index is column
-	    $asy(($i), ($j)).=
-		top_slice($greenPc, "($m)")-
-		($pair->conj->(*1) # column, row
-		 *$pair->(:,*1)
-		 *$greenTensor)->sumover->sumover
-		;
-	    $asy(($j), ($i)).=-$asy(($i),($j));
-	    $m++
-	}
-    }
+    my $cpairs=$self->geometry->cUnitPairs->mv(1,-1);
+    my $indexes = triangle_coords($nd);
+    $indexes = $indexes->mv(-1,0)->whereND( ($indexes(0) <= $nd-2)->((0)) )->mv(0,-1); # first index only up to $nd-2, mv because whereND takes dims off bottom
+    $asy->indexND($indexes) .= #$asy is xy,xy. First index is column
+      $greenPc-
+      ($cpairs->conj->(*1) # column, row
+       *$cpairs->(:,*1)
+       *$greenTensor)->sumover->sumover
+      ;
     $asy *= PDL->i();
+    $asy -= $asy->transpose;
     $greenTensor+$asy;
 }
 
