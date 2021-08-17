@@ -46,6 +46,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    use Photonic::WE::S::Green;
    my $G=Photonic::WE::S::Green->new(metric=>$m, nh=>$nh);
    my $GreenTensor=$G->greenTensor;
+   my $WaveTensor=$G->waveOperator;
+   my $EpsTensor=$G->epsilonTensor;
 
 =head1 DESCRIPTION
 
@@ -53,61 +55,38 @@ Calculates the retarded green's tensor for a given fixed
 Photonic::WE::S::Metric structure as a function of the dielectric
 functions of the components.
 
-=head1 METHODS
-
-=over 4
-
-=item * new(metric=>$m, nh=>$nh, smallH=>$smallH, smallE=>$smallE,
-keepStates=>$k)
-
-Initializes the structure.
-
-$m Photonic::WE::S::Metric describing the structure and some parameters.
-
-$nh is the maximum number of Haydock coefficients to use.
-
-$smallH and $smallE are the criteria of convergence (default 1e-7) for
-Haydock coefficients and continued fraction
-
-$k is a flag to keep states in Haydock calculations (default 0)
-
-=back
-
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
 =item * keepStates
 
-Value of flag to keep Haydock states
+Value of flag to keep Haydock states in Haydock calculations (default 0)
 
-=item * epsA
+=item * metric
 
-Dielectric function of component A
-
-=item * epsB
-
-Dielectric function of component B
-
-=item * u
-
-Spectral variable
-
-=item * haydock
-
-Array of Photonic::WE::S::Haydock structures, one for each polarization
-
-=item * greenP
-
-Array of Photonic::WE::S::GreenP structures, one for each direction.
-
-=item * greenTensor
-
-The Green's tensor calculated
+L<Photonic::WE::S::Metric> describing the structure and some parameters.
 
 =item * nh
 
 The maximum number of Haydock coefficients to use.
+
+=item * smallH, smallE
+
+Criteria of convergence of Haydock coefficients and continued
+fraction. 0 means don't check. (default 1e-7)
+
+=item * haydock
+
+Array of L<Photonic::WE::S::Haydock> structures, one for each polarization
+
+=item * greenP
+
+Array of L<Photonic::WE::S::GreenP> structures, one for each direction.
+
+=item * greenTensor
+
+The Green's tensor calculated
 
 =item * nhActual
 
@@ -117,10 +96,13 @@ The actual number of Haydock coefficients used in the last calculation
 
 Flags that the last calculation converged before using up all coefficients
 
-=item * smallH, smallE
+=item * waveOperator
 
-Criteria of convergence of Haydock coefficients and continued
-fraction. 0 means don't check.
+The macroscopic wave operator of the last operation
+
+=item * epsilonTensor
+
+The macroscopic dielectric tensor
 
 =back
 
@@ -128,10 +110,11 @@ fraction. 0 means don't check.
 
 use namespace::autoclean;
 use PDL::Lite;
+use PDL::NiceSlice;
 use Photonic::WE::S::Haydock;
 use Photonic::WE::S::GreenP;
 use Photonic::Types;
-use Photonic::Utils qw(tensor make_haydock make_greenp);
+use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator any_complex);
 use List::Util qw(all);
 use Moose;
 use MooseX::StrictConstructor;
@@ -159,6 +142,13 @@ has 'greenTensor'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>unde
              documentation=>'Greens Tensor');
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
+has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+                        lazy=>1, builder=>'_build_waveOperator',
+                        documentation=>'Wave operator');
+has 'epsilonTensor' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+                         lazy=>1, builder=>'_build_epsilonTensor',
+                         documentation=>'macroscopic response');
+
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 sub _build_greenTensor {
@@ -174,6 +164,31 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
 
 sub _build_greenP {
     make_greenp(shift, 'Photonic::WE::S::GreenP');
+}
+
+sub _build_waveOperator {
+    my $self=shift;
+    wave_operator($self->greenTensor, $self->geometry->ndims);
+}
+
+sub _build_epsilonTensor {
+    my $self=shift;
+    my $wave=$self->waveOperator;
+    my $q=$self->metric->wavenumber;
+    my $q2=$q*$q;
+    my $k=$self->metric->wavevector;
+    my ($k2, $kk);
+    if(any_complex($q, $k)){
+        #Make both complex
+        $_ = PDL::r2C($_) for $q, $k;
+        $k2=($k*$k)->sumover; #inner
+        $kk=$k->(:,*1)*$k->(*1); #outer
+    } else {
+        $k2=$k->inner($k);
+        $kk=$k->outer($k);
+    }
+    my $id=PDL::MatrixOps::identity($k);
+    $wave+$k2/$q2*$id - $kk/$q2;
 }
 
 __PACKAGE__->meta->make_immutable;

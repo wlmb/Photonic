@@ -302,17 +302,14 @@ Obtain one, or all, Haydock coefficients.
 
 Calculate the dielectric function projected along some direction.
 
-=item L<Photonic::WE::S::EpsilonTensor>
-
-Calculate the dielectric tensor.
-
 =item L<Photonic::WE::S::Field>
 
 Calculate the microscopic field.
 
 =item L<Photonic::WE::S::Green>
 
-Calculate the macroscopic Green tensor.
+Calculate the macroscopic Green tensor, macroscopic wave tensor, or
+dielectric tensor.
 
 =item L<Photonic::WE::S::GreenP>
 
@@ -322,10 +319,6 @@ Calculate the macroscopic Green tensor projected onto some direction.
 
 Retarded metric tensor of binary metamaterial with a non-dissipative
 host.
-
-=item L<Photonic::WE::S::Wave>
-
-Macroscopic wave tensor.
 
 =item L<Photonic::WE::S::WaveP>
 

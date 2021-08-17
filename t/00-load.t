@@ -72,13 +72,11 @@ Photonic::WE::R2::GreenP
 Photonic::WE::R2::Haydock
 Photonic::WE::R2::Metric
 Photonic::WE::S::EpsilonP
-Photonic::WE::S::EpsilonTensor
 Photonic::WE::S::Field
 Photonic::WE::S::Green
 Photonic::WE::S::GreenP
 Photonic::WE::S::Haydock
 Photonic::WE::S::Metric
-Photonic::WE::S::Wave
 Photonic::WE::S::WaveP
 	);
     foreach(@mods){
