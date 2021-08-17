@@ -40,13 +40,11 @@ lib/Photonic/Roles/Reorthogonalize.pm
 lib/Photonic/Roles/UseMask.pm
 lib/Photonic/Types.pm
 lib/Photonic/Utils.pm
-lib/Photonic/WE/R2/EpsilonP.pm
 lib/Photonic/WE/R2/Field.pm
 lib/Photonic/WE/R2/Green.pm
 lib/Photonic/WE/R2/GreenP.pm
 lib/Photonic/WE/R2/Haydock.pm
 lib/Photonic/WE/R2/Metric.pm
-lib/Photonic/WE/R2/WaveP.pm
 lib/Photonic/WE/S/EpsilonP.pm
 lib/Photonic/WE/S/EpsilonTensor.pm
 lib/Photonic/WE/S/Field.pm

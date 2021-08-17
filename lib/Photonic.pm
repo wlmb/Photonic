@@ -265,10 +265,6 @@ characteristic function.
 
 Obtain one, or all, Haydock coefficients.
 
-=item L<Photonic::WE::R2::EpsilonP>
-
-Calculate the dielectric function projected along some direction.
-
 =item L<Photonic::WE::R2::Field>
 
 Calculate the microscopic field.
@@ -280,16 +276,13 @@ or dielectric tensor.
 
 =item L<Photonic::WE::R2::GreenP>
 
-Calculate the macroscopic Green tensor projected onto some direction.
+Calculate projected onto some direction the macroscopic Green tensor,
+or macroscopic wave operator, or dielectric function.
 
 =item L<Photonic::WE::R2::Metric>
 
 Retarded metric tensor of binary metamaterial with a non-dissipative
 host.
-
-=item L<Photonic::WE::R2::WaveP>
-
-Macroscopic wave operator projected into some direction.
 
 =back
 

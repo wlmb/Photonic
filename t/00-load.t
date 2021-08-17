@@ -66,13 +66,11 @@ Photonic::Roles::Reorthogonalize
 Photonic::Roles::UseMask
 Photonic::Types
 Photonic::Utils
-Photonic::WE::R2::EpsilonP
 Photonic::WE::R2::Field
 Photonic::WE::R2::Green
 Photonic::WE::R2::GreenP
 Photonic::WE::R2::Haydock
 Photonic::WE::R2::Metric
-Photonic::WE::R2::WaveP
 Photonic::WE::S::EpsilonP
 Photonic::WE::S::EpsilonTensor
 Photonic::WE::S::Field

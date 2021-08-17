@@ -46,6 +46,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    use Photonic::WE::R2::GreenP;
    my $green=Photonic::WE::R2::GreepP->new(haydock=>$h, nh=>$nh, epsB=>$epsB);
    my $greenProjection=$green->Gpp;
+   my $WaveProjection=$green->waveOperator;
+   my $EpsP=$green->epsilon;
 
 =head1 DESCRIPTION
 
@@ -82,7 +84,7 @@ The spectral variable from the calculation
 
 =item * Gpp
 
-Returns the macroscopic projected green'S function for a given complex
+Returns the macroscopic projected Green's function for a given complex
 value of the dielectric functions of the particle C<epsB>.
 
 =item * nhActual
@@ -92,6 +94,23 @@ The actual number of Haydock coefficients used in the calculation
 =item * converged
 
 Flags that the calculation converged before using up all coefficients
+
+=item * waveOperator
+
+Returns the macroscopic wave operator for a given value of the
+dielectric functions of the particle C<epsB>. The host's
+response C<epsA> is taken from the metric.
+
+NOTE: Only works along principal directions, as it treats Green's
+function as scalar.
+
+=item * epsilon
+
+Returns the macroscopic dielectric component for a given value of the
+dielectric function of the particle C<epsB>. The host's
+response C<epsA> is taken from the Haydock structure.
+
+NOTE: Only works for polarizations along principal directions.
 
 =back
 
@@ -131,6 +150,12 @@ has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, lazy=
 has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
+has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+             lazy=>1, builder=>'_build_waveOperator',
+             documentation=>'Wave operator from last evaluation');
+has 'epsilon' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+             lazy=>1, builder=>'_build_epsilon',
+             documentation=>'Wave projection from evaluation');
 
 sub BUILD {
     my $self=shift;
@@ -157,6 +182,26 @@ sub _build_Gpp {
     $self->_nhActual($n);
     my $g0b02=$h->gs->slice("(0)")*$h->b2s->slice("(0)");
     $u*$g0b02/($epsA*$fn);
+}
+
+sub _build_waveOperator {
+    1/shift->Gpp; #only works along principal directions!!
+};
+
+sub _build_epsilon {
+    my $self=shift;
+    my $wave=$self->waveOperator;
+    my $q=$self->haydock->metric->wavenumber;
+    my $q2=$q*$q;
+    my $k=$self->haydock->metric->wavevector;
+    my $k2=$k->inner($k);
+    #my $kk=$k->outer($k);
+    my $p=$self->haydock->normalizedPolarization;
+    #Note $p->inner($p) might be complex, so is not necessarily 1.
+    my $p2=($p*$p)->sumover;
+    my $pk=($p*$k)->sumover;
+    my $proj=$p2*$k2/$q2 - $pk*$pk/$q2;
+    $wave+$proj;
 }
 
 __PACKAGE__->meta->make_immutable;
