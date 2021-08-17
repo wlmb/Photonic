@@ -76,9 +76,9 @@ sub wave_operator {
 }
 
 sub tensor {
-    my ($data, $decomp, $nd, $dims, $after_cb) = @_;
-    my $backsub = lu_solve($decomp, $data);
-    $backsub = $after_cb->($backsub) if $after_cb;
+    my ($data, $decomp, $nd, $dims, $skip) = @_;
+    my $backsub = lu_solve($decomp, reorderN($data, 0, ($skip||0)-1));
+    $backsub = reorderN($backsub, 0, ($skip||0)-1, 1);
     my $tensor = PDL->zeroes(($nd) x $dims)->r2C;
     my $n = 0;
     my $slice_prefix = ':,' x ($dims-2);
@@ -127,6 +127,7 @@ sub incarnate_as {
 
 sub reorderN {
   my ($pdl, $start, $end, $reverse) = @_;
+  return $pdl if $end < $start;
   my $ndims=$pdl->ndims;
   my $length = $end-$start+1;
   $pdl->reorder(0..$start-1, ($reverse

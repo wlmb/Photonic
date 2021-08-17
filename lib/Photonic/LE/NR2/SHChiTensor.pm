@@ -292,7 +292,7 @@ sub evaluate {
     my $P2Mp = PDL->pdl(@P2M);
     #Get cartesian indices out of the way, solve the system of
     #equations, and move the cartesian indices back
-    my $chiTensor=tensor($P2Mp->mv(0,-1), $self->geometry->unitDyadsLU, $nd, 3, sub { $_[0]->mv(-1,0) });
+    my $chiTensor=tensor($P2Mp, $self->geometry->unitDyadsLU, $nd, 3, 1);
     $self->_chiTensor($chiTensor);
     return $chiTensor;
 }
