@@ -306,11 +306,11 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
     my $f=shift; #vector field
     my $s=shift; #scale
     my $d=shift; #decimation
-    my $f1=$s*$f->slice(":,0:-1:$d, 0:-1:$d"); #decimate two dimensions
-    my $coords=$d*PDL::ndcoords(@{[$f1->dims]}[1,2]);
+    my $f1=$s*$f->mv(0,-1)->slice("0:-1:$d, 0:-1:$d"); #decimate two dimensions
+    my $coords=$d*PDL::ndcoords(($f1->dims)[0,1])->mv(0,-1);
     ( #basex, basey, vectorx vectory
-	($coords-.5*$f1)->mv(0,-1)->clump(-2)->dog,
-	$f1->mv(0,-1)->clump(-2)->dog);
+	($coords-.5*$f1)->clump(-2)->dog,
+	$f1->clump(-2)->dog);
 }
 
 sub cgtsv {
