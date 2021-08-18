@@ -115,6 +115,15 @@ EOF
 $got = tile(sequence(4, 4, 2, 2), 3, 3);
 ok all(approx($got, $expected)), 'tile' or diag "got: $got, expected $expected";
 
+$got = [mvN(ones(2,1,11), 0, 0, -1)->dims];
+is_deeply $got, [1,11,2], 'mvN small 1 to -1' or diag explain $got;
+my $data = ones(1, 2, 3, 4, 5, 6);
+is_deeply [mvN($data, 1, 1, -1)->dims], [1,3,4,5,6,2], 'mvN 1 to -1';
+is_deeply [mvN($data, 1, 2, 5)->dims], [1,4,5,6,2,3], 'mvN to 5';
+is_deeply [mvN($data, 1, 2, -1)->dims], [1,4,5,6,2,3], 'mvN to -1';
+is_deeply [mvN($data, 1, 2, 4)->dims], [1,4,5,2,3,6], 'mvN to 4';
+is_deeply [mvN(ones(1,4,5,6,2,3), -2, -1, 1)->dims], [1,2,3,4,5,6], 'mvN with negative';
+
 $expected = pdl(<<'EOF');
 [
  [ [ 0 -4.3260582e-17+6.1800832e-18i ] ]
@@ -448,7 +457,7 @@ $got = pdl(vectors2Dlist(pdl(<<'EOF'), 0, 5));
 EOF
 ok all(approx($got, $expected)) or diag "got: $got, expected $expected";
 
-my $data = pdl(<<'EOF');
+$data = pdl(<<'EOF');
 [
  0.72727273
  1733.403-2.8318751e-28i
@@ -540,10 +549,6 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok all(approx($got, $expected)), 'make_dyads' or diag "got:$got\nexpected:$expected";
-
-$data = sequence(1, 2, 3, 4, 5, 6);
-is_deeply [reorderN($data, 1, 2)->dims], [1,4,5,6,2,3], 'reorderN';
-is_deeply [reorderN(reorderN($data, 1, 2), 1, 2, 1)->dims], [1,2,3,4,5,6], 'reorderN reversed';
 
 is_deeply triangle_coords(3, 1)->unpdl, [[0,0], [0,1], [0,2], [1,1], [1,2], [2,2]], 'triangle_coords with diag';
 is_deeply triangle_coords(3)->unpdl, [[0,1], [0,2], [1,2]], 'triangle_coords without diag';

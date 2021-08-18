@@ -38,7 +38,7 @@ require Exporter;
 @ISA=qw(Exporter);
 @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
     HProd MHProd EProd VSProd SProd
-    corner_rotate reorderN top_slice linearCombineIt lentzCF any_complex tensor
+    corner_rotate mvN top_slice linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
     dummyN triangle_coords incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
@@ -98,14 +98,15 @@ sub triangle_coords {
 
 sub tensor {
     my ($data, $decomp, $nd, $dims, $skip) = @_;
-    my $backsub = lu_solve($decomp, reorderN($data, 0, ($skip||0)-1));
-    $backsub = reorderN($backsub, 0, ($skip||0)-1, 1);
+    $skip //= 0;
+    my $backsub = lu_solve($decomp, mvN($data, 0, $skip-1, -1));
+    $backsub = mvN($backsub, -$skip, -1, 0) if $skip;
     my $tensor = PDL->zeroes(($nd) x $dims)->r2C;
-    $tensor = reorderN($tensor, 0, $dims-3); # avoid a slice prefix
+    my $tensor_mv = mvN($tensor, 0, $dims-3, -1);
     my $indexes = triangle_coords($nd, 1);
-    $tensor->indexND($indexes) .= $backsub;
-    $tensor->indexND($indexes->slice('-1:0')) .= $backsub;
-    reorderN($tensor, 0, $dims-3, 1);
+    $tensor_mv->indexND($indexes) .= $backsub;
+    $tensor_mv->indexND($indexes->slice('-1:0')) .= $backsub;
+    $tensor;
 }
 
 my @HAYDOCK_PARAMS = qw(
@@ -140,15 +141,18 @@ sub incarnate_as {
   $class->new((map +($_ => $self->$_), @$with), @extra);
 }
 
-sub reorderN {
-  my ($pdl, $start, $end, $reverse) = @_;
-  return $pdl if $end < $start;
+sub mvN {
+  my ($pdl, $start, $end, $to) = @_;
   my $ndims=$pdl->ndims;
-  my $length = $end-$start+1;
-  $pdl->reorder(0..$start-1, ($reverse
-    ? (($ndims-$length)..($ndims-1), $start..($ndims-$length-1))
-    : ($end+1..$ndims-1, $start..$end)
-  ));
+  local $_;
+  $_ = !$_ ? 0 : $_ > 0 ? $_ : $ndims + $_ for $start, $end, $to;
+  my $length = $end - $start + 1;
+  return $pdl if $length <= 0 or $length == $ndims or $to == $start;
+  my @indices = 0..$ndims-1;
+  my @move_indices = splice @indices, $start, $length;
+  $to -= $length - 1 if $to >= $start; # adjust if needed
+  splice @indices, $to, 0, @move_indices;
+  $pdl->reorder(@indices);
 }
 
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
@@ -160,7 +164,7 @@ sub HProd { #Hermitean product between two fields. skip first 'skip' dims
 	unless $ndims == $second->ndims;
     my $prod=$first->conj*$second;
     # clump all except skip dimensions, protecto index and sum.
-    reorderN($prod, 0, $skip-1)->clump(-$skip-1)->sumover;
+    mvN($prod, 0, $skip-1, -1)->clump(-$skip-1)->sumover;
 }
 
 sub MHProd { #Hermitean product between two fields with metric. skip
@@ -178,7 +182,7 @@ sub MHProd { #Hermitean product between two fields with metric. skip
     my $mprod=($metric*$sliced)->sumover;
     die "Dimensions should be equal" unless $ndims == $mprod->ndims;
     my $prod=$first->conj*$mprod;
-    reorderN($prod, 0, $skip-1)->clump(-$skip-1)->sumover;
+    mvN($prod, 0, $skip-1, -1)->clump(-$skip-1)->sumover;
 }
 
 sub corner_rotate {
@@ -202,7 +206,7 @@ sub EProd { #Euclidean product between two fields in reciprocal
     my $first_mG=corner_rotate($first->slice($sl), $skip, $ndims-1); #rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     my $prod=$first_mG*$second; #s1:s2:nx:ny
     # clump all except skip dimensions, protecto index and sum.
-    reorderN($prod, 0, $skip-1) #nx:ny:s1:s2
+    mvN($prod, 0, $skip-1, -1) #nx:ny:s1:s2
 	->clump(-$skip-1) #nx*ny:s1:s2
 	->sumover; #s1:s2
 }
@@ -225,7 +229,7 @@ sub SProd { #Spinor product between two fields in reciprocal
     $first_mG=corner_rotate($first_mG, $skip+1, $ndims-1); #rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     my $prod=$first_mG*$second; #pmk,s1,s2,nx,ny
     # clump all except skip dimensions, protect sum.
-    reorderN($prod, 0, $skip) #nx,ny,pmk,s1,s2
+    mvN($prod, 0, $skip, -1) #nx,ny,pmk,s1,s2
 	->clump(-$skip-1)  #nx*ny*pmk, s1, s2
 	->sumover; #s1, s2
 }
@@ -246,7 +250,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     $first_mG=corner_rotate($first_mG, 2, $ndims-1); #rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     my $prod=$first_mG*$second; #xy:pm:nx:ny
     # clump all except xy.
-    reorderN($prod, 0, 1) #nx:ny:xy:pm
+    $prod->mv(0, -1) #nx:ny:xy:pm
 	->clump(-1)  #nx*ny*xy*pm
 	->sumover;
 }
@@ -256,9 +260,9 @@ sub RtoG { #transform a 'complex' scalar, vector or tensorial field
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $moved=reorderN($field, 0, $skip-1);
+    my $moved=mvN($field, 0, $skip-1, -1);
     my $transformed=fftn($moved, $ndims);
-    reorderN($transformed, 0, $skip-1, 1);
+    $skip ? mvN($transformed, -$skip, -1, 0) : $transformed;
 }
 
 sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
@@ -266,9 +270,9 @@ sub GtoR { #transform a 'complex' scalar, vector or tensorial field from
     my $field=shift; #field to fourier transform
     my $ndims=shift; #number of dimensions to transform
     my $skip=shift; #dimensions to skip
-    my $moved=reorderN($field, 0, $skip-1);
+    my $moved=mvN($field, 0, $skip-1, -1);
     my $transformed=ifftn($moved, $ndims);
-    reorderN($transformed, 0, $skip-1, 1);
+    $skip ? mvN($transformed, -$skip, -1, 0) : $transformed;
 }
 
 sub lentzCF {
@@ -456,14 +460,12 @@ Adds C<$how_many> (no-op if <= 0) dummy dimensions of size C<$dim_size>
 Complex linear combination of states. $c is a 'complex'
 ndarray and $it is an ndarray of states from a L<Photonic::Roles::Haydock>.
 
-=item * $reordered=reorderN($pdl, $start, $end[, $reverse])
+=item * $reordered=mvN($pdl, $start, $end, $to)
+
+  mvN(sequence(1,2,3,4,5,6), 1, 2, -1) # dims 1,4,5,6,2,3
 
 Reorder given ndarray's dimensions, moving dimensions starting C<$start>
-and ending C<$end> to the end if $reverse is false or not given, or
-those dimensions from the end back to the C<$start> otherwise:
-
-    $reordered=reorderN($pdl, 0, $skip-1);
-    $original=reorderN($reordered, 0, $skip-1, 1);
+and ending C<$end> (no-op if before C<$start>) to C<$to>.
 
 =item * $pdl=corner_rotate($pdl, $start, $end)
 
