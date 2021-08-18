@@ -135,7 +135,7 @@ use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types;
-use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator);
+use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator top_slice);
 
 use List::Util qw(all any);
 use Moose;
@@ -198,12 +198,11 @@ sub _build_greenTensor {
     my $epsB=$self->epsB;
     $self->_u(my $u=1/(1-$epsB/$epsA));
     $self->_converged(all { $_->converged } @{$self->greenP});
-    my $greenTensor = tensor(pdl([map $_->Gpp, @{$self->greenP}]), $self->geometry->unitDyadsLU, $self->geometry->ndims, 2);
+    my $greenTensor = tensor(pdl([map $_->Gpp, @{$self->greenP}]), $self->geometry->unitDyadsLU, my $nd=$self->geometry->ndims, 2);
     #That's all unless you want the antisymmetric part
     return $greenTensor if $self->symmetric;
-    my @greenPc = map $_->Gpp, @{$self->cGreenP}; ; #array of Green's projections along complex directions.
-    $self->_converged(any { $_->converged } $self, @{$self->cGreenP});
-    my $nd=$self->geometry->B->ndims;
+    my $greenPc = pdl map $_->Gpp, my @cGP=@{$self->cGreenP}; #Green's projections along complex directions.
+    $self->_converged(any { $_->converged } $self, @cGP);
     my $asy=$greenTensor->zeroes; #xy,xy, $ndx$nd
     my $cpairs=$self->geometry->cUnitPairs;
     my $m=0;
@@ -211,17 +210,17 @@ sub _build_greenTensor {
 	for my $j($i+1..$nd-1){
 	    my $pair=$cpairs->(:,($m));
 	    #$asy is xy,xy. First index is column
-	    $asy(($i), ($j)).=PDL->i()*(
-		$greenPc[$m]-
+	    $asy(($i), ($j)).=
+		top_slice($greenPc, "($m)")-
 		($pair->conj->(*1) # column, row
 		 *$pair->(:,*1)
 		 *$greenTensor)->sumover->sumover
-		);
+		;
 	    $asy(($j), ($i)).=-$asy(($i),($j));
 	    $m++
 	}
-     }
-    #print $asy, "\n";
+    }
+    $asy *= PDL->i();
     $greenTensor+$asy;
 }
 
