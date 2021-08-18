@@ -40,7 +40,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     corner_rotate reorderN top_slice linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
-    triangle_coords incarnate_as
+    dummyN triangle_coords incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
     cgtsv lu_decomp lu_solve
 );
@@ -60,9 +60,22 @@ sub top_slice :lvalue {
     $pdl->slice($slice_arg);
 }
 
+sub dummyN {
+  my ($pdl, $how_many, $where, $dim_size) = @_;
+  return $pdl if $how_many <= 0;
+  my $ndims=$pdl->ndims;
+  $where //= 0;
+  local $_;
+  $_ = !$_ ? 0 : $_ > 0 ? $_ : $ndims + $_ + 1 for $where;
+  $dim_size //= 1;
+  my @before = (':') x $where;
+  my $slice_arg = join ',', @before, ("*$dim_size")x$how_many;
+  $pdl->slice($slice_arg);
+}
+
 sub linearCombineIt { #complex linear combination of states
     my ($coefficients, $states)=@_; #complex states, ndarray of complex coefficients
-    $coefficients=$coefficients->dummy(0) while $coefficients->ndims < $states->ndims;
+    $coefficients=dummyN($coefficients, $states->ndims-$coefficients->ndims);
     ($coefficients*$states)->mv(-1,0)->sumover;
 }
 
@@ -427,6 +440,16 @@ Utility functions that may be useful.
 
 Applies the given C<$slice_arg> to the highest dimension of the given
 ndarray.
+
+=item * $pdl=dummyN($pdl, $how_many, $where, $dim_size)
+
+  dummyN(sequence(2, 3), 3, 0, 4) # dims: 4, 4, 4, 2, 3
+  dummyN(sequence(2, 3), 3, 1, 4) # dims: 2, 4, 4, 4, 3
+  dummyN(sequence(2, 3), 3, -1, 4) # dims: 2, 3, 4, 4, 4
+  dummyN(sequence(2, 3), 3, -2, 4) # dims: 2, 4, 4, 4, 3
+
+Adds C<$how_many> (no-op if <= 0) dummy dimensions of size C<$dim_size>
+(default 1) in the C<$which_dim> (default 0) position.
 
 =item * $r=linearCombineIt($c, $it)
 

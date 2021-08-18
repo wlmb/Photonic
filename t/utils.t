@@ -548,4 +548,13 @@ is_deeply [reorderN(reorderN($data, 1, 2), 1, 2, 1)->dims], [1,2,3,4,5,6], 'reor
 is_deeply triangle_coords(3, 1)->unpdl, [[0,0], [0,1], [0,2], [1,1], [1,2], [2,2]], 'triangle_coords with diag';
 is_deeply triangle_coords(3)->unpdl, [[0,1], [0,2], [1,2]], 'triangle_coords without diag';
 
+$got = [dummyN(sequence(2, 3), 3, 0, 4)->dims];
+is_deeply $got, [4, 4, 4, 2, 3], 'dummyN' or diag explain $got;
+$got = [dummyN(sequence(2, 3), 3, 1, 4)->dims];
+is_deeply $got, [2, 4, 4, 4, 3], 'dummyN' or diag explain $got;
+$got = [dummyN(sequence(2, 3), 3, -1, 4)->dims];
+is_deeply $got, [2, 3, 4, 4, 4], 'dummyN at -1' or diag explain $got;
+$got = [dummyN(sequence(2, 3), 3, -2, 4)->dims];
+is_deeply $got, [2, 4, 4, 4, 3], 'dummyN at -2' or diag explain $got;
+
 done_testing;
