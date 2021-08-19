@@ -40,7 +40,7 @@ require Exporter;
     HProd MHProd EProd VSProd SProd
     corner_rotate mvN top_slice linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
-    dummyN triangle_coords incarnate_as
+    cartesian_product dummyN triangle_coords incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
     cgtsv lu_decomp lu_solve
 );
@@ -51,6 +51,7 @@ use Carp;
 use Storable qw(dclone);
 require PDL::LinearAlgebra::Real;
 require PDL::LinearAlgebra::Complex;
+require List::Util;
 use warnings;
 use strict;
 
@@ -86,6 +87,21 @@ sub any_complex {
 sub wave_operator {
     my ($green, $nd) = @_;
     lu_solve([lu_decomp($green)], r2C(PDL::MatrixOps::identity($nd)));
+}
+
+sub cartesian_product {
+  my ($s1, $s2) = @_;
+  my $ndims_target = List::Util::max(2, map $_->ndims, $s1, $s2);
+  $_ = dummyN($_, $ndims_target-$_->ndims) for grep $_->ndims < $ndims_target, $s1, $s2;
+  my ($nd1, $nd2) = map $_->ndims, $s1, $s2;
+  my @dims = $s1->dims;
+  $dims[-2] += $s2->dim(-2); # X1+X2
+  $dims[-1] *= $s2->dim(-1); # m*n
+  my $res = zeroes(@dims);
+  my ($res_mv, $s1_mv, $s2_mv) = map mvN($_, 0, $nd1-3, -1), $res, $s1, $s2; # now work with first 2 dims
+  $res->slice('0:'.($s1_mv->dim(-2)-1)) .= $s1_mv->dummy(2, $s2_mv->dim(-1))->clump(1,2);
+  $res->slice($s1_mv->dim(-2).':-1') .= $s2_mv->dummy(1, $s1_mv->dim(-1))->clump(1,2);
+  $res;
 }
 
 sub triangle_coords {
@@ -543,6 +559,13 @@ are centered on the decimated lattice points.
 =item * any_complex
 
 True if any of the args are a complex PDL.
+
+=item * cartesian_product
+
+Given two ndarrays a(Z,x1,m), b(Z,x2,n), return c(Z,x1+x2,m*n), with
+each row from C<b> appended to all rows from C<a>. C<Z> can be empty
+but must be compatible; the shorter one will be "dummied up" from the
+zero end as necessary.
 
 =item * tensor
 

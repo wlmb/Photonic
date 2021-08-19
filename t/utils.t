@@ -562,4 +562,46 @@ is_deeply $got, [2, 3, 4, 4, 4], 'dummyN at -1' or diag explain $got;
 $got = [dummyN(sequence(2, 3), 3, -2, 4)->dims];
 is_deeply $got, [2, 4, 4, 4, 3], 'dummyN at -2' or diag explain $got;
 
+my $s1 = pdl '[ [0 0] [0 1] [1 1] ]';
+$got = cartesian_product($s1, sequence(2));
+$expected = pdl '[
+  [0 0 0]
+  [0 1 0]
+  [1 1 0]
+  [0 0 1]
+  [0 1 1]
+  [1 1 1]
+]';
+ok all(approx($got, $expected)), 'cartesian_product 2x3,2' or diag "got:$got\nexpected:$expected";
+$got = cartesian_product(sequence(2), $s1);
+$expected = pdl '[
+  [0 0 0]
+  [1 0 0]
+  [0 0 1]
+  [1 0 1]
+  [0 1 1]
+  [1 1 1]
+]';
+ok all(approx($got, $expected)), 'cartesian_product 2,2x3' or diag "got:$got\nexpected:$expected";
+$got = cartesian_product(sequence(2), sequence(3));
+$expected = pdl '[
+  [0 0]
+  [1 0]
+  [0 1]
+  [1 1]
+  [0 2]
+  [1 2]
+]';
+ok all(approx($got, $expected)), 'cartesian_product 2,3' or diag "got:$got\nexpected:$expected";
+$got = cartesian_product($s1, sequence(2)->dummy(0, 2));
+$expected = pdl '[
+  [0 0 0 0]
+  [0 1 0 0]
+  [1 1 0 0]
+  [0 0 1 1]
+  [0 1 1 1]
+  [1 1 1 1]
+]';
+ok all(approx($got, $expected)), 'cartesian_product 2x3,2x2' or diag "got:$got\nexpected:$expected";
+
 done_testing;
