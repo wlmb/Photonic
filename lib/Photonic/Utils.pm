@@ -159,14 +159,16 @@ sub incarnate_as {
 
 sub mvN {
   my ($pdl, $start, $end, $to) = @_;
+  return $pdl if $end < $start; # before negative-adjustment
   my $ndims=$pdl->ndims;
   local $_;
   $_ = !$_ ? 0 : $_ > 0 ? $_ : $ndims + $_ for $start, $end, $to;
   my $length = $end - $start + 1;
-  return $pdl if $length <= 0 or $length == $ndims or $to == $start;
+  confess "mvN: destination $to past end of $ndims-D ndarray\n" if $to > $ndims-1;
+  return $pdl if $length <= 0 or ($start <= $to and $to <= $end);
   my @indices = 0..$ndims-1;
   my @move_indices = splice @indices, $start, $length;
-  $to -= $length - 1 if $to >= $start; # adjust if needed
+  $to -= $length-1 if $start <= $to; # -1 as after if move to right
   splice @indices, $to, 0, @move_indices;
   $pdl->reorder(@indices);
 }
@@ -473,7 +475,16 @@ ndarray and $it is an ndarray of states from a L<Photonic::Roles::Haydock>.
   mvN(sequence(1,2,3,4,5,6), 1, 2, -1) # dims 1,4,5,6,2,3
 
 Reorder given ndarray's dimensions, moving dimensions starting C<$start>
-and ending C<$end> (no-op if before C<$start>) to C<$to>.
+and ending C<$end> (no-op if less than C<$start> before
+negative-adjustment).
+
+They are moved to after the current C<$to> if C<$start> is less than
+C<$to> (i.e. moving dims to right), and before if greater. This is
+like L<PDL::Slices/mv>, and intuitive if superficially odd. If C<$to>
+is between C<$start> and C<$end> inclusive, it is a no-op.
+
+Negative-adjustment: like L<PDL::Slices/mv>, all parameters may be
+negative, which is treated relative to the end of the dimension-list.
 
 =item * $pdl=corner_rotate($pdl, $start, $end)
 

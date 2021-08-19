@@ -117,12 +117,15 @@ ok all(approx($got, $expected)), 'tile' or diag "got: $got, expected $expected";
 
 $got = [mvN(ones(2,1,11), 0, 0, -1)->dims];
 is_deeply $got, [1,11,2], 'mvN small 1 to -1' or diag explain $got;
-my $data = ones(1, 2, 3, 4, 5, 6);
+my $data = ones(1,2,3,4,5,6);
 is_deeply [mvN($data, 1, 1, -1)->dims], [1,3,4,5,6,2], 'mvN 1 to -1';
+is_deeply [mvN($data, 0, -1, -1)->dims], [1,2,3,4,5,6], 'mvN no-op if 0,-1';
+is_deeply [mvN($data, 0, 2, 1)->dims], [1,2,3,4,5,6], 'mvN no-op if dest within start/end';
 is_deeply [mvN($data, 1, 2, 5)->dims], [1,4,5,6,2,3], 'mvN to 5';
 is_deeply [mvN($data, 1, 2, -1)->dims], [1,4,5,6,2,3], 'mvN to -1';
 is_deeply [mvN($data, 1, 2, 4)->dims], [1,4,5,2,3,6], 'mvN to 4';
-is_deeply [mvN(ones(1,4,5,6,2,3), -2, -1, 1)->dims], [1,2,3,4,5,6], 'mvN with negative';
+is_deeply [mvN($data, 1, 2, 1)->dims], [1,2,3,4,5,6], 'mvN to within start/end=no-op';
+is_deeply [mvN(ones(1,4,5,6,2,3), -2, -1, 1)->dims], [1,2,3,4,5,6], 'mvN with negative start/end';
 
 $expected = pdl(<<'EOF');
 [
