@@ -411,22 +411,14 @@ sub make_dyads {
     my ($nd, $unitPairs) = @_;
     my $ne = $nd*($nd+1)/2; #number of symmetric matrix elements
     my $matrix = PDL->zeroes($ne, $ne);
-    my $n = 0; #run over vector pairs
-    for my $i (0..$nd-1) {
-        for my $j ($i..$nd-1) {
-            my $m = 0; #run over components of dyads
-            for my $k (0..$nd-1) {
-                for my $l ($k..$nd-1) {
-                    my $factor = $k == $l?1:2;
-                    $matrix->slice("($m),($n)") .= #pdl order!
-                        $factor*$unitPairs->slice("($k),($n)") *
-                        $unitPairs->slice("($l),($n)");
-                    ++$m;
-                }
-            }
-            ++$n;
-        }
-    }
+    my $indexes = triangle_coords($nd, 1); # col0,col1=x,y
+    my $i_plus_seq = cartesian_product($indexes, sequence($ne)); # col2=seq
+    $i_plus_seq = cartesian_product($i_plus_seq, ones(2, 1)); # col3,4=ones
+    $i_plus_seq->slice('(3)') .= sequence($ne)->dummy(1, $ne)->clump(-1); # col3=sequence of coords
+    $i_plus_seq->slice('(4)') += $i_plus_seq->slice('(0)') != $i_plus_seq->slice('(1)'); # col4=factor
+    $matrix->indexND($i_plus_seq->slice('3:2')) .=
+      $i_plus_seq->slice('(4)')*$unitPairs->indexND($i_plus_seq->dice([0,2])) *
+      $unitPairs->indexND($i_plus_seq->slice('1:2'));
     return $matrix;
 }
 
