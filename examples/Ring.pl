@@ -44,6 +44,7 @@ use Photonic::LE::NR2::Haydock;
 use Photonic::WE::R2::Metric;
 use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::GreenP;
+use Photonic::CharacteristicFuncions qw(ring);
 use PDL;
 use PDL::NiceSlice;
 
@@ -172,15 +173,6 @@ my $y=$o->(:,1:-1);
 my $wgp=gpwin('qt');
 $wgp->plot(xr=>[1.2,3],with=>'lines',lw=>2,$x,$y);
 #------------------------------------------------------------
-
-sub ring {
-    my $N=shift;
-    my $ra=(shift)*(2*$N+1);  #Note: it was $N
-    my $rb=(shift)*(2*$N+1);
-    my $z=zeroes(2*$N+1, 2*$N+1);
-    my $B=($z->rvals<=$rb) & ($z->rvals >= $ra);
-    return $B;
-}
 
 sub eps{
     my $epsi=shift;
