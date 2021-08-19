@@ -137,7 +137,7 @@ sub applyOperator {
 }
 
 sub innerProduct {
-    return HProd($_[1], $_[2]); #skip self, Hermitian product
+    return HProd(@_[1,2], $_[0]->ndims); #skip self, Hermitian product
 }
 
 sub magnitude { #magnitude of a state

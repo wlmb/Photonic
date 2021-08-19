@@ -174,15 +174,12 @@ sub mvN {
 }
 
 sub HProd { #Hermitean product between two fields. skip first 'skip' dims
-    my $first=shift;
-    my $second=shift;
-    my $skip=shift//0;
-    my $ndims=$first->ndims;
-    confess "Dimensions should be equal, instead: first=", $first->info, " second=", $second->info
-	unless $ndims == $second->ndims;
+    my ($first, $second, $dims, $skip)=@_;
+    $skip//=0;
     my $prod=$first->conj*$second;
-    # clump all except skip dimensions, protecto index and sum.
-    mvN($prod, 0, $skip-1, -1)->clump(-$skip-1)->sumover;
+    # clump $dims dimensions, protecto index and sum.
+    my $moved=mvN($prod, 0, $skip-1, $skip+$dims-1);
+    ($dims ? $moved->clump($dims) : $moved)->sumover;
 }
 
 sub MHProd { #Hermitean product between two fields with metric. skip
@@ -495,10 +492,11 @@ Rotates each dimension from C<$start> to C<$end> by 1, to opposite corner.
 Returns ndarray of coordinates of the lower triangle of a square $n*$n
 matrix, either with or without the diagonal. Ordered by column, then row.
 
-=item * $p=HProd($a, $b, $skip)
+=item * $p=HProd($a, $b, $dims, $skip)
 
 Hermitean product <a|b> of two 'complex' multidimensional
-pdls $a and $b. If $skip is present, preserve the first $skip
+pdls $a and $b. Only sums over $dims dimensions, allowing threading.
+If $skip is present, preserve the first $skip
 dimensions before adding up.
 
 =item * $p=MHProd($a, $b, $m, $skip)

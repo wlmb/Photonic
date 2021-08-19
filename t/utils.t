@@ -10,7 +10,7 @@ use TestUtils;
 my $x = zeroes(11)->r2C;
 $x->slice('0') .= 1;
 my $single_complex_1 = $x;
-my $got = HProd($x, $x);
+my $got = HProd($x, $x, 1);
 ok approx($got, r2C(1)), 'HProd' or diag "got:$got";
 $got = EProd($x, $x);
 ok approx($got, r2C(1)), 'EProd' or diag "got:$got";
