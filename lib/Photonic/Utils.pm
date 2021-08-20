@@ -75,9 +75,10 @@ sub dummyN {
 }
 
 sub linearCombineIt { #complex linear combination of states
-    my ($coefficients, $states)=@_; #complex states, ndarray of complex coefficients
+    my ($coefficients, $states, $thread_dims)=@_;
+    $thread_dims //= 0;
     $coefficients=dummyN($coefficients, $states->ndims-$coefficients->ndims);
-    ($coefficients*$states)->mv(-1,0)->sumover;
+    ($coefficients*$states)->mv(-$thread_dims-1,0)->sumover;
 }
 
 sub any_complex {
@@ -462,10 +463,11 @@ ndarray.
 Adds C<$how_many> (no-op if <= 0) dummy dimensions of size C<$dim_size>
 (default 1) in the C<$which_dim> (default 0) position.
 
-=item * $r=linearCombineIt($c, $it)
+=item * $r=linearCombineIt($c, $it, $thread_dims)
 
 Complex linear combination of states. $c is a 'complex'
 ndarray and $it is an ndarray of states from a L<Photonic::Roles::Haydock>.
+$thread_dims is the quantity of dimensions over which this is threaded.
 
 =item * $reordered=mvN($pdl, $start, $end, $to)
 
