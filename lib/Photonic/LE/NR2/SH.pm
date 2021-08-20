@@ -508,21 +508,14 @@ sub _build_P2LMCalt {
     my $states=$haydock->states;
     my $phi_G=linearCombineIt($phi_n, $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G, $self->ndims);
-
     my $beta_G=RtoG($B*GtoR($haydock->firstState,$ndims,0), $ndims,0);
     my $betaV_G=$beta_G->(*1)*$geom->GNorm;
     $states=$haydock->states->dummy(0);
-    my $betaV_n=PDL->pdl(
-	[map {HProd($betaV_G,top_slice($states, "($_)"), $self->ndims, 1)} (0..$nh-1)]
-	);
+    my $betaV_n=HProd($betaV_G,$states, $self->ndims, 1);
     my $psi = cgtsv($subdiag, $diag, $supradiag, $betaV_n->mv(0,-1)); # nx ny .... cartesian nh - threading
-    my $Ppsi = PDL->zeroes($ndims)->r2C;
     $states=$haydock->states;
-    foreach(0..$ndims-1){
-	my $psi_n = top_slice($psi, "($_)"); # nx ny .... cartesian
-	my $psi_G=linearCombineIt($psi_n, $states);
-	$Ppsi->(($_)) .= HProd($psi_G, $PexL_G, $self->ndims);
-    }
+    my $psi_G=linearCombineIt($psi, $states->dummy(-1), 1);
+    my $Ppsi = HProd($psi_G, $PexL_G, $self->ndims);
     my $P2M=$Pphi+$Ppsi+$PexM*$nelem; # Unnormalize Pex !!
     return $P2M->(,*1,*1);
 }
