@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromEpsilon;
-$Photonic::Geometry::FromEpsilon::VERSION = '0.018';
+$Photonic::Geometry::FromEpsilon::VERSION = '0.019';
 
 =encoding UTF-8
 
@@ -76,7 +76,7 @@ Photonic::Geometry::FromEpsilon
 
 =head1 VERSION
 
-version 0.018
+version 0.019
 
 =head1 SYNOPSIS
 

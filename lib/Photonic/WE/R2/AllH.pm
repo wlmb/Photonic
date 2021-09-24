@@ -1,5 +1,5 @@
 package Photonic::WE::R2::AllH;
-$Photonic::WE::R2::AllH::VERSION = '0.018';
+$Photonic::WE::R2::AllH::VERSION = '0.019';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::R2::AllH
 
 =head1 VERSION
 
-version 0.018
+version 0.019
 
 =head1 COPYRIGHT NOTICE
 

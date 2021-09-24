@@ -1,5 +1,5 @@
 package Photonic::WE::R2::EpsilonP;
-$Photonic::WE::R2::EpsilonP::VERSION = '0.018';
+$Photonic::WE::R2::EpsilonP::VERSION = '0.019';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::R2::EpsilonP
 
 =head1 VERSION
 
-version 0.018
+version 0.019
 
 =head1 COPYRIGHT NOTICE
 
