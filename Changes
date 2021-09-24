@@ -1,3 +1,13 @@
+- unify Reorthogonalize roles
+0.019 2021-09-24
+- Fix some tests
+
+0.018 2021-07-20
+- Correct filtering of vector fields
+
+0.017 2021-06-26
+- switch from PDL::Complex to native-complex
+
 0.016 2021-05-30
 - Factor several repetitive tasks
 - use PDL::FFTW3's new ability to take PDL::Complex inputs
