@@ -44,7 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::LE::NR2::SH;
-   my $nrsh=Photonic::LE::NR2::SH->new(shp=>$shp, epsA=>$epsA, epsB=>$epsB);
+   my $nrsh=Photonic::LE::NR2::SH->new(shp=>$shp, epsA1=>$epsA1, epsB1=>$epsB1,
+-                 epsA2=>$epsA2, epsB2=>$epsB2);
    my $PL_G=$nrsh->selfConsistentL_G;
 
 
@@ -58,15 +59,17 @@ using the continuous dipolium model.
 
 =over 4
 
-=item * new(shp=>$shp, epsA=>$epsA, epsB=>$epsB);
+item * new(shp=>$shp, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2,
+             epsB2=>epsB2);
 
 Initializes the structure
 
 $shp is a Photonic::LE::NR2::SHP object with the invariant part of
 the data structures for the calculations
 
-$epsA, $epsB are the dielectric functions of the A
-and B materials at the fundamental frequency
+$epsA1, $epsB1, $epsA2, $epsB2 are the dielectric functions of the A
+-and B materials at the fundamental and the second harmonic frequency
+
 
 =back
 
@@ -82,9 +85,13 @@ Invariant part of SHG calculator.
 
 Accessors handled by shp
 
-=item * epsA, epsB
+=item * epsA1, epsB1
 
 Dielectric functions of materials A and B at the fundamental frequency
+
+=item * epsA2, epsB2
+
+Dielectric functions of materials A and B at the second harmonic frequency
 
 =item * alpha1
 
@@ -197,13 +204,13 @@ use MooseX::StrictConstructor;
 has 'shp'=>(is=>'ro', 'isa'=>'Photonic::LE::NR2::SHP', required=>1,
     handles=>[qw(ndims nrf densityA densityB density haydock)],
     documentation=>'Object with invariant part of SHG calculation');
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
+has 'epsA1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
     documentation=>'Fundamental dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
+has 'epsB1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
         documentation=>'Fundamental dielectric function of inclusions');
-has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1, builder => '_build_epsA2',
+has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
     documentation=>'SH Dielectric function of host');
-has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1, builder => '_build_epsB2',
+has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
         documentation=>'SH Dielectric function of inclusions');
 has 'alpha1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
          lazy=>1, builder=>'_build_alpha1',
@@ -300,34 +307,24 @@ has 'P2LMCalt'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
 has 'filterflag'=>(is=>'rw',
          documentation=>'Filter results in reciprocal space');
 
-sub _build_epsA2 {
-    my $self=shift;
-    $self->epsA * $self->epsA;
-}
-
-sub _build_epsB2 {
-    my $self=shift;
-    $self->epsB * $self->epsB;
-}
-
 sub _alpha {
     my $self=shift;
     my $epsA=shift;
     my $epsB=shift;
-    my $alphaA1=my $alphaB1=PDL::r2C(0);
-    $alphaA1=($epsA-1)/(4*$self->densityA*PI) unless
+    my $alphaA=my $alphaB=PDL::r2C(0);
+    $alphaA=($epsA-1)/(4*$self->densityA*PI) unless
 	$self->densityA==0;
-    $alphaB1=($epsB-1)/(4*$self->densityB*PI) unless
+    $alphaB=($epsB-1)/(4*$self->densityB*PI) unless
 	$self->densityB==0;
-    $alphaA1=$alphaB1 if $self->densityA==0;
-    $alphaB1=$alphaA1 if $self->densityB==0;
+    $alphaA=$alphaB if $self->densityA==0;
+    $alphaB=$alphaA if $self->densityB==0;
     my $B=$self->nrf->haydock->B;
-    $alphaA1*(1-$B)+$B*$alphaB1;
+    $alphaA*(1-$B)+$B*$alphaB;
 }
 
 sub _build_alpha1 {
     my $self=shift;
-    $self->_alpha($self->epsA,$self->epsB);
+    $self->_alpha($self->epsA1,$self->epsB1);
 }
 
 sub _build_alpha2 {
@@ -338,7 +335,7 @@ sub _build_alpha2 {
 
 sub _build_field1 {
     my $self=shift;
-    $self->nrf->evaluate($self->epsA, $self->epsB);
+    $self->nrf->evaluate($self->epsA1, $self->epsB1);
 }
 
 sub _build_field2 {

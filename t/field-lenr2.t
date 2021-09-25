@@ -70,7 +70,7 @@ my $nrshp=Photonic::LE::NR2::SHP->new(
   nrf=>$fto, densityA=>$dA, densityB=>$dB,
 );
 my $nrsh=Photonic::LE::NR2::SH->new(
-  shp=>$nrshp, epsA=>$ea, epsB=>$eb,
+  shp=>$nrshp, epsA1=>$ea, epsB1=>$eb, epsA2=>$ea*$ea, epsB2=>$eb*$eb,
   filterflag => 1
 );
 my $got=$nrsh->dipolar;
@@ -323,11 +323,11 @@ ok(Cagree($got, $expected, 1e-46), "P2LMCalt") or diag "got: $got\nexpected: $ex
 my $chi=Photonic::LE::NR2::SHChiTensor->new(
   geometry=>$gl,
   densityA=>$dA, densityB=>$dB, nhf=>10, nh=>10,
-  epsA=>$ea, epsB=>$eb,
+  epsA1=>$ea, epsB1=>$eb, epsA2=>$ea*$ea, epsB2=>$eb*$eb,
   keepStates=>1,
 );
 $got = Photonic::LE::NR2::SH->new(
-  shp=>$chi->nrshp->[0], epsA=>$ea, epsB=>$eb,
+  shp=>$chi->nrshp->[0], epsA1=>$ea, epsB1=>$eb,epsA2=>$ea*$ea, epsB2=>$eb*$eb,
   filterflag=>0
 )->P2;
 $expected = pdl(<<'EOF');

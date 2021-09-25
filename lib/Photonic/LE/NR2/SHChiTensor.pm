@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    use Photonic::LE::NR2::SHChiTensor;
    my $chi=Photonic::LE::NR2::SHChiTensor->new(geometry=>$g,
            densityA=>$dA, densityB=>$dB, nh=>$nh, nhf=>$nhf,
-           epsA=>$epsA, epsB=>$epsB,
+           epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2, epsB2=>$epsB2,
            filter=>$f, filterflag=>$ff);
    my $chiTensor=$chi->evaluate;
 
@@ -77,7 +77,7 @@ $ff is a (maybe smooth) cutoff function in reciprocal space to smothen the geome
 $smallH and $smallE are the criteria of convergence (default 1e-7) for
 haydock coefficients and continued fraction.
 
-=item * evaluate($epsA, $epsB, [kind=>$kind,] [mask=>$mask] )
+=item * evaluate([kind=>$kind,] [mask=>$mask] )
 
 Returns the macroscopic second Harmonic susceptibility function for a
 given value of the dielectric functions of the host $epsA and the
@@ -122,9 +122,9 @@ Maximum number of Haydock coefficients for field calculation
 
 Optional filter to multiply by in reciprocal space
 
-=item * epsA, epsB
+-=item * epsA1, epsB1, epsA2, epsB2
 
-Dielectric functions of components A and B at fundamental frequency
+Dielectric functions of components A and B at fundamental and SH frequency
 
 =item * nrshp
 
@@ -205,13 +205,13 @@ has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 
 #accessors
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+has 'epsA1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
     documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+has 'epsB1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
         documentation=>'Dielectric function of inclusions');
-has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1, builder => '_build_epsA2',
-    documentation=>'Dielectric function of host');
-has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1, builder => '_build_epsB2',
+has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
+    documentation=>'Dielectric function of host at SH');
+has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
         documentation=>'Dielectric function of inclusions');
 has 'nrshp' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::SHP]',
             init_arg=>undef, lazy=>1, builder=>'_build_nrshp',
@@ -241,20 +241,13 @@ my %KIND2METHOD = (
 );
 my %KIND2SUBTRACT = map +($_=>1), qw(f l a);
 
-sub _build_epsA2 {
-    my $self=shift;
-    $self->epsA * $self->epsA;
-}
-
-sub _build_epsB2 {
-    my $self=shift;
-    $self->epsB * $self->epsB;
-}
 
 sub evaluate {
     my $self=shift;
-    my $epsA1=$self->epsA;
-    my $epsB1=$self->epsB;
+    my $epsA1=$self->epsA1;
+    my $epsB1=$self->epsB1;
+    my $epsA2=$self->epsA2;
+    my $epsB2=$self->epsB2;
     my %options=@_; #the rest are options. Currently, kind and mask.
     my $kind=lc($options{kind}//'f');
     my $mask=$options{mask};
@@ -264,7 +257,7 @@ sub evaluate {
     my $method = $KIND2METHOD{$kind};
     foreach(@{$self->nrshp}){
 	my $nrsh=Photonic::LE::NR2::SH->new(
-	    shp=>$_, epsA=>$epsA1, epsB=>$epsB1,
+	    shp=>$_, epsA1=>$epsA1, epsB1=>$epsB1, epsA2=>$epsA2, epsB2=>$epsB2,
 	    filterflag=>0);
 	# XorY,nx,ny
 	# dipolar, quadrupolar, external, full
