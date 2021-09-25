@@ -89,8 +89,8 @@ has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
 has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
         documentation=>'Dielectric function of inclusions');
 
-with 'Photonic::Roles::EpsTensor';
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
+with 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsTensor', 'Photonic::Roles::KeepStates';
+
 
 __PACKAGE__->meta->make_immutable;
 

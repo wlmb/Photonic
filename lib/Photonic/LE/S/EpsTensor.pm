@@ -71,8 +71,9 @@ has allh_attrs=>(is=>'ro', default=>sub{[qw(reorthogonalize use_mask mask)]});
 has epsl_class=>(is=>'ro', default=>'Photonic::LE::S::EpsL');
 has epsl_attrs=>(is=>'ro', default=>sub{[qw(nh smallE)]});
 
-with 'Photonic::Roles::EpsTensor';
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
+with 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsTensor',
+    'Photonic::Roles::KeepStates', 'Photonic::Roles::EpsFromGeometry';
+
 
 __PACKAGE__->meta->make_immutable;
 

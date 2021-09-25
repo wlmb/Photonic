@@ -83,8 +83,7 @@ has epsl_attrs=>(is=>'ro', default=>sub{[qw(nh smallE)]});
 
 has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1);
 
-with 'Photonic::Roles::EpsTensor';
-with 'Photonic::Roles::KeepStates';
+with 'Photonic::Roles::EpsTensor', 'Photonic::Roles::KeepStates';
 
 __PACKAGE__->meta->make_immutable;
 

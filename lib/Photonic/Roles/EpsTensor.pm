@@ -144,6 +144,10 @@ use Photonic::Types;
 
 requires qw(allh_class allh_attrs epsl_class epsl_attrs);
 
+sub dims; # Forward declarations to allow some role compositions
+sub ndims; # recommended by Moose::Manual::Roles
+sub geometry;
+
 has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
     handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
 );

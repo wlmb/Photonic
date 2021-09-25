@@ -261,10 +261,9 @@ has 'storeAllFN' =>(is=>'ro', required=>1, default=>undef,
 		    documentation=>'Name of file to store everything');
 has 'loadAllFN' =>(is=>'ro', required=>1, default=>undef,
 		    documentation=>'Name of file to load everything from');
-with 'Photonic::Roles::KeepStates';
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::Reorthogonalize';
 requires qw(iterate magnitude innerProduct
     _checkorthogonalize);
-with 'Photonic::Roles::Reorthogonalize';
 
 my @allfields= (@cero_fields, (map "$_->[0]s", @poly_coeffs),
     qw(iteration keepStates current_a next_g current_state
