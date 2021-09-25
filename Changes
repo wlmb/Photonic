@@ -1,4 +1,6 @@
+- fix filling fraction of integer characteristic functions
 - unify Reorthogonalize roles
+
 0.019 2021-09-24
 - Fix some tests
 
