@@ -89,10 +89,10 @@ my $fn = make_fn(); #output file name
     #partial restore allh from previous calculation
     my ($a, $g) = make_store(zeroes(11)->xvals<5, [1], 1, {keepStates=>1, storeAllFN=>$fn});
     is($a->iteration, 1, "Can stop before exhausting coefficients 1D L");
-    my $a2=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10,
+    my $a2=Photonic::LE::NR2::Haydock->new(geometry=>$g, nh=>10,
 					keepStates=>1, loadAllFN=>$fn);
     $a2->run;
-    my $a3=Photonic::LE::NR2::AllH->new(geometry=>$g, nh=>10, keepStates=>1);
+    my $a3=Photonic::LE::NR2::Haydock->new(geometry=>$g, nh=>10, keepStates=>1);
     $a3->run;
     foreach(qw(iteration as bs b2s cs bcs gs)){
 	ok(agree(pdl($a2->$_), pdl($a3->$_)), "1D L retarted $_");

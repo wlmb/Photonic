@@ -86,7 +86,7 @@ response $epsA is taken from the metric.
 
 The macroscopic wave operator of the last operation
 
-=item * All accesors of Photonic::WE::S::Green
+=item * All accessors of Photonic::WE::S::Green
 
 
 =back

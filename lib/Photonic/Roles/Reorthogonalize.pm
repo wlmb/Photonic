@@ -1,5 +1,5 @@
-package Photonic::Roles::ReorthogonalizeC;
-$Photonic::Roles::ReorthogonalizeC::VERSION = '0.019';
+package Photonic::Roles::Reorthogonalize;
+$Photonic::Roles::Reorthogonalize::VERSION = '0.018';
 
 =encoding UTF-8
 
@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
     package 'Mypackage';
-    with 'Photonic::Roles::ReorthogonalizeC';
+    with 'Photonic::Roles::Reorthogonalize';
     .
     .
     .
@@ -50,14 +50,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Roles consumed by AllH objects to be used in a Photonic
+Role consumed by AllH objects to be used in a Photonic
 calculation. Estimates orthogonalization errors and makes a full
 reorthogonalization of Haydock states when required. This version works
+for both Hermitian operators with real Haydock coefficients, and
 for non Hermitian operators with complex Haydock coefficients.
 
 =head1 ATTRIBUTES
 
 =over 4
+
+=item * complexCoeffs
 
 =item * previous_W, current_W, next_W
 
@@ -106,10 +109,15 @@ Flags a recent orthogonalization.
 
 =item * _checkorthogonalize
 
+=item * _sign
+
+Only used with real coefficients.
+
 =item * _arg
 
-=back
+Only used with complex coefficients.
 
+=back
 
 =cut
 
@@ -120,14 +128,16 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use Moose::Role;
 
+requires 'complexCoeffs';
+
 has 'previous_W' =>(is=>'ro',
      writer=>'_previous_W', lazy=>1, init_arg=>undef,
-     default=>sub{PDL::r2C(0)->(*1)},
+     default=>sub{PDL->pdl([0])},
      documentation=>"Row of error matrix"
 );
 has 'current_W' =>(is=>'ro',
      writer=>'_current_W', lazy=>1, init_arg=>undef,
-     default=>sub{PDL::r2C(0)->(*1)},
+     default=>sub{PDL->pdl([0])},
      documentation=>"Row of error matrix"
 );
 has 'next_W' =>(is=>'ro',
@@ -149,16 +159,15 @@ has 'orthogonalizations'=>(is=>'ro', init_arg=>undef, default=>0,
 has '_justorthogonalized'=>(
     is=>'ro', init_arg=>undef, default=>0,
     writer=>'_write_justorthogonalized',
-    documentation=>'Flag I just orthogonnalized');
+    documentation=>'Flag I just orthogonalized');
 
 sub _build_next_W {
     my $self=shift;
     my $g_n=$self->current_g;
-    return PDL::r2C($g_n)->(*1);
+    return PDL->pdl([$g_n]);
 }
 
-around '_fullorthogonalize_indeed' => sub {
-    my $orig=shift; #won't use
+sub _fullorthogonalize_indeed {
     my $self=shift;
     my $psi=shift; #state to orthogonalize
     return $psi unless $self->fullorthogonalize_N;
@@ -166,71 +175,68 @@ around '_fullorthogonalize_indeed' => sub {
     $self->_orthogonalizations($self->orthogonalizations+1);
     $self->_write_justorthogonalized(1);
     my $it=$self->state_iterator;
-    for my $g(@{$self->gs}){
+    for my $g($self->gs->dog){
+	#for every saved state
 	my $s=$it->nextval;
 	$psi=$psi-$g*$self->innerProduct($s, $psi)*$s;
     }
     return $psi;
 };
 
+# returns the number of states to unwind
 sub _checkorthogonalize {
     my $self=shift;
-    return unless defined $self->nextState;
-    return unless $self->reorthogonalize;
-    return if $self->fullorthogonalize_N; #already orthogonalizing
+    return 0 unless defined $self->next_state;
+    return 0 if $self->fullorthogonalize_N; #already orthogonalizing
     my $n=$self->iteration;
     my $a=$self->as;
     my $b=$self->bs;
     my $c=$self->cs;
     if($self->_justorthogonalized){
 	$self->_write_justorthogonalized(0);
-	my $current_W=PDL->ones($n)*PDL::r2C($self->noise);
-	my $next_W=PDL->ones($n+1)*PDL::r2C($self->noise);
-	$current_W->(-1).=PDL::r2C($self->current_g);
-	$next_W->(-1).=PDL::r2C($self->next_g);
+	my $current_W=PDL->ones($n)*$self->noise;
+	my $next_W=PDL->ones($n+1)*$self->noise;
+	$current_W->(-1).=$self->current_g;
+	$next_W->(-1).=$self->next_g;
 	$self->_current_W($current_W);
 	$self->_next_W($next_W);
-	return;
+	return 0;
     }
     $self->_previous_W(my $previous_W=$self->current_W);
     $self->_current_W(my $current_W=$self->next_W);
-    my $next_W;
+    my $next_W=PDL->pdl([]);
+    my $method = $self->complexCoeffs ? '_arg' : '_sign';
     if($n>=2){
 	$next_W= $b->(1:-1)*$current_W->(1:-1)
 	    + ($a->(0:-2)-$a->(($n-1)))*$current_W->(0:-2)
 	    - $c->(($n-1))*$previous_W;
-	$next_W->(1:-1).=$next_W->(1:-1)+
-	    $c->(1:-2)*$current_W->(0:-3) if ($n>=3);
-	$next_W=$next_W+_arg($next_W)*2*$self->normOp*$self->noise;
+	$next_W->(1:-1)+=$c->(1:-2)*$current_W->(0:-3) if ($n>=3);
+	$next_W+=$self->$method($next_W)*2*$self->normOp*$self->noise;
 	$next_W=$next_W/$self->next_b;
     }
-    $next_W=PDL::r2C($self->noise)->(*1) if $n==1;
-    $next_W=$next_W->append($self->noise) if $n>=2;
-    $next_W=$next_W->append(PDL::r2C($self->next_g));
+    $next_W=$next_W->append($self->noise) if $n>=1;
+    $next_W=$next_W->append($self->next_g);
     $self->_next_W($next_W);
-    return unless $n>=2;
+    return 0 unless $n>=2;
     my $max=$next_W->(0:-2)->abs->maximum;
-    if($max > sqrt($self->accuracy)){
-	#recalculate the last two states with full reorthogonalization
-	my $orthos=1; #number of reorthogonalizations
-	$self->_fullorthogonalize_N($orthos); #1 states, but check
-				#until 2nd state
-	$self->_pop; #undoes stack
-	if($n>3){ #usual case
-	    ++$orthos;
-	    $self->_fullorthogonalize_N($orthos); #2 states, but
-				#check until 3d state
-	    $self->_pop; #undo stack again
-	}
-    }
+    return 0 unless $max > sqrt($self->accuracy);
+    #recalculate the last $ortho states with full reorthogonalization
+    my $orthos=$n>3 ? 2 : 1; #number of reorthogonalizations
+    $self->_fullorthogonalize_N($orthos); #$ortho states, but check until that+1 state
+    $orthos;
+}
+
+sub _sign {
+    my (undef, $s)=@_;
+    2*($s>=0)-1;
 }
 
 sub _arg {
-    my $s=shift->copy;
+    my $s=$_[1]->copy;
     my $a=$s->abs;
-    $s->re->where($a==0).=1;
+    $s->where($a==0).=1;
     $a->where($a==0).=1;
-    my $arg=$s/$a;
+    $s/$a;
 }
 
 no Moose::Role;

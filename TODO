@@ -1,5 +1,6 @@
 # -*- mode: org; -*-
 
+* TODO [2021-09-25 Sat] Check if it is clear that complexCoeffs is equivalent to non is_hermitian
 * DONE Return as, bs, b2s as pdl instead of array?
 * DONE Check upper iterations in continued fractions
 * DONE Factor out OneH?

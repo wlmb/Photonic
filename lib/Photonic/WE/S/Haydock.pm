@@ -1,11 +1,11 @@
-package Photonic::WE::S::OneH;
-$Photonic::WE::S::OneH::VERSION = '0.019';
+package Photonic::WE::S::Haydock;
+$Photonic::WE::S::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::WE::S::OneH
+Photonic::WE::S::Haydock
 
 =head1 VERSION
 
@@ -13,13 +13,13 @@ version 0.019
 
 =head1 SYNOPSIS
 
-    use Photonic::WE::S::OneH;
-    my $nr=Photonic::WE::S::OneH->new(metric=>$g, polarization=>$p);
+    use Photonic::WE::S::Haydock;
+    my $nr=Photonic::WE::S::Haydock->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
     say $nr->next_b2;
-    my $state=$nr->nextState;
+    my $state=$nr->next_state;
 
 =head1 DESCRIPTION
 
@@ -28,65 +28,28 @@ the calculation of the retarded dielectric function of arbitrary
 periodic systems in arbitrary number of dimensions,  one
 Haydock coefficient at a time. It uses the wave equation and the spinor representation.
 
-=head1 METHODS
+Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::UseMask>,
+L<Photonic::Roles::EpsFromGeometry>
+- please see those for attributes.
 
-=over 4
-
-=item * new(metric=>$m, polarization=>$e, [, smallH=>$s])
-
-Create a new Ph::OneH::R2 object with PDL::Metric::R2 $m, with a
-field along the complex direction $e and with small convergence parameter $s.
-
-=back
-
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
 =item * metric Photonic::WE::S::Metric
 
 A L<Photonic::WE::S::Metric> object defining the geometry of the
-system, the charateristic function, the wavenumber, wavevector and
+system, the characteristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
+
+=item * B ndims dims epsilon
+
+Accessors handled by metric (see L<Photonic::WE::S::Metric>)
 
 =item * polarization complex PDL
 
 A non null vector defining the complex direction of the macroscopic
 field.
-
-=item * smallH
-
-A small number used as tolerance to end the iteration. Small enough
-b^2 coefficients are taken to be zero. From L<Photonic::Roles::EpsParams>.
-
-=item * B ndims dims epsilon
-
-Accesors handled by metric (see L<Photonic::WE::S::Metric>)
-
-=item * previousState currentState nextState
-
-The n-1-th, n-th and n+1-th Haydock states at the n-th iteration; a complex vector-spinor for each
-reciprocal wavevector. Dimensions ri,xy,pm,nx,ny...
-
-=item * current_a
-
-The n-th Haydock coefficient a
-
-=item * current_b2 next_b2 current_b next_b
-
-The n-th and n+1-th b^2 and b Haydock coefficients
-
-=item * next_c
-
-The n+1-th c Haydock coefficient
-
-=item * previous_g current_g next_g
-
-The n-1-th n-th and n+1-th g Haydock coefficients
-
-=item * iteration
-
-Number n of completed iterations
 
 =back
 
@@ -94,15 +57,15 @@ Number n of completed iterations
 
 =over 4
 
-=item * iterate
-
-Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_c, next_g, next_state, shifting the current values where
-necessary. Returns 0 when unable to continue iterating.
-
 =item * applyMetric($psi)
 
 Returns the result of applying the metric to the state $psi.
+
+=back
+
+=head1 ATTRIBUTES SUPPLIED FOR ROLE
+
+=over 4
 
 =item * applyOperator($psi_G)
 
@@ -125,19 +88,7 @@ Returns 0, as there is no need to change sign.
 
 =back
 
-=head1 INTERNAL METHODS
-
-=over 4
-
-=item * $s= _firstState($self)
-
-Returns the first state $v.
-
-=back
-
 =cut
-
-
 
 =head1 COPYRIGHT NOTICE
 
@@ -169,7 +120,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
-
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -188,17 +138,15 @@ has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH',  'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
-
-#Required by Photonic::Roles::OneH
+with 'Photonic::Roles::Haydock',  'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
 
 sub applyOperator {
     my $self=shift;
-    my $psi=shift; #psi is ri:xy:pm:nx:ny
+    my $psi=shift; #psi is xy:pm:nx:ny
     my $mask=undef;
     $mask=$self->mask if $self->use_mask;
     my $gpsi=$self->applyMetric($psi);
-    # gpsi is ri:xy:pm:nx:ny. Get cartesian and pm out of the way and
+    # gpsi is xy:pm:nx:ny. Get cartesian and pm out of the way and
     my $gpsi_r=GtoR($gpsi, $self->ndims, 2)->mv(0,-1)->mv(0,-1);
     #nx:ny:xy:pm
     my $H=($self->epsilonR-$self->epsilon)/$self->epsilonR;
@@ -262,7 +210,6 @@ sub _firstState { #\delta_{G0}
                        # xy:pm:nx:ny
     return $phi;
 }
-
 
 __PACKAGE__->meta->make_immutable;
 

@@ -56,13 +56,13 @@ subtype 'Photonic::Types::GeometryG0' =>
   where { $_->has_Direction0 },
   message { "You should define a direction for G=0 reciprocal vector" };
 
-subtype 'Photonic::Types::AllH' =>
+subtype 'Photonic::Types::Haydock' =>
   as 'Ref',
-  where { $_->does('Photonic::Roles::AllH')},
+  where { $_->does('Photonic::Roles::Haydock')},
   message { "Expected an AllH" };
 
-subtype 'Photonic::Types::AllHSave' =>
-  as 'Photonic::Types::AllH',
+subtype 'Photonic::Types::HaydockSave' =>
+  as 'Photonic::Types::Haydock',
   where { $_->keepStates == 1 },
     message { "Can't calculate fields if you don't keepStates" };
 
@@ -111,7 +111,7 @@ Array of OddInts
 
 Photonic::Geometry with a direction for G=0 reciprocal vector
 
-=item * Photonic::Types::NonRetarded::AllHSave
+=item * Photonic::Types::NonRetarded::HaydockSave
 
 Photonic::NonRetarded:AllH object where the keepStates flag has been
 turned on.

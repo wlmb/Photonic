@@ -1,11 +1,11 @@
-package Photonic::LE::S::OneH;
-$Photonic::LE::S::OneH::VERSION = '0.019';
+package Photonic::LE::S::Haydock;
+$Photonic::LE::S::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::LE::S::OneH
+Photonic::LE::S::Haydock
 
 =head1 VERSION
 
@@ -43,14 +43,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-    use Photonic::LE::S::OneH;
-    my $nr=Photonic::LE::S::OneH->new(epsilon=>$epsilon,
+    use Photonic::LE::S::Haydock;
+    my $nr=Photonic::LE::S::Haydock->new(epsilon=>$epsilon,
            geometry=>$geometry);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
     say $nr->next_b2;
-    my $state=$nr->nextState;
+    my $state=$nr->next_state;
 
 =head1 DESCRIPTION
 
@@ -59,69 +59,24 @@ the calculation of the non retarded dielectric function of arbitrary
 periodic N component systems in arbitrary number of dimensions. One
 Haydock coefficient at a time. Use k,-k spinors. MQ notes.
 
-=head1 METHODS
+Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::UseMask>,
+L<Photonic::Roles::EpsFromGeometry>
+- please see those for attributes.
+
+=head1 ATTRIBUTES SUPPLIED FOR ROLE
+
+These are provided for roles:
 
 =over 4
-
-=item * new(epsilon=>$e, geometry=>$g[, smallH=>$s])
-
-Create a new Photonic::LE::S::OneH object with GeometryG0 $g, dielectric
-function $e and optional smallness parameter  $s.
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * epsilon
-
-A complex PDL giving the value of the dielectric function epsilon
-for each pixel of the system
 
 =item * geometry Photonic::Types::GeometryG0
 
 A Photonic::Geometry object defining the geometry of the system,
-the charateristic function and the direction of the G=0 vector. Should
-be given in the initializer.
+the characteristic function and the direction of the G=0 vector. Required.
 
 =item * B ndims dims r G GNorm L scale f
 
-Accesors handled by geometry (see Photonic::Geometry)
-
-=item * smallH
-
-A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero.
-
-=item * previousState currentState nextState
-
-The n-1-th, n-th and n+1-th Haydock states; a complex 2-spinor for each
-reciprocal vector.
-
-=item * current_a
-
-The n-th Haydock coefficient a
-
-=item * current_b2 next_b2 current_b next_b
-
-The n-th and n+1-th b^2 and b Haydock coefficients
-
-=item * iteration
-
-Number of completed iterations
-
-=back
-
-=head1 METHODS
-
-=over 4
-
-=item * iterate
-
-Performs a single Haydock iteration and updates current_a, next_state,
-next_b2, next_b, shifting the current values where necessary. Returns
-0 when unable to continue iterating.
+Accessors handled by geometry (see Photonic::Geometry)
 
 =item * applyOperator($psi_G)
 
@@ -145,16 +100,6 @@ Returns 0, as there is no need to change sign.
 
 =back
 
-=head1 INTERNAL METHODS
-
-=over 4
-
-=item * _firstState
-
-Returns the first state.
-
-=back
-
 =cut
 
 use namespace::autoclean;
@@ -171,9 +116,9 @@ has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
     );
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
-with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
+with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsFromGeometry';
 
-#Required by Photonic::Roles::OneH
+#Required by Photonic::Roles::Haydock
 
 sub _firstState { #\delta_{G0}
     my $self=shift;

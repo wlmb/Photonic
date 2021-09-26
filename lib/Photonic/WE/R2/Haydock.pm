@@ -1,5 +1,5 @@
-package Photonic::WE::R2::OneH;
-$Photonic::WE::R2::OneH::VERSION = '0.019';
+package Photonic::WE::R2::Haydock;
+$Photonic::WE::R2::Haydock::VERSION = '0.018';
 
 =encoding UTF-8
 
@@ -50,8 +50,7 @@ has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
-with 'Photonic::Roles::OneH', 'Photonic::Roles::UseMask';
-
+with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask';
 
 sub applyOperator {
     my $self=shift;
@@ -119,7 +118,7 @@ sub _firstState {
     $e=$e/sqrt($modulus2);
     $self->_normalizedPolarization($e);
     my $phi=$e*$v(*1); #initial state ordinarily normalized
-                       # RorI xyz nx ny nz
+                       # xyz nx ny nz
     return $phi;
 }
 
@@ -129,7 +128,7 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 
-Photonic::OneH::R2
+Photonic::WE::R2::Haydock
 
 =head1 VERSION
 
@@ -137,13 +136,13 @@ version 0.019
 
 =head1 SYNOPSIS
 
-    use Photonic::OneH::R2;
-    my $nr=Photonic::OneH::R2->new(metric=>$g, polarization=>$p);
+    use Photonic::WE::R2::Haydock;
+    my $nr=Photonic::WE::R2::Haydock->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
     say $nr->next_b2;
-    my $state=$nr->nextState;
+    my $state=$nr->next_state;
 
 =head1 DESCRIPTION
 
@@ -152,86 +151,48 @@ the calculation of the retarded dielectric function of arbitrary
 periodic two component systems in arbitrary number of dimentions. One
 Haydock coefficient at a time.
 
-=head1 METHODS
+Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::UseMask>
+- please see those for attributes.
+
+=head1 ATTRIBUTES
 
 =over 4
 
-=item * new(metric=>$m, polarization=>$e, [, smallH=>$s])
-
-Create a new Ph::OneH::R2 object with PDL::Metric::R2 $m, with a
-field along the complex direction $e and with smallness parameter  $s.
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * metric Photonic::Metric::R2
+=item * metric
 
 A Photonic::Metric::R2 object defining the geometry of the
-system, the charateristic function, the wavenumber, wavevector and
+system, the characteristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
+
+=item * B ndims dims epsilon
+
+Accessors handled by metric (see Photonic::Metric::R2)
 
 =item * polarization
 
 A non null vector defining the complex direction of the macroscopic
 field.
 
-=item * smallH
-
-A small number used as tolerance to end the iteration. Small negative
-b^2 coefficients are taken to be zero.
-
-=item * B ndims dims epsilon
-
-Accesors handled by metric (see Photonic::Metric::R2)
-
-=item * previousState currentState nextState
-
-The n-1-th, n-th and n+1-th Haydock states; a complex vector for each
-reciprocal wavevector
-
-=item * current_a
-
-The n-th Haydock coefficient a
-
-=item * current_b2 next_b2 current_b next_b
-
-The n-th and n+1-th b^2 and b Haydock coefficients
-
-=item * next_c
-
-The n+1-th c Haydock coefficient
-
-=item * previous_g current_g next_g
-
-The n-1-th n-th and n+1-th g Haydock coefficients
-
-=item * iteration
-
-Number of completed iterations
-
 =back
 
 =head1 METHODS
 
 =over 4
 
-=item * iterate
-
-Performs a single Haydock iteration and updates current_a, next_b,
-next_b2, next_c, next_g, next_state, shifting the current values where
-necessary. Returns 0 when unable to continue iterating.
-
 =item * applyMetric($psi)
 
 Returns the result of applying the metric 'g' to the state; $psi.
 
+=back
+
+=head1 ATTRIBUTES SUPPLIED FOR ROLE
+
+=over 4
+
 =item * applyOperator($psi_G)
 
 Apply the Hamiltonian operator to state. The Hamiltonian is Bg, with g
-the metric and B the characteriztic function. Also applies an optional
+the metric and B the characteristic function. Also applies an optional
 mask in reciprocal space.
 
 =item * innerProduct($left, $right)
@@ -246,16 +207,6 @@ the inner product of the state with itself.
 =item * changesign
 
 Returns 1 if sign change is required to ensure b^2 is positive.
-
-=back
-
-=head1 INTERNAL METHODS
-
-=over 4
-
-=item *  _firstState
-
-Returns the first state $v.
 
 =back
 
