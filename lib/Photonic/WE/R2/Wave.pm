@@ -1,5 +1,5 @@
 package Photonic::WE::R2::Wave;
-$Photonic::WE::R2::Wave::VERSION = '0.019';
+$Photonic::WE::R2::Wave::VERSION = '0.020';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::R2::Wave
 
 =head1 VERSION
 
-version 0.019
+version 0.020
 
 =head1 COPYRIGHT NOTICE
 

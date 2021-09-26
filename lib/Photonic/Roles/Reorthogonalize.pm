@@ -1,5 +1,5 @@
 package Photonic::Roles::Reorthogonalize;
-$Photonic::Roles::Reorthogonalize::VERSION = '0.018';
+$Photonic::Roles::Reorthogonalize::VERSION = '0.020';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Roles::ReorthogonalizeC
 
 =head1 VERSION
 
-version 0.019
+version 0.020
 
 =head1 COPYRIGHT NOTICE
 

@@ -1,5 +1,5 @@
 package Photonic::Types;
-$Photonic::Types::VERSION = '0.019';
+$Photonic::Types::VERSION = '0.020';
 
 =encoding UTF-8
 

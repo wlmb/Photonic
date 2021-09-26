@@ -1,5 +1,5 @@
 package Photonic::Utils;
-$Photonic::Utils::VERSION = '0.019';
+$Photonic::Utils::VERSION = '0.020';
 
 =encoding UTF-8
 
@@ -413,7 +413,7 @@ Photonic::Utils
 
 =head1 VERSION
 
-version 0.019
+version 0.020
 
 =head1 SYNOPSIS
 

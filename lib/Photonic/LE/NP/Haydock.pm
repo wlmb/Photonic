@@ -1,5 +1,5 @@
 package Photonic::LE::NP::Haydock;
-$Photonic::LE::NP::OneH::VERSION = '0.019';
+$Photonic::LE::NP::OneH::VERSION = '0.020';
 
 =encoding UTF-8
 
@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 VERSION
 
-version 0.019
+version 0.020
 
 =head1 SYNOPSIS
 
