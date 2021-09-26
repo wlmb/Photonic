@@ -1,11 +1,15 @@
 package Photonic::LE::NP::Haydock;
-$Photonic::LE::NP::OneH::VERSION = '0.020';
+$Photonic::LE::NP::Haydock::VERSION = '0.020';
 
 =encoding UTF-8
 
 =head1 NAME
 
 Photonic::LE::NP::Haydock
+
+=head1 VERSION
+
+version 0.020
 
 =head1 COPYRIGHT NOTICE
 
