@@ -133,6 +133,14 @@ Flags that the last calculation converged before using up all coefficients
 
 =back
 
+=begin Pod::Coverage
+
+=head2 dims
+
+=head2 ndims
+
+=end Pod::Coverage
+
 =cut
 
 use Moose::Role;
