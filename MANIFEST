@@ -4,6 +4,7 @@ data/half.png
 data/white.png
 examples/LE/NR2/epsM-L.pl
 examples/LE/NR2/field.pl
+examples/LE/NR2/honeycomb.pl
 examples/LE/NR2/toroid.pl
 examples/mortola.pl
 examples/Ring.pl
