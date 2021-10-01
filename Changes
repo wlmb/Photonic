@@ -1,3 +1,8 @@
+0.021 2021-10-01
+- Add example of honeycomb lattice for LE::NR2
+- Admit 'haydock' as an optional parameter in P::Roles::EpsTensor
+- Documentation P::LE::NR2::EpsTensor
+- Documentation P::Geometry::FromB
 
 0.020 2021-09-25
 - Admit Ed J (mohawk2) PR
