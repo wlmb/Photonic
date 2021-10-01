@@ -1,5 +1,5 @@
 package Photonic::Roles::KeepStates;
-$Photonic::Roles::KeepStates::VERSION = '0.020';
+$Photonic::Roles::KeepStates::VERSION = '0.021';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Roles::KeepStates
 
 =head1 VERSION
 
-version 0.020
+version 0.021
 
 =head1 COPYRIGHT NOTICE
 
