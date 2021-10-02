@@ -174,8 +174,6 @@ use Moose;
 
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'epsL'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
 	     writer=>'_epsL',
 	     documentation=>'Value of dielectric function'  );
