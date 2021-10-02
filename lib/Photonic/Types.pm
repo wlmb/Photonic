@@ -37,15 +37,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use Moose::Util::TypeConstraints;
 use Photonic::Utils qw(any_complex);
 
-subtype 'Photonic::Types::OddInt' =>
-    as 'Int',
-    where { $_ % 2 == 1 },
-    message { "Number $_ must be odd" };
-
-subtype 'Photonic::Types::ArrayOfOddInts' =>
-    as 'ArrayRef[Photonic::Types::OddInt]',
-    message { "Numbers [".join(", ", @$_). "] must have been odd" };
-
 subtype 'Photonic::Types::Geometry' =>
   as 'Ref',
   where { $_->does('Photonic::Roles::Geometry')},
@@ -88,7 +79,7 @@ version 0.008
    use Photonic::Types;
    package MyPackage;
    use Moose;
-   has 'n' => {is => 'ro', isa =>'Photonic::Types::OddInt'}
+   has 'n' => {is => 'ro', isa =>'Photonic::Types::Geometry'}
 
 =head1 DESCRIPTION
 
@@ -98,14 +89,6 @@ calculations.
 =head1 TYPES
 
 =over 4
-
-=item * Photonic::Types::OddInt
-
-Odd integer
-
-=item * Photonic::Types::ArrayOfOddInts
-
-Array of OddInts
 
 =item * Photonic::Types::GeometryG0
 
