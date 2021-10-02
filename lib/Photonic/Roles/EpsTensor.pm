@@ -147,8 +147,8 @@ use Moose::Role;
 use namespace::autoclean;
 use PDL::Lite;
 use Photonic::Utils qw(tensor make_haydock incarnate_as);
+use Photonic::Types -all;
 use List::Util qw(all);
-use Photonic::Types;
 
 requires qw(allh_class allh_attrs epsl_class epsl_attrs);
 
@@ -156,27 +156,27 @@ sub dims; # Forward declarations to allow some role compositions
 sub ndims; # recommended by Moose::Manual::Roles
 sub geometry;
 
-has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
+has 'geometry'=>(is=>'ro', isa => Geometry,
     handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
 );
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
-has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::Roles::Haydock]',
+has 'haydock' =>(is=>'ro', isa=>ArrayRef[Haydock],
             lazy=>1, builder=>'_build_haydock',
             documentation=>'Array of Haydock calculators');
-has 'epsL'=>(is=>'ro', isa=>'ArrayRef[Photonic::Roles::EpsL]',
+has 'epsL'=>(is=>'ro', isa=>ArrayRef[ConsumerOf['Photonic::Roles::EpsL']],
              init_arg=>undef, lazy=>1, builder=>'_build_epsL',
              documentation=>'Array of epsilon calculators');
-has 'epsTensor'=>(is=>'ro', isa=>'PDL', lazy=>1, builder=>'_build_epsTensor',
+has 'epsTensor'=>(is=>'ro', isa=>PDLObj, lazy=>1, builder=>'_build_epsTensor',
              documentation=>'Dielectric Tensor');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All EpsL evaluations converged in last evaluation');
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+has 'nh' =>(is=>'ro', isa=>Num, required=>1,
             documentation=>'Desired no. of Haydock coefficients');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
             documentation=>'Convergence criterium for Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
             documentation=>'Convergence criterium for use of Haydock coeff.');
 
 sub _build_epsTensor {

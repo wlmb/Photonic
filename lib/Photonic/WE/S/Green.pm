@@ -113,39 +113,39 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::WE::S::Haydock;
 use Photonic::WE::S::GreenP;
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator any_complex);
 use List::Util qw(all);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'metric'=>(is=>'ro', isa => 'Photonic::WE::S::Metric',
+has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WE::S::Metric'],
        handles=>[qw(geometry ndims dims)],required=>1);
 
-has 'haydock' =>(is=>'ro', isa=>'ArrayRef[Photonic::WE::S::Haydock]',
+has 'haydock' =>(is=>'ro', isa=>ArrayRef[Haydock],
             init_arg=>undef, lazy=>1, builder=>'_build_haydock',
 	    documentation=>'Array of Haydock calculators');
-has 'greenP'=>(is=>'ro', isa=>'ArrayRef[Photonic::WE::S::GreenP]',
+has 'greenP'=>(is=>'ro', isa=>ArrayRef[InstanceOf['Photonic::WE::S::GreenP']],
              init_arg=>undef, lazy=>1, builder=>'_build_greenP',
              documentation=>'Array of projected G calculators');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All greenP evaluations converged');
-has 'greenTensor'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'greenTensor'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
 	      lazy=>1, builder=>'_build_greenTensor',
              documentation=>'Greens Tensor');
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
-has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'waveOperator' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
                         lazy=>1, builder=>'_build_waveOperator',
                         documentation=>'Wave operator');
-has 'epsilonTensor' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'epsilonTensor' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
                          lazy=>1, builder=>'_build_epsilonTensor',
                          documentation=>'macroscopic response');
 

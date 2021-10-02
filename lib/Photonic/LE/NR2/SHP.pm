@@ -105,17 +105,18 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Moose;
+use Photonic::Types -all;
 use MooseX::StrictConstructor;
 
-has 'nrf'=>(is=>'ro', isa=>'Photonic::LE::NR2::Field', required=>1,
+has 'nrf'=>(is=>'ro', isa=>InstanceOf['Photonic::LE::NR2::Field'], required=>1,
          documentation=>'Haydock field calculator');
-has 'densityA'=>(is=>'ro', isa=>'Num', required=>1,
+has 'densityA'=>(is=>'ro', isa=>Num, required=>1,
          documentation=>'Normalized dipole entities density in medium A');
-has 'densityB'=>(is=>'ro', isa=>'Num', required=>1,
+has 'densityB'=>(is=>'ro', isa=>Num, required=>1,
          documentation=>'Normalized dipole entities density in medium B');
-has 'density'=>(is=>'ro', isa=>'PDL', writer=>'_density', init_arg=>undef,
+has 'density'=>(is=>'ro', isa=>PDLObj, writer=>'_density', init_arg=>undef,
          documentation=>'Normalized dipole entities density over unit cell');
-has 'ndims' =>(is=>'ro', isa=>'Int', init_arg=>undef, lazy=>1,
+has 'ndims' =>(is=>'ro', isa=>Int, init_arg=>undef, lazy=>1,
          builder=>'_ndims',
          documentation=>'Number of dimensions of system');
 

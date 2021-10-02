@@ -69,9 +69,9 @@ These are provided for roles:
 
 =over 4
 
-=item * geometry Photonic::Types::GeometryG0
+=item * geometry GeometryG0
 
-A Photonic::Geometry object defining the geometry of the system,
+A L<Photonic::Types/GeometryG0> object defining the geometry of the system,
 the characteristic function and the direction of the G=0 vector. Required.
 
 =item * B ndims dims r G GNorm L scale f
@@ -106,12 +106,12 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Carp;
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::Utils qw(SProd any_complex GtoR RtoG);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
+has 'geometry'=>(is=>'ro', isa => GeometryG0,
     handles=>[qw(B ndims dims r G GNorm L scale f pmGNorm)],required=>1
     );
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,

@@ -63,7 +63,7 @@ Initializes the structure.
 
 $haydock Photonic::WE::S::Haydock is a Haydock calculator for the
 structure, *initialized* with the flag keepStates=>1
-(Photonic::Types::HaydockSave, as defined in Photonic::Types).
+(L<Photonic::Types/HaydockSave>).
 
 $nh is the maximum number of Haydock coefficients to use.
 
@@ -132,21 +132,21 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::WE::S::Haydock;
 use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
-use Photonic::Types;
+use Photonic::Types -all;
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'haydock'=>(is=>'ro', isa=>'Photonic::Types::HaydockSave', required=>1,
+has 'haydock'=>(is=>'ro', isa=>HaydockSave, required=>1,
            documentation=>'Haydock recursion calculator');
-has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
+has 'filter'=>(is=>'ro', isa=>PDLObj, predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
-has 'field'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'field'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
            writer=>'_field', documentation=>'Calculated real space field');
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
 
 sub BUILD {

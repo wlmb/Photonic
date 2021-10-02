@@ -238,9 +238,7 @@ Store final state to file, if provided.
 use Moose::Role;
 
 use PDL::Lite;
-use Photonic::Types;
-use Moose::Util::TypeConstraints;
-use Fcntl;
+use Photonic::Types -all;
 use Photonic::Utils qw(top_slice);
 use PDL::NiceSlice;
 use IO::File;
@@ -256,18 +254,18 @@ requires
     'magnitude', #magnitude of a state
     'complexCoeffs', #Haydock coefficients are complex
     'changesign'; #change sign of $b2
-has 'firstState' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy=>1,
+has 'firstState' =>(is=>'ro', isa=>PDLComplex, lazy=>1,
 		    builder=>'_firstState');
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 
 has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
-has "_state_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_state_pdl', init_arg=>undef, isa=>'Photonic::Types::PDLComplex');
+has "_state_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_state_pdl', init_arg=>undef, isa=>PDLComplex);
 my @poly_coeffs = qw(a b b2 c bc g);
-has "_${_}_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_coeff_pdl', init_arg=>undef, isa=>'PDL')
+has "_${_}_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_coeff_pdl', init_arg=>undef, isa=>PDLObj)
          for @poly_coeffs;
 has reorthogonalize=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize flag');
@@ -278,7 +276,7 @@ has 'storeAllFN' =>(is=>'ro', required=>1, default=>undef,
 has 'loadAllFN' =>(is=>'ro', required=>1, default=>undef,
 		    documentation=>'Name of file to load everything from');
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::Reorthogonalize';
-has 'converged'=>(is=>'ro', isa=>'Bool', init_arg=>undef,
+has 'converged'=>(is=>'ro', isa=>Bool, init_arg=>undef,
                   writer=>'_converged',
                   documentation=>'The calculation did converge');
 requires qw(iterate magnitude innerProduct

@@ -38,12 +38,12 @@ use namespace::autoclean;
 use Carp;
 use Moose;
 use MooseX::StrictConstructor;
-use Photonic::Types;
+use Photonic::Types -all;
 
-has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
+has 'epsilon'=>(is=>'ro', isa=>PDLComplex, required=>1,
 		documentation=>'Dielectric function as function of position');
 
-has 'B' =>(is=>'ro', isa=>'PDL', init_arg=>undef, builder=>'_B', lazy=>1,
+has 'B' =>(is=>'ro', isa=>PDLObj, init_arg=>undef, builder=>'_B', lazy=>1,
 	   documentation=>'Characteristic function');
 
 with 'Photonic::Roles::Geometry';

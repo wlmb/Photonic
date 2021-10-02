@@ -22,7 +22,7 @@ WriteMakefile(
 	'Machine::Epsilon'               => '0',
 	'Moose'                          => '0',
 	'Moose::Role'                    => '0',
-	'Moose::Util::TypeConstraints'   => '0',
+	'Type::Tiny'                     => '0',
 	'MooseX::StrictConstructor'      => '0',
 	'PDL'                            => '2.049', # PDL::Complex->from_native
 	'PDL::Constants'                 => '0',

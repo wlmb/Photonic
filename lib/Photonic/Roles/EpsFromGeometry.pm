@@ -34,10 +34,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =cut
 
 use Moose::Role;
+use Photonic::Types -all;
 
 requires 'geometry';
 
-has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1, lazy=>1,
+has 'epsilon'=>(is=>'ro', isa=>PDLComplex, required=>1, lazy=>1,
                 builder=> '_epsilon');
 
 sub _epsilon { shift->geometry->epsilon }

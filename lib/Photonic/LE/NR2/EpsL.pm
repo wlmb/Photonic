@@ -74,7 +74,7 @@ The spectral variable used in the last calculation
 =cut
 
 use namespace::autoclean;
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::Utils qw(lentzCF);
 
 use List::Util qw(min);
@@ -84,11 +84,11 @@ use MooseX::StrictConstructor;
 
 with 'Photonic::Roles::EpsL';
 
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+has 'epsA'=>(is=>'ro', isa=>PDLComplex, required => 1,
     documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+has 'epsB'=>(is=>'ro', isa=>PDLComplex, required => 1,
         documentation=>'Dielectric function of inclusions');
-has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy => 1, builder => '_build_u',
+has 'u'=>(is=>'ro', isa=>PDLComplex, lazy => 1, builder => '_build_u',
     documentation=>'Spectral variable');
 
 sub _build_u {

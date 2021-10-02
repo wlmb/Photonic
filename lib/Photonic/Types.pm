@@ -33,36 +33,39 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
-
-use Moose::Util::TypeConstraints;
+use Type::Library -base, -declare =>
+  qw(Geometry GeometryG0 Haydock HaydockSave PDLObj PDLComplex
+  );
+use Type::Utils -all;
+BEGIN { extends 'Types::Standard' }
 use Photonic::Utils qw(any_complex);
 
-subtype 'Photonic::Types::Geometry' =>
-  as 'Ref',
-  where { $_->does('Photonic::Roles::Geometry')},
+declare Geometry =>
+  as ConsumerOf['Photonic::Roles::Geometry'],
   message { "Expected a Geometry" };
 
-subtype 'Photonic::Types::GeometryG0' =>
-  as 'Photonic::Types::Geometry',
+declare GeometryG0 =>
+  as Geometry,
   where { $_->has_Direction0 },
   message { "You should define a direction for G=0 reciprocal vector" };
 
-subtype 'Photonic::Types::Haydock' =>
-  as 'Ref',
-  where { $_->does('Photonic::Roles::Haydock')},
+declare Haydock =>
+  as ConsumerOf['Photonic::Roles::Haydock'],
   message { "Expected an AllH" };
 
-subtype 'Photonic::Types::HaydockSave' =>
-  as 'Photonic::Types::Haydock',
+declare HaydockSave =>
+  as Haydock,
   where { $_->keepStates == 1 },
     message { "Can't calculate fields if you don't keepStates" };
 
-subtype 'Photonic::Types::PDLComplex' =>
-  as 'PDL',
-  where { any_complex($_) },
+declare PDLObj =>
+  as InstanceOf['PDL'],
   ;
 
-no Moose::Util::TypeConstraints;
+declare PDLComplex =>
+  as PDLObj,
+  where { any_complex($_) },
+  ;
 
 __END__
 
@@ -76,10 +79,10 @@ version 0.008
 
 =head1 SYNOPSIS
 
-   use Photonic::Types;
+   use Photonic::Types -all;
    package MyPackage;
    use Moose;
-   has 'n' => {is => 'ro', isa =>'Photonic::Types::Geometry'}
+   has 'n' => {is => 'ro', isa =>Geometry}
 
 =head1 DESCRIPTION
 
@@ -90,14 +93,25 @@ calculations.
 
 =over 4
 
-=item * Photonic::Types::GeometryG0
+=item * Geometry
 
-Photonic::Geometry with a direction for G=0 reciprocal vector
+L<Photonic::Roles::Geometry> object.
 
-=item * Photonic::Types::NonRetarded::HaydockSave
+=item * GeometryG0
 
-Photonic::NonRetarded:AllH object where the keepStates flag has been
-turned on.
+L</Geometry> with a direction for G=0 reciprocal vector
+
+=item * Haydock
+
+L<Photonic::Roles::Haydock> object.
+
+=item * HaydockSave
+
+L</Haydock> object where the keepStates flag has been turned on.
+
+=item * PDLComplex
+
+L<PDL> object with complex values.
 
 =back
 

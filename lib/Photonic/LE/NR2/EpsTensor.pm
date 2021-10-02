@@ -75,7 +75,7 @@ Dielectric function of component B
 use namespace::autoclean;
 use Photonic::LE::NR2::Haydock;
 use Photonic::LE::NR2::EpsL;
-use Photonic::Types;
+use Photonic::Types -all;
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -84,9 +84,9 @@ has allh_attrs=>(is=>'ro', default=>sub{[qw(reorthogonalize use_mask mask)]});
 has epsl_class=>(is=>'ro', default=>'Photonic::LE::NR2::EpsL');
 has epsl_attrs=>(is=>'ro', default=>sub{[qw(nh smallE epsA epsB)]});
 
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+has 'epsA'=>(is=>'ro', isa=>PDLComplex, required => 1,
     documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+has 'epsB'=>(is=>'ro', isa=>PDLComplex, required => 1,
         documentation=>'Dielectric function of inclusions');
 
 with 'Photonic::Roles::UseMask', 'Photonic::Roles::EpsTensor', 'Photonic::Roles::KeepStates';

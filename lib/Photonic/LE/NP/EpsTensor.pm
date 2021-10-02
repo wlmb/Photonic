@@ -73,6 +73,7 @@ for each pixel of the system
 use namespace::autoclean;
 use Photonic::LE::NP::Haydock;
 use Photonic::LE::NP::EpsL;
+use Photonic::Types -all;
 use Moose;
 use MooseX::StrictConstructor;
 
@@ -81,7 +82,7 @@ has allh_attrs=>(is=>'ro', default=>sub{[qw(reorthogonalize epsilon)]});
 has epsl_class=>(is=>'ro', default=>'Photonic::LE::NP::EpsL');
 has epsl_attrs=>(is=>'ro', default=>sub{[qw(nh smallE)]});
 
-has 'epsilon'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1);
+has 'epsilon'=>(is=>'ro', isa=>PDLComplex, required=>1);
 
 with 'Photonic::Roles::EpsTensor', 'Photonic::Roles::KeepStates';
 

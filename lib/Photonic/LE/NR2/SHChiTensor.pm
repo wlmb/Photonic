@@ -168,31 +168,31 @@ use PDL::NiceSlice;
 use PDL::MatrixOps;
 use PDL::IO::Storable;
 use Photonic::Utils qw(make_haydock tensor incarnate_as);
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::LE::NR2::EpsTensor;
 use Moose;
 
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'epsL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'epsL'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
 	     writer=>'_epsL',
 	     documentation=>'Value of dielectric function'  );
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
+has 'nhActual'=>(is=>'ro', isa=>Num, init_arg=>undef,
 		 writer=>'_nhActual',
 		 documentation=>'Actual number of coefficients used' );
-has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef,
+has 'converged'=>(is=>'ro', isa=>Num, init_arg=>undef,
 		  writer=>'_converged',
 		  documentation=>'The calculation did converge');
 
 #required parameters
-has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::Geometry',
+has 'geometry'=>(is=>'ro', isa => Geometry,
     handles=>[qw(B dims r G GNorm L scale f ndims)],required=>1
 );
-has 'densityA'=>(is=>'ro', isa=>'Num', required=>1,
+has 'densityA'=>(is=>'ro', isa=>Num, required=>1,
          documentation=>'Normalized dipole entities density in medium A');
-has 'densityB'=>(is=>'ro', isa=>'Num', required=>1,
+has 'densityB'=>(is=>'ro', isa=>Num, required=>1,
          documentation=>'Normalized dipole entities density in medium B');
 has 'nhf'=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock
@@ -201,31 +201,31 @@ has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
 
 #optional parameters
-has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
+has 'filter'=>(is=>'ro', isa=>PDLObj, predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 
 #accessors
-has 'epsA1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+has 'epsA1'=>(is=>'ro', isa=>PDLComplex, required => 1,
     documentation=>'Dielectric function of host');
-has 'epsB1'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required => 1,
+has 'epsB1'=>(is=>'ro', isa=>PDLComplex, required => 1,
         documentation=>'Dielectric function of inclusions');
-has 'epsA2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
+has 'epsA2'=>(is=>'ro', isa=>PDLComplex, required=>1,
     documentation=>'Dielectric function of host at SH');
-has 'epsB2'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
+has 'epsB2'=>(is=>'ro', isa=>PDLComplex, required=>1,
         documentation=>'Dielectric function of inclusions');
-has 'nrshp' =>(is=>'ro', isa=>'ArrayRef[Photonic::LE::NR2::SHP]',
+has 'nrshp' =>(is=>'ro', isa=>ArrayRef[InstanceOf['Photonic::LE::NR2::SHP']],
             init_arg=>undef, lazy=>1, builder=>'_build_nrshp',
             documentation=>'Array of Haydock SH polarization calculators');
-has 'epsTensor'=>(is=>'ro', isa=>'Photonic::LE::NR2::EpsTensor',
+has 'epsTensor'=>(is=>'ro', isa=>InstanceOf['Photonic::LE::NR2::EpsTensor'],
          init_arg=>undef,
          lazy=>1,  builder=>'_build_epsTensor',
          documentation=>'diel. tensor at 2w');
-has 'chiTensor'=>(is=>'ro', isa=>'PDL', init_arg=>undef, writer=>'_chiTensor',
+has 'chiTensor'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, writer=>'_chiTensor',
              documentation=>'SH Susceptibility from last evaluation');
 
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';

@@ -126,34 +126,34 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'epsA'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_epsA',
+has 'epsA'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, writer=>'_epsA',
     documentation=>'Dielectric function of host');
-has 'epsB'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', required=>1,
+has 'epsB'=>(is=>'ro', isa=>PDLComplex, required=>1,
         documentation=>'Dielectric function of inclusions');
-has 'u'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, writer=>'_u',
+has 'u'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
 
-has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::R2::Haydock', required=>1);
-has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef, lazy=>1, builder=>'_build_Gpp');
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
+has 'haydock' =>(is=>'ro', isa=>InstanceOf['Photonic::WE::R2::Haydock'], required=>1);
+has 'Gpp'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, lazy=>1, builder=>'_build_Gpp');
+has 'nhActual'=>(is=>'ro', isa=>Num, init_arg=>undef,
                  writer=>'_nhActual');
-has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
-has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'converged'=>(is=>'ro', isa=>Bool, init_arg=>undef, writer=>'_converged');
+has 'waveOperator' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
              lazy=>1, builder=>'_build_waveOperator',
              documentation=>'Wave operator from last evaluation');
-has 'epsilon' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'epsilon' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
              lazy=>1, builder=>'_build_epsilon',
              documentation=>'Wave projection from evaluation');
 

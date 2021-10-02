@@ -103,29 +103,29 @@ NOTE: Only works for polarizations along principal directions.
 use namespace::autoclean;
 use PDL::Lite;
 use Photonic::WE::S::Haydock;
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1,
+has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallH'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'haydock' =>(is=>'ro', isa=>'Photonic::WE::S::Haydock', required=>1);
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
+has 'haydock' =>(is=>'ro', isa=>Haydock, required=>1);
+has 'nhActual'=>(is=>'ro', isa=>Num, init_arg=>undef,
                  writer=>'_nhActual');
-has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef, writer=>'_converged');
-has 'Gpp'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'converged'=>(is=>'ro', isa=>Num, init_arg=>undef, writer=>'_converged');
+has 'Gpp'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
 	    lazy=>1, builder=>'_build_Gpp',
 	      documentation=>'Value of projected Greens function');
-has 'waveOperator' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'waveOperator' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
              lazy=>1, builder=>'_build_waveOperator',
              documentation=>'Wave operator');
-has 'epsilon' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
+has 'epsilon' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
                    lazy=>1, builder=>'_build_epsilon',
                    documentation=>'Projected dielectric function');
 

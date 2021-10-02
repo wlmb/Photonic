@@ -124,17 +124,17 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Carp;
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::Utils qw(VSProd any_complex GtoR RtoG);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'metric'=>(is=>'ro', isa => 'Photonic::WE::S::Metric',
+has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WE::S::Metric'],
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',
 			 geometry=>'geometry', epsilonR=>'epsilon'},
 	       required=>1);
-has 'polarization' =>(is=>'ro', required=>1, isa=>'Photonic::Types::PDLComplex');
-has 'normalizedPolarization' =>(is=>'ro', isa=>'Photonic::Types::PDLComplex',
+has 'polarization' =>(is=>'ro', required=>1, isa=>PDLComplex);
+has 'normalizedPolarization' =>(is=>'ro', isa=>PDLComplex,
      init_arg=>undef, writer=>'_normalizedPolarization');
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');

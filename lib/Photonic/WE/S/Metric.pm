@@ -86,13 +86,13 @@ use PDL::Lite;
 use PDL::MatrixOps;
 use PDL::NiceSlice;
 use Carp;
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::Utils qw(any_complex);
 use Moose;
 use MooseX::StrictConstructor;
 
 # Later make it complex
-has 'value'     => (is=>'ro', isa=>'PDL', init_arg=>undef, lazy=>1,
+has 'value'     => (is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
                    builder=>'_value',
                    documentation=>'Metric tensor');
 

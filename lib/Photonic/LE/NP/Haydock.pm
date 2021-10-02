@@ -76,7 +76,7 @@ These are provided for roles:
 
 =item * geometry
 
-A Photonic::Types::GeometryG0 object defining the geometry of the system,
+A L<Photonic::Types/GeometryG0> object defining the geometry of the system,
 the characteristic function and the direction of the G=0 vector. Required.
 
 =item * B ndims dims r G GNorm L scale f
@@ -109,12 +109,12 @@ Returns zero, as there is no need to change sign.
 use namespace::autoclean;
 use PDL::Lite;
 use Carp;
-use Photonic::Types;
+use Photonic::Types -all;
 use Photonic::Utils qw(EProd any_complex apply_longitudinal_projection);
 use Moose;
 use MooseX::StrictConstructor;
 
-has 'geometry'=>(is=>'ro', isa => 'Photonic::Types::GeometryG0',
+has 'geometry'=>(is=>'ro', isa => GeometryG0,
     handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
 );
 has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
