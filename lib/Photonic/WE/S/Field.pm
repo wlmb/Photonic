@@ -104,10 +104,6 @@ Dielectric function of component B
 
 Spectral variable
 
-=item * Es
-
-Array of field coefficients
-
 =item * filter
 
 optional reciprocal space filter
@@ -142,8 +138,6 @@ use MooseX::StrictConstructor;
 
 has 'haydock'=>(is=>'ro', isa=>'Photonic::Types::HaydockSave', required=>1,
            documentation=>'Haydock recursion calculator');
-has 'Es'=>(is=>'ro', isa=>'ArrayRef[Photonic::Types::PDLComplex]', init_arg=>undef,
-           writer=>'_Es', documentation=>'Field coefficients');
 has 'filter'=>(is=>'ro', isa=>'PDL', predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 has 'field'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
