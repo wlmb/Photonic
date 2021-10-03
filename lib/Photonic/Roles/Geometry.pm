@@ -199,6 +199,16 @@ sub _build_pmGNorm { #normalized +- reciprocal lattice. Leave
     return PDL->pdl($self->GNorm, $self->mGNorm)->mv(-1,1);
 }
 
+sub BUILD {
+  my ($self) = @_;
+  if ($self->has_Direction0) {
+    my $value = $self->Direction0;
+    confess "Direction0 must be length ".$self->ndims." vector" unless
+      $value->dim(0)==$self->ndims and $value->ndims==1;
+    confess "Direction must be non-null" unless $value->inner($value)>0;
+  }
+}
+
 sub _build_f { #calculate filling fraction
     my $self=shift;
     return $self->B->davg;
@@ -246,9 +256,6 @@ sub _build_unitDyadsLU {
 sub _G0 {
     my $self=shift;
     my $value=shift;
-    confess "Direction0 must be ".$self->ndims."-dimensional vector" unless
-	$value->dim(0)==$self->ndims and $value->ndims==1;
-    confess "Direction must be non-null" unless $value->inner($value)>0;
     my $arg=":". (",(0)" x $self->ndims); #:,(0),... dimension of space times
     $value=$value->norm; #normalize
     #Set element 0,0 for normalized arrays.
@@ -432,6 +439,8 @@ Test if Direction0 has been set.
 =begin Pod::Coverage
 
 =head2 PI
+
+=head2 BUILD
 
 =end  Pod::Coverage
 
