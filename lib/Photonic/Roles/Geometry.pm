@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =cut
 
 
-use Moose::Role;
+use Moo::Role;
 
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -46,61 +46,48 @@ use constant PI=>4*atan2(1,1);
 
 requires 'B'; #characteristic function
 
-has 'L' =>(is=>'ro', isa => PDLObj, lazy=>1, builder=>'_build_L',
+has 'L' =>(is=>'lazy', isa => PDLObj,
 	   documentation=>'array of unit cell size');
-has 'units'=>(is=>'ro', isa=>PDLObj, lazy=>1,
-     builder=>'_build_units',
+has 'units'=>(is=>'lazy', isa=>PDLObj,
      documentation=>'Basis of unit vectors');
-has 'primitive'=>(is=>'ro', isa=>PDLObj, required=>1, lazy=>1,
-		  builder=>'_build_primitive',
+has 'primitive'=>(is=>'lazy', isa=>PDLObj, required=>1,
 		  documentation=>'Primitive directions');
-has 'primitiveNorm'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-		  builder=>'_build_primitiveNorm',
+has 'primitiveNorm'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 		  documentation=>'Normalized primitive vectors');
-has 'dualNorm'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-		 builder=>'_build_dualNorm',
+has 'dualNorm'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 		 documentation=>'Normalized reciprocal primitive vectors');
-has 'dims' =>(is=>'ro', isa=>ArrayRef[Int],
-           init_arg=>undef, lazy=>1, builder=>'_build_dims',
+has 'dims' =>(is=>'lazy', isa=>ArrayRef[Int],
+           init_arg=>undef,
            documentation=>'list of dimensions of B');
-has 'ndims' =>(is=>'ro', isa=>Int,
-           init_arg=>undef, lazy=>1, builder=>'_build_ndims',
+has 'ndims' =>(is=>'lazy', isa=>Int,
+           init_arg=>undef,
            documentation=>'number of dimensions of B');
-has 'npoints' =>(is=>'ro', isa=>Int,
-           init_arg=>undef, lazy=>1, builder=>'_build_npoints',
+has 'npoints' =>(is=>'lazy', isa=>Int,
+           init_arg=>undef,
            documentation=>'number of points within B');
-has 'scale'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-              builder=>'_build_scale',
+has 'scale'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 	      documentation=>'distances between pixels');
-has 'r' =>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-           builder=>'_build_r',
+has 'r' =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 	   documentation=>'array of positions x_or_y, nx, ny');
-has 'G' =>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1, builder=>'_build_G',
+has 'G' =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 	   documentation=>'array of reciprocal vectors xy,nx,ny...');
-has 'GNorm' =>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-     builder=>'_build_GNorm',
+has 'GNorm' =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
      documentation=>'array of unit norm reciprocal vectors xy,nx,ny...');
-has 'mGNorm' =>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-     builder=>'_build_mGNorm',
+has 'mGNorm' =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
      documentation=>
 	  'array of negated unit norm reciprocal vectors xy,nx,ny...');
-has 'pmGNorm' =>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-     builder=>'_build_pmGNorm',
+has 'pmGNorm' =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
      documentation=>
        'array of spinors of +- unit norm reciprocal vectors xy,pm,nx,ny');
-has 'f'=>(is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_f',
+has 'f'=>(is=>'lazy', init_arg=>undef,
      documentation=>'filling fraction of B region');
-has 'unitPairs'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-     builder=>'_build_unitPairs',
+has 'unitPairs'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
      documentation=>'Normalized sum of pairs of basis vectors');
-has 'cUnitPairs'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-     builder=>'_build_cUnitPairs',
+has 'cUnitPairs'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
      documentation=>'Normalized complex sum of pairs of basis vectors');
-has 'unitDyads'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-     builder=>'_build_unitDyads',
+has 'unitDyads'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
      documentation=>'Matrix of dyads of unit vector pairs');
-has 'unitDyadsLU'=>(is=>'ro', isa=>ArrayRef, lazy=>1,
-     builder=>'_build_unitDyadsLU',
+has 'unitDyadsLU'=>(is=>'lazy', isa=>ArrayRef,
      documentation=>'LU decomposition of unitDyads');
 has 'Direction0' =>(is => 'ro', isa => PDLObj,
      predicate=>'has_Direction0');
@@ -213,6 +200,7 @@ sub BUILD {
     $self->mGNorm->slice($arg).=$value; #Don't change sign for mGNorm!
     $self->pmGNorm->mv(1,-1)->slice($arg).=$value;
   }
+  1; # cover -test causes a boolean test on the return value so make not pdl
 }
 
 sub _build_f { #calculate filling fraction
@@ -282,7 +270,7 @@ sub LC2Vec_G { #longitudinal vector field from its longitudinal
     $field->(*1)*$gnorm;
 }
 
-no Moose::Role;
+no Moo::Role;
 
 1;
 
@@ -309,7 +297,7 @@ version 0.021
     package Photonic::Geometry::FromB;
     $Photonic::Geometry::Geometry::VERSION = '0.021';
     use namespace::autoclean;
-    use Moose;
+    use Moo;
     has 'B' =>(is=>'ro', isa=>PDLObj, required=>1,
 	       documentation=>'characteristic function');
     with 'Photonic::Roles::Geometry';

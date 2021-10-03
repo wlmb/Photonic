@@ -74,8 +74,8 @@ use namespace::autoclean;
 use Photonic::LE::NP::Haydock;
 use Photonic::LE::NP::EpsL;
 use Photonic::Types -all;
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has allh_class=>(is=>'ro', default=>'Photonic::LE::NP::Haydock');
 has allh_attrs=>(is=>'ro', default=>sub{[qw(reorthogonalize epsilon)]});

@@ -142,19 +142,18 @@ use Photonic::Types -all;
 use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator triangle_coords);
 
 use List::Util qw(all any);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WE::R2::Metric'],
        handles=>[qw(geometry B dims ndims r G GNorm L scale f)],required=>1);
-has 'haydock' =>(is=>'ro', isa=>ArrayRef[InstanceOf['Photonic::WE::R2::Haydock']],
-            init_arg=>undef, lazy=>1, builder=>'_build_haydock',
+has 'haydock' =>(is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WE::R2::Haydock']],
+            init_arg=>undef,
 	    documentation=>'Array of Haydock calculators');
-has 'greenP'=>(is=>'ro', isa=>ArrayRef[InstanceOf['Photonic::WE::R2::GreenP']],
-             init_arg=>undef, lazy=>1, builder=>'_build_greenP',
+has 'greenP'=>(is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WE::R2::GreenP']],
+             init_arg=>undef,
              documentation=>'Array of projected G calculators');
-has 'greenTensor'=>(is=>'ro', isa=>PDLObj, init_arg=>undef,
-             lazy=>1, builder=>'_build_greenTensor',
+has 'greenTensor'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
              documentation=>"Green's Tensor");
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
@@ -173,23 +172,21 @@ has 'epsB'=>(is=>'ro', isa=>PDLComplex, required=>1,
         documentation=>'Dielectric function of inclusions');
 has 'u'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
-has 'waveOperator' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
-             lazy=>1, builder=>'_build_waveOperator',
+has 'waveOperator' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
              documentation=>'Wave operator from evaluation');
-has 'epsilonTensor' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
-             lazy=>1, builder=>'_build_epsilonTensor',
+has 'epsilonTensor' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
              documentation=>'Macroscopic dielectric tensor');
 
 with 'Photonic::Roles::KeepStates',  'Photonic::Roles::UseMask';
 
 has 'cHaydock' =>(
-    is=>'ro', isa=>ArrayRef[InstanceOf['Photonic::WE::R2::Haydock']],
-    init_arg=>undef, lazy=>1, builder=>'_build_cHaydock',
+    is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WE::R2::Haydock']],
+    init_arg=>undef,
     documentation=>'Array of Haydock calculators for complex projection');
 
 has 'cGreenP'=>(
-    is=>'ro', isa=>ArrayRef[InstanceOf['Photonic::WE::R2::GreenP']],
-    init_arg=>undef, lazy=>1, builder=>'_build_cGreenP',
+    is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WE::R2::GreenP']],
+    init_arg=>undef,
     documentation=>'Array of projected G calculators for complex projection');
 
 has 'symmetric' => (

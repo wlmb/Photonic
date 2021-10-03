@@ -36,13 +36,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 use namespace::autoclean;
 use Carp;
-use Moose;
+use Moo;
 use Photonic::Types -all;
 
 has 'epsilon'=>(is=>'ro', isa=>PDLComplex, required=>1,
 		documentation=>'Dielectric function as function of position');
 
-has 'B' =>(is=>'ro', isa=>PDLObj, init_arg=>undef, builder=>'_B', lazy=>1,
+has 'B' =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 	   documentation=>'Characteristic function');
 
 with 'Photonic::Roles::Geometry';
@@ -55,7 +55,7 @@ before 'f' => sub {
 	. "Photonic::Geometry::FromEpsilon";
 };
 
-sub _B {
+sub _build_B {
     my $self=shift;
     return $self->epsilon->re; #value is irrelevant. Only
 				#shape of pdl counts.

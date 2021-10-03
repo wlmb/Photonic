@@ -106,8 +106,8 @@ use Photonic::WE::S::Haydock;
 use Photonic::Types -all;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
@@ -117,14 +117,11 @@ has 'haydock' =>(is=>'ro', isa=>Haydock, required=>1);
 has 'nhActual'=>(is=>'ro', isa=>Num, init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>Num, init_arg=>undef, writer=>'_converged');
-has 'Gpp'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-	    lazy=>1, builder=>'_build_Gpp',
+has 'Gpp'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 	      documentation=>'Value of projected Greens function');
-has 'waveOperator' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
-             lazy=>1, builder=>'_build_waveOperator',
+has 'waveOperator' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
              documentation=>'Wave operator');
-has 'epsilon' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
-                   lazy=>1, builder=>'_build_epsilon',
+has 'epsilon' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
                    documentation=>'Projected dielectric function');
 
 sub _build_Gpp {

@@ -115,8 +115,8 @@ use PDL::Lite;
 use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(EProd any_complex apply_longitudinal_projection);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'geometry'=>(is=>'ro', isa => GeometryG0,
     handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1
@@ -125,7 +125,7 @@ has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 		      documentation=>'Haydock coefficients are complex');
 with 'Photonic::Roles::Haydock', 'Photonic::Roles::EpsFromGeometry';
 
-sub _firstState { #\delta_{G0}
+sub _build_firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(@{$self->dims})->r2C; #nx, ny...
     my $arg=join ',', ("(0)") x ($self->B->ndims); #(0),(0),... ndims+1 times

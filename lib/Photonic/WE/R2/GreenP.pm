@@ -129,8 +129,8 @@ use Photonic::WE::R2::Haydock;
 use Photonic::Types -all;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
@@ -144,15 +144,13 @@ has 'u'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, writer=>'_u',
     documentation=>'Spectral variable');
 
 has 'haydock' =>(is=>'ro', isa=>InstanceOf['Photonic::WE::R2::Haydock'], required=>1);
-has 'Gpp'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, lazy=>1, builder=>'_build_Gpp');
+has 'Gpp'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef);
 has 'nhActual'=>(is=>'ro', isa=>Num, init_arg=>undef,
                  writer=>'_nhActual');
 has 'converged'=>(is=>'ro', isa=>Bool, init_arg=>undef, writer=>'_converged');
-has 'waveOperator' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
-             lazy=>1, builder=>'_build_waveOperator',
+has 'waveOperator' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
              documentation=>'Wave operator from last evaluation');
-has 'epsilon' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
-             lazy=>1, builder=>'_build_epsilon',
+has 'epsilon' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
              documentation=>'Wave projection from evaluation');
 
 sub BUILD {

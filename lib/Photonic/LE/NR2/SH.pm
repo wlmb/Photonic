@@ -195,8 +195,8 @@ use Photonic::LE::NR2::Haydock;
 use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv top_slice mvN);
 use Photonic::Types -all;
 use PDL::Constants qw(PI);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'shp'=>(is=>'ro', isa=>InstanceOf['Photonic::LE::NR2::SHP'], required=>1,
     handles=>[qw(ndims nrf densityA densityB density haydock)],
@@ -209,94 +209,73 @@ has 'epsA2'=>(is=>'ro', isa=>PDLComplex, required=>1,
     documentation=>'SH Dielectric function of host');
 has 'epsB2'=>(is=>'ro', isa=>PDLComplex, required=>1,
         documentation=>'SH Dielectric function of inclusions');
-has 'alpha1'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_alpha1',
+has 'alpha1'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'Linear "atomic" polarizability');
-has 'alpha2'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_alpha2',
+has 'alpha2'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'SH linear "atomic" polarizability');
-has 'u1'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_u1',
+has 'u1'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'Spectral variable at fundamental');
-has 'u2'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_u2',
+has 'u2'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'Spectral variable at SH');
-has 'field1'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_field1',
+has 'field1'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'longitudinal field at fundamental');
-has 'field2'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_field2',
+has 'field2'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'longitudinal field at second harmonic');
 has 'epsL2'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
          writer=>'_epsL2', predicate=>'has_epsL2',
          documentation=>'longitudinal dielectric function at 2w');
-has 'dipolar'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_dipolar',
+has 'dipolar'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'SH dipolar contribution to SH polarization');
-has 'quadrupolar'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_quadrupolar',
+has 'quadrupolar'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'SH quadrupolar contribution to SH polarization');
-has 'external'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_external',
+has 'external'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'SH external contribution to SH polarization');
-has 'external_G'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_external_G',
+has 'external_G'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>'SH ext. polarization in reciprocal space');
-has 'externalL_G'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_externalL_G',
+has 'externalL_G'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>
              'SH ext. longitudinal polarization comp. in reciprocal space');
-has 'externalVecL_G'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_externalVecL_G',
+has 'externalVecL_G'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>
              'SH ext. longitudinal polarization proj. in recip. space');
-has 'externalVecL'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_externalVecL',
+has 'externalVecL'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>
              'SH ext. longitudinal polarization proj. in real space');
-has 'HP' =>(is=>'ro', isa=>InstanceOf['Photonic::LE::NR2::Haydock'], init_arg=>undef,
-         lazy=>1, builder=>'_build_HP',
+has 'HP' =>(is=>'lazy', isa=>InstanceOf['Photonic::LE::NR2::Haydock'], init_arg=>undef,
          documentation=>
          'Structure to calculate Haydock basis for non linear polarization');
-has 'externalL_n'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-         lazy=>1, builder=>'_build_externalL_n',
+has 'externalL_n'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
          documentation=>
              'SH ext. longitudinal polarization in Haydock
                representation');
-has 'selfConsistentL_n'=>(is=>'ro', isa=>PDLComplex,
-         init_arg=>undef, lazy=>1,
-         builder=>'_build_selfConsistentL_n',
+has 'selfConsistentL_n'=>(is=>'lazy', isa=>PDLComplex,
+         init_arg=>undef,
          documentation=>
              'SH self consistent longitudinal polarization
               in Haydock representation');
-has 'selfConsistentL_G'=>(is=>'ro', isa=>PDLComplex,
-         init_arg=>undef, lazy=>1,
-         builder=>'_build_selfConsistentL_G',
+has 'selfConsistentL_G'=>(is=>'lazy', isa=>PDLComplex,
+         init_arg=>undef,
          documentation=>
              'SH self consistent longitudinal polarization components in
                reciprocal space');
-has 'selfConsistentVecL_G'=>(is=>'ro', isa=>PDLComplex,
-         init_arg=>undef, lazy=>1,
-         builder=>'_build_selfConsistentVecL_G',
+has 'selfConsistentVecL_G'=>(is=>'lazy', isa=>PDLComplex,
+         init_arg=>undef,
          documentation=>
              'SH self consistent longitudinal polarization vector
               field in reciprocal space');
-has 'selfConsistentVecL'=>(is=>'ro', isa=>PDLComplex,
-         init_arg=>undef, lazy=>1,
-         builder=>'_build_selfConsistentVecL',
+has 'selfConsistentVecL'=>(is=>'lazy', isa=>PDLComplex,
+         init_arg=>undef,
          documentation=>
              'SH self consistent longitudinal polarization vector
               field in real space');
-has 'P2'=>(is=>'ro', isa=>PDLComplex,
-         init_arg=>undef, lazy=>1,
-         builder=>'_build_P2',
+has 'P2'=>(is=>'lazy', isa=>PDLComplex,
+         init_arg=>undef,
          documentation=>
              'SH self consistent total polarization vector
               field in real space');
 
-has 'P2LMCalt'=>(is=>'ro', isa=>PDLComplex,
-         init_arg=>undef, lazy=>1,
-         builder=>'_build_P2LMCalt',
+has 'P2LMCalt'=>(is=>'lazy', isa=>PDLComplex,
+         init_arg=>undef,
          documentation=>
              'SH self consistent total macroscopic polarization
               in real space. Alternative');

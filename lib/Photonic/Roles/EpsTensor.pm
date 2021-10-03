@@ -55,7 +55,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     package Photonic::LE::S::EpsTensor;
     $Photonic::LE::S::EpsTensor::VERSION= '0.021';
     use namespace::autoclean;
-    use Moose;
+    use Moo;
     with 'Photonic::Roles::EpsTensor';
     has...
 
@@ -147,7 +147,7 @@ Flags that the last calculation converged before using up all coefficients
 
 =cut
 
-use Moose::Role;
+use Moo::Role;
 use namespace::autoclean;
 use PDL::Lite;
 use Photonic::Utils qw(tensor make_haydock incarnate_as);
@@ -165,13 +165,12 @@ has 'geometry'=>(is=>'ro', isa => Geometry,
 );
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
-has 'haydock' =>(is=>'ro', isa=>ArrayRef[Haydock],
-            lazy=>1, builder=>'_build_haydock',
+has 'haydock' =>(is=>'lazy', isa=>ArrayRef[Haydock],
             documentation=>'Array of Haydock calculators');
-has 'epsL'=>(is=>'ro', isa=>ArrayRef[ConsumerOf['Photonic::Roles::EpsL']],
-             init_arg=>undef, lazy=>1, builder=>'_build_epsL',
+has 'epsL'=>(is=>'lazy', isa=>ArrayRef[ConsumerOf['Photonic::Roles::EpsL']],
+             init_arg=>undef,
              documentation=>'Array of epsilon calculators');
-has 'epsTensor'=>(is=>'ro', isa=>PDLObj, lazy=>1, builder=>'_build_epsTensor',
+has 'epsTensor'=>(is=>'lazy', isa=>PDLObj,
              documentation=>'Dielectric Tensor');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
@@ -200,6 +199,6 @@ sub _build_epsL {
     [ map incarnate_as($self->epsl_class, $self, $self->epsl_attrs, haydock=>$_), @{$self->haydock} ];
 }
 
-no Moose::Role;
+no Moo::Role;
 
 1;

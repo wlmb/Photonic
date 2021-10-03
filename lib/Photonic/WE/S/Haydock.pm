@@ -134,8 +134,8 @@ use PDL::NiceSlice;
 use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(VSProd any_complex GtoR RtoG);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WE::S::Metric'],
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',
@@ -197,7 +197,7 @@ sub changesign { #don't change sign
     return 0;
 }
 
-sub _firstState { #\delta_{G0}
+sub _build_firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(2,@{$self->dims})->r2C; #pm:nx:ny...
     my $arg=join ',', ':', ("(0)") x $self->ndims; #(0),(0),... ndims+1 times

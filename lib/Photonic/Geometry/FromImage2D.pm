@@ -95,8 +95,8 @@ L<Photonic::Roles::Geometry>
 =cut
 
 use namespace::autoclean;
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 BEGIN {
 # Put inoffensive path. Or else, PDL::IO::Pic fails in taint mode.
@@ -109,7 +109,7 @@ use Carp;
 
 has 'path' => ( is => 'ro', required => 1,
 	       documentation => 'File name of 2D monochrome image' );
-has 'B' => (is=>'ro', init_arg=>undef, lazy=>1, builder=>'_build_B' );
+has 'B' => (is=>'lazy', init_arg=>undef);
 has 'inverted' => (is=>'ro', default=> 0,
                documentation=>'Flag to invert black/white');
 

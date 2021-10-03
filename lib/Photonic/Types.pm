@@ -81,7 +81,7 @@ version 0.008
 
    use Photonic::Types -all;
    package MyPackage;
-   use Moose;
+   use Moo;
    has 'n' => {is => 'ro', isa =>Geometry}
 
 =head1 DESCRIPTION

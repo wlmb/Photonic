@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 
 use namespace::autoclean;
-use Moose;
+use Moo;
 use Photonic::Types -all;
 
 has 'B' =>(is=>'ro', isa=>PDLObj, required=>1,

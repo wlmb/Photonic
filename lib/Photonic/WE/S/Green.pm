@@ -120,8 +120,8 @@ use Photonic::WE::S::GreenP;
 use Photonic::Types -all;
 use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator any_complex);
 use List::Util qw(all);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
@@ -132,25 +132,22 @@ has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WE::S::Metric'],
        handles=>[qw(geometry ndims dims)],required=>1);
 
-has 'haydock' =>(is=>'ro', isa=>ArrayRef[Haydock],
-            init_arg=>undef, lazy=>1, builder=>'_build_haydock',
+has 'haydock' =>(is=>'lazy', isa=>ArrayRef[Haydock],
+            init_arg=>undef,
 	    documentation=>'Array of Haydock calculators');
-has 'greenP'=>(is=>'ro', isa=>ArrayRef[InstanceOf['Photonic::WE::S::GreenP']],
-             init_arg=>undef, lazy=>1, builder=>'_build_greenP',
+has 'greenP'=>(is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WE::S::GreenP']],
+             init_arg=>undef,
              documentation=>'Array of projected G calculators');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
              documentation=>
                   'All greenP evaluations converged');
-has 'greenTensor'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-	      lazy=>1, builder=>'_build_greenTensor',
+has 'greenTensor'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
              documentation=>'Greens Tensor');
 has 'reorthogonalize'=>(is=>'ro', required=>1, default=>0,
          documentation=>'Reorthogonalize haydock flag');
-has 'waveOperator' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
-                        lazy=>1, builder=>'_build_waveOperator',
+has 'waveOperator' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
                         documentation=>'Wave operator');
-has 'epsilonTensor' =>  (is=>'ro', isa=>PDLComplex, init_arg=>undef,
-                         lazy=>1, builder=>'_build_epsilonTensor',
+has 'epsilonTensor' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
                          documentation=>'macroscopic response');
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';

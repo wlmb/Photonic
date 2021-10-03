@@ -38,8 +38,8 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Carp;
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 use Photonic::Utils qw(MHProd any_complex GtoR RtoG);
 use Photonic::Types -all;
 
@@ -102,7 +102,7 @@ sub changesign { #flag change sign required if b^2 negative
     return $_[1]->re < 0;
 }
 
-sub _firstState {
+sub _build_firstState {
     my $self=shift;
     my $d=$self->ndims;
     my $v=PDL->zeroes(@{$self->dims}); #build a nx ny nz pdl

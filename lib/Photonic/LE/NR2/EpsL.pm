@@ -79,8 +79,8 @@ use Photonic::Utils qw(lentzCF);
 
 use List::Util qw(min);
 
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 with 'Photonic::Roles::EpsL';
 
@@ -88,7 +88,7 @@ has 'epsA'=>(is=>'ro', isa=>PDLComplex, required => 1,
     documentation=>'Dielectric function of host');
 has 'epsB'=>(is=>'ro', isa=>PDLComplex, required => 1,
         documentation=>'Dielectric function of inclusions');
-has 'u'=>(is=>'ro', isa=>PDLComplex, lazy => 1, builder => '_build_u',
+has 'u'=>(is=>'lazy', isa=>PDLComplex,
     documentation=>'Spectral variable');
 
 sub _build_u {

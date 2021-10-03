@@ -112,8 +112,8 @@ use PDL::NiceSlice;
 use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(SProd any_complex GtoR RtoG);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'geometry'=>(is=>'ro', isa => GeometryG0,
     handles=>[qw(B ndims dims r G GNorm L scale f pmGNorm)],required=>1
@@ -124,7 +124,7 @@ with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask', 'Photonic::Roles::E
 
 #Required by Photonic::Roles::Haydock
 
-sub _firstState { #\delta_{G0}
+sub _build_firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(2,@{$self->dims})->r2C; #pm:nx:ny
     my $arg=join ',', ':', ("(0)") x $self->ndims; #(0),(0),... ndims+1 times

@@ -76,8 +76,8 @@ use namespace::autoclean;
 use Photonic::LE::NR2::Haydock;
 use Photonic::LE::NR2::EpsL;
 use Photonic::Types -all;
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has allh_class=>(is=>'ro', default=>'Photonic::LE::NR2::Haydock');
 has allh_attrs=>(is=>'ro', default=>sub{[qw(reorthogonalize use_mask mask)]});

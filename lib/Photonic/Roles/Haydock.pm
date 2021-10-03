@@ -65,7 +65,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     package Photonic::LE::NR2::Haydock;
     $Photonic::LE::NR2::Haydock::VERSION= '0.021';
     use namespace::autoclean;
-    use Moose;
+    use Moo;
     has...
     with 'Photonic::Roles::Haydock';
 
@@ -239,7 +239,7 @@ Store final state to file, if provided.
 
 =cut
 
-use Moose::Role;
+use Moo::Role;
 
 use PDL::Lite;
 use Photonic::Types -all;
@@ -252,14 +252,13 @@ use Carp;
 
 requires
     '_fullorthogonalize_indeed',
-    '_firstState', #default first state
+    '_build_firstState', #default first state
     'applyOperator', #Apply Hamiltonian to state
     'innerProduct', #Inner product between states
     'magnitude', #magnitude of a state
     'complexCoeffs', #Haydock coefficients are complex
     'changesign'; #change sign of $b2
-has 'firstState' =>(is=>'ro', isa=>PDLComplex, lazy=>1,
-		    builder=>'_firstState');
+has 'firstState' =>(is=>'lazy', isa=>PDLComplex);
 has 'iteration' =>(is=>'ro', writer=>'_iteration', init_arg=>undef,
                    default=>0);
 has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
@@ -267,7 +266,7 @@ has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
 
 has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
-has "_state_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_state_pdl', init_arg=>undef, isa=>PDLComplex);
+has "_state_pdl"=>(is=>'lazy', init_arg=>undef, isa=>PDLComplex);
 my @poly_coeffs = qw(a b b2 c bc g);
 has "_${_}_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_coeff_pdl', init_arg=>undef, isa=>PDLObj)
          for @poly_coeffs;
@@ -325,7 +324,7 @@ sub states {
     $i ? top_slice($self->_state_pdl, '0:'.($i-1)) : PDL->null;
 }
 
-sub _build_state_pdl {
+sub _build__state_pdl {
     my ($self) = @_;
     my $fs = $self->_firstRState;
     my $pdl;
@@ -472,6 +471,6 @@ sub _pop { # undo the changes done after, in and before iteration, for
     $self->_iteration($self->iteration-1); #decrement counter
 }
 
-no Moose::Role;
+no Moo::Role;
 
 1;

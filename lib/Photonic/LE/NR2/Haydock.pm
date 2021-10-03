@@ -114,8 +114,8 @@ use PDL::Lite;
 use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(HProd apply_longitudinal_projection);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'geometry'=>(is=>'ro', isa => GeometryG0,
     handles=>[qw(B dims ndims r G GNorm L scale f)],required=>1);
@@ -123,7 +123,7 @@ has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>0,
 		      documentation=>'Haydock coefficients are real');
 with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask';
 
-sub _firstState { #\delta_{G0}
+sub _build_firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(@{$self->dims})->r2C; #nx, ny...
     my $arg=join ',', ("(0)") x ($self->ndims); #(0),(0),... ndims times

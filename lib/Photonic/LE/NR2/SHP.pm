@@ -104,9 +104,9 @@ Number of dimensions of the system
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use Moose;
+use Moo;
 use Photonic::Types -all;
-use MooseX::StrictConstructor;
+use MooX::StrictConstructor;
 
 has 'nrf'=>(is=>'ro', isa=>InstanceOf['Photonic::LE::NR2::Field'], required=>1,
          documentation=>'Haydock field calculator');
@@ -116,8 +116,7 @@ has 'densityB'=>(is=>'ro', isa=>Num, required=>1,
          documentation=>'Normalized dipole entities density in medium B');
 has 'density'=>(is=>'ro', isa=>PDLObj, writer=>'_density', init_arg=>undef,
          documentation=>'Normalized dipole entities density over unit cell');
-has 'ndims' =>(is=>'ro', isa=>Int, init_arg=>undef, lazy=>1,
-         builder=>'_ndims',
+has 'ndims' =>(is=>'lazy', isa=>Int, init_arg=>undef,
          documentation=>'Number of dimensions of system');
 
 sub BUILD {
@@ -126,7 +125,7 @@ sub BUILD {
     $self->_density($self->densityA*(1-$B)+$self->densityB*$B);
 }
 
-sub _ndims {
+sub _build_ndims {
     my $self=shift;
     return $self->nrf->haydock->B->ndims;
 }

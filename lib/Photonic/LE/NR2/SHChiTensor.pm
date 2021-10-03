@@ -178,7 +178,7 @@ use PDL::IO::Storable;
 use Photonic::Utils qw(make_haydock tensor incarnate_as);
 use Photonic::Types -all;
 use Photonic::LE::NR2::EpsTensor;
-use Moose;
+use Moo;
 
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
@@ -216,12 +216,11 @@ has 'epsA2'=>(is=>'ro', isa=>PDLComplex, required=>1,
     documentation=>'Dielectric function of host at SH');
 has 'epsB2'=>(is=>'ro', isa=>PDLComplex, required=>1,
         documentation=>'Dielectric function of inclusions');
-has 'nrshp' =>(is=>'ro', isa=>ArrayRef[InstanceOf['Photonic::LE::NR2::SHP']],
-            init_arg=>undef, lazy=>1, builder=>'_build_nrshp',
+has 'nrshp' =>(is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::LE::NR2::SHP']],
+            init_arg=>undef,
             documentation=>'Array of Haydock SH polarization calculators');
-has 'epsTensor'=>(is=>'ro', isa=>InstanceOf['Photonic::LE::NR2::EpsTensor'],
+has 'epsTensor'=>(is=>'lazy', isa=>InstanceOf['Photonic::LE::NR2::EpsTensor'],
          init_arg=>undef,
-         lazy=>1,  builder=>'_build_epsTensor',
          documentation=>'diel. tensor at 2w');
 has 'chiTensor'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, writer=>'_chiTensor',
              documentation=>'SH Susceptibility from last evaluation');

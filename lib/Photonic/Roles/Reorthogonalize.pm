@@ -125,7 +125,7 @@ use Machine::Epsilon;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::Utils qw(top_slice);
-use Moose::Role;
+use Moo::Role;
 
 requires 'complexCoeffs';
 
@@ -229,6 +229,6 @@ sub _checkorthogonalize {
     $orthos;
 }
 
-no Moose::Role;
+no Moo::Role;
 
 1;

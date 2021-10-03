@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    package Photonic::MyPackage;
-   use Moose;
+   use Moo;
    with 'Photonic::Roles::KeepStates;
    has 'myfield' => (is=>'ro');
    ...
@@ -63,7 +63,7 @@ keep states (0).
 
 =cut
 
-use Moose::Role;
+use Moo::Role;
 
 
 
@@ -71,6 +71,6 @@ has 'keepStates'=>(is=>'ro', required=>1, default=>0, writer=> '_keepStates',
          documentation=>'flag to save Haydock states');
 
 
-no Moose::Role;
+no Moo::Role;
 
 1;

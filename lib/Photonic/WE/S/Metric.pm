@@ -88,17 +88,16 @@ use PDL::NiceSlice;
 use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(any_complex);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 # Later make it complex
-has 'value'     => (is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
-                   builder=>'_value',
+has 'value'     => (is=>'lazy', isa=>PDLObj, init_arg=>undef,
                    documentation=>'Metric tensor');
 
 with 'Photonic::Roles::Metric';
 
-sub _value {
+sub _build_value {
     # Evaluate the metric tensor. Eq. MQ83.
     my $self = shift;
     my $G=$self->G; #reciprocal lattice;

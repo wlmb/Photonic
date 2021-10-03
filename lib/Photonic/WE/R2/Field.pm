@@ -125,8 +125,8 @@ use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
 use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types -all;
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 has 'haydock'=>(is=>'ro', isa=>HaydockSave, required=>1,
            documentation=>'Haydock recursion calculator');
