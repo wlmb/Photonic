@@ -376,7 +376,7 @@ sub _build_external_G {
     my $self=shift;
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
-    my $result=RtoG($self->external, $self->ndims, 1); # RoI cartesian nx ny...
+    my $result=RtoG($self->external, $self->ndims, 1); # cartesian nx ny...
     $self->filterflag($filterflag);
     $result=$self->_filter($result,1) if $filterflag;
     return $result;
@@ -386,7 +386,7 @@ sub _build_externalL_G {
     my $self=shift;
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
-    my $result=$self->haydock->geometry->Vec2LC_G($self->external_G); # RoI cartesian nx ny...
+    my $result=$self->haydock->geometry->Vec2LC_G($self->external_G); # cartesian nx ny...
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0) if $filterflag;
     return $result;
