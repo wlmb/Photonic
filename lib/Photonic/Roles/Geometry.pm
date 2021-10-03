@@ -102,7 +102,7 @@ has 'unitDyads'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
 has 'unitDyadsLU'=>(is=>'ro', isa=>ArrayRef, lazy=>1,
      builder=>'_build_unitDyadsLU',
      documentation=>'LU decomposition of unitDyads');
-has 'Direction0' =>(is => 'ro', isa => PDLObj, trigger=>\&_G0,
+has 'Direction0' =>(is => 'ro', isa => PDLObj,
      predicate=>'has_Direction0');
 
 sub _build_L {
@@ -188,12 +188,12 @@ sub _build_GNorm { #origin set to zero here.
 }
 
 sub _build_mGNorm { #normalized negated reciprocal lattice. Leave
-    #direction 0 invariant. See _G0.
+    #direction 0 invariant.
     my $self=shift;
     return -$self->GNorm;
 }
 sub _build_pmGNorm { #normalized +- reciprocal lattice. Leave
-    #direction 0 invariant. See _G0.
+    #direction 0 invariant.
     #xy,pm,nx,ny
     my $self=shift;
     return PDL->pdl($self->GNorm, $self->mGNorm)->mv(-1,1);
@@ -206,6 +206,12 @@ sub BUILD {
     confess "Direction0 must be length ".$self->ndims." vector" unless
       $value->dim(0)==$self->ndims and $value->ndims==1;
     confess "Direction must be non-null" unless $value->inner($value)>0;
+    my $arg=":". (",(0)" x $self->ndims); #:,(0),... dimension of space times
+    $value=$value->norm; #normalize
+    #Set element 0,0 for normalized arrays.
+    $self->GNorm->slice($arg).=$value; #Normalized 0.
+    $self->mGNorm->slice($arg).=$value; #Don't change sign for mGNorm!
+    $self->pmGNorm->mv(1,-1)->slice($arg).=$value;
   }
 }
 
@@ -251,17 +257,6 @@ sub _build_unitDyads {
 sub _build_unitDyadsLU {
     my $self=shift;
     [lu_decomp($self->unitDyads->r2C)];
-}
-
-sub _G0 {
-    my $self=shift;
-    my $value=shift;
-    my $arg=":". (",(0)" x $self->ndims); #:,(0),... dimension of space times
-    $value=$value->norm; #normalize
-    #Set element 0,0 for normalized arrays.
-    $self->GNorm->slice($arg).=$value; #Normalized 0.
-    $self->mGNorm->slice($arg).=$value; #Don't change sign for mGNorm!
-    $self->pmGNorm->mv(1,-1)->slice($arg).=$value;
 }
 
 sub Vec2LC_G { #longitudinal component of 'complex' vector field in
