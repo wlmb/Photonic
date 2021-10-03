@@ -114,12 +114,6 @@ evaluation of the field
 
 =back
 
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
-
 =cut
 
 

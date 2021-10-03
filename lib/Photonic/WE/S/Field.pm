@@ -85,18 +85,6 @@ Photonic::WE::S::Haydock structure
 
 Maximum number of Haydock coefficients to use.
 
-=item * epsA
-
-Dielectric function of component A
-
-=item * epsB
-
-Dielectric function of component B
-
-=item * u
-
-Spectral variable
-
 =item * filter
 
 optional reciprocal space filter
@@ -105,18 +93,7 @@ optional reciprocal space filter
 
 real space field in format cartesian, nx, ny,...
 
-=item * epsL
-
-Longitudinal dielectric response, obtained colaterally from last
-evaluation of the field
-
 =back
-
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
 
 =cut
 

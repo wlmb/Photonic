@@ -85,18 +85,6 @@ Photonic::LE::S::Haydock structure
 
 Maximum number of Haydock coefficients to use.
 
-=item * epsA
-
-Dielectric function of component A
-
-=item * epsB
-
-Dielectric function of component B
-
-=item * u
-
-Spectral variable
-
 =item * filter
 
 optional reciprocal space filter
@@ -111,12 +99,6 @@ Longitudinal dielectric response, obtained colaterally from last
 evaluation of the field
 
 =back
-
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
 
 =cut
 
@@ -141,13 +123,6 @@ has 'epsL' =>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
 		 documentation=>'Longitudinal dielectric response');
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-# Not needed for spinor calculation
-#has 'epsA'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, writer=>'_epsA',
-#    documentation=>'Dielectric function of host');
-#has 'epsB'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, writer=>'_epsB',
-#        documentation=>'Dielectric function of inclusions');
-#has 'u'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, writer=>'_u',
-#    documentation=>'Spectral variable');
 
 sub BUILD {
     my $self=shift;

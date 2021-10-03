@@ -110,12 +110,6 @@ real space field in format cartesian, nx, ny,...
 
 =back
 
-=begin Pod::Coverage
-
-=head2 BUILD
-
-=end Pod::Coverage
-
 =cut
 
 
