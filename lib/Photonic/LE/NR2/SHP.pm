@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::LE::NR2::SHP;
    my $nrshp=Photonic::LE::NR2::SHP->new(
-             nrf=>$nrf, densityA=>$dA, densityB=>$dB);
+             haydock=>$nt, nh=>10, densityA=>$dA, densityB=>$dB);
 
 =head1 DESCRIPTION
 
@@ -58,38 +58,32 @@ dipolium model.
 
 =over 4
 
-=item * new(nrf=>$nrf, densityA=>$dA, densityB=>$dB)
+=item * make_field
 
-Initializes the structure
-
-$nrf Photonic::LE::NR2::Field is a Haydock field calculator for the
+Makes L<Photonic::LE::NR2::Field> Haydock field calculator for the
 structure.
-
-$dA is the density of polarizable entities in medium A
-
-$dB is the density of polarizable entities in medium B
 
 =back
 
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
-=item * nrf
+=item * haydock filter nh
 
-Photonic::LE::NR2::Field Haydock field calculator
+Information to make L<Photonic::LE::NR2::Field> Haydock field calculator
 
 =item * densityA, densityB
 
-Normalized (to what?) dipole entities density in media A and B
+Normalized (to what?) density of polarizable entities in media A and B
 
 =item * density
 
-Density field over unit cell
+Density field over unit cell calculated from densities A and B
 
 =item * ndims
 
-Number of dimensions of the system
+Number of dimensions of the system, calculated from C<haydock>
 
 =back
 
@@ -107,9 +101,17 @@ use PDL::NiceSlice;
 use Moo;
 use Photonic::Types -all;
 use MooX::StrictConstructor;
+use Photonic::LE::NR2::Field;
+use Photonic::Utils qw(incarnate_as);
 
-has 'nrf'=>(is=>'ro', isa=>InstanceOf['Photonic::LE::NR2::Field'], required=>1,
-         documentation=>'Haydock field calculator');
+# to make Field object
+has 'haydock'=>(is=>'ro', isa=>HaydockSave, required=>1,
+           documentation=>'Haydock recursion calculator');
+has 'filter'=>(is=>'ro', isa=>PDLObj, predicate=>'has_filter',
+               documentation=>'Optional reciprocal space filter');
+has 'nh' =>(is=>'ro', isa=>Num, required=>1,
+            documentation=>'Desired no. of Haydock coefficients');
+
 has 'densityA'=>(is=>'ro', isa=>Num, required=>1,
          documentation=>'Normalized dipole entities density in medium A');
 has 'densityB'=>(is=>'ro', isa=>Num, required=>1,
@@ -121,13 +123,19 @@ has 'ndims' =>(is=>'lazy', isa=>Int, init_arg=>undef,
 
 sub BUILD {
     my $self=shift;
-    my $B=$self->nrf->haydock->B;
+    my $B=$self->haydock->B;
     $self->_density($self->densityA*(1-$B)+$self->densityB*$B);
 }
 
 sub _build_ndims {
     my $self=shift;
-    return $self->nrf->haydock->B->ndims;
+    return $self->haydock->B->ndims;
+}
+
+my @FIELD_ATTRS = qw(haydock nh);
+sub make_field {
+    my $self=shift;
+    incarnate_as('Photonic::LE::NR2::Field', $self, \@FIELD_ATTRS, $self->has_filter ? (filter=>$self->filter) : ());
 }
 
 __PACKAGE__->meta->make_immutable;

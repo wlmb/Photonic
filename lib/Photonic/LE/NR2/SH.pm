@@ -81,7 +81,7 @@ $epsA1, $epsB1, $epsA2, $epsB2 are the dielectric functions of the A
 
 Invariant part of SHG calculator.
 
-=item * ndims nrf densityA densityB density haydock
+=item * ndims densityA densityB density haydock nh filter
 
 Accessors handled by shp
 
@@ -199,8 +199,10 @@ use Moo;
 use MooX::StrictConstructor;
 
 has 'shp'=>(is=>'ro', isa=>InstanceOf['Photonic::LE::NR2::SHP'], required=>1,
-    handles=>[qw(ndims nrf densityA densityB density haydock)],
+    handles=>[qw(ndims densityA densityB density haydock nh filter has_filter make_field)],
     documentation=>'Object with invariant part of SHG calculation');
+has '_nrf1'=>(is=>'lazy', init_arg=>undef);
+has '_nrf2'=>(is=>'lazy', init_arg=>undef);
 has 'epsA1'=>(is=>'ro', isa=>PDLComplex, required=>1,
     documentation=>'Fundamental dielectric function of host');
 has 'epsB1'=>(is=>'ro', isa=>PDLComplex,
@@ -294,7 +296,7 @@ sub _alpha {
 	$self->densityB==0;
     $alphaA=$alphaB if $self->densityA==0;
     $alphaB=$alphaA if $self->densityB==0;
-    my $B=$self->nrf->haydock->B;
+    my $B=$self->haydock->B;
     $alphaA*(1-$B)+$B*$alphaB;
 }
 
@@ -308,16 +310,24 @@ sub _build_alpha2 {
     $self->_alpha($self->epsA2,$self->epsB2);
 }
 
+sub _build__nrf1 {
+    my $self=shift;
+    $self->make_field;
+}
+sub _build__nrf2 {
+    my $self=shift;
+    $self->make_field;
+}
 
 sub _build_field1 {
     my $self=shift;
-    $self->nrf->evaluate($self->epsA1, $self->epsB1);
+    $self->_nrf1->evaluate($self->epsA1, $self->epsB1);
 }
 
 sub _build_field2 {
     my $self=shift;
-    $self->nrf->evaluate($self->epsA2, $self->epsB2);
-    $self->_epsL2($self->nrf->epsL);
+    $self->_nrf2->evaluate($self->epsA2, $self->epsB2);
+    $self->_epsL2($self->_nrf2->epsL);
 }
 
 sub _build_dipolar {
@@ -329,7 +339,7 @@ sub _build_dipolar {
     my $Esquare_R=($field*$field)->sumover; #result is nx, ny...
     #Fourier transform
     my $Esquare_G=RtoG($Esquare_R, $ndims, 0); # nx ny...
-    my $G=$self->nrf->haydock->G; #cartesian, nx, ny...
+    my $G=$self->haydock->G; #cartesian, nx, ny...
     my $iG=i2C $G; #cartesian nx ny
     my $iGE2=$iG*$Esquare_G->(*1); #cartesian nx ny...
     #back to real space. Get cartesian out of the way and then back
@@ -349,10 +359,10 @@ sub _build_quadrupolar {
     my $naa=$self->density*$self->alpha1*$self->alpha1/2; #nx, ny...
     my $naaEE_R=$naa->(*1,*1)*$EE_R; #cartesian cartesian nx ny...
     my $naaEE_G=RtoG($naaEE_R, $ndims, 2); # cartesian cartesian nx ny...
-    my $G=$self->nrf->haydock->G; #cartesian, nx, ny...
+    my $G=$self->haydock->G; #cartesian, nx, ny...
     my $iG=i2C $G; #cartesian nx ny...
     my $iGnaaEE_G=($iG->(,*1)*$naaEE_G)->sumover; #dot - cartesian nx ny...
-    $iGnaaEE_G *= $self->nrf->filter->(*1) if $self->nrf->has_filter; # nx ny...
+    $iGnaaEE_G *= $self->filter->(*1) if $self->has_filter; # nx ny...
     #back to real space. Get cartesian out of the way and then back
     GtoR($iGnaaEE_G, $ndims, 1); #cartesian, nx, ny...
 }
@@ -376,7 +386,7 @@ sub _build_externalL_G {
     my $self=shift;
     my $filterflag=$self->filterflag;
     $self->filterflag(0);
-    my $result=$self->nrf->haydock->geometry->Vec2LC_G($self->external_G); # RoI cartesian nx ny...
+    my $result=$self->haydock->geometry->Vec2LC_G($self->external_G); # RoI cartesian nx ny...
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0) if $filterflag;
     return $result;
@@ -384,7 +394,7 @@ sub _build_externalL_G {
 
 sub _build_externalVecL_G {
     my $self=shift;
-    $self->nrf->haydock->geometry->LC2Vec_G($self->externalL_G);
+    $self->haydock->geometry->LC2Vec_G($self->externalL_G);
 }
 
 sub _build_externalVecL {
@@ -397,8 +407,8 @@ sub _build_HP { #build haydock states for P2
     my $ext=$self->externalL_G;
     my $normext=sqrt(PDL::abs2($ext)->sum);
     my $extnorm=$ext/$normext;
-    my $hp=Photonic::LE::NR2::Haydock->new(nh=>$self->nrf->nh,
-	geometry=>$self->nrf->haydock->geometry, smallH=>$self->nrf->haydock->smallH,
+    my $hp=Photonic::LE::NR2::Haydock->new(nh=>$self->nh,
+	geometry=>$self->haydock->geometry, smallH=>$self->haydock->smallH,
 		keepStates=>1, firstState=>$extnorm);
     $hp->run;
     return $hp;
@@ -443,7 +453,7 @@ sub _build_selfConsistentL_G {
 
 sub _build_selfConsistentVecL_G {
     my $self=shift;
-    $self->nrf->haydock->geometry->LC2Vec_G($self->selfConsistentL_G);
+    $self->haydock->geometry->LC2Vec_G($self->selfConsistentL_G);
 }
 
 sub _build_selfConsistentVecL {
@@ -464,8 +474,7 @@ sub _build_P2LMCalt {
     my $self=shift;
     my $PexL_G=$self->externalL_G; #external long 2w polarization
     my $PexM=$self->external_G->(:,(0),(0)); #macroscopic external.
-    my $nrf=$self->nrf;
-    my $haydock=$nrf->haydock;
+    my $haydock=$self->haydock;
     my $geom=$haydock->geometry;
     my $ndims=$geom->ndims;
     my $nelem=$geom->npoints;
@@ -475,7 +484,7 @@ sub _build_P2LMCalt {
     my $B=$geom->B;
     my $as=$haydock->as;
     my $bs=$haydock->bs;
-    my $nh=$nrf->nh; #desired number of Haydock terms
+    my $nh=$self->nh; #desired number of Haydock terms
     #don't go beyond available values.
     $nh=$haydock->iteration if $nh>=$haydock->iteration;
     # calculate using lapack for tridiag system
@@ -505,7 +514,7 @@ sub _build_P2LMCalt {
 
 sub _build_u1 {
     my $self=shift;
-    $self->nrf->u;
+    $self->_nrf1->u;
 }
 
 sub _build_u2 {
@@ -518,8 +527,8 @@ sub _filter { #Filter complex field in reciprocal space
     my $field=shift;
     my $skip=shift; #dimensions to skip, 0 for scalar, 1 for vector, 2
 		    #for tensor,  etc.
-    return $field unless $self->nrf->has_filter;
-    my $filter=$self->nrf->filter;
+    return $field unless $self->has_filter;
+    my $filter=$self->filter;
     my $field_mv=mvN($field, 1, $skip, -1); #mv cartesian out of the way
     $field_mv *= $filter;
     $field;

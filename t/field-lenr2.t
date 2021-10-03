@@ -67,7 +67,8 @@ ok(Cagree($ftv, $ftx), "1D trans field");
 
 my ($dA, $dB) = (0, 1); # vacuum, then anything as is normalised to dB
 my $nrshp=Photonic::LE::NR2::SHP->new(
-  nrf=>$fto, densityA=>$dA, densityB=>$dB,
+  haydock=>$nt, nh=>10, filter=>ones(1),
+  densityA=>$dA, densityB=>$dB,
 );
 my $nrsh=Photonic::LE::NR2::SH->new(
   shp=>$nrshp, epsA1=>$ea, epsB1=>$eb, epsA2=>$ea*$ea, epsB2=>$eb*$eb,
@@ -309,7 +310,7 @@ EOF
 ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->u1;
 $expected = pdl(<<'EOF');
--0.22115385-0.10576923i
+-0.75-0.25i
 EOF
 ok(Cagree($got, $expected), "u1") or diag "got: $got\nexpected: $expected";
 $got=$nrsh->P2LMCalt;

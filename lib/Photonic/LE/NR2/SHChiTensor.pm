@@ -268,7 +268,7 @@ sub evaluate {
 	    ->clump(-2) #linear index, XorY
 	    ->sumover  #XorY
 	    /$self->geometry->npoints;
-	my $k=$_->nrf->haydock->geometry->Direction0;
+	my $k=$_->haydock->geometry->Direction0;
 	my $FPChi=$epsT-identity($nd); #four pi chi linear 2w
 	my $P2MLC=($k*$P2M)->sumover; #Longitudinal component
 	my $P2ML=$k*$P2MLC; #longitudinal projection
@@ -307,7 +307,7 @@ sub _build_nrshp { # One Haydock coefficients calculator per direction0
     my @args=(nh=>$self->nhf);
     push @args, filter=>$self->filter if $self->has_filter;
     [ map Photonic::LE::NR2::SHP->new(
-	    nrf=>Photonic::LE::NR2::Field->new(@args, haydock=>$_),
+	    @args, haydock=>$_,
 	    densityA=>$self->densityA, densityB=>$self->densityB,
     ), @$haydock ];
 }
