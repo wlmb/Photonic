@@ -57,7 +57,7 @@ the components.
 
 =over 4
 
-=item * new(haydock=>$haydock, nh=>$nh, smallE=>$smallE)
+=item * new(haydock=>$haydock, nh=>$nh)
 
 Initializes the structure.
 
@@ -66,9 +66,6 @@ structure, *initialized* with the flag keepStates=>1
 (L<Photonic::Types/HaydockSave>).
 
 $nh is the maximum number of Haydock coefficients to use.
-
-$smallE is the criteria of convergence (default 1e-7) for
-Field calculations
 
 =item * evaluate()
 
@@ -87,10 +84,6 @@ Photonic::LE::S::Haydock structure
 =item * nh
 
 Maximum number of Haydock coefficients to use.
-
-=item * smallE
-
-Criteria of convergence. 0 means don't check.
 
 =item * epsA
 
@@ -148,10 +141,6 @@ has 'epsL' =>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
 		 documentation=>'Longitudinal dielectric response');
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for use of Haydock coeff.');
 # Not needed for spinor calculation
 #has 'epsA'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef, writer=>'_epsA',
 #    documentation=>'Dielectric function of host');
