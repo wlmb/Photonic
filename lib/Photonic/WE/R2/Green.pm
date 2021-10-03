@@ -83,7 +83,7 @@ continued fraction
 
 Value of flag to keep Haydock states (default 0)
 
-=item * symmetry
+=item * symmetric
 
 Flags that you only want the symmetric part of the Green's tensor, default 0.
 
@@ -104,6 +104,10 @@ Spectral variable
 
 Array of L<Photonic::WE::R2::Haydock> structures, one for each
 polarization, from the geometry.
+
+=item * reorthogonalize
+
+Reorthogonalize haydock flag
 
 =item * greenP
 

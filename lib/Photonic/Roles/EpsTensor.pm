@@ -112,6 +112,10 @@ Array of L<Photonic::Role::Haydock> structures, one for each direction
 calculated you are encouraged to use the accessor to pass the value to
 construct other C<EpsTensor> with different epsilon.
 
+=item * reorthogonalize
+
+Reorthogonalize haydock flag
+
 =item * epsL
 
 Array of L<Photonic::Role::EpsL> structures, one for each direction

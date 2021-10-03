@@ -125,6 +125,10 @@ Dipolar contribution to SH polarization field
 
 SH quadrupolar contribution to SH polarization field
 
+=item * epsL2
+
+Longitudinal dielectric function at 2w
+
 =item * external
 
 External contribution to SH polarization field (quadrupolar + dipolar)

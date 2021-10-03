@@ -102,6 +102,10 @@ square root of the inner product of the state with itself.
 
 Returns zero, as there is no need to change sign.
 
+=item * complexCoeffs
+
+Haydock coefficients are complex
+
 =back
 
 =cut

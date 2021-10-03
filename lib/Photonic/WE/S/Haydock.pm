@@ -51,6 +51,10 @@ Accessors handled by metric (see L<Photonic::WE::S::Metric>)
 A non null vector defining the complex direction of the macroscopic
 field.
 
+=item * normalizedPolarization
+
+The polarisation, normalised
+
 =back
 
 =head1 METHODS
@@ -85,6 +89,10 @@ the magnitude of inner product of the state with itself.
 =item * changesign
 
 Returns 0, as there is no need to change sign.
+
+=item * complexCoeffs
+
+Haydock coefficients are complex
 
 =back
 

@@ -101,6 +101,10 @@ Returns the magnitude of a state as the square root of the inner
 
 Return 0, as there is no need to change sign.
 
+=item * complexCoeffs
+
+Haydock coefficients are real
+
 =back
 
 =cut

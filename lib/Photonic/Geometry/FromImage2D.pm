@@ -70,12 +70,9 @@ inverted. Its size must be odd along both directions.
 $L is the size of the unit cell along the cartesian axes. By
 default, it is the number of pixels.
 
-$i controls whether the characteristic function ought to be
-inverted: 1 means invert, 0 don't invert. Default: 0
-
 =back
 
-=head1 ACCESSORS (read only)
+=head1 ATTRIBUTES
 
 =over 4
 
@@ -83,7 +80,10 @@ inverted: 1 means invert, 0 don't invert. Default: 0
 
 The filename containing the image
 
-=item * For the other accessors, see Photonic::Geometry
+=item * inverted
+
+Controls whether the characteristic function ought to be
+inverted: 1 means invert, 0 don't invert. Default: 0
 
 =back
 

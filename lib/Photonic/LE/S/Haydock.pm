@@ -98,6 +98,10 @@ inner product of the state with itself.
 
 Returns 0, as there is no need to change sign.
 
+=item * complexCoeffs
+
+Haydock coefficients are complex
+
 =back
 
 =cut

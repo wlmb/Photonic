@@ -171,6 +171,10 @@ ndarray of Haydock g coefficients
 
 Flag that the calculation converged
 
+=item * reorthogonalize
+
+Flag that the calculation should be reorthogonalised
+
 =back
 
 =head1 REQUIRED ATTRIBUTES

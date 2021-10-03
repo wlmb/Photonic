@@ -122,9 +122,13 @@ Maximum number of Haydock coefficients for field calculation
 
 Optional filter to multiply by in reciprocal space
 
--=item * epsA1, epsB1, epsA2, epsB2
+=item * epsA1, epsB1, epsA2, epsB2
 
 Dielectric functions of components A and B at fundamental and SH frequency
+
+=item * epsL
+
+Value of dielectric function
 
 =item * nrshp
 
@@ -147,6 +151,10 @@ Flags that the last calculation converged before using up all coefficients
 
 Criteria of convergence for Haydock coefficients and for fields. 0
 means don't check.
+
+=item * reorthogonalize
+
+Reorthogonalize haydock flag
 
 =back
 
@@ -177,9 +185,6 @@ has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 has 'epsL'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
 	     writer=>'_epsL',
 	     documentation=>'Value of dielectric function'  );
-has 'nhActual'=>(is=>'ro', isa=>Num, init_arg=>undef,
-		 writer=>'_nhActual',
-		 documentation=>'Actual number of coefficients used' );
 has 'converged'=>(is=>'ro', isa=>Num, init_arg=>undef,
 		  writer=>'_converged',
 		  documentation=>'The calculation did converge');

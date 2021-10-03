@@ -80,6 +80,10 @@ fraction. 0 means don't check. (default 1e-7)
 
 Array of L<Photonic::WE::S::Haydock> structures, one for each polarization
 
+=item * reorthogonalize
+
+Reorthogonalize haydock flag
+
 =item * greenP
 
 Array of L<Photonic::WE::S::GreenP> structures, one for each direction.
