@@ -3,6 +3,7 @@
 - remove the state_iterator capability which is replaced by memory-mapping, allowing large threaded calculations
 - switch type system to Type::Tiny
 - switch OO system to Moo
+- make Photonic::Roles::Field
 
 0.021 2021-10-01
 - Add example of honeycomb lattice for LE::NR2

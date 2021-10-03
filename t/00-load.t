@@ -58,6 +58,7 @@ Photonic::LE::S::Haydock
 Photonic::Roles::EpsFromGeometry
 Photonic::Roles::EpsL
 Photonic::Roles::EpsTensor
+Photonic::Roles::Field
 Photonic::Roles::Geometry
 Photonic::Roles::Haydock
 Photonic::Roles::KeepStates

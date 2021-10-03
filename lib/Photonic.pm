@@ -216,9 +216,13 @@ Calculate the longitudinal dielectric response.
 
 Some fields that have been factored our from the calculations of the response.
 
+=item L<Photonic::Roles::Field>
+
+Role consumed by all Field objects.
+
 =item L<Photonic::Roles::Geometry>
 
-Roles consumed by all Geometry objects.
+Role consumed by all Geometry objects.
 
 =item L<Photonic::Roles::KeepStates>
 
@@ -226,7 +230,7 @@ Flag to keepstates.
 
 =item L<Photonic::Roles::Metric>
 
-Roles factored out of the metric calculators.
+Role factored out of the metric calculators.
 
 =item L<Photonic::Roles::Reorthogonalize>
 
@@ -234,7 +238,7 @@ Role to keep Haydock states orthogonalized.
 
 =item L<Photonic::Roles::UseMask>
 
-Roles to manage masks in reciprocal space.
+Role to manage masks in reciprocal space.
 
 =back
 

@@ -135,7 +135,7 @@ sub _build_ndims {
 my @FIELD_ATTRS = qw(haydock nh);
 sub make_field {
     my $self=shift;
-    incarnate_as('Photonic::LE::NR2::Field', $self, \@FIELD_ATTRS, $self->has_filter ? (filter=>$self->filter) : ());
+    incarnate_as('Photonic::LE::NR2::Field', $self, \@FIELD_ATTRS, @_, $self->has_filter ? (filter=>$self->filter) : ());
 }
 
 __PACKAGE__->meta->make_immutable;

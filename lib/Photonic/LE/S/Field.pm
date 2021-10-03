@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    use Photonic::LE::S::Field;
    my $nrf=Photonic::LE::S::Field->new(...);
-   my $field=$nrf->evaluate();
+   my $field=$nrf->field;
 
 =head1 DESCRIPTION
 
@@ -53,45 +53,12 @@ Calculates the non retarded electric field for a given fixed
 Photonic::Geometry structure and given dielectric functions of
 the components.
 
-=head1 METHODS
+Consumes L<Photonic::Roles::Field>
+- please see for attributes.
+
+=head1 ATTRIBUTES
 
 =over 4
-
-=item * new(haydock=>$haydock, nh=>$nh)
-
-Initializes the structure.
-
-$haydock Photonic::LE::S::Haydock is a Haydock calculator for the
-structure, *initialized* with the flag keepStates=>1
-(L<Photonic::Types/HaydockSave>).
-
-$nh is the maximum number of Haydock coefficients to use.
-
-=item * evaluate()
-
-Returns the microscopic electric field.
-
-=back
-
-=head1 ACCESSORS (read only)
-
-=over 4
-
-=item * haydock
-
-Photonic::LE::S::Haydock structure
-
-=item * nh
-
-Maximum number of Haydock coefficients to use.
-
-=item * filter
-
-optional reciprocal space filter
-
-=item * field
-
-real space field in format cartesian, nx, ny,...
 
 =item * epsL
 
@@ -102,7 +69,6 @@ evaluation of the field
 
 =cut
 
-
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -112,24 +78,18 @@ use Photonic::Types -all;
 use Moo;
 use MooX::StrictConstructor;
 
-has 'haydock'=>(is=>'ro', isa=>HaydockSave, required=>1,
-           documentation=>'Haydock recursion calculator');
-has 'filter'=>(is=>'ro', isa=>PDLObj, predicate=>'has_filter',
-               documentation=>'Optional reciprocal space filter');
-has 'field'=>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
-           writer=>'_field', documentation=>'Calculated real space field');
+with 'Photonic::Roles::Field';
+
 has 'epsL' =>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
 		 writer=>'_epsL',
 		 documentation=>'Longitudinal dielectric response');
-has 'nh' =>(is=>'ro', isa=>Num, required=>1,
-	    documentation=>'Desired no. of Haydock coefficients');
 
 sub BUILD {
     my $self=shift;
     $self->haydock->run unless $self->haydock->iteration;
 }
 
-sub evaluate {
+sub _build_field {
     my $self=shift;
     my $as=$self->haydock->as;
     my $bs=$self->haydock->bs;
@@ -164,9 +124,7 @@ sub evaluate {
     #get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=GtoR($Esp, $self->haydock->B->ndims, 1);
     $field_R*=$self->haydock->B->nelem; #scale to have unit macroscopic field
-    #result is xy,nx,ny,...
-    $self->_field($field_R);
-    return $field_R;
+    return $field_R; #result is xy,nx,ny,...
 }
 
 __PACKAGE__->meta->make_immutable;

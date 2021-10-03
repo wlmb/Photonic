@@ -47,7 +47,7 @@ my $gl=Photonic::Geometry::FromB->new(B=>$B, Direction0=>pdl([1])); #long
 my $haydock=Photonic::LE::S::Haydock->new(geometry=>$gl, nh=>10,
    keepStates=>1, epsilon=>$epsilon);
 my $flo=Photonic::LE::S::Field->new(haydock=>$haydock, nh=>10);
-my $flv=$flo->evaluate;
+my $flv=$flo->field;
 my $fla=1/$ea;
 my $flb=1/$eb;
 my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
@@ -62,6 +62,6 @@ my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
 my $nt=Photonic::LE::S::Haydock->new(geometry=>$gt, nh=>10,
 				  keepStates=>1, epsilon=>$epsilont);
 my $fto=Photonic::LE::S::Field->new(haydock=>$nt, nh=>10);
-my $ftv=$fto->evaluate;
+my $ftv=$fto->field;
 my $ftx=r2C(pdl [1, 0]);
 ok(Cagree($ftv, $ftx), "1D trans field");

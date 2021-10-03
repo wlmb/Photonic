@@ -32,6 +32,7 @@ lib/Photonic/LE/S/Haydock.pm
 lib/Photonic/Roles/EpsFromGeometry.pm
 lib/Photonic/Roles/EpsL.pm
 lib/Photonic/Roles/EpsTensor.pm
+lib/Photonic/Roles/Field.pm
 lib/Photonic/Roles/Geometry.pm
 lib/Photonic/Roles/Haydock.pm
 lib/Photonic/Roles/KeepStates.pm

@@ -312,21 +312,21 @@ sub _build_alpha2 {
 
 sub _build__nrf1 {
     my $self=shift;
-    $self->make_field;
+    $self->make_field(epsA=>$self->epsA1, epsB=>$self->epsB1);
 }
 sub _build__nrf2 {
     my $self=shift;
-    $self->make_field;
+    $self->make_field(epsA=>$self->epsA2, epsB=>$self->epsB2);
 }
 
 sub _build_field1 {
     my $self=shift;
-    $self->_nrf1->evaluate($self->epsA1, $self->epsB1);
+    $self->_nrf1->field;
 }
 
 sub _build_field2 {
     my $self=shift;
-    $self->_nrf2->evaluate($self->epsA2, $self->epsB2);
+    $self->_nrf2->field;
     $self->_epsL2($self->_nrf2->epsL);
 }
 
