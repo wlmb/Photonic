@@ -64,7 +64,7 @@ ok(agree($g->G->(:,(6),(6)), pdl(-5*2*$pi/11,-5*2*$pi/11)),
 ok(agree($gl->G->(:,(6),(6)), pdl(-5*2*$pi,-5*2*$pi)),
    "Reciprocal vector beyond center");
 ok(!$g->has_Direction0, "False Direction0 predicate");
-$g->Direction0(pdl(1,0)); #set direction 0
+$g=Photonic::Geometry::FromB->new(B=>$B,Direction0=>pdl(1,0)); #set direction 0
 ok($g->has_Direction0, "True Direction0 predicate");
 ok(agree($g->GNorm->(:,(0),(0)),pdl(1,0)), "Normalized G=0 reciprocal vector");
 ok(agree($g->GNorm->(:,(5),(5)),pdl(1,1)/sqrt(2)),

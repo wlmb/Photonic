@@ -102,7 +102,7 @@ has 'unitDyads'=>(is=>'ro', isa=>PDLObj, init_arg=>undef, lazy=>1,
 has 'unitDyadsLU'=>(is=>'ro', isa=>ArrayRef, lazy=>1,
      builder=>'_build_unitDyadsLU',
      documentation=>'LU decomposition of unitDyads');
-has 'Direction0' =>(is => 'rw', isa => PDLObj, trigger=>\&_G0,
+has 'Direction0' =>(is => 'ro', isa => PDLObj, trigger=>\&_G0,
      predicate=>'has_Direction0');
 
 sub _build_L {

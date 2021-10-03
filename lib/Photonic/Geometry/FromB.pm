@@ -37,7 +37,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use namespace::autoclean;
 use Moose;
 use Photonic::Types -all;
-use MooseX::StrictConstructor;
 
 has 'B' =>(is=>'ro', isa=>PDLObj, required=>1,
 	   documentation=>'Characteristic function');

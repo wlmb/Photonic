@@ -140,7 +140,7 @@ sub make_haydock {
 sub _haydock_extra {
   my ($self, $u, $add_geom) = @_;
   my $obj = dclone($add_geom ? $self->geometry : $self->metric);
-  $obj->Direction0($u) if $add_geom; #add G0 direction
+  $obj = $obj->new(%$obj, Direction0=>$u) if $add_geom; #add G0 direction
   $add_geom ? (geometry=>$obj) : (metric=>$obj, polarization=>$u->r2C);
 }
 
