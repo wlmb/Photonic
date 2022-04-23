@@ -10,7 +10,8 @@ WriteMakefile(
 	'Bernardo S. Mendoza <bms@cio.mx>',
 	'Jose Samuel Perez-Huerta <jsperez@fisica.uaz.edu.mx>',
 	'Lucila Juarez Reyes <lucilajuarezreyes@gmail.com>',
-	'Merlyn Jaqueline Juarez-Gutierrez <merlynj@icf.unam.mx>'
+	'Raksha Singla  <raksharuia@gmail.com>',
+	'Merlyn Jaqueline Juarez-Gutierrez <merlynj@icf.unam.mx>',
 	],
     VERSION_FROM => 'lib/Photonic.pm',
     LICENSE    => 'perl',

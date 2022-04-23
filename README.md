@@ -33,6 +33,7 @@ doi:10.1088/1367-2630/15/4/043037
   - Bernardo S. Mendoza
   - Lucila Juárez-Reyes
   - José Samuel Pérez-Huerta
+  - Raksha Singla
   - Merlyn Jaqueline Juárez-Gutiérrez
 
 ## Acknowledgments ##
