@@ -73,11 +73,10 @@ reciprocal vector for each even dimension of reciprocal space.
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use Moose::Role;
+use Moo::Role;
 
 has 'use_mask'=>(is=>'ro', default=>1, documentation=>'Use mask if present');
-has 'mask'=>(is=>'ro', lazy=>1, builder=>'_build_mask',
-    documentation=>'Mask in reciprocal space');
+has 'mask'=>(is=>'lazy', documentation=>'Mask in reciprocal space');
 #ndims returns the number of dimensions and dims a reference to an
 #array with each dimension
 requires qw(ndims dims);
@@ -99,6 +98,6 @@ sub _build_mask { #default mask kills G_max for even dims.
     return undef;
 }
 
-no Moose::Role;
+no Moo::Role;
 
 1;

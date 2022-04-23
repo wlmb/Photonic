@@ -53,4 +53,4 @@ plan skip_all => "Pod::Coverage $min_pc required for testing POD coverage"
 #since PDL::IO::Pic fails too.
 ($ENV{PATH}) = ($ENV{PATH} =~ /^(.*)$/g);
 
-all_pod_coverage_ok();
+all_pod_coverage_ok({private=>[qr/_(attrs|class)$|BUILD|^(has)?_/]});

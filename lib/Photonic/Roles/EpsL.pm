@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     package Photonic::LE::NR2::EpsL;
     $Photonic::LE::NR2::EpsL::VERSION= '0.021';
     use namespace::autoclean;
-    use Moose;
+    use Moo;
     with 'Photonic::Roles::EpsL';
     has...
 
@@ -115,22 +115,22 @@ check.
 
 =cut
 
-use Moose::Role;
-use Photonic::Types;
+use Moo::Role;
+use Photonic::Types -all;
 
 requires '_build_epsL';
 
-has 'haydock' =>(is=>'ro', isa=>'Photonic::Types::Haydock', required=>1);
-has 'nh' =>(is=>'ro', isa=>'Num', required=>1, lazy=>1, builder=>'_nh',
+has 'haydock' =>(is=>'ro', isa=>Haydock, required=>1);
+has 'nh' =>(is=>'lazy', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>'Num', required=>1, default=>1e-7,
+has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'epsL'=>(is=>'ro', isa=>'Photonic::Types::PDLComplex', lazy => 1, builder => '_build_epsL',
+has 'epsL'=>(is=>'lazy', isa=>PDLComplex,
 	     documentation=>'Value of dielectric function'  );
-has 'nhActual'=>(is=>'ro', isa=>'Num', init_arg=>undef,
+has 'nhActual'=>(is=>'ro', isa=>Num, init_arg=>undef,
 		 writer=>'_nhActual',
 		 documentation=>'Actual number of coefficients used' );
-has 'converged'=>(is=>'ro', isa=>'Num', init_arg=>undef,
+has 'converged'=>(is=>'ro', isa=>Num, init_arg=>undef,
 		  writer=>'_converged',
 		  documentation=>'The calculation did converge');
 
@@ -139,11 +139,11 @@ sub BUILD {
     $self->haydock->run unless $self->haydock->iteration;
 }
 
-sub _nh { #build desired number of Haydock coeffs to use.
+sub _build_nh { #build desired number of Haydock coeffs to use.
     my $self=shift;
     return $self->haydock->nh; #defaults to coefficients desired
 }
 
-no Moose::Role;
+no Moo::Role;
 
 1;

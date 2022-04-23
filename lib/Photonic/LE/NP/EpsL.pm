@@ -61,8 +61,8 @@ Consumes L<Photonic::Roles::EpsL>
 use namespace::autoclean;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 
 with 'Photonic::Roles::EpsL';
 
