@@ -105,7 +105,7 @@ extends 'Photonic::WE::R2::Wave';
 
 has 'epsilonTensor' =>  (is=>'ro', isa=>'Photonic::Types::PDLComplex', init_arg=>undef,
              writer=>'_epsilonTensor',
-             documentation=>'Wave operator from last evaluation');
+             documentation=>'Dielectric tensor value');
 
 around 'evaluate' => sub {
     my $orig=shift;
