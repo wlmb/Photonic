@@ -1,3 +1,5 @@
+- Fix skip test in geometry.t when there is no image converter
+
 0.021 2021-10-01
 - Add example of honeycomb lattice for LE::NR2
 - Admit 'haydock' as an optional parameter in P::Roles::EpsTensor
