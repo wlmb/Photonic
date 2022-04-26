@@ -94,7 +94,7 @@ ok(agree($g->Vec2LC_G(zeroes(11,11)->ndcoords->r2C)->re,
    "Vec2LC");
 ok(agree($g->LC2Vec_G(ones(11,11)->r2C)->re, $g->GNorm), "LC2Vec_G");
 
-SKIP {
+SKIP: {
      skip "image converter not found", 7 unless rpiccan("PNG");
      my $gw=Photonic::Geometry::FromImage2D->new(path=>'data/white.png');
      ok(defined $gw, "Create geometry from Image");
