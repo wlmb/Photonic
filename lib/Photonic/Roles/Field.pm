@@ -110,7 +110,7 @@ has 'filter'=>(is=>'ro', isa=>PDLObj, predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 has 'field'=>(is=>'lazy', isa=>PDLComplex,
            documentation=>'Calculated real space field');
-has 'nh' =>(is=>'ro', isa=>Num,
+has 'nh' =>(is=>'lazy', isa=>Num, builder=>'_build_nh',
             documentation=>'Desired no. of Haydock coefficients');
 
 sub BUILD {
