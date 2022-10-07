@@ -326,8 +326,8 @@ sub _build_field1 {
 
 sub _build_field2 {
     my $self=shift;
-    $self->_nrf2->field;
     $self->_epsL2($self->_nrf2->epsL);
+    $self->_nrf2->field;
 }
 
 sub _build_dipolar {

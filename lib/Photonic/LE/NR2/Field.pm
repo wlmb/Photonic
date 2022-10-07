@@ -94,7 +94,7 @@ use MooX::StrictConstructor;
 
 with 'Photonic::Roles::Field';
 
-has 'epsL' =>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
+has 'epsL' =>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 		 writer=>'_epsL',
 		 documentation=>'Longitudinal dielectric response');
 has 'epsA'=>(is=>'ro', isa=>PDLComplex,
@@ -107,6 +107,12 @@ has 'u'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 sub BUILD {
     my $self=shift;
     $self->haydock->run unless $self->haydock->iteration;
+}
+
+sub _build_epsL {
+    my $self=shift;
+    my $field= $self->field; # epsL is side effect of field
+    $self->epsL; # danger of infinite recursion?
 }
 
 sub _build_u {
@@ -136,11 +142,12 @@ sub _build_field {
     $rhs=$rhs->r2C;
     my $result = cgtsv($subdiag, $diag, $supradiag, $rhs);
     # Obtain longitudinal macroscopic response from result
-    $self->_epsL(my $epsL=1/$result->((0)));
+    my $Norm=1/$result->((0)); # Normalization for field, 1/E_M
+    $self->_epsL($Norm*$epsA/$u);
     # Normalize result so macroscopic field is 1.
     #states are nx,ny...
     my $stateit=$self->haydock->states->dummy(0);
-    my $Es= $result*$epsL;
+    my $Es= $result*$Norm;
     my $nrGnorm = $self->haydock->GNorm;
     #field is cartesian,nx,ny...
     my $field_G=linearCombineIt($Es, $nrGnorm*$stateit); #En ^G|psi_n>
