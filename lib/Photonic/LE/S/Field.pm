@@ -80,7 +80,7 @@ use MooX::StrictConstructor;
 
 with 'Photonic::Roles::Field';
 
-has 'epsL' =>(is=>'ro', isa=>PDLComplex, init_arg=>undef,
+has 'epsL' =>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 		 writer=>'_epsL',
 		 documentation=>'Longitudinal dielectric response');
 
@@ -88,6 +88,13 @@ sub BUILD {
     my $self=shift;
     $self->haydock->run unless $self->haydock->iteration;
 }
+
+sub _build_epsL {
+    my $self=shift;
+    my $field= $self->field; # epsL is side effect of field
+    $self->epsL; # danger of infinite recursion?
+}
+
 
 sub _build_field {
     my $self=shift;
