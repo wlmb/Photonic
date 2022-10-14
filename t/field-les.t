@@ -34,7 +34,7 @@ use PDL;
 use Photonic::LE::S::Haydock;
 use Photonic::LE::S::Field;
 
-use Test::More tests => 2;
+use Test::More tests => 4;
 use lib 't/lib';
 use TestUtils;
 
@@ -48,12 +48,15 @@ my $haydock=Photonic::LE::S::Haydock->new(geometry=>$gl, nh=>10,
    keepStates=>1, epsilon=>$epsilon);
 my $flo=Photonic::LE::S::Field->new(haydock=>$haydock, nh=>10);
 my $flv=$flo->field;
+my $fle=$flo->epsL;
 my $fla=1/$ea;
 my $flb=1/$eb;
 my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
+my $flex=1/$fproml;
 ($fla, $flb)=map {$_/$fproml} ($fla, $flb);
-my $flx=($fla*(1-$B)+$flb*$B)->transpose;
-ok(Cagree($flv, $flx), "1D long field");
+my $flx=($fla*(1-$B)+$flb*$B)->slice("*1");
+ok(Cagree($flv, $flx), "1D long field") or diag "got: $flv\nexpected: $flx";
+ok(Cagree($fle, $flex), "1D long response") or diag "got: $fle\nexpected: $flex";
 
 #View 2D from 1D superlattice.
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
@@ -63,5 +66,8 @@ my $nt=Photonic::LE::S::Haydock->new(geometry=>$gt, nh=>10,
 				  keepStates=>1, epsilon=>$epsilont);
 my $fto=Photonic::LE::S::Field->new(haydock=>$nt, nh=>10);
 my $ftv=$fto->field;
-my $ftx=r2C(pdl [1, 0]);
-ok(Cagree($ftv, $ftx), "1D trans field");
+my $fte=$fto->epsL;
+my $ftx=pdl([1, 0])->r2C;
+ok(Cagree($ftv, $ftx), "1D trans field") or diag "got: $ftv\nexpected: $ftx";;
+my $fpromt=$ea*(1-$gt->f)+$eb*($gt->f);
+ok(Cagree($fte, $fpromt), "1D trans response") or diag "got: $fte\nexpected: $fpromt";

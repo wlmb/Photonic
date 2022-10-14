@@ -116,9 +116,11 @@ sub _build_field {
     my $result = cgtsv($subdiag, $diag, $supradiag, $rhs);
     # Obtain longitudinal macroscopic response from result
     # Add spinor normalization.
-    $self->_epsL(my $epsL=sqrt(2)/$result->((0)));
+    my $epsL=1/$result->((0));
+    $self->_epsL($epsL);
+    my $norm=sqrt(2)*$epsL;
     # Normalize result so macroscopic field is 1.
-    my $Es = $result*$epsL;
+    my $Es = $result*$norm;
     #states are xy,nx,ny...
     my $stateit=$self->haydock->states->slice("*1");
     #pmGnorm is xy,pm,nx,ny...

@@ -53,10 +53,11 @@ my $fle=$flo->epsL;
 my $fla=1/$ea;
 my $flb=1/$eb;
 my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
+my $flex=1/$fproml;
 ($fla, $flb)=map {$_/$fproml} ($fla, $flb);
-my $flx=pdl([$fla*(1-$B)+$flb*$B])->mv(0,-1);
+my $flx=($fla*(1-$B)+$flb*$B)->slice("*1");
 ok(Cagree($flv, $flx), "1D long field") or diag "got: $flv\nexpected: $flx";
-ok(Cagree($fle, 1/$fproml), "1D long response") or diag "got: $fle\nexpected: $fproml";
+ok(Cagree($fle, $flex), "1D long response") or diag "got: $fle\nexpected: $flex";
 #View 2D from 1D superlattice.
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
@@ -64,10 +65,10 @@ my $nt=Photonic::LE::NR2::Haydock->new(geometry=>$gt, nh=>10, keepStates=>1);
 my $fto=Photonic::LE::NR2::Field->new(haydock=>$nt, nh=>10, filter=>ones(1), epsA=>$ea, epsB=>$eb);
 my $ftv=$fto->field;
 my $fte=$fto->epsL;
-my $ftx=pdl(r2C(1), r2C(0));
-ok(Cagree($ftv, $ftx), "1D trans field");
+my $ftx=pdl([1, 0])->r2C;
+ok(Cagree($ftv, $ftx), "1D trans field") or diag "got: $ftv\nexpected: $ftx";;
 my $fpromt=$ea*(1-$gt->f)+$eb*($gt->f);
-ok(Cagree($fte, $fpromt), "1D trans response");
+ok(Cagree($fte, $fpromt), "1D trans response") or diag "got: $fte\nexpected: $fpromt";
 
 
 my ($dA, $dB) = (0, 1); # vacuum, then anything as is normalised to dB
