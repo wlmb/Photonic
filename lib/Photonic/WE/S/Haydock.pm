@@ -174,7 +174,7 @@ sub applyMetric {
     my $g=$self->metric->value;
     #$g is xy:xy:pm:nx:ny
     #real or complex matrix times complex vector
-    my $gpsi=($g*$psi(*1)) #xy:xy:pm:nx:ny
+    my $gpsi=($g*$psi(:,*1)) #xy:xy:pm:nx:ny
 	->sumover; #xy:pm:nx:ny
     return $gpsi;
 }
