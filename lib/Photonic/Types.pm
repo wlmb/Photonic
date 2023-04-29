@@ -51,7 +51,7 @@ declare GeometryG0 =>
 
 declare Haydock =>
   as ConsumerOf['Photonic::Roles::Haydock'],
-  message { "Expected an AllH" };
+  message { "Expected a Haydock" };
 
 declare HaydockSave =>
   as Haydock,
@@ -65,6 +65,16 @@ declare PDLObj =>
 declare PDLComplex =>
   as PDLObj,
   where { any_complex($_) },
+  ;
+
+declare PDLComplexMatrix =>
+  as PDLComplex,
+  where { $_->ndims>=2 && $_->dim(0)==$_->dim(1)},
+  ;
+
+declare PDLComplexMatrixField => # NxN matrix for each point in N dimensional space
+  as PDLComplexMatrix,
+  where { $_->dim(0)==$_->ndims-2},
   ;
 
 __END__
