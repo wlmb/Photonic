@@ -201,7 +201,7 @@ sub changesign { #don't change sign
 sub _build_firstState { #\delta_{G0}
     my $self=shift;
     my $v=PDL->zeroes(2,@{$self->dims})->r2C; #pm:nx:ny...
-    my $arg=join ',', ':', ("(0)") x $self->ndims; #(0),(0),... ndims+1 times
+    my $arg=join ',', ':', ("(0)") x $self->ndims; #:,(0),(0),... ndims times
     $v->slice($arg).=1/sqrt(2);
     my $e=$self->polarization; #xy
     my $d=$e->dim(0);
