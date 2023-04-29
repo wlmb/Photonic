@@ -211,8 +211,8 @@ sub changesign { #don't change sign
 
 sub _build_firstState { #\delta_{G0}
     my $self=shift;
-    my $v=PDL->zeroes(2,@{$self->dims})->r2C; #pm:nx:ny...
-    my $arg=join ',', ':', ("(0)") x $self->ndims; #(0),(0),... ndims+1 times
+    my $v=PDL->zeroes(@{$self->dims})->r2C; #nx:ny...
+    my $arg=join ',', ("(0)") x $self->ndims; #(0),(0),... ndims times
     $v->slice($arg).=1/sqrt(2);
     my $e=$self->polarization; #xy
     my $d=$e->dim(0);
@@ -224,9 +224,8 @@ sub _build_firstState { #\delta_{G0}
 	$modulus2 > 0;
     $e=$e/sqrt($modulus2);
     $self->_normalizedPolarization($e);
-    #I'm using the same polarization for k and for -k. Could be
-    #different (for chiral systems, for example
-    my $phi=$e*$v(*1); #initial state ordinarily normalized
+    #Use same helicity for k and for -k, conjugate polarization, for allowing chirality
+    my $phi=pdl($e, $e->conj)*$v->(*1,*1); #initial state ordinarily normalized
                        # xy:pm:nx:ny
     return $phi;
 }
