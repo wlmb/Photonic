@@ -14,7 +14,7 @@ version 0.021
 =head1 SYNOPSIS
 
     use Photonic::WE::ST::Haydock;
-    my $nr=Photonic::WE::ST::Haydock->new(metric=>$g, polarization=>$p);
+    my $nr=Photonic::WE::ST::Haydock->new(metric=>$g, polarization=>$p, nh=>$nh);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -154,7 +154,7 @@ sub applyOperator {
     my $psi=shift; #psi is xy:pm:nx:ny...
     my $mask=undef;
     $mask=$self->mask if $self->use_mask;
-    my $id=identity($self->ndims);
+    my $id=PDL::MatrixOps::identity($self->ndims);
     my $gpsi=$self->applyMetric($psi);
     # gpsi is xy:pm:nx:ny. Get cartesian and pm out of the way and
     my $gpsi_r=GtoR($gpsi, $self->ndims, 2)->mv(1,-1); #xy:nx:ny:pm

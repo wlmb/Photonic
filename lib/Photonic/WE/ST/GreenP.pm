@@ -44,7 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::WE::ST::GreenP;
-   my $green=Photonic::WE::ST::GreepP->new(haydock=>$h, nh=>$nh);
+   my $green=Photonic::WE::ST::GreenP->new(haydock=>$h, nh=>$nh);
    my $greenProjection=$green->Gpp;
    my $WaveProjection=$green->waveOperator;
    my $EpsTensor=$green->epsilon;
