@@ -118,7 +118,7 @@ use PDL::NiceSlice;
 use Photonic::WE::ST::Haydock;
 use Photonic::WE::ST::GreenP;
 use Photonic::Types -all;
-use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator any_complex);
+use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator any_complex  triangle_coords);
 use List::Util qw(all);
 use Moo;
 use MooX::StrictConstructor;
@@ -152,19 +152,66 @@ has 'epsilonTensor' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
+has 'cHaydock' =>(
+    is=>'lazy', isa=>ArrayRef[Haydock],
+    init_arg=>undef,
+    documentation=>'Array of Haydock calculators for complex projection');
+
+has 'cGreenP'=>(
+    is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WE::ST::GreenP']],
+    init_arg=>undef,
+    documentation=>'Array of projected G calculators for complex projection');
+
+has 'symmetric' => (
+    is=>'ro', required=>1, default=>0,
+    documentation=>'Flags only symmetric part required');
+
 sub _build_greenTensor {
     my $self=shift;
+    my $symmetric=tensor(
+	pdl([map $_->Gpp, @{$self->greenP}]),
+	$self->geometry->unitDyadsLU,
+	my $nd=$self->geometry->ndims, 2);
     $self->_converged(all { $_->converged } @{$self->greenP});
-    tensor(pdl([map $_->Gpp, @{$self->greenP}]), $self->geometry->unitDyadsLU, $self->geometry->ndims, 2);
+    return $symmetric if $self->symmetric;
+    my $greenPc = pdl map $_->Gpp,
+	my @cGP=@{$self->cGreenP}; #Green's projections along complex directions.
+    $self->_converged(all { $_->converged } $self, @cGP);
+    my $asy=$symmetric->zeroes; #xy,xy, $ndx$nd
+    my $cpairs=$self->geometry->cUnitPairs->mv(1,-1);
+    my $indexes = triangle_coords($nd);
+    $indexes = $indexes->mv(-1,0)->whereND( ($indexes(0) <= $nd-2)->((0)) )->mv(0,-1); # first index only up to $nd-2, mv because whereND takes dims off bottom
+    $asy->indexND($indexes) .= #$asy is xy,xy. First index is column
+      $greenPc-
+      ($cpairs->conj->(*1) # column, row
+       *$cpairs->(:,*1)
+       *$symmetric)->sumover->sumover
+      ;
+    $asy *= PDL->i();
+    # This is wrong: $asy -= $asy->transpose;
+    $asy = $asy-$asy->transpose;
+    $symmetric+$asy;
 }
+
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0
     my ($self) = @_;
     make_haydock($self, 'Photonic::WE::ST::Haydock', $self->geometry->unitPairs, 0, qw(reorthogonalize use_mask mask));
 }
 
+sub _build_cHaydock {
+    # One Haydock coefficients calculator per complex polarization
+    my $self=shift;
+    make_haydock($self, 'Photonic::WE::ST::Haydock', $self->geometry->cUnitPairs, 0,
+	qw(reorthogonalize use_mask mask));
+}
+
 sub _build_greenP {
     make_greenp(shift, 'Photonic::WE::ST::GreenP');
+}
+
+sub _build_cGreenP {
+    make_greenp(shift, 'Photonic::WE::ST::GreenP', 'cHaydock');
 }
 
 sub _build_waveOperator {
