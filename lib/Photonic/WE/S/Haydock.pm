@@ -214,9 +214,9 @@ sub _build_firstState { #\delta_{G0}
     $e=$e/sqrt($modulus2);
     $self->_normalizedPolarization($e);
     #I'm using the same polarization for k and for -k. Could be
-    #different (for chiral systems, for example
-    my $phi=$e*$v(*1); #initial state ordinarily normalized
-                       # xy:pm:nx:ny
+    #different (for chiral systems, for example (maybe I should conjugate to avoid null states)
+    my $phi=$e*$v(*1); #initial state ordinarily normalized #suspicious, what about circular polarization?
+    # xy:pm:nx:ny
     return $phi;
 }
 
