@@ -1,5 +1,5 @@
 package Photonic::WE::S::Haydock;
-$Photonic::WE::S::Haydock::VERSION = '0.021';
+$Photonic::WE::S::Haydock::VERSION = '0.022';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::S::Haydock
 
 =head1 VERSION
 
-version 0.021
+version 0.022
 
 =head1 SYNOPSIS
 
@@ -174,7 +174,7 @@ sub applyMetric {
     my $g=$self->metric->value;
     #$g is xy:xy:pm:nx:ny
     #real or complex matrix times complex vector
-    my $gpsi=($g  #j:i:pm:nx:ny
+    my $gpsi=($g  #xy:xy:pm:nx:ny
 	      *$psi(:,*1)) #xy:xy:pm:nx:ny
 	->sumover; #xy:pm:nx:ny
     return $gpsi;
