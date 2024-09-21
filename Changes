@@ -1,3 +1,4 @@
+0.022 2024-09-21
 - Fix mistake in Ph::WE::S::Haydock::applyMetric
 - Fix bug in macroscopic response from fields in Ph::LE::NR2::Field and Ph::LE::S::Field
 - Fix skip test in geometry.t when there is no image converter
