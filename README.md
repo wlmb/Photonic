@@ -1,7 +1,7 @@
 # Photonic #
 
 This archive contains the distribution Photonic,
-version 0.021
+version 0.022
 to run electromagnetic calculations for photonics and
 metamaterials.
 
