@@ -15,7 +15,7 @@ lib/Photonic/CharacteristicFunctions.pm
 lib/Photonic/Geometry/FromB.pm
 lib/Photonic/Geometry/FromEpsilon.pm
 lib/Photonic/Geometry/FromImage2D.pm
-# lib/Photonic/Geometry/FromEpsilonTensor.pm
+lib/Photonic/Geometry/FromEpsilonTensor.pm
 lib/Photonic/LE/NP/EpsL.pm
 lib/Photonic/LE/NP/EpsTensor.pm
 lib/Photonic/LE/NP/Haydock.pm
