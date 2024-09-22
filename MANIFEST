@@ -2,6 +2,7 @@ Changes
 data/black.png
 data/half.png
 data/white.png
+examples/WE/ST/anisotropy.pl
 examples/LE/NR2/epsM-L.pl
 examples/LE/NR2/field.pl
 examples/LE/NR2/honeycomb.pl
@@ -71,9 +72,9 @@ t/allh-np.t
 t/allh-nr2.t
 t/allh-s.t
 t/allh-store.t
-# t/allh-st.t
+t/allh-st.t
 t/allh-wer2.t
-# t/allh-west.t??
+t/allh-west.t
 t/allh-wes.t
 t/allh-writest.t
 t/cgtsv.t
