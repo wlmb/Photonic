@@ -160,12 +160,14 @@ sub incarnate_as {
 
 sub mvN {
   my ($pdl, $start, $end, $to) = @_;
+  #SUSPICIOUS! WHAT IF $end IS NEGATIVE?
   return $pdl if $end < $start; # before negative-adjustment
   my $ndims=$pdl->ndims;
-  local $_;
-  $_ = !$_ ? 0 : $_ > 0 ? $_ : $ndims + $_ for $start, $end, $to;
+  $_ = $_ < 0 ? $ndims + $_ : $_ for $start, $end, $to; # Deal with negative indices
   my $length = $end - $start + 1;
   confess "mvN: destination $to past end of $ndims-D ndarray\n" if $to > $ndims-1;
+  #confess "mvN: length $length<=0" if $length<0;
+  #confess "mvN: start $start<=to $to <= end $end" if $start<=$to<=$end;
   return $pdl if $length <= 0 or ($start <= $to and $to <= $end);
   my @indices = 0..$ndims-1;
   my @move_indices = splice @indices, $start, $length;
