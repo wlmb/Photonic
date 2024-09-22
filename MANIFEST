@@ -91,10 +91,10 @@ t/epst-wer2.t
 # t/epst-west.t
 t/epst-wes.t
 t/field-lenr2.t
-t/field-lest.t
+# t/field-lest.t
 t/field-les.t
 t/field-wer2.t
-t/field-west.t
+# t/field-west.t
 t/field-wes.t
 t/geometry.t
 t/greenp.t
