@@ -80,6 +80,7 @@ Photonic::WE::S::GreenP
 Photonic::WE::S::Haydock
 Photonic::WE::S::Metric
 Photonic::WE::ST::Haydock
+Photonic::WE::ST::Metric
 	);
 #Photonic::LE::ST::EpsL
 #Photonic::LE::ST::EpsTensor
@@ -87,7 +88,6 @@ Photonic::WE::ST::Haydock
 #Photonic::WE::ST::Field
 #Photonic::WE::ST::Green
 #Photonic::WE::ST::GreenP
-#Photonic::WE::ST::Metric
 
 
     foreach(@mods){
