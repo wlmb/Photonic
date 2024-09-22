@@ -85,7 +85,7 @@ Photonic::Types
 
 =head1 VERSION
 
-version 0.008
+version 0.022
 
 =head1 SYNOPSIS
 
