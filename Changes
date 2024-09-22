@@ -1,3 +1,5 @@
+- Add tests for modules ST
+- Add tensorial modules ST, to deal with anisotropic components
 0.022 2024-09-21
 - Fix mistake in Ph::WE::ST::Haydock::applyMetric
 - Fix mistake in Ph::WE::S::Haydock::applyMetric
