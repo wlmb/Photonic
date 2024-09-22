@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromEpsilonTensor;
-$Photonic::Geometry::FromEpsilonTensor::VERSION = '0.021';
+$Photonic::Geometry::FromEpsilonTensor::VERSION = '0.022';
 
 =encoding UTF-8
 
@@ -75,7 +75,7 @@ Photonic::Geometry::FromEpsilon
 
 =head1 VERSION
 
-version 0.021
+version 0.022
 
 =head1 SYNOPSIS
 
