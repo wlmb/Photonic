@@ -128,7 +128,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
-use v5.36;
+use strict;
+use warnings;
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
