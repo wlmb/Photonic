@@ -73,32 +73,33 @@ ok(Cagree($b2st->slice("(0)"), 1), "1D T b_0^2");
 ok(Cagree($ast->slice("(0)"), $ea*(1-$f)+$eb*$f), "1D T a_0");
 ok(Cagree($b2st, $bst**2), "1D T b2==b^2");
 
-SKIP: {
-    skip "Not ready";
+{
     #check reorthogonalize with square array
-    my $epss=$eb*(zeroes(15,15)->rvals<5)+$ea*(zeroes(15,15)->rvals>=5);
-    my $gs=Photonic::Geometry::FromEpsilon
+    my $epss=($eb*(zeroes(15,15)->rvals<5)+$ea*(zeroes(15,15)->rvals>=5))->slice("*2,*2")
+             *identity(2);
+    my $gs=Photonic::Geometry::FromEpsilonTensor
 	->new(epsilon=>$epss, Direction0=>pdl([1,0]), L=>pdl(1,1));
-    my $als=Photonic::LE::S::Haydock
+    my $als=Photonic::LE::ST::Haydock
 	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
 	      accuracy=>machine_epsilon(), noise=>3*machine_epsilon(),
-	      normOp=>$eb->abs);
+	      normOp=>$eb->abs->sumover->sumover # sum of abs of matrix elements
+	      );
     $als->run;
     ok($als->iteration <= 15*15,
        "No more iterations than dimensions. Square. States in mem.");
     diag("Actual iterations: " .$als->iteration
 	 . " Actual orthogonalizations: " . $als->orthogonalizations);
 }
-SKIP: {
-    skip "Not ready";
+{
     #check reorthogonalize with square array. Data in file.
-    my $epss=$eb*(zeroes(15,15)->rvals<5)+$ea*(zeroes(15,15)->rvals>=5);
-    my $gs=Photonic::Geometry::FromEpsilon
+    my $epss=($eb*(zeroes(15,15)->rvals<5)+$ea*(zeroes(15,15)->rvals>=5))->slice("*2,*2")
+             *identity(2);
+    my $gs=Photonic::Geometry::FromEpsilonTensor
 	->new(epsilon=>$epss, Direction0=>pdl([1,0]), L=>pdl(1,1));
-    my $als=Photonic::LE::S::Haydock
+    my $als=Photonic::LE::ST::Haydock
 	->new(geometry=>$gs, nh=>2*15*15, reorthogonalize=>1,
 	      accuracy=>machine_epsilon(), noise=>3*machine_epsilon(),
-	      normOp=>$eb->abs, stateFN=>$fn);
+	      normOp=>$eb->abs->sumover->sumover, stateFN=>$fn);
     $als->run;
     ok($als->iteration <= 15*15,
               "No more iterations than dimensions. Square. States in file");
