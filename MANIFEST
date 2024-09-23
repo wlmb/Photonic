@@ -33,7 +33,7 @@ lib/Photonic/LE/S/Field.pm
 lib/Photonic/LE/S/Haydock.pm
 lib/Photonic/LE/ST/EpsL.pm
 lib/Photonic/LE/ST/EpsTensor.pm
-#lib/Photonic/LE/ST/Field.pm
+lib/Photonic/LE/ST/Field.pm
 lib/Photonic/LE/ST/Haydock.pm
 lib/Photonic/Roles/EpsFromGeometry.pm
 lib/Photonic/Roles/EpsL.pm
@@ -92,7 +92,7 @@ t/epst-wer2.t
 # t/epst-west.t
 t/epst-wes.t
 t/field-lenr2.t
-# t/field-lest.t
+t/field-lest.t
 t/field-les.t
 t/field-wer2.t
 # t/field-west.t

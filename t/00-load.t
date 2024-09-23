@@ -58,6 +58,7 @@ Photonic::LE::S::Field
 Photonic::LE::S::Haydock
 Photonic::LE::ST::EpsL
 Photonic::LE::ST::EpsTensor
+Photonic::LE::ST::Field
 Photonic::LE::ST::Haydock
 Photonic::Roles::EpsFromGeometry
 Photonic::Roles::EpsL
@@ -84,7 +85,6 @@ Photonic::WE::S::Metric
 Photonic::WE::ST::Haydock
 Photonic::WE::ST::Metric
 	);
-#Photonic::LE::ST::Field
 #Photonic::WE::ST::Field
 #Photonic::WE::ST::Green
 #Photonic::WE::ST::GreenP
