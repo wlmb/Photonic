@@ -86,7 +86,7 @@ t/epsl-s.t
 t/epst-np.t
 t/epst-nr2-keller.t
 t/epst-nr2.t
-# t/epst-st.t
+t/epst-st.t
 t/epst-s.t
 t/epst-wer2.t
 # t/epst-west.t
@@ -107,7 +107,7 @@ t/oneh-nr2.t
 t/oneh-st.t
 t/oneh-s.t
 t/oneh-wer2.t
-# t/oneh-west.t
+t/oneh-west.t
 t/oneh-wes.t
 t/tensor.t
 t/utils.t
