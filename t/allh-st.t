@@ -51,11 +51,13 @@ $a->run;
 my $as=$a->as;
 my $bs=$a->bs;
 my $b2s=$a->b2s;
-is($a->iteration, 2, "Number of iterations 1D longitudinal");
-ok(Cagree($b2s->slice("(0)"), r2C(1)), "1D L b_0^2");
-ok(Cagree($as, pdl([$ea*(1-$f)+$eb*$f, $ea*$f+$eb*(1-$f)])), "1D L a");
-ok(Cagree($b2s->slice("(1)"), ($eb-$ea)**2*$f*(1-$f)), "1D L b_1^2");
-ok(Cagree($b2s, $bs**2), "1D L b2==b^2");
+{
+    is($a->iteration, 2, "Number of iterations 1D longitudinal");
+    ok(Cagree($b2s->slice("(0)"), r2C(1)), "1D L b_0^2");
+    ok(Cagree($as, pdl([$ea*(1-$f)+$eb*$f, $ea*$f+$eb*(1-$f)])), "1D L a");
+    ok(Cagree($b2s->slice("(1)"), ($eb-$ea)**2*$f*(1-$f)), "1D L b_1^2");
+    ok(Cagree($b2s, $bs**2), "1D L b2==b^2");
+}
 
 #View 1D system as 2D, isotropic but tensorial. Transverse direction
 my $epst=($ea*identity(2)*(zeroes(2,2,11,1)->zvals<5)
@@ -68,10 +70,12 @@ $at->run;
 my $ast=$at->as;
 my $bst=$at->bs;
 my $b2st=$at->b2s;
-is($at->iteration, 1, "Number of iterations 1D trans");
-ok(Cagree($b2st->slice("(0)"), 1), "1D T b_0^2");
-ok(Cagree($ast->slice("(0)"), $ea*(1-$f)+$eb*$f), "1D T a_0");
-ok(Cagree($b2st, $bst**2), "1D T b2==b^2");
+{
+    is($at->iteration, 1, "Number of iterations 1D trans");
+    ok(Cagree($b2st->slice("(0)"), 1), "1D T b_0^2");
+    ok(Cagree($ast->slice("(0)"), $ea*(1-$f)+$eb*$f), "1D T a_0");
+    ok(Cagree($b2st, $bst**2), "1D T b2==b^2");
+}
 
 {
     #check reorthogonalize with square array

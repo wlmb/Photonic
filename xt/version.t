@@ -33,7 +33,8 @@ use warnings;
 use Test::More;
 
 ## no critic
-eval q{use Test::Version 1.003001 qw( version_all_ok ), {
+# eval q{use Test::Version 1.003001 qw( version_all_ok ), {
+eval q{use Test::Version qw( version_all_ok ), {
         is_strict   => 1,
         has_version => 1,
         consistent  => 1,
