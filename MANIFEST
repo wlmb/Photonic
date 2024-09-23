@@ -31,8 +31,8 @@ lib/Photonic/LE/S/EpsL.pm
 lib/Photonic/LE/S/EpsTensor.pm
 lib/Photonic/LE/S/Field.pm
 lib/Photonic/LE/S/Haydock.pm
-#lib/Photonic/LE/ST/EpsL.pm
-#lib/Photonic/LE/ST/EpsTensor.pm
+lib/Photonic/LE/ST/EpsL.pm
+lib/Photonic/LE/ST/EpsTensor.pm
 #lib/Photonic/LE/ST/Field.pm
 lib/Photonic/LE/ST/Haydock.pm
 lib/Photonic/Roles/EpsFromGeometry.pm
@@ -81,7 +81,7 @@ t/cgtsv.t
 t/characteristic-functions.t
 t/epsl-nr2-nc.t
 t/epsl-nr2.t
-# t/epsl-st.t
+t/epsl-st.t
 t/epsl-s.t
 t/epst-np.t
 t/epst-nr2-keller.t
@@ -104,7 +104,7 @@ t/lib/TestUtils.pm
 t/metric.t
 t/oneh-np.t
 t/oneh-nr2.t
-# t/oneh-st.t
+t/oneh-st.t
 t/oneh-s.t
 t/oneh-wer2.t
 # t/oneh-west.t
