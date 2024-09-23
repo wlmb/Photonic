@@ -82,12 +82,12 @@ Photonic::WE::S::Green
 Photonic::WE::S::GreenP
 Photonic::WE::S::Haydock
 Photonic::WE::S::Metric
+Photonic::WE::ST::Field
+Photonic::WE::ST::Green
+Photonic::WE::ST::GreenP
 Photonic::WE::ST::Haydock
 Photonic::WE::ST::Metric
 	);
-#Photonic::WE::ST::Field
-#Photonic::WE::ST::Green
-#Photonic::WE::ST::GreenP
 
 
     foreach(@mods){

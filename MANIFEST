@@ -57,9 +57,9 @@ lib/Photonic/WE/S/Green.pm
 lib/Photonic/WE/S/GreenP.pm
 lib/Photonic/WE/S/Haydock.pm
 lib/Photonic/WE/S/Metric.pm
-# lib/Photonic/WE/ST/Field.pm
-# lib/Photonic/WE/ST/Green.pm
-# lib/Photonic/WE/ST/GreenP.pm
+lib/Photonic/WE/ST/Field.pm
+lib/Photonic/WE/ST/Green.pm
+lib/Photonic/WE/ST/GreenP.pm
 lib/Photonic/WE/ST/Haydock.pm
 lib/Photonic/WE/ST/Metric.pm
 LICENSE
@@ -89,13 +89,13 @@ t/epst-nr2.t
 t/epst-st.t
 t/epst-s.t
 t/epst-wer2.t
-# t/epst-west.t
+t/epst-west.t
 t/epst-wes.t
 t/field-lenr2.t
 t/field-lest.t
 t/field-les.t
 t/field-wer2.t
-# t/field-west.t
+t/field-west.t
 t/field-wes.t
 t/geometry.t
 t/greenp.t
