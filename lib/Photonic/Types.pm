@@ -1,5 +1,5 @@
 package Photonic::Types;
-$Photonic::Types::VERSION = '0.022';
+$Photonic::Types::VERSION = '0.023';
 
 =encoding UTF-8
 
@@ -85,7 +85,7 @@ Photonic::Types
 
 =head1 VERSION
 
-version 0.022
+version 0.023
 
 =head1 SYNOPSIS
 
