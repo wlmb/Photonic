@@ -13,6 +13,7 @@ WriteMakefile(
 	'Raksha Singla  <raksharuia@gmail.com>',
 	'Merlyn Jaqueline Juarez-Gutierrez <merlynj@icf.unam.mx>',
 	],
+    ABSTRACT=> 'A perl package for calculations on photonics and metamaterials.',
     VERSION_FROM => 'lib/Photonic.pm',
     LICENSE    => 'perl',
     MIN_PERL_VERSION => '5.14.0',
