@@ -16,7 +16,7 @@ WriteMakefile(
     ABSTRACT=> 'A perl package for calculations on photonics and metamaterials.',
     VERSION_FROM => 'lib/Photonic.pm',
     LICENSE    => 'perl',
-    MIN_PERL_VERSION => '5.14.0',
+    MIN_PERL_VERSION => '5.16.0',                 # so PDL::FFTW3 also installs
     PREREQ_PM => {
 	'Carp'                           => '0',
 	'IO::File'                       => '0',
