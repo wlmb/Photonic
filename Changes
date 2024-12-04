@@ -1,3 +1,4 @@
+- Push min perl version to 5.16, as needed by PDL::FFTW3
 - Modify P::LE::NR2::Field so as not to modify Haydock coefficients
   inadvertently
 0.023 2024-10-02
