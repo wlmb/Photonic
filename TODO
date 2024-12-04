@@ -1,5 +1,12 @@
 # -*- mode: org; -*-
 
+* TODO [2024-12-04 Wed] Field modifies silently haydock coefficients
+  We found P::LE::NR2::Field uses cgtsv, a routine that modifies its
+  arguments. We used to pass a subdiagonal and supradiagonal which are
+  both given by the b coefficients. We used the same ndarray, so when
+  the subdiagonal is modified, the supradiagonal is erroneously
+  modified. The results were wrong.
+* TODO [2024-11-01 Fri] It seems WE::S::Green doesn't compute antisymmetric part. Fix and test.
 * DONE [2021-09-30 Sun] Add example/test with non Cartesian coordinates
 * TODO [2021-09-25 Sat] Check if it is clear that complexCoeffs is equivalent to non is_hermitian
 * DONE Return as, bs, b2s as pdl instead of array?

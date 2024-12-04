@@ -1,3 +1,5 @@
+- Modify P::LE::NR2::Field so as not to modify Haydock coefficients
+  inadvertently
 0.023 2024-10-02
 - Add tests for modules ST
 - Add tensorial modules ST, to deal with anisotropic components
