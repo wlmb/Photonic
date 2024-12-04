@@ -152,6 +152,8 @@ has 'epsilonTensor' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 
 with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
+#  Antisymmetric part is missing. Compare to ST and to R2!
+
 sub _build_greenTensor {
     my $self=shift;
     $self->_converged(all { $_->converged } @{$self->greenP});

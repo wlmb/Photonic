@@ -283,7 +283,7 @@ has 'converged'=>(is=>'ro', isa=>Bool, init_arg=>undef,
                   writer=>'_converged',
                   documentation=>'The calculation did converge');
 requires qw(iterate magnitude innerProduct
-    _checkorthogonalize);
+    _checkorthogonalize);   # why iterate if defined below?
 
 # Fields to store and restore
 my @allfields= qw(iteration keepStates converged);
