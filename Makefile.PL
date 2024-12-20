@@ -42,9 +42,7 @@ WriteMakefile(
     },
     TEST_REQUIRES => {
         'Machine::Epsilon'            => '0',
-	'Test::More'                  => '0',
-	'Test::Version'               => '1.003001'
-
+	'Test::More'                  => '0.88',
     },
     CONFIGURE_REQUIRES => {
 	'ExtUtils::MakeMaker' => '0',

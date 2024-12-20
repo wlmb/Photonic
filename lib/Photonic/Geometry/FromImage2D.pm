@@ -99,8 +99,8 @@ use Moo;
 use MooX::StrictConstructor;
 
 BEGIN {
-# Put inoffensive path. Or else, PDL::IO::Pic fails in taint mode.
-    $ENV{'PATH'} = '/bin:/usr/bin';
+# Put inoffensive path in taint mode. Or else, PDL::IO::Pic fails.
+    $ENV{PATH} = '/bin:/usr/bin' if ${^TAINT};
 }
 
 use PDL::Lite;
@@ -119,7 +119,6 @@ sub _build_B {
     my $self=shift;
     my $path=$self->path;
     ( $path ) = ($path =~ m|^([A-Z0-9_.-\\/]+)$|ig);
-    ($ENV{PATH})=($ENV{PATH}=~m|^([A-Z0-9_.-\\/]+)$|ig);
     confess
 	"Only letters, numbers, underscores, dots, slashes and hyphens " .
 	"allowed in file names"
