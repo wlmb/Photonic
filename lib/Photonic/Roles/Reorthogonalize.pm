@@ -185,7 +185,7 @@ sub _fullorthogonalize_indeed {
 sub _checkorthogonalize {
     my ($self, $n, $a, $b, $c, $b_np1, $g_n, $g_np1)=@_;
     return 0 if $self->fullorthogonalize_N; #already orthogonalizing
-    if($self->_justorthogonalized){
+    if ($self->_justorthogonalized) {
 	$self->_write_justorthogonalized(0);
 	my $current_W=PDL->ones($n)*$self->noise;
 	my $next_W=PDL->ones($n+1)*$self->noise;
