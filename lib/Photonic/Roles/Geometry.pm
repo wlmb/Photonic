@@ -50,7 +50,7 @@ has 'L' =>(is=>'lazy', isa => PDLObj,
 	   documentation=>'array of unit cell size');
 has 'units'=>(is=>'lazy', isa=>PDLObj,
      documentation=>'Basis of unit vectors');
-has 'primitive'=>(is=>'lazy', isa=>PDLObj, required=>1,
+has 'primitive'=>(is=>'lazy', isa=>PDLObj, required=>1, # required?
 		  documentation=>'Primitive directions');
 has 'primitiveNorm'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 		  documentation=>'Normalized primitive vectors');

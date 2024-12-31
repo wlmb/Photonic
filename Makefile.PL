@@ -26,7 +26,7 @@ WriteMakefile(
 	'namespace::autoclean'           => '0',
 	'Type::Tiny'                     => '0',
 	'MooX::StrictConstructor'        => '0',
-	'PDL'                            => '2.049', # PDL::Complex->from_native
+	'PDL'                            => '2.093', # PDL::Complex->from_native, inner for complex
 	'PDL::Constants'                 => '0',
 	'PDL::Core'                      => '0',
 	'PDL::Core::Dev'                 => '0',
