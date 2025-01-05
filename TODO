@@ -23,12 +23,14 @@
   Immutable objects that return a pdl may be silently changed if the
   pdl itself is changed. It must be fixed, but I don't know what is
   the best way.
-* TODO [2024-12-04 Wed] Field modifies silently haydock coefficients
-  We found P::LE::NR2::Field uses cgtsv, a routine that modifies its
-  arguments. We used to pass a subdiagonal and supradiagonal which are
-  both given by the b coefficients. We used the same ndarray, so when
-  the subdiagonal is modified, the supradiagonal is erroneously
-  modified. The results were wrong.
+* DONE Field modifies silently haydock coefficients
+  - [2024-12-04 Wed] We found P::LE::NR2::Field uses cgtsv, a routine that modifies its
+    arguments. We used to pass a subdiagonal and supradiagonal which are
+    both given by the b coefficients. We used the same ndarray, so when
+    the subdiagonal is modified, the supradiagonal is erroneously
+    modified. The results were wrong.
+  - [2025-01-05 Sun] Modified Utils::cgtsv so that it takes care of
+    copying the arrays that get modified
 * TODO [2024-11-01 Fri] It seems WE::S::Green doesn't compute antisymmetric part. Fix and test.
 * DONE [2021-09-30 Sun] Add example/test with non Cartesian coordinates
 * TODO [2021-09-25 Sat] Check if it is clear that complexCoeffs is equivalent to non is_hermitian
@@ -40,6 +42,7 @@
 * DONE Relax need for odd dimensions
 * TODO Merge exact surface SHG calculation with current surface calculation.
 * TODO Write and publish paper.
+  Wrote a contribution to Science Perl, to appear in 2025.
 * DONE Allow non-orthogonal unit vectors
 * DONE Allow saving states for reorthogonalization and reinitialization
   Done for reorthogonalization. Reinitialization pending.

@@ -135,8 +135,8 @@ sub _build_field {
     # At first take D=|0>
     my $diag=$u - $as->(0:$nh-1);
     # rotate complex zero from first to last element.
-    my $subdiag=-$bs->(0:$nh-1)->copy->rotate(-1)->r2C;
-    my $supradiag=$subdiag->copy;
+    my $subdiag=-$bs->(0:$nh-1)->rotate(-1)->r2C;
+    my $supradiag=$subdiag;
     my $rhs=PDL->zeroes($nh);
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
