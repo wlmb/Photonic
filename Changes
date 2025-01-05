@@ -1,3 +1,4 @@
+0.024 2024-01-05
 - Revert modification to P::LE::NR2::Field as it is no longer needed.
 - Modify Utils::cgtsv to avoid erroneously modifying its arguments
 - Push min perl version to 5.16, as needed by PDL::FFTW3
