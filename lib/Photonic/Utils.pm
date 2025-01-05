@@ -350,7 +350,7 @@ sub vectors2Dlist { #2D vector fields ready for gnuploting
 
 sub cgtsv {
     confess "Wrong number of arguments" unless @_ == 4;
-    my ($c, $d, $e, $b) = map $_->new_or_inplace($_), @_;
+    my ($c, $d, $e, $b) = map $_->new_or_inplace, @_;
     my $i = PDL::LinearAlgebra::Complex::cgtsv($c, $d, $e, $b);
     confess "Error solving tridiag system: info=$i" if $i->any;
     $b;
