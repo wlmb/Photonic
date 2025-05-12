@@ -67,12 +67,55 @@ use Photonic::Types -all;
 use Moo;
 use MooX::StrictConstructor;
 
+# Temporary:
+has 'rawfield'=>(is=>'lazy', isa=>PDLComplex,
+           documentation=>'Calculated real space field, unnormalized');
+
 with 'Photonic::Roles::Field';
 
 sub BUILD {
     my $self=shift;
     $self->haydock->run unless $self->haydock->iteration;
 }
+
+# Temporary. Almost copy of _build_field
+sub _build_rawfield {
+    my $self=shift;
+    my $as=$self->haydock->as;
+    my $bs=$self->haydock->bs;
+    my $cs=$self->haydock->cs;
+    my $nh=$self->nh; #desired number of Haydock terms
+    #don't go beyond available values.
+    $nh=$self->haydock->iteration if $nh>$self->haydock->iteration;
+    # calculate using lapack for tridiag system
+    my $diag = 1-$as->(0:$nh-1);
+    # rotate complex zero from first to last element.
+    my $subdiag = -$bs->(0:$nh-1)->rotate(-1);
+    my $supradiag =-$cs->(0:$nh-1)->rotate(-1);
+    my $rhs=PDL->zeroes($nh); #build a nh pdl
+    $rhs->slice((0)).=1;
+    $rhs=$rhs->r2C;
+    #coefficients of g^{-1}E
+    my $giEs= cgtsv($subdiag, $diag, $supradiag, $rhs);
+    #states are xy,pm,nx,ny...
+    my $stateit=$self->haydock->states;
+    my $ndims=$self->haydock->B->ndims; # num. of dims of space
+    #field is xy,pm,nx,ny...
+    my $field_G=linearCombineIt($giEs, $stateit); #En ^G|psi_n>
+    my $Es=$self->haydock->applyMetric($field_G);
+    #Comment as unnormalized
+    #$Es*=$bs->((0))/$self->haydock->metric->epsilon;
+    my $Esp=$Es(:,(0)); # choose +k spinor component.
+    $Esp *= $self->filter->(*1) if $self->has_filter;
+    ##get cartesian out of the way, fourier transform, put cartesian.
+    my $field_R=GtoR($Esp, $ndims, 1);
+    $field_R*=$self->haydock->B->nelem; #scale??
+    my $b0=$self->haydock->bs->slice('(0)'); # #First state normalization factor
+    $field_R*=$b0; #scale??
+    $field_R/=$self->haydock->B->nelem; #normalize FT?
+    return $field_R; #result is xy,nx,ny...
+}
+
 
 sub _build_field {
     my $self=shift;
@@ -101,6 +144,7 @@ sub _build_field {
     #Comment as normalization below makes it useless
     #$Es*=$bs->((0))/$self->haydock->metric->epsilon;
     my $Esp=$Es(:,(0)); # choose +k spinor component.
+    # project unto polarization?
     my $e_0=1/($Esp->slice(":" . ",(0)" x $ndims)
 	       *$self->haydock->polarization->conj)->sumover;
     # Normalize result so macroscopic field is 1.
