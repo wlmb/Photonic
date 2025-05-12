@@ -1,66 +1,75 @@
-0.024 2024-01-05
-- Revert modification to P::LE::NR2::Field as it is no longer needed.
-- Modify Utils::cgtsv to avoid erroneously modifying its arguments
-- Push min perl version to 5.16, as needed by PDL::FFTW3
-- Modify P::LE::NR2::Field so as not to modify Haydock coefficients
-  inadvertently
-0.023 2024-10-02
-- Add tests for modules ST
-- Add tensorial modules ST, to deal with anisotropic components
-0.022 2024-09-21
-- Fix mistake in Ph::WE::ST::Haydock::applyMetric
-- Fix mistake in Ph::WE::S::Haydock::applyMetric
-- Add Photonic::LE::ST::GreenP
+Revision history for Photonic
 
-- Add Photonic::WE::ST::Metric Almost identical to Photonic::WE::S::Metric
-- Add Photonic::LE::ST::Field Almost identical to Ph::LE::S::Field
-- Add Photonic::LE::ST::EpsTensor Almost identical to Ph::LE::S::EpsTensor
-- Add Photonic::LE::ST::EpsL. Almost identical to Ph::LE::S::EpsL
-- Add tests for Photonic::LE::ST::Haydock
-- Add and mofify Photonic::LE::ST::Haydock to use tensorial epsilon
-- Add some tests for Photonic::Geometry::FromEpsilonTensor
-- Modify Photonic::Roles::Geometry so it can deal with Epsilon Tensor
-- Add Photonic::Geometry::FromEpsilonTensor
-- Add types ComplexMatrix and ComplexMatrixField, for tensorial input in dielectric functions
-- Fix bug in macroscopic response from fields in Ph::LE::NR2::Field and Ph::LE::S::Field
-- Fix skip test in geometry.t when there is no image converter
-- separate storeAllFN from stateFN
-- Haydock states stored in memory-mapped files rather than using Storable
-- remove the state_iterator capability which is replaced by memory-mapping, allowing large threaded calculations
-- switch type system to Type::Tiny
-- switch OO system to Moo
-- make Photonic::Roles::Field
+{{$NEXT}}
+
+  - Add conversion routines between frequency, energy and wavelength
+  - Avoid duplicate arguments in cgtsv
+
+0.024 2024-01-05
+  - Revert modification to P::LE::NR2::Field as it is no longer needed.
+  - Modify Utils::cgtsv to avoid erroneously modifying its arguments
+  - Push min perl version to 5.16, as needed by PDL::FFTW3
+  - Modify P::LE::NR2::Field so as not to modify Haydock coefficients
+    inadvertently
+
+0.023 2024-10-02
+  - Add tests for modules ST
+  - Add tensorial modules ST, to deal with anisotropic components
+
+0.022 2024-09-21
+  - Fix mistake in Ph::WE::ST::Haydock::applyMetric
+  - Fix mistake in Ph::WE::S::Haydock::applyMetric
+  - Add Photonic::LE::ST::GreenP
+
+  - Add Photonic::WE::ST::Metric Almost identical to Photonic::WE::S::Metric
+  - Add Photonic::LE::ST::Field Almost identical to Ph::LE::S::Field
+  - Add Photonic::LE::ST::EpsTensor Almost identical to Ph::LE::S::EpsTensor
+  - Add Photonic::LE::ST::EpsL. Almost identical to Ph::LE::S::EpsL
+  - Add tests for Photonic::LE::ST::Haydock
+  - Add and mofify Photonic::LE::ST::Haydock to use tensorial epsilon
+  - Add some tests for Photonic::Geometry::FromEpsilonTensor
+  - Modify Photonic::Roles::Geometry so it can deal with Epsilon Tensor
+  - Add Photonic::Geometry::FromEpsilonTensor
+  - Add types ComplexMatrix and ComplexMatrixField, for tensorial input in dielectric functions
+  - Fix bug in macroscopic response from fields in Ph::LE::NR2::Field and Ph::LE::S::Field
+  - Fix skip test in geometry.t when there is no image converter
+  - separate storeAllFN from stateFN
+  - Haydock states stored in memory-mapped files rather than using Storable
+  - remove the state_iterator capability which is replaced by memory-mapping, allowing large threaded calculations
+  - switch type system to Type::Tiny
+  - switch OO system to Moo
+  - make Photonic::Roles::Field
 
 0.021 2021-10-01
-- Add example of honeycomb lattice for LE::NR2
-- Admit 'haydock' as an optional parameter in P::Roles::EpsTensor
-- Documentation P::LE::NR2::EpsTensor
-- Documentation P::Geometry::FromB
+  - Add example of honeycomb lattice for LE::NR2
+  - Admit 'haydock' as an optional parameter in P::Roles::EpsTensor
+  - Documentation P::LE::NR2::EpsTensor
+  - Documentation P::Geometry::FromB
 
 0.020 2021-09-25
-- Admit Ed J (mohawk2) PR
-- Merge OneH and ALlH into Haydock
-- Inmutable objects. Response functions should be given at creation time
-- factorize lots of codes
-- use ndarrays instead of perl arrays
-- unify Reorthogonalize roles
+  - Admit Ed J (mohawk2) PR
+  - Merge OneH and ALlH into Haydock
+  - Inmutable objects. Response functions should be given at creation time
+  - factorize lots of codes
+  - use ndarrays instead of perl arrays
+  - unify Reorthogonalize roles
 
 0.019 2021-09-24
-- Fix error in tests
+  - Fix error in tests
 
 0.018 2021-07-20
-- Correct filtering of vector fields
+  - Correct filtering of vector fields
 
 0.017 2021-06-26
-- switch from PDL::Complex to native-complex
+  - switch from PDL::Complex to native-complex
 
 0.016 2021-05-30
-- Factor several repetitive tasks
-- use PDL::FFTW3's new ability to take PDL::Complex inputs
-- Moose type abstracting real vs complex (inc native) data
+  - Factor several repetitive tasks
+  - use PDL::FFTW3's new ability to take PDL::Complex inputs
+  - Moose type abstracting real vs complex (inc native) data
 
 0.015 2021-03-12
-- convert from bundled Fortran code to PDL::LinearAlgebra
+  - convert from bundled Fortran code to PDL::LinearAlgebra
 
 0.014 2020-03-26
   - Fix (again) t/geometry.t's bug when netpbm files are not available

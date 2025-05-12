@@ -320,17 +320,11 @@ The characteristic function as PDL
 
 =back
 
-=head1 ACCESSORS (read write)
-
-=over 4
+=head1 ACCESSORS (read only)
 
 =item * Direction0
 
 Direction of the zero length wavevector
-
-=back
-
-=head1 ACCESSORS (read only)
 
 =over 4
 

@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use PDL;
+use PDL::Constants qw(PI);
 use Photonic::Utils;
 Photonic::Utils->import(@Photonic::Utils::EXPORT_OK);
 use Test::More;
@@ -606,5 +607,48 @@ $expected = pdl '[
   [1 1 1 1]
 ]';
 ok all(approx($got, $expected)), 'cartesian_product 2x3,2x2' or diag "got:$got\nexpected:$expected";
+
+# convert units
+ok approx(convert_units(1, "am", "m")/1e-18,1),  "attometer";
+ok approx(convert_units(1, "fm", "m")/1e-15,1),  "femtometer";
+ok approx(convert_units(1, "pm", "m")/1e-12,1),  "picometer";
+ok approx(convert_units(1, "AA", "m")/1e-10,1), "Angstrom";
+ok approx(convert_units(1, "nm", "m")/1e-9,1),  "nanometer";
+ok approx(convert_units(1, "mu", "m")/1e-6,1),  "micron";
+ok approx(convert_units(1, "mm", "m")/1e-3,1),  "millimeter";
+ok approx(convert_units(1, "cm", "m")/1e-2,1),  "centimeter";
+ok approx(convert_units(1, "dm", "m")/1e-1,1),  "decimeter";
+ok approx(convert_units(1, "m", "m")/1,1),      "meter";
+ok approx(convert_units(1, "km", "m")/1e3,1),   "kilometer";
+ok approx(convert_units(1, "as", "m")/2.99792458e-10,1), "attosecond";
+ok approx(convert_units(1, "fs", "m")/2.99792458e-7,1), "femtosecond";
+ok approx(convert_units(1, "ps", "m")/2.99792458e-4,1), "picosecond";
+ok approx(convert_units(1, "ns", "m")/2.99792458e-1,1), "nanosecond";
+ok approx(convert_units(1, "mus", "m")/2.99792458e2,1), "microsecond";
+ok approx(convert_units(1, "ms", "m")/2.99792458e5,1), "millisecond";
+ok approx(convert_units(1, "s", "m")/2.99792458e8,1), "second";
+ok approx(convert_units(1, "m", "nm")/1e9,1), "inverse distance conversion";
+ok approx(convert_units(1, "Hz", "Hz")/1,1),    "Hz";
+ok approx(convert_units(1, "kHz", "Hz")/1e3,1), "kHz";
+ok approx(convert_units(1, "MHz", "Hz")/1e6,1), "MHz";
+ok approx(convert_units(1, "GHz", "Hz")/1e9,1), "GHz";
+ok approx(convert_units(1, "THz", "Hz")/1e12,1), "THz";
+ok approx(convert_units(1, "cm1", "Hz")/2.99792458e10,1), "cm1";
+ok approx(convert_units(1, "meV", "Hz")/2.4179894e11,1), "meV";
+ok approx(convert_units(1, "eV", "Hz")/ 2.4179894e14,1), "eV";
+ok approx(convert_units(1, "keV", "Hz")/2.4179894e17,1), "keV";
+ok approx(convert_units(1, "MeV", "Hz")/2.4179894e20,1), "MeV";
+ok approx(convert_units(1, "GeV", "Hz")/2.4179894e23,1), "GeV";
+ok approx(convert_units(1, "TeV", "Hz")/2.4179894e26,1), "TeV";
+ok approx(convert_units(1, "PeV", "Hz")/2.4179894e29,1), "PeV";
+ok approx(convert_units(1, "eV", "nm")/1239.84193,1), "eV to nm";
+ok approx(convert_units(1, "nm", "eV")/1239.84193,1), "nm to eV";
+
+# upper_sqrt
+
+my $octants=exp(i()*sequence(8)*PI);
+my $sqrt=upper_sqrt($octants);
+ok approx($sqrt**2, $octants)->all, "square of square root";
+ok(($sqrt->im >=0)->all, "upper half plane");
 
 done_testing;

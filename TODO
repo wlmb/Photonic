@@ -1,5 +1,27 @@
 # -*- mode: org; -*-
 
+* TODO [2025-04-30 Wed] Field normalization
+  - The normalization of the fields is done so that in the usual case
+    the field is normalized to the macroscopic field. However, it is
+    not clear if it will work when a firstState is given.
+  - It should be possible to unnormalize it, so that it corresponds to
+    a given external current or external polarization.
+  - That was the purpose of the epsL field in LE::NR2::Field. I can
+    add ad-hoc methods to the others, but It will be better to think
+    it over and do it correctly.
+  - If a firstState is given, there should be no need and no use for
+    polarization in ...::Field
+* TODO [2025-02-20 Thu] KeepStates
+  - It seems version 0.24 keep states, without regards to keepStates,
+    as the states are now kept in a state pdl instead of a perl
+    array.
+* TODO [2025-02-20 Thu] Ph::Role::Geometry
+  - I don't know why the normalized vector 0 is initialized in BUILD
+    instead of in _build_GNorm
+* TODO [2025-02-20 Thu] StrictConstructor
+  - At someplace MooseX::StricConstructor dissapeared from the
+    package. I guess it can be useful to add MooX::StrictConstructor
+    to the package.
 * TODO [2024-12-21 Sat] Geometry
   - It would be nice to be able to set the origin of the unit cell in geometry
   - It would be nice to have functions to map from pixel to cartesian

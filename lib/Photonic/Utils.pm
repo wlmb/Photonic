@@ -1,4 +1,7 @@
 package Photonic::Utils;
+
+use warnings;
+use strict;
 $Photonic::Utils::VERSION = '0.024';
 
 =encoding UTF-8
@@ -35,14 +38,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 # Collection of subroutines. Thus, no Moo
 require Exporter;
-@ISA=qw(Exporter);
-@EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
+our @ISA=qw(Exporter);
+our @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
     HProd MHProd EProd VSProd SProd
     corner_rotate mvN top_slice linearCombineIt lentzCF any_complex tensor
     make_haydock make_greenp
     cartesian_product dummyN triangle_coords incarnate_as
     wave_operator apply_longitudinal_projection make_dyads
-    cgtsv lu_decomp lu_solve
+    cgtsv lu_decomp lu_solve convert_units upper_sqrt
 );
 use PDL::LiteF;
 use PDL::FFTW3;
@@ -52,8 +55,7 @@ use Storable qw(dclone);
 require PDL::LinearAlgebra::Real;
 require PDL::LinearAlgebra::Complex;
 require List::Util;
-use warnings;
-use strict;
+
 
 sub top_slice :lvalue {
     my ($pdl, $index) = @_;
@@ -420,6 +422,50 @@ sub make_dyads {
     return $matrix;
 }
 
+# Variables for convert_units below
+my $pi=4*atan2(1,1);
+my $hbarc=1973.269631; # eV AA
+my $c= 299_792_458.; # m/s
+my %m=(am=>1e-18, fm=>1e-15, pm=>1e-12, AA=>1e-10, nm=>1e-9, mu=>1e-6,
+       mm=>1e-3, cm=>1e-2,
+       dm=>1e-1, m=>1., km=>1e3, as=>1e-18*$c, fs=>1e-15*$c,
+       ps=>1e-12*$c, ns=>1e-9*$c, mus=>1e-6*$c, ms=>1e-3*$c, s=>$c);
+my %Hz=(Hz=>1., kHz=>1e3, MHz=>1e6, GHz=>1e9, THz=>1e12, cm1=>1e2*$c,
+	meV=>(1e-3*$c)/(2*$pi*$hbarc*1e-10),
+	eV=>($c)/(2*$pi*$hbarc*1e-10),
+	keV=>(1e3*$c)/(2*$pi*$hbarc*1e-10),
+	MeV=>(1e6*$c)/(2*$pi*$hbarc*1e-10),
+	GeV=>(1e9*$c)/(2*$pi*$hbarc*1e-10),
+	TeV=>(1e12*$c)/(2*$pi*$hbarc*1e-10),
+	PeV=>(1e15*$c)/(2*$pi*$hbarc*1e-10),
+    );
+
+sub convert_units{
+    # Valid: am, fm, pm, AA, nm, mm, cm, dm, m, km, fs, ps, ns, ms, s, Hz, kHz, MHz, GHz
+    # THz, cm1, meV, eV, keV, MeV, GeV, TeV, PeV
+    my ($in, $units, $outunits)=@_;
+    return $in*$m{$units}/$m{$outunits} if $m{$units} && $m{$outunits};
+    return $c/($in*$m{$units}*$Hz{$outunits}) if $m{$units} && $Hz{$outunits};
+    return $c/($in*$Hz{$units}*$m{$outunits}) if $Hz{$units} && $m{$outunits};
+    return $in*$Hz{$units}/$Hz{$outunits} if $Hz{$units} && $Hz{$outunits};
+    confess "Unknown conversion: $units to $outunits";
+}
+
+thread_define '_upper_sqrt_aux(x();[o]s())', over {
+    my $x=shift;
+    my $s=shift;
+    my $t=sqrt($x);
+    $t=-$t if $t->im <0 || ($t->im==0 && $t->re < 0);
+    $s.=$t;
+};
+
+sub upper_sqrt { # sqrt in upper half plane
+    my $x=shift;
+    my $r=null;
+    _upper_sqrt_aux($x, $r);
+    return $r;
+}
+
 1;
 
 __END__
@@ -630,4 +676,27 @@ returns a matrix of dyads of unit vector pairs
 B<d>^{ij}_{kl}=B<u>^{i}_{kl}B<u>^{j}_{kl} as 2d matrix, adjusted for
 symmetry.
 
+=item * convert_units
+
+     my $out=convert_units($in, $from, $to);
+
+Converts units between wavelength, period, frequency and energy. C<$in> is the
+amount of C<$from> units, which correspond to C<$out> of C<$to> units. C<$from>
+and C<$to> can be any of
+   am, fm, pm, AA, nm, mu, mm, cm, dm, m, km,
+   as, fs, ps, ns, mus, ms, s
+   Hz, kHz, MHz, GHz, THz, cm1,	meV, eV, keV,
+   MeV, GeV, TeV, PeV
+When converting from wavelength and period to frequency and
+energy the relations is an inverse proportion.
+
+=item * upper_sqrt
+
+    my $sqrt=$z->upper_sqrt;
+
+Takes square root with non-negative imaginary part, i.e.,
+with branch cut along the negative real axis.
+
 =back
+
+=cut
