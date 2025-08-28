@@ -162,7 +162,20 @@ sub _build_greenTensor {
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0
     my ($self) = @_;
-    make_haydock($self, 'Photonic::WE::S::Haydock', $self->geometry->unitPairs, 0, qw(reorthogonalize use_mask mask));
+    my @pairs=$self->geometry->unitPairs->dog;
+    my @haydocks = map{
+	Photonic::WE::S::Haydock->new(
+	    metric=>$self->metric,
+	    nh=>$self->nh,
+	    reorthogonalize=>$self->reorthogonalize,
+	    use_mask=>$self->use_mask,
+	    mask=>$self->mask,
+	    keepStates=>1,
+	    stateFN=>"rem$_.dat",
+	    polarization=>$pairs[$_]->r2C,
+	    )
+    } 0..@pairs-1;
+    return [@haydocks]
 }
 
 sub _build_greenP {
