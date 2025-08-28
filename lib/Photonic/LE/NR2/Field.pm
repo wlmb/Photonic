@@ -104,6 +104,9 @@ has 'epsB'=>(is=>'ro', isa=>PDLComplex,
 has 'u'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
     documentation=>'Spectral variable');
 
+has '_Fn'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
+	    documentation=>'Solution of (u-H)F=(1,0...) in Haydock basis');
+
 sub BUILD {
     my $self=shift;
     $self->haydock->run unless $self->haydock->iteration;
@@ -111,8 +114,8 @@ sub BUILD {
 
 sub _build_epsL {
     my $self=shift;
-    my $field= $self->field; # epsL is side effect of field
-    $self->epsL; # danger of infinite recursion?
+    my $field= $self->_Fn; # epsL is side effect of Fn
+    $self->epsL; # (otherwise, infinite recursion)
 }
 
 sub _build_u {
@@ -120,10 +123,8 @@ sub _build_u {
     1/(1-$self->epsB/$self->epsA);
 }
 
-sub _build_field {
+sub _build__Fn{
     my $self=shift;
-    my $epsA=$self->epsA;
-    my $epsB=$self->epsB;
     my $u=$self->u;
     my $as=$self->haydock->as;
     my $bs=$self->haydock->bs;
@@ -141,20 +142,38 @@ sub _build_field {
     $rhs->((0)).=1;
     $rhs=$rhs->r2C;
     my $result = cgtsv($subdiag, $diag, $supradiag, $rhs);
+    $self->_epsL($self->epsA/($self->u*$result((0))));
+    return $result;
+}
+sub _build_field {
+    my $self=shift;
+    my $Fn = $self->_Fn;
     # Obtain longitudinal macroscopic response from result
-    my $Norm=1/$result->((0)); # Normalization for field, 1/E_M
-    $self->_epsL($Norm*$epsA/$u);
     # Normalize result so macroscopic field is 1.
     #states are nx,ny...
-    my $stateit=$self->haydock->states->dummy(0);
-    my $Es= $result*$Norm;
+    my $states=$self->haydock->states->dummy(0);
+    my $Es= $Fn/$Fn((0));
     my $nrGnorm = $self->haydock->GNorm;
     #field is cartesian,nx,ny...
-    my $field_G=linearCombineIt($Es, $nrGnorm*$stateit); #En ^G|psi_n>
+    my $field_G=linearCombineIt($Es, $nrGnorm*$states); #En ^G|psi_n>
     $field_G *= $self->filter->(*1) if $self->has_filter;
-    #get cartesian out of the way, fourier transform, put cartesian.
+    # fourier transform vector field.
     my $field_R=GtoR($field_G, $self->haydock->ndims, 1);
-    $field_R*=$self->haydock->B->nelem; #scale to have unit macroscopic field
+    $field_R*=$self->haydock->B->nelem; #scale FFT
+    return $field_R; #result is cartesian, nx, ny,...
+}
+
+sub _build_rawfield {
+    my $self=shift;
+    my $Es = $self->_Fn*$self->u/$self->epsA;
+    my $states=$self->haydock->states->dummy(0);
+    my $nrGnorm = $self->haydock->GNorm;
+    #field is cartesian,nx,ny...
+    my $field_G=linearCombineIt($Es, $nrGnorm*$states); #En ^G|psi_n>
+    $field_G *= $self->filter->(*1) if $self->has_filter;
+    # fourier transform vector field.
+    my $field_R=GtoR($field_G, $self->haydock->ndims, 1);
+    $field_R*=$self->haydock->B->nelem; #scale FFT
     return $field_R; #result is cartesian, nx, ny,...
 }
 

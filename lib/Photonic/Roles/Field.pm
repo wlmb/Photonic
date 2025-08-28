@@ -65,12 +65,14 @@ Calculates the non retarded electric field for a given fixed
 Photonic::Geometry structure and given dielectric functions of
 the components.
 
-The consuming class needs to supply these methods to inform lazy-building
+The consuming class needs to supply these methods to allow lazy-building
 of C<field>:
 
 =over 4
 
 =item * _build_field
+
+=item * _build_rawfield
 
 =back
 
@@ -89,7 +91,11 @@ optional reciprocal space filter
 
 =item * field
 
-real space field in format cartesian, nx, ny,... (lazy-built).
+real space field normalized to macroscopic field in format cartesian, nx, ny,... (lazy-built).
+
+=item * rawfield
+
+real space field normalized to external source in format cartesian, nx, ny,... (lazy-built).
 
 =item * nh
 
@@ -102,14 +108,17 @@ The maximum number of Haydock coefficients to use.
 use Moo::Role;
 use Photonic::Types -all;
 
-requires '_build_field';
+#requires '_build_field'; necessary?
+#requires '_build_rawfield';
 
 has 'haydock'=>(is=>'ro', isa=>HaydockSave, required=>1,
            documentation=>'Haydock recursion calculator');
 has 'filter'=>(is=>'ro', isa=>PDLObj, predicate=>'has_filter',
                documentation=>'Optional reciprocal space filter');
 has 'field'=>(is=>'lazy', isa=>PDLComplex,
-           documentation=>'Calculated real space field');
+           documentation=>'Calculated real space field. Normalized to macroscopic.');
+has 'rawfield'=>(is=>'lazy', isa=>PDLComplex,
+           documentation=>'Calculated real space field. Normalized to external source.');
 has 'nh' =>(is=>'lazy', isa=>Num, builder=>'_build_nh',
             documentation=>'Desired no. of Haydock coefficients');
 
