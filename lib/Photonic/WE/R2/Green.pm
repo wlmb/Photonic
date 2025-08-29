@@ -139,7 +139,7 @@ use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::GreenP;
 use Photonic::Types -all;
-use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator triangle_coords);
+use Photonic::Utils qw(tensor make_haydock make_greenp triangle_coords);
 
 use List::Util qw(all any);
 use Moo;
@@ -242,7 +242,7 @@ sub _build_cGreenP {
 
 sub _build_waveOperator {
     my $self=shift;
-    wave_operator($self->greenTensor, $self->geometry->ndims);
+    $self->greenTensor->inv;
 }
 
 sub _build_epsilonTensor {

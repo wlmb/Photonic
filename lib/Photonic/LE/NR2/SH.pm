@@ -192,7 +192,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::LE::NR2::Haydock;
-use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv top_slice mvN);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombine any_complex cgtsv top_slice mvN);
 use Photonic::Types -all;
 use PDL::Constants qw(PI);
 use Moo;
@@ -275,12 +275,6 @@ has 'P2'=>(is=>'lazy', isa=>PDLComplex,
          documentation=>
              'SH self consistent total polarization vector
               field in real space');
-
-has 'P2LMCalt'=>(is=>'lazy', isa=>PDLComplex,
-         init_arg=>undef,
-         documentation=>
-             'SH self consistent total macroscopic polarization
-              in real space. Alternative');
 
 has 'filterflag'=>(is=>'rw',
          documentation=>'Filter results in reciprocal space');
@@ -445,7 +439,7 @@ sub _build_selfConsistentL_G {
     $self->filterflag(0);
     my $PLn=$self->selfConsistentL_n;
     my $stateit=$self->HP->states;
-    my $result=linearCombineIt($PLn, $stateit);
+    my $result=linearCombine($PLn, $stateit);
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0)  if $filterflag;
     return $result;
@@ -468,48 +462,6 @@ sub _build_P2 {
     my $PL=$self->selfConsistentVecL;
     my $Pext=$self->external;
     -4*PI*($alpha2*$density)->(*1)*$PL+$Pext;
-}
-
-sub _build_P2LMCalt {
-    my $self=shift;
-    my $PexL_G=$self->externalL_G; #external long 2w polarization
-    my $PexM=$self->external_G->(:,(0),(0)); #macroscopic external.
-    my $haydock=$self->haydock;
-    my $geom=$haydock->geometry;
-    my $ndims=$geom->ndims;
-    my $nelem=$geom->npoints;
-    my $k=$geom->Direction0;
-    my $epsA2=$self->epsA2;
-    my $u2=$self->u2;
-    my $B=$geom->B;
-    my $as=$haydock->as;
-    my $bs=$haydock->bs;
-    my $nh=$self->nh; #desired number of Haydock terms
-    #don't go beyond available values.
-    $nh=$haydock->iteration if $nh>=$haydock->iteration;
-    # calculate using lapack for tridiag system
-    # solve \epsilon^LL \vec E^L=|0>.
-    my $diag=$self->u2->conj - $as->(0:$nh-1);
-    # rotate complex zero from first to last element.
-    my $subdiag=-$bs->(0:$nh-1)->rotate(-1)->r2C;
-    my $supradiag=$subdiag->rotate(-1);
-    my $rhs=PDL->zeroes($nh);
-    $rhs->((0)).=1;
-    $rhs=$rhs->r2C;
-    my $phi_n = cgtsv($subdiag, $diag, $supradiag, $rhs);
-    my $states=$haydock->states;
-    my $phi_G=linearCombineIt($phi_n, $states);
-    my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G, $self->ndims);
-    my $beta_G=RtoG($B*GtoR($haydock->firstState,$ndims,0), $ndims,0);
-    my $betaV_G=$beta_G->(*1)*$geom->GNorm;
-    $states=$haydock->states->dummy(0);
-    my $betaV_n=HProd($betaV_G,$states, $self->ndims, 1);
-    my $psi = cgtsv($subdiag, $diag, $supradiag, $betaV_n->mv(0,-1)); # nx ny .... cartesian nh - threading
-    $states=$haydock->states;
-    my $psi_G=linearCombineIt($psi, $states->dummy(-1), 1);
-    my $Ppsi = HProd($psi_G, $PexL_G, $self->ndims);
-    my $P2M=$Pphi+$Ppsi+$PexM*$nelem; # Unnormalize Pex !!
-    return $P2M->(,*1,*1);
 }
 
 sub _build_u1 {

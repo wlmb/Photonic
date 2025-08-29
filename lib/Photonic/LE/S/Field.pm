@@ -73,7 +73,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::LE::S::Haydock;
-use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
+use Photonic::Utils qw(cgtsv GtoR linearCombine);
 use Photonic::Types -all;
 use Moo;
 use MooX::StrictConstructor;
@@ -126,7 +126,7 @@ sub _build_field {
     #pmGnorm is xy,pm,nx,ny...
     my $pmGNorm=$self->haydock->pmGNorm;
     #field is xy,pm,nx,ny...
-    my $field_G=linearCombineIt($Es, $pmGNorm*$stateit); #En ^G|psi_n>
+    my $field_G=linearCombine($Es, $pmGNorm*$stateit); #En ^G|psi_n>
     #Choose +k
     my $Esp=$field_G->(:,(0)); #xy,nx,ny
     $Esp *= $self->filter->(*1) if $self->has_filter;

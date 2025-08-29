@@ -332,13 +332,6 @@ $expected = pdl(<<'EOF');
 -0.75-0.25i
 EOF
 ok(Cagree($got, $expected), "u1") or diag "got: $got\nexpected: $expected";
-$got=$nrsh->P2LMCalt;
-$expected = pdl(<<'EOF');
-[
- [ [ 0 -4.7586641e-16+6.7980915e-17i ] ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-46), "P2LMCalt") or diag "got: $got\nexpected: $expected";
 
 my $chi=Photonic::LE::NR2::SHChiTensor->new(
   geometry=>$gl,
@@ -381,11 +374,6 @@ $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected, machine_epsilon()), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
-$got = $chi->evaluate(kind => 'a');
-$expected = pdl(<<'EOF');
-[ [ [ 0 ] ] ]
-EOF
-ok(Cagree($got, $expected, machine_epsilon()), "P2LMCalt") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate(kind => 'd');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]

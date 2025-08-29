@@ -1,7 +1,12 @@
 Revision history for Photonic
 
 {{$NEXT}}
-
+  - Change cartesian_product from Utils to a simpler code. Fix
+    documentation.
+  - Remove wave_operator from Utils, as it is a plain inverse.
+  - Remove unused/unproven alternative method for SH calculation
+  - Remove unused and maybe mistaken third parameter from linearCombineIt
+  - Remove the It as we no longer use iterators
   - Add conversion routines between frequency, energy and wavelength
   - Avoid duplicate arguments in cgtsv
 

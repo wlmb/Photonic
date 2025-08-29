@@ -118,7 +118,7 @@ use PDL::NiceSlice;
 use Photonic::WE::S::Haydock;
 use Photonic::WE::S::GreenP;
 use Photonic::Types -all;
-use Photonic::Utils qw(tensor make_haydock make_greenp wave_operator any_complex);
+use Photonic::Utils qw(tensor make_haydock make_greenp any_complex);
 use List::Util qw(all);
 use Moo;
 use MooX::StrictConstructor;
@@ -184,7 +184,7 @@ sub _build_greenP {
 
 sub _build_waveOperator {
     my $self=shift;
-    wave_operator($self->greenTensor, $self->geometry->ndims);
+    $self->greenTensor->inv;
 }
 
 sub _build_epsilonTensor {

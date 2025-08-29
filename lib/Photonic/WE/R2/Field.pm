@@ -81,7 +81,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
-use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
+use Photonic::Utils qw(cgtsv GtoR linearCombine);
 use Photonic::Types -all;
 use Moo;
 use MooX::StrictConstructor;
@@ -137,7 +137,7 @@ sub _build_field {
     #field is xy,nx,ny...
     my $ndims=$self->haydock->B->ndims; # num. of dims of space
     #field is cartesian, nx, ny...
-    my $field_G=linearCombineIt($giEs, $stateit); #En ^G|psi_n>
+    my $field_G=linearCombine($giEs, $stateit); #En ^G|psi_n>
     my $Es=$self->haydock->applyMetric($field_G);
     my $e_0=1/($Es->slice(":" . ",(0)" x $ndims)
 	       *$self->haydock->polarization->conj)->sumover;
