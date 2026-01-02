@@ -2,6 +2,9 @@ Revision history for Photonic
 
 {{$NEXT}}
 
+  - Program rawfield to obtain the unnormalized fields, assuming the
+    external source is an external polarization. Currently, modified
+    LE::NR2::Field, LE::S::Field, Roles::Field, WE::S::Field, and the tests.
   - Add conversion routines between frequency, energy and wavelength
   - Avoid duplicate arguments in cgtsv
 

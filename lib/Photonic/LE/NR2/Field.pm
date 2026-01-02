@@ -86,6 +86,7 @@ evaluation of the field
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
+use PDL::Constants qw(PI);
 use Photonic::LE::NR2::Haydock;
 use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types -all;
@@ -165,7 +166,7 @@ sub _build_field {
 
 sub _build_rawfield {
     my $self=shift;
-    my $Es = $self->_Fn*$self->u/$self->epsA;
+    my $Es = -4*PI*$self->_Fn*$self->u/$self->epsA; # assume drive is external polarization
     my $states=$self->haydock->states->dummy(0);
     my $nrGnorm = $self->haydock->GNorm;
     #field is cartesian,nx,ny...
@@ -173,7 +174,8 @@ sub _build_rawfield {
     $field_G *= $self->filter->(*1) if $self->has_filter;
     # fourier transform vector field.
     my $field_R=GtoR($field_G, $self->haydock->ndims, 1);
-    $field_R*=$self->haydock->B->nelem; #scale FFT
+    my $b0=$self->haydock->bs->((0));
+    $field_R*=$b0*$self->haydock->B->nelem; #scale FFT
     return $field_R; #result is cartesian, nx, ny,...
 }
 

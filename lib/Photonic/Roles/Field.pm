@@ -96,6 +96,7 @@ real space field normalized to macroscopic field in format cartesian, nx, ny,...
 =item * rawfield
 
 real space field normalized to external source in format cartesian, nx, ny,... (lazy-built).
+Source is interpreted as external polarization.
 
 =item * nh
 

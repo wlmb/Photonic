@@ -61,6 +61,7 @@ Consumes L<Photonic::Roles::Field>
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
+use PDL::Constants qw(PI);
 use Photonic::WE::S::Haydock;
 use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types -all;
@@ -68,8 +69,8 @@ use Moo;
 use MooX::StrictConstructor;
 
 # Temporary:
-has 'rawfield'=>(is=>'lazy', isa=>PDLComplex,
-           documentation=>'Calculated real space field, unnormalized');
+#has 'rawfield'=>(is=>'lazy', isa=>PDLComplex,
+#           documentation=>'Calculated real space field, unnormalized');
 
 with 'Photonic::Roles::Field';
 
@@ -105,14 +106,14 @@ sub _build_rawfield {
     my $Es=$self->haydock->applyMetric($field_G);
     #Comment as unnormalized
     #$Es*=$bs->((0))/$self->haydock->metric->epsilon;
-    my $Esp=$Es(:,(0)); # choose +k spinor component.
+    my $Esp=sqrt(2)*$Es(:,(0)); # choose +k spinor component.
     $Esp *= $self->filter->(*1) if $self->has_filter;
     ##get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=GtoR($Esp, $ndims, 1);
     $field_R*=$self->haydock->B->nelem; #scale??
     my $b0=$self->haydock->bs->slice('(0)'); # #First state normalization factor
     $field_R*=$b0; #scale??
-    $field_R/=$self->haydock->B->nelem; #normalize FT?
+    $field_R*= -4*PI; # Interpreting the first state as external polarization.
     return $field_R; #result is xy,nx,ny...
 }
 
