@@ -106,8 +106,11 @@ sub cartesian_product {
   $res;
 }
 
-sub triangle_coords {
-  my ($n, $inc_diag) = @_;
+sub triangle_coords { # indices of lower triangular matrix, with or without diagonal
+    my (
+	$n,           # dimension
+	$inc_diag     # include diagonal
+	) = @_;
   my $x = xvals($n, $n);
   my $y = yvals($n, $n);
   my $mask = $inc_diag ? $x >= $y : $x > $y;

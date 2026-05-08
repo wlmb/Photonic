@@ -1,11 +1,11 @@
 name: perl
+
 on:
   push:
     branches:
-      - '*'
-    tags-ignore:
-      - '*'
+      - '**'
   pull_request:
+
 jobs:
   ubuntu:
     runs-on: ${{ matrix.os }}
@@ -19,21 +19,27 @@ jobs:
             os: ubuntu-latest
             release-test: true
             coverage: true
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - uses: shogo82148/actions-setup-perl@v1
         with:
-          distribution: strawberry # ignored non-windows
           perl-version: ${{ matrix.perl-version }}
+
       - run: perl -V
+
       - name: Ubuntu packages
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get -y update && sudo apt-get -y install build-essential libfftw3-dev liblapack-dev netpbm
-      - run: cpanm -n ExtUtils::MakeMaker~7.00 # TEST_REQUIRES etc
+        run: sudo apt-get update && sudo apt-get install -y build-essential libfftw3-dev liblapack-dev netpbm
+
+      - run: cpanm -n ExtUtils::MakeMaker@7.00 # TEST_REQUIRES etc
       - run: cpanm -n --installdeps .
+
       - name: Run tests (no coverage)
         if: ${{ !matrix.coverage }}
         run: perl Makefile.PL && HARNESS_OPTIONS='j4' make test
+
       - name: Run tests (with coverage)
         if: ${{ matrix.coverage }}
         env:
@@ -41,6 +47,7 @@ jobs:
         run: |
           cpanm -n Devel::Cover::Report::Coveralls
           HARNESS_OPTIONS='j4' cover -test -report Coveralls
+
       - name: Run release tests # after main tests so built
         if: ${{ matrix.release-test }}
         env:
