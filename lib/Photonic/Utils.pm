@@ -68,7 +68,6 @@ sub dummyN {
   return $pdl if $how_many <= 0;
   my $ndims=$pdl->ndims;
   $where //= 0;
-  local $_;
   $_ = !$_ ? 0 : $_ > 0 ? $_ : $ndims + $_ + 1 for $where;
   $dim_size //= 1;
   my @before = (':') x $where;
@@ -94,9 +93,9 @@ sub wave_operator {
 
 sub cartesian_product {
   my ($s1, $s2) = @_;
-  my $ndims_target = List::Util::max(2, map $_->ndims, $s1, $s2);
-  $_ = dummyN($_, $ndims_target-$_->ndims) for grep $_->ndims < $ndims_target, $s1, $s2;
   my ($nd1, $nd2) = map $_->ndims, $s1, $s2;
+  my $ndims_target = List::Util::max(2, $nd1, $nd2);
+  $_ = dummyN($_, $ndims_target-$_->ndims) for grep $_->ndims < $ndims_target, $s1, $s2;
   my @dims = $s1->dims;
   $dims[-2] += $s2->dim(-2); # X1+X2
   $dims[-1] *= $s2->dim(-1); # m*n
@@ -116,7 +115,17 @@ sub triangle_coords {
 }
 
 sub tensor {
-    my ($data, $decomp, $nd, $dims, $skip) = @_;
+    # build a symmetric tensor T_ij from its projections along the unit pair directions
+    # v_ij=e_i+e_j (normalized) i<=j (0,0), (0,1)...(1,1),(1,2)....
+    # The first argument are the projections. The second the LU decomposition of the matrix
+    # v_tt' with t the index of ij and t' that of i'j'. The third is the dimension of space.
+    my ($data,    # projections of the tensor
+	$decomp,  # LU decomposition of the unit vectors matrix
+	$nd,      # dimension of space
+	$dims,    # dimensions of tensor (may be >2 i.e., for nonlinear response,
+	          # T_kij, symmetric in ij)
+	$skip     # number of extra dimensions at front, to be skipped
+	) = @_;
     $skip //= 0;
     my $backsub = lu_solve($decomp, mvN($data, 0, $skip-1, -1));
     $backsub = mvN($backsub, -$skip, -1, 0) if $skip;
@@ -128,30 +137,46 @@ sub tensor {
     $tensor;
 }
 
-my @HAYDOCK_PARAMS = qw(
-  nh keepStates smallH
-);
+my @HAYDOCK_PARAMS = qw(nh keepStates smallH);
 sub make_haydock {
-  my ($self, $class, $pairs, $add_geom, @extra_attributes) = @_;
-  # This must change if G is not symmetric
-  [ map incarnate_as($class, $self, [ @HAYDOCK_PARAMS, @extra_attributes ],
-      _haydock_extra($self, $_, $add_geom),
-  ), $pairs->dog ];
+    # make array of haycodk calculators
+    my ($self,            # calling object
+	$class,           # class name for the Haydock calculator
+	$polarizations,   # array of polarizations for each calculator
+	$add_geom,        # use geometry (1) or metric (0)
+	@extra_attributes # additional attributes
+	) = @_;
+    # This must change if G is not symmetric
+    [ map incarnate_as($class, $self, [ @HAYDOCK_PARAMS, @extra_attributes ],
+		       _haydock_extra($self, $_, $add_geom),
+      ),
+      $polarizations->dog
+    ];
 }
 
 sub _haydock_extra {
-  my ($self, $u, $add_geom) = @_;
-  my $obj = dclone($add_geom ? $self->geometry : $self->metric);
-  $obj = $obj->new(%$obj, Direction0=>$u) if $add_geom; #add G0 direction
-  $add_geom ? (geometry=>$obj) : (metric=>$obj, polarization=>$u->r2C);
+    # clone and modify the appropriate geometry or metric for a given polarization
+    my ($self,    # calling object
+	$pol,       # polarization
+	$add_geom # choose to add geometry (1) or metric (0)
+	) = @_;
+    my $obj = dclone($add_geom ? $self->geometry : $self->metric);
+    $obj = $obj->new(%$obj, Direction0=>$pol) if $add_geom; #add G0 direction
+    $add_geom ? (geometry=>$obj) : (metric=>$obj, polarization=>$pol->r2C);
 }
 
 my @GREENP_PARAMS = qw(nh smallE);
 sub make_greenp {
-  my ($self, $class, $method, @extra_attributes) = @_;
-  $method ||= 'haydock';
-  [ map incarnate_as($class, $self, [ @GREENP_PARAMS, @extra_attributes ], haydock=>$_),
-      @{$self->$method}
+    # make array of projected Green functions
+    my ($self,             # the calling object
+	$projected_green,  # the class name for the projected Green function
+	$haydocks,         # method name for list of Haydock calculators
+	@extra_attributes  # to initialize the class of green projections
+	) = @_;
+    $haydocks //= 'haydock';
+    [ map incarnate_as($projected_green, $self,
+		       [ @GREENP_PARAMS, @extra_attributes ], haydock=>$_),
+      @{$self->$haydocks}
   ];
 }
 
@@ -408,11 +433,13 @@ sub apply_longitudinal_projection {
 }
 
 sub make_dyads {
+    # given V_n=e_i+e_j (normalized) the n-th sum of pairs of unit vectors
+    # build the matrix M_mn=F_ij V_mi Vmj with F_ij=1 or 2, according to whether i==j
     my ($nd, $unitPairs) = @_;
     my $ne = $nd*($nd+1)/2; #number of symmetric matrix elements
     my $matrix = PDL->zeroes($ne, $ne);
-    my $indexes = triangle_coords($nd, 1); # col0,col1=x,y
-    my $i_plus_seq = cartesian_product($indexes, sequence($ne)); # col2=seq
+    my $indices = triangle_coords($nd, 1); # xy, n
+    my $i_plus_seq = cartesian_product($indices, sequence($ne)); # col2=seq
     $i_plus_seq = cartesian_product($i_plus_seq, ones(2, 1)); # col3,4=ones
     $i_plus_seq->slice('(3)') .= sequence($ne)->dummy(1, $ne)->clump(-1); # col3=sequence of coords
     $i_plus_seq->slice('(4)') += $i_plus_seq->slice('(0)') != $i_plus_seq->slice('(1)'); # col4=factor

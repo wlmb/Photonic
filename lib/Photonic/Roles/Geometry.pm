@@ -48,9 +48,9 @@ requires 'B'; #characteristic function
 
 has 'L' =>(is=>'lazy', isa => PDLObj,
 	   documentation=>'array of unit cell size');
-has 'units'=>(is=>'lazy', isa=>PDLObj,
+has 'units'=>(is=>'lazy', isa=>PDLObj, init_arg => undef,
      documentation=>'Basis of unit vectors');
-has 'primitive'=>(is=>'lazy', isa=>PDLObj, required=>1, # required?
+has 'primitive'=>(is=>'lazy', isa=>PDLObj,
 		  documentation=>'Primitive directions');
 has 'primitiveNorm'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 		  documentation=>'Normalized primitive vectors');
@@ -212,26 +212,26 @@ sub _build_unitPairs {
     my $self=shift;
     my $nd=$self->ndims;
     my $units=$self->units;
-    my $pairs = PDL->zeroes($nd, $nd * ($nd + 1) / 2);
+    my $pairs = PDL->zeroes($nd, ($nd * ($nd + 1)) / 2);
     my $pairs_slice = $pairs->mv(1, 0);
-    my $indexes = triangle_coords($nd, 1);
+    my $indices = triangle_coords($nd, 1);
     $pairs_slice .= (
-      $units->indexND($indexes(0))+
-      $units->indexND($indexes(1))
+      $units->indexND($indices(0))+
+      $units->indexND($indices(1))
     )->transpose->norm->transpose;
-    $pairs;
+    $pairs;  #xy,n
 }
 
 sub _build_cUnitPairs {
     my $self=shift;
     my $nd=$self->ndims;
     my $units=$self->units;
-    my $cpairs = PDL->zeroes($nd, $nd * ($nd - 1) / 2)->r2C;
+    my $cpairs = PDL->zeroes($nd, ($nd * ($nd - 1)) / 2)->r2C;
     my $cpairs_slice = $cpairs->mv(1, 0);
-    my $indexes = triangle_coords($nd);
+    my $indices = triangle_coords($nd);
     $cpairs_slice .= PDL::czip(
-      $units->indexND($indexes(0)),
-      $units->indexND($indexes(1))
+      $units->indexND($indices(0)),
+      $units->indexND($indices(1))
     );
     $cpairs_slice /= sqrt($cpairs_slice->abs2->transpose->sumover);
     $cpairs;
@@ -335,6 +335,19 @@ Unit cell sizes as a ndims pdl.
 =item * units
 
 Basis C<e>_i of basis vectors for the lattice
+
+=item * primitive
+
+Primitive vectors of the unit cell. Only direction is
+relevant. Specify for non-cubic non-orthorhombic lattices
+
+=item * primitiveNorm
+
+Normalized primitive vectors
+
+=item *dualNorm
+
+Normalized reciprocal primitive vectors.
 
 =item * dims
 
