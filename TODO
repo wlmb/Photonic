@@ -1,5 +1,9 @@
 # -*- mode: org; -*-
 
+* TODO [2026-05-08 Fri] Test all attributes are pod covered
+  My current xt/pod-coverage.t doesn't test lazy attributes. I don't
+  understand why. Currently, there are many undocumented. I have to
+  document them and I would like the tests to help with them.
 * TODO [2025-08-02 Sat] Check firstState in unretarded spinor calculations
   I use \delta_{G0}/sqrt2 for both the positive and negative parts. My
   guess is that the correct value is to change the sign of the G=0
@@ -18,7 +22,7 @@
   - If a firstState is given, there should be no need and no use for
     polarization in ...::Field
 * TODO [2025-02-20 Thu] KeepStates
-  - It seems version 0.24 keep states, without regards to keepStates,
+  - It seems version 0.24 keeps states, without regards to keepStates,
     as the states are now kept in a state pdl instead of a perl
     array.
 * TODO [2025-02-20 Thu] Ph::Role::Geometry

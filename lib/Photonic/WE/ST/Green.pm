@@ -92,6 +92,10 @@ Array of L<Photonic::WE::ST::GreenP> structures, one for each direction.
 
 The Green's tensor calculated
 
+=item * symmetric
+
+Only the symmetric part of the tensor is required.
+
 =item * nhActual
 
 The actual number of Haydock coefficients used in the last calculation

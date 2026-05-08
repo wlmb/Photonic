@@ -345,7 +345,7 @@ relevant. Specify for non-cubic non-orthorhombic lattices
 
 Normalized primitive vectors
 
-=item *dualNorm
+=item * dualNorm
 
 Normalized reciprocal primitive vectors.
 
