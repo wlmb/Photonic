@@ -103,7 +103,9 @@ sub apply{
     my $psi = shift; #xyz:pm:nx:ny:nz
     my $G=$self->G; #reciprocal lattice, xyz:nx:ny:nz
     my $q=$self->wavenumber; # wavenumber
-    my $eps=$self->epsilon; # this is the reference epsilon (from Roles)  
+    my $eps=$self->epsilon; # this is the reference epsilon (from Roles)
+    croak "For the time being the reference epsilon should be 1 or not initialized"
+	unless $eps==1;
     my $k=$self->wavevector; # bloch wavevector, xyz
     my $mu=$self->mu; # magnetic permeability nx:ny:nz
     croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
