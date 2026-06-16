@@ -114,8 +114,8 @@ sub apply{
 	(pdl($mu->dims)==pdl($self->dims))->all; #exactly the same dimensions
     # FIRST TERM of the metric
     # apply longitudinal projector to state psi
-    my $ProjL_psi = ($self->longitudinal_projector #xyz:xyz:pm:nx:ny:nz
-		     ->inner($psi(:,*1) #xyz:1:pm:nx:ny:nz
+    my $ProjL_psi = ($self->build_longitudinal_projector #xyz:xyz:pm:nx:ny:nz
+		     ->inner($psi(:,*1)) #xyz:1:pm:nx:ny:nz
 	); #xyz:pm:nx:ny:nz a this matrix vector mutiplication
     # SECOND TERM
     # wavevectors with +-k
@@ -143,12 +143,12 @@ sub apply{
 
 #this is built here because it uses the k vector and it's an atributte
 #because it is called in Haydock to build the Hamiltonian
-sub longitudinal_projector{
+sub build_longitudinal_projector{
     #returns the value of the projector
     my $self=shift;
     my $G=$self->G; #reciprocal lattice from Geometry
     my $k=$self->wavevector; # bloch wavevector, solution
-    my ($kPG,$kMG) = ($k+$G, $k-$G); # xyz:pm:nx:ny:nz
+    my ($kPG,$kMG) = ($G+$k, $G-$k); # xyz:pm:nx:ny:nz
     # spinorlike wavevectors,
     my ($kPGkPG, $kMGkMG) = map $_->outer($_), $kPG, $kMG; #xyz:xyz:nx:ny:nz
     #outer product GG to build
