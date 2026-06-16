@@ -119,7 +119,7 @@ sub apply{
 	); #xyz:pm:nx:ny:nz a this matrix vector mutiplication
     # SECOND TERM
     # wavevectors with +-k
-    my ($kPG,$kMG) = ($k+$G, $k-$G); # xyz:nx:ny:nz
+    my ($kPG,$kMG) = ($G+$k, $G-$k); # xyz:nx:ny:nz
     # magnitude of Gpmk vectors squared
     my ($kPG2,$kMG2) = map $_->inner($_), $kPG, $kMG; #nx:ny:nz;
     # divide each vector by its norm squared and concatenate them
