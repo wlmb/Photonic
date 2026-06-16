@@ -107,9 +107,11 @@ sub apply{
     croak "For the time being the reference epsilon should be 1 or not initialized"
 	unless $eps==1;
     my $k=$self->wavevector; # bloch wavevector, xyz
-    my $mu=$self->mu; # magnetic permeability nx:ny:nz
     croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
 	$k->dim(0)==$self->ndims;
+    my $mu=$self->mu; # magnetic permeability nx:ny:nz
+    croak "Mu must be a $self->dims array" unless
+	(pdl($mu->dims)==pdl($self->dims))->all; #exactly the same dimensions
     # FIRST TERM of the metric
     # apply longitudinal projector to state psi
     my $ProjL_psi = ($self->longitudinal_projector #xyz:xyz:pm:nx:ny:nz
