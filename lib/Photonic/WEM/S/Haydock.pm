@@ -168,10 +168,10 @@ sub applyOperator {
     my $gpsi_G=$g->apply($psi); # xyz:pm:nx:ny:nz.
     # FIRST TERM
     # get longitudinal projector and apply it to psi
-    my $ProjLPMk_gpsi = ($g->longitudinal_projector #xyz:xyz:pm:nx:ny:nz
-			  *$gpsi_G(:,*1)) #xyz:1:pm:nx:ny:nz
-	->sumover; # matrix-vector product xyz:pm:nx:ny:nz
-    # SECOND TERM applied to gpsi
+    my $ProjLPMk_gpsi = ($g->build_longitudinal_projector #xyz:xyz:pm:nx:ny:nz
+			  ->inner($gpsi_G(:,*1))) #xyz:1:pm:nx:ny:nz
+			 ; # matrix-vector product xyz:pm:nx:ny:nz
+    #SECOND TERM applied to gpsi
     #FT gspi to real space
     my $gpsi_r = GtoR($gpsi_G,$self->ndims,2)->mv(0,-1)->mv(0,-1); #nx:ny:nz:xyz:pm
     # left-multiply by epsilon in real space
