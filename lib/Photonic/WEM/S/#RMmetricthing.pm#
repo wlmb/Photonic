@@ -1,0 +1,35 @@
+my $self=shift;
+    my $psi=shift; #psi is xyz:pm:nx:ny:nz
+    my $mask=undef;
+    $mask=$self->mask if $self->use_mask;
+    my $g = $self->metric; #metric object to get the reciprocal lattice
+    my $G = $g->G; #reciprocal lattice
+    my $k = $g->wavevector; # wavevector
+    my $q = $g->wavenumber; # wavenumber
+    my $gpsi=$self->applyMetric($psi); # gpsi is xyz:pm:nx:ny:nz.
+    ## Magnetic part of the waveoperator ##
+    my $kPMG = pdl($k+$G, $k-$G)->mv(-1,1); #spinorlike wavevectors, xyz:pm:nx:ny:nz
+    my $kPMGXgpsi = crossp($kPMG,$gpsi); #xyz:pm:nx:ny
+    # Get cartesian and pm out of the way to multiply by mu scalar in real space
+    my $kPMGXgpsi_r = GtoR($kPMGXgpsi,$self->ndims,2)->mv(0,-1)->mv(0,-1); #nx:ny:nz:xyz:pm
+    # Get cartesian and pm back to multiply by wavevectors in fourier space
+    my $mu_kPMGXgpsi_r = (($self->mu)*$kPMGXgpsi_r)->mv(-1,0)->mv(-1,0); #xyz:pm:nx:ny:nz
+    #### is this identity ok in here multiplying mu???
+    my $mu_kPMGXgpsi_G = RtoG($mu_kPMGXgpsi_r,$self->ndims,2);
+    # mu acting on kPMGtimesgpsi in G space, xyz:pm:nx:ny:nz
+    my $kPMGXmukPMGXgpsi = crossp($kPMG,$mu_kPMGXgpsi_G); #xyz::pm:nx:ny:nz
+    my $mgn_part_G = (1/($q*$q))*$kPMGXmukPMGXgpsi; #xyz::pm:nx:ny:nz
+    ## Dielectric part ##
+    # Get cartesian and pm out of the way to multiply by epsilon scalar
+    my $gpsi_r=GtoR($gpsi, $self->ndims, 2)->mv(0,-1)->mv(0,-1); #(nx:ny:nz:xyz:pm)
+    #geometry->epsilon so epsilon is already a nx:ny:nz array
+    my $epsXgpsi_r = (($self->epsilon)*$gpsi_r)->mv(-1,0)->mv(-1,0); #xyz:pm:nx:ny:nz
+    my $epsXgpsi_G = RtoG($epsXgpsi_r, $self->ndims, 2);  #xyz:pm:nx:ny:nz
+    my $Hgpsi_G = ($id*$psi - $epsXgpsi_G - $mgn_part_G); #hamiltonian times metric acting on psi in G space
+    #Transform to reciprocal space, move xy and pm back and make complex,
+    my $psi_G = $Hgpsi_G;
+    #Apply mask
+    #psi_G is xyz:pm:nx:ny:nz mask is nx:ny
+    $psi_G=$psi_G*$mask->(*1,*1) if defined $mask; #use dummies for xy:pm
+    return $psi_G;
+}
