@@ -113,8 +113,8 @@ sub apply{
     # FIRST TERM of the metric
     # apply longitudinal projector to state psi
     my $ProjL_psi = ($self->longitudinal_projector #xyz:xyz:pm:nx:ny:nz
-		     *$psi(:,*1) #xyz:1:pm:nx:ny:nz
-	)->sumover; #xyz:pm:nx:ny:nz a this matrix vector mutiplication
+		     ->inner($psi(:,*1) #xyz:1:pm:nx:ny:nz
+	); #xyz:pm:nx:ny:nz a this matrix vector mutiplication
     # SECOND TERM
     # wavevectors with +-k
     my ($kPG,$kMG) = ($k+$G, $k-$G); # xyz:nx:ny:nz
