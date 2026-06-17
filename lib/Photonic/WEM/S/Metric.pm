@@ -86,11 +86,14 @@ use Photonic::Utils qw(any_complex);
 use Moo;
 use MooX::StrictConstructor;
 
-has 'value' =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
-	       documentation=>'Build a value so Roles does not complain');
-has 'mu'    =>(is=>'ro', isa=>PDLObj, required=>1,
-	       documentation=> 'Magnetic permeability scalar function');
+has 'mu' =>(is=>'ro', isa=>PDLObj, required=>1,
+	    documentation=> 'Magnetic permeability scalar function');
 
+has 'longitudinal_projector'
+    =>(is=>'ro', isa=>PDLObj, init_arg=>undef,
+       documentation=>'Longitudinal Projector in reciprocal spinorial space');
+has  'value'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
+	       documentation=>'Metric Tensor');
 
 with 'Photonic::Roles::Metric';
 # Roles::Metric Pulls the following attributes: geometry, epsilonRef,
@@ -112,18 +115,19 @@ sub apply{
     my $mu=$self->mu; # magnetic permeability nx:ny:nz
     croak "Mu must be a $self->dims array" unless
 	(pdl($mu->dims)==pdl($self->dims))->all; #exactly the same dimensions
+    croak "Currenlty, only 3D is supported" unless $self->ndims==3;
+    # $self->ndims is given by geometry (Roles)
     # FIRST TERM of the metric
     # apply longitudinal projector to state psi
-    my $ProjL_psi = ($self->build_longitudinal_projector #xyz:xyz:pm:nx:ny:nz
+    my $ProjL_psi = ($self->longitudinal_projector #xyz:xyz:pm:nx:ny:nz
 		     ->inner($psi(:,*1)) #xyz:1:pm:nx:ny:nz
 	); #xyz:pm:nx:ny:nz a this matrix vector mutiplication
     # SECOND TERM
     # wavevectors with +-k
-    my ($kPG,$kMG) = ($G+$k, $G-$k); # xyz:nx:ny:nz
-    # magnitude of Gpmk vectors squared
-    my ($kPG2,$kMG2) = map $_->inner($_), $kPG, $kMG; #nx:ny:nz;
-    # divide each vector by its norm squared and concatenate them
-    my $kPMG_norm2 = cat($kPG/$kPG2->(*1),$kMG/$kMG2->(*1))->mv(-1,1); #xyz:pm:nx:ny:nz
+    my $GPMk=cat($G+$k, $G-$k)->mv(-1,1); #xyz:pm:nx:ny:nz
+    # divide the wavevectors by the magnitude squared (inner prod along the 1st dimension)
+    my $GPMk_norm2 = $GPMk/($GPMk->inner($GPMk)) # pm:nx:ny:nz
+	->(*1); # xyz:pm:nx:ny:nz
     # cross prod with psi
     my $kPMGXpsi = crossp($kPMG_norm2,$psi); #xyz:pm:nx:ny:nz
     # FT to real space and move dims 
@@ -143,22 +147,17 @@ sub apply{
 
 #this is built here because it uses the k vector and it's an atributte
 #because it is called in Haydock to build the Hamiltonian
-sub build_longitudinal_projector{
+sub _build_longitudinal_projector{
     #returns the value of the projector
     my $self=shift;
     my $G=$self->G; #reciprocal lattice from Geometry
     my $k=$self->wavevector; # bloch wavevector, solution
-    my ($kPG,$kMG) = ($G+$k, $G-$k); # xyz:pm:nx:ny:nz
-    # spinorlike wavevectors,
-    my ($kPGkPG, $kMGkMG) = map $_->outer($_), $kPG, $kMG; #xyz:xyz:nx:ny:nz
-    #outer product GG to build
-    #the longitudinal projector 
-    my ($kPG2,$kMG2) = map $_->inner($_), $kPG, $kMG; #nx:ny:nz;
-    #magnitude squared of G+-k vectors
-    my $ProjLPMk = cat($kPGkPG/$kPG2->(*1),$kMGkMG/$kMG2->(*1)) # xyz:xyz:nx:ny:nz:pm
-	->mv(-1,2); # xyz:xyz:pm:nx:ny:nz
-    #normalized longitudinal projectors for each G+-k wave vectors
-    return $ProjLPMk;
+    return cat(map{$_->outer($_)/$_->inner($_)->(*1,*1)}($G+$k, $G-$k))
+	->mv(-1,2);
+}
+
+sub _build_value {
+    croak "Sorry, there is no value for the metric of magnetizable systems";
 }
 
 
