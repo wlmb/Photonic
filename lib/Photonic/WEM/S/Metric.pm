@@ -129,17 +129,17 @@ sub apply{
     my $GPMk_norm2 = $GPMk/($GPMk->inner($GPMk)) # pm:nx:ny:nz
 	->(*1); # xyz:pm:nx:ny:nz
     # cross prod with psi
-    my $kPMGXpsi = crossp($kPMG_norm2,$psi); #xyz:pm:nx:ny:nz
+    my $GPMkXpsi = crossp($GPMk_norm2,$psi); #xyz:pm:nx:ny:nz
     # FT to real space and move dims 
-    my $kPMGXpsi_r = GtoR($kPMGXpsi,$self->ndims,2)->mv(0,-1)->mv(0,-1); #nx:ny:nz:xyz:pm
+    my $GPMkXpsi_r = GtoR($GPMkXpsi,$self->ndims,2)->mv(0,-1)->mv(0,-1); #nx:ny:nz:xyz:pm
     # left-multiply by mu and move dims back
-    my $mu_kPMGXpsi_r = (($mu)*($kPMGXpsi_r))->mv(-1,0)->mv(-1,0); #xyz:pm:nx:ny:nz
-    # mu kPMGtimespsi in G space 
-    my $mu_kPMGXgpsi_G = RtoG($mu_kPMGXpsi_r,$self->ndims,2); #xyz:pm:nx:ny:nz
+    my $mu_GPMkXpsi_r = (($mu)*($GPMkXpsi_r))->mv(-1,0)->mv(-1,0); #xyz:pm:nx:ny:nz
+    # mu GPMktimespsi in G space 
+    my $mu_GPMkXgpsi_G = RtoG($mu_GPMkXpsi_r,$self->ndims,2); #xyz:pm:nx:ny:nz
     # cross produt with wavvectors 
-    my $kPMGXmukPMGXpsi = crossp($kPMG_norm2, $mu_kPMGXpsi_G); #xyz::pm:nx:ny:nz
+    my $GPMkXmuGPMkXpsi = crossp($GPMk_norm2, $mu_GPMkXpsi_G); #xyz::pm:nx:ny:nz
     # multiply by q**2
-    my $mgn_part_G_psi = ($q*$q)*$kPMGXmukPMGXpsi; #xyz::pm:nx:ny:nz
+    my $mgn_part_G_psi = ($q*$q)*$GPMkXmuGPMkXpsi; #xyz::pm:nx:ny:nz
     # complete applied metric in G space
     my $gpsi_G = $ProjL_psi + $mgn_part_G_psi; #xyz:nx:ny:nz
     return $gpsi_G;
