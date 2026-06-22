@@ -118,3 +118,4 @@ requires qw(value); #provided by metric instances
 no Moo::Role;
 
 1;
+
