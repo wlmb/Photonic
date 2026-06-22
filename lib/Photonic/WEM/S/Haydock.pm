@@ -165,25 +165,24 @@ sub applyOperator {
     $mask=$self->mask if $self->use_mask;
     my $g = $self->metric; #metric object
     # apply metric
-    my $gpsi_G=$g->apply($psi); # xyz:pm:nx:ny:nz.
+    my $g_psi_G=$g->apply($psi); # xyz:pm:nx:ny:nz.
     # FIRST TERM
-    # get longitudinal projector and apply it to psi
-    my $ProjLPMk_gpsi = ($g->longitudinal_projector #xyz:xyz:pm:nx:ny:nz
-			  ->inner($gpsi_G(:,*1))) #xyz:1:pm:nx:ny:nz
+    # get longitudinal projector and apply it to g psi
+    my $PL_g_psi_G = $g->LP #xyz:xyz:pm:nx:ny:nz
+			  ->inner($g_psi_G(:,*1)) #xyz:1:pm:nx:ny:nz
 			 ; # matrix-vector product xyz:pm:nx:ny:nz
-    #SECOND TERM applied to gpsi
-    #FT gspi to real space
-    my $gpsi_r = GtoR($gpsi_G,$self->ndims,2)->mv(0,-1)->mv(0,-1); #nx:ny:nz:xyz:pm
+    #SECOND TERM applied to g_psi
+    #FT g_psi to real space
+    my $g_psi_r = GtoR(mvN($gpsi_G,0,1,-1),$self->ndims,0); #nx:ny:nz:xyz:pm
     # left-multiply by epsilon in real space
-    my $eps_psi_r = ($self->epsilon * $gpsi_r)->mv(0,-1)->mv(0,-1); #xyz:pm:nx:ny:nz
-    # FT the product to reciprocal space 
-    my $eps_psi_G = RtoG($eps_psi_r, $self->ndims, 2); #xyz:pm:nx:ny:nz
-    ### Applied Hamiltonian in G space
-    my $Hgpsi_G = $ProjLPMk_gpsi - $eps_psi_G;
-    #psi_G is xyz:pm:nx:ny:nz mask is nx:ny
-    $Hpsi_G=$Hgpsi_G*$mask->(*1,*1) if defined $mask; #use dummies for xy:pm
-    return $Hpsi_G;
-}
+    my $eps_psi_r = ($self->epsilon * $g_psi_r); #nx:ny:nz:xyz:pm
+    # FT the product to reciprocal space
+    my $eps_psi_G = mvN(RtoG($eps_psi_r, $self->ndims, 0),-2,-1,0); #xyz:pm:nx:ny:nz
+    ### Apply Hamiltonian in G space
+    my $H_g_psi_G = $PL_g_psi_G - $eps_psi_G;
+    #psi_G is xyz:pm:nx:ny:nz mask is nx:ny:nz
+    $H_g_psi_G *= $mask->(*1,*1) if defined $mask; #use dummies for xyz:pm
+    return $H_g_psi_G;
 
 sub innerProduct {  #Return Hermitian product with metric
     my $self=shift;
@@ -220,8 +219,9 @@ sub _build_firstState { #\delta_{G0}
     $self->_normalizedPolarization($e);
     #I'm using the same polarization for k and for -k. Could be
     #different (for chiral systems, for example (maybe I should conjugate to avoid null states)
-    my $phi=$e*$v(*1); #initial state ordinarily normalized #suspicious, what about circular polarization?
-    # xy:pm:nx:ny
+    my $phi=$e*$v(*1); #initial state ordinarily normalized
+		       ##suspicious, what about circular polarization?
+		       #xy:pm:nx:ny
     return $phi;
 }
 
