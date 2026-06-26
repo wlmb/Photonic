@@ -173,7 +173,7 @@ sub applyOperator {
 			 ; # matrix-vector product xyz:pm:nx:ny:nz
     #SECOND TERM applied to g_psi
     #FT g_psi to real space
-    my $g_psi_r = GtoR(mvN($gpsi_G,0,1,-1),$self->ndims,0); #nx:ny:nz:xyz:pm
+    my $g_psi_r = GtoR(mvN($g_psi_G,0,1,-1),$self->ndims,0); #nx:ny:nz:xyz:pm
     # left-multiply by epsilon in real space
     my $eps_psi_r = ($self->epsilon * $g_psi_r); #nx:ny:nz:xyz:pm
     # FT the product to reciprocal space
@@ -183,6 +183,7 @@ sub applyOperator {
     #psi_G is xyz:pm:nx:ny:nz mask is nx:ny:nz
     $H_g_psi_G *= $mask->(*1,*1) if defined $mask; #use dummies for xyz:pm
     return $H_g_psi_G;
+}
 
 sub innerProduct {  #Return Hermitian product with metric
     my $self=shift;
@@ -210,7 +211,7 @@ sub _build_firstState { #\delta_{G0}
     my $e=$self->polarization; #xyz
     my $d=$e->dim(0);
     confess "Polarization has wrong dimensions. " .
-	  " Should be $d-dimensional complex vector, got ($e)."
+	" Should be $d-dimensional complex vector, got ($e)."
 	unless any_complex($e) && $e->dim(0)==$d;
     my $modulus=$e->magnover->re;
     confess "Polarization should be non null" unless
