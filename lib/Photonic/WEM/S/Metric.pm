@@ -77,7 +77,6 @@ Haydock when it calls this method.
 
 
 use namespace::autoclean;
-use PDL::Core;
 use PDL::Primitive;
 use PDL::Lite;
 use PDL::MatrixOps;
@@ -154,7 +153,7 @@ sub _build_LP{
     my $self=shift;
     my $G=$self->G; #reciprocal lattice from Geometry
     my $k=$self->wavevector; # bloch wavevector, solution
-    return cat(map{$_->outer($_)/$_->inner($_)->(*1,*1)}($G+$k, $G-$k))
+    return pdl(map{$_->outer($_)/$_->inner($_)->(*1,*1)}($G+$k, $G-$k))
 	->mv(-1,2); # (G+-k)(G+-k)/(G+-k)^2
 }
 
@@ -162,7 +161,7 @@ sub _build__G_pm_k_div_sqrd { # (G+-k)/(G+-k)^2
     my $self=shift;
     my $k=$self->wavevector;
     my $G=$self->G;
-    return cat(map{$_/$_->inner($_)->(*1)}($G+$k, $G-$k))->mv(-1,1);
+    return pdl(map{$_/$_->inner($_)->(*1)}($G+$k, $G-$k))->mv(-1,1);
 }
 
 sub _build_value {

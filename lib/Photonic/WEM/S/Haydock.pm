@@ -134,7 +134,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
-
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -143,6 +142,7 @@ use Photonic::Types -all;
 use Photonic::Utils qw(VSProd any_complex GtoR RtoG mvN);
 use Moo;
 use MooX::StrictConstructor;
+extends "Photonic::WE::S::Haydock";
 
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WEM::S::Metric'],
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',
@@ -157,7 +157,7 @@ has 'complexCoeffs'=>(is=>'ro', init_arg=>undef, default=>1,
 with 'Photonic::Roles::Haydock', 'Photonic::Roles::UseMask',
 'Photonic::Roles::EpsFromGeometry';
 
-# the state to whish we apply the hamiltonian is $gpsi_G
+# the state to whish we apply the hamiltonian is $g_psi_G
 sub applyOperator {
     my $self=shift;
     my $psi=shift; #psi is xyz:pm:nx:ny:nz
@@ -189,8 +189,8 @@ sub innerProduct {  #Return Hermitian product with metric
     my $self=shift;
     my $psi1=shift;
     my $psi2=shift;
-    my $gpsi2=$self->metric->apply($psi2);
-    return VSProd($psi1, $gpsi2);
+    my $g_psi2=$self->metric->apply($psi2);
+    return VSProd($psi1, $g_psi2);
 }
 
 sub magnitude {
@@ -205,22 +205,22 @@ sub changesign { #don't change sign
 
 sub _build_firstState { #\delta_{G0}
     my $self=shift;
-    my $v=PDL->zeroes(2,@{$self->dims})->r2C; #pm:nx:ny...
-    my $arg=join ',', ':', ("(0)") x $self->ndims; #:,(0),(0),... ndims times
+    my $v=PDL->zeroes(@{$self->dims})->r2C; #nx:ny...
+    my $arg=join ',', ("(0)") x $self->ndims; #(0),(0),... ndims times
     $v->slice($arg).=1/sqrt(2);
-    my $e=$self->polarization; #xyz
+    my $e=$self->polarization; #xy
     my $d=$e->dim(0);
     confess "Polarization has wrong dimensions. " .
-	" Should be $d-dimensional complex vector, got ($e)."
+	  " Should be $d-dimensional complex vector, got ($e)."
 	unless any_complex($e) && $e->dim(0)==$d;
     my $modulus=$e->magnover->re;
     confess "Polarization should be non null" unless
 	$modulus > 0;
-    $e=$e/sqrt($modulus);
+    $e=$e/$modulus;
     $self->_normalizedPolarization($e);
     #Use same helicity for k and for -k, conjugate polarization, for allowing chirality
     my $phi=pdl($e, $e->conj)*$v->(*1,*1); #initial state ordinarily normalized
-		       #xy:pm:nx:ny
+                       # xy:pm:nx:ny
     return $phi;
 }
 
