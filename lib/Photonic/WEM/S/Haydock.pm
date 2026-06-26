@@ -140,7 +140,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use Carp;
 use Photonic::Types -all;
-use Photonic::Utils qw(VSProd any_complex GtoR RtoG);
+use Photonic::Utils qw(VSProd any_complex GtoR RtoG mvN);
 use Moo;
 use MooX::StrictConstructor;
 

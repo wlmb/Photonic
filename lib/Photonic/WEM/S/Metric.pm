@@ -77,6 +77,8 @@ Haydock when it calls this method.
 
 
 use namespace::autoclean;
+use PDL::Core;
+use PDL::Primitive;
 use PDL::Lite;
 use PDL::MatrixOps;
 use PDL::NiceSlice;
@@ -109,7 +111,7 @@ sub BUILD {
     croak "For the time being the reference epsilon should be 1 or not initialized"
 	unless $eps==1;
     my $k=$self->wavevector; # bloch wavevector, xyz
-    die "Wavevector should be 3D" unless $k->dims=1 && $k->dim(0)==3;
+    die "Wavevector should be 3D" unless $k->dims==1 && $k->dim(0)==3;
     my $mu=$self->mu;
     die "Mu should be a $self->dims scalar function" unless
 	(pdl($mu->dims)==pdl($self->dims))->all; #exactly the same dimensions
