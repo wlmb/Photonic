@@ -110,7 +110,8 @@ sub _build_field {
     my $ndims=$self->haydock->B->ndims; # num. of dims of space
     #field is xy,pm,nx,ny...
     my $field_G=linearCombine($giEs, $stateit); #En ^G|psi_n>
-    my $Es=$self->haydock->applyMetric($field_G);
+    my $metric = $self->haydock->metric; #get metric object from Haydock
+    my $Es=$metric->apply($field_G); #apply metric to state
     #Comment as normalization below makes it useless
     #$Es*=$bs->((0))/$self->haydock->metric->epsilon;
     my $Esp=$Es(:,(0)); # choose +k spinor component.
