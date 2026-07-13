@@ -40,17 +40,15 @@ use Test::More tests => 4;
 use lib 't/lib';
 use TestUtils;
 
-#my $ea=r2C(1);
-#my $eb=3+4*i;
-my $ea=r2C(2);
-my $eb=r2C(4);
+my $ea=pdl(2);
+my $eb=3+4*i;
 
 #Check haydock coefficients for simple 1D system.
 {
     #Longitudinal case
     my $B=zeroes(11)->xvals<5; #1D system
     my $gl=Photonic::Geometry::FromB->new(B=>$B);
-    my $ml=Photonic::WE::R2::Metric->new(geometry=>$gl, epsilon=>$ea->re,
+    my $ml=Photonic::WE::R2::Metric->new(geometry=>$gl, epsilon=>$ea,
        wavenumber=>pdl(1), wavevector=>pdl([0.01]));
     my $haydock=Photonic::WE::R2::Haydock->new(metric=>$ml, nh=>10, keepStates=>1,
 				       polarization=>pdl([1])->r2C);
@@ -84,7 +82,7 @@ my $eb=r2C(4);
 {
     my $B=zeroes(11)->xvals<5; #1D system
     my $gl=Photonic::Geometry::FromB->new(B=>$B);
-    my $ml=Photonic::WE::R2::Metric->new(geometry=>$gl, epsilon=>$ea->re,
+    my $ml=Photonic::WE::R2::Metric->new(geometry=>$gl, epsilon=>$ea,
        wavenumber=>pdl(1), wavevector=>pdl([0.01]));
     my $haydock=Photonic::WE::R2::Haydock->new(metric=>$ml, nh=>10, keepStates=>1,
 				       polarization=>pdl([1])->r2C);
@@ -103,7 +101,7 @@ my $eb=r2C(4);
     my $q=pdl(0.000000000001);
     my $k=pdl(0.0000000001);
     my $pol=pdl([1,0]);
-    my $mt=Photonic::WE::R2::Metric->new(geometry=>$gt, epsilon=>pdl(1),
+    my $mt=Photonic::WE::R2::Metric->new(geometry=>$gt, epsilon=>$ea,
        wavenumber=>$q, wavevector=>pdl([0,$k]));
     my $nt=Photonic::WE::R2::Haydock->new(metric=>$mt, nh=>10, keepStates=>1,
 				       polarization=>$pol->r2C);
@@ -113,5 +111,4 @@ my $eb=r2C(4);
     my $epsM=(1-$f)*$ea+$f*$eb;
     my $ftx=-4*PI*$pol->r2C->dummy(2,11)*$q**2/($epsM*$q**2-$k**2);
     ok(Cagree($ftv, $ftx), "1D trans rawfield");
-    diag($ftv->slice("(0)")/$ftx->slice("(0)"));
 }
