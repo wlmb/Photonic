@@ -54,12 +54,13 @@ my $flv=$flo->field;
 my $fle=$flo->epsL;
 my $fla=1/$ea;
 my $flb=1/$eb;
-my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
-my $flex=1/$fproml;
-my ($flan, $flbn)=map {$_/$fproml} ($fla, $flb);
+my $favl=$fla*(1-$gl->f)+$flb*($gl->f);
+my $flex=1/$favl;
+my ($flan, $flbn)=map {$_/$favl} ($fla, $flb);
 my $flx=($flan*(1-$B)+$flbn*$B)->slice("*1");
 ok(Cagree($flv, $flx), "1D long field") or diag "got: $flv\nexpected: $flx";
 ok(Cagree($fle, $flex), "1D long response") or diag "got: $fle\nexpected: $flex";
+
 #View 2D from 1D superlattice.
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
@@ -69,15 +70,17 @@ my $ftv=$fto->field;
 my $fte=$fto->epsL;
 my $ftx=pdl([1, 0])->r2C;
 ok(Cagree($ftv, $ftx), "1D trans field") or diag "got: $ftv\nexpected: $ftx";;
-my $fpromt=$ea*(1-$gt->f)+$eb*($gt->f);
-ok(Cagree($fte, $fpromt), "1D trans response") or diag "got: $fte\nexpected: $fpromt";
+my $favt=$ea*(1-$gt->f)+$eb*($gt->f);
+ok(Cagree($fte, $favt), "1D trans response") or diag "got: $fte\nexpected: $favt";
 
 # check raw fields
 # Longitudinal
 my $flv_raw=$flo->rawfield;
 my $flx_raw=-4*PI*($fla*(1-$B)+$flb*$B)->dummy(0);
-ok(Cagree($flv_raw, $flx_raw), "1D long raw field");
-
+ok(Cagree($flv_raw, $flx_raw), "1D long rawfield");
+my $ftv_raw=$fto->rawfield;
+my $ftx_raw=-(4*PI+0*i)/($ea*(1-$gt->f)+$eb*$gt->f)*pdl([1,0]);
+ok(Cagree($ftv_raw, $ftx_raw), "1D trans field") or diag "got: $ftv_raw\nexpected: $ftx_raw";
 
 my ($dA, $dB) = (0, 1); # vacuum, then anything as is normalised to dB
 my $nrshp=Photonic::LE::NR2::SHP->new(
