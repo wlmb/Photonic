@@ -40,7 +40,7 @@ use Test::More tests => 4;
 use lib 't/lib';
 use TestUtils;
 
-my $ea=r2C(1);
+my $ea=1+2*i;
 my $eb=3+4*i;
 
 #Check field for simple 1D system.
@@ -95,8 +95,6 @@ my $eb=3+4*i;
     my $flv=$flo->rawfield;
     my $fla=1/$ea;
     my $flb=1/$eb;
-    #my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
-    #($fla, $flb)=map {$_/$fproml} ($fla, $flb);
     my $flx=-4*PI*($fla*(1-$B)+$flb*$B)->transpose;
     ok(Cagree($flv, $flx), "1D long rawfield");
 }
@@ -117,6 +115,6 @@ my $eb=3+4*i;
     my $ftv=$fto->rawfield;
     my $f=$gt->f;
     my $epsM=(1-$f)*$ea+$f*$eb;
-    my $ftx=-4*PI*r2C(pdl [1, 0])->dummy(2,11)*$q**2/($epsM*$q**2-($k**2)->sumover);
+    my $ftx=-4*PI*r2C(pdl [1, 0])->dummy(2,11)*$q**2/($epsM*$q**2-$k->inner($k));
     ok(Cagree($ftv, $ftx), "1D trans rawfield");
 }
