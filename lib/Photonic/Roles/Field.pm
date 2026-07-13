@@ -109,8 +109,8 @@ The maximum number of Haydock coefficients to use.
 use Moo::Role;
 use Photonic::Types -all;
 
-#requires '_build_field'; necessary?
-#requires '_build_rawfield';
+requires '_build_field'; #necessary?
+requires '_build_rawfield';
 
 has 'haydock'=>(is=>'ro', isa=>HaydockSave, required=>1,
            documentation=>'Haydock recursion calculator');

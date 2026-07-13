@@ -297,7 +297,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     my $first_mG=$first->slice($sl); #xy:pm:nx:ny
     $first_mG=corner_rotate($first_mG, 2, $ndims-1); #rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     my $prod=$first_mG*$second; #xy:pm:nx:ny
-    # clump all except xy.
+    # clump all except xy. #??
     $prod->mv(0, -1) #nx:ny:xy:pm
 	->clump(-1)  #nx*ny*xy*pm
 	->sumover;

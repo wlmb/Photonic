@@ -85,6 +85,9 @@ has 'epsL' =>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 		 writer=>'_epsL',
 		 documentation=>'Longitudinal dielectric response');
 
+has '_Fn'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
+	    documentation=>'Solution of (epsLL)F=(1,0...) in Haydock basis');
+
 sub BUILD {
     my $self=shift;
     $self->haydock->run unless $self->haydock->iteration;
@@ -95,9 +98,6 @@ sub _build_epsL {
     my $field= $self->field; # epsL is side effect of field
     $self->epsL; # danger of infinite recursion?
 }
-
-has '_Fn'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
-	    documentation=>'Solution of (epsLL)F=(1,0...) in Haydock basis');
 
 sub _build__Fn{
     my $self=shift;

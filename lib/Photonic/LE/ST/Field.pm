@@ -72,6 +72,7 @@ evaluation of the field
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
+use PDL::Constants qw(PI);
 use Photonic::LE::S::Haydock;
 use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types -all;
@@ -83,6 +84,10 @@ with 'Photonic::Roles::Field';
 has 'epsL' =>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 		 writer=>'_epsL',
 		 documentation=>'Longitudinal dielectric response');
+
+has '_Fn'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
+	    documentation=>'Solution of (epsLL)F=(1,0...) in Haydock basis');
+
 
 sub BUILD {
     my $self=shift;
@@ -96,7 +101,7 @@ sub _build_epsL {
 }
 
 
-sub _build_field {
+sub _build__Fn{
     my $self=shift;
     my $as=$self->haydock->as;
     my $bs=$self->haydock->bs;
@@ -118,15 +123,22 @@ sub _build_field {
     # Add spinor normalization.
     my $epsL=1/$result->((0));
     $self->_epsL($epsL);
+    return $result;
+}
+
+sub _build_field {
+    my $self=shift;
+    my $result=$self->_Fn;
+    my $epsL=$self->epsL;
     my $norm=sqrt(2)*$epsL;
     # Normalize result so macroscopic field is 1.
     my $Es = $result*$norm;
     #states are xy,nx,ny...
-    my $stateit=$self->haydock->states->slice("*1");
+    my $states=$self->haydock->states->slice("*1");
     #pmGnorm is xy,pm,nx,ny...
     my $pmGNorm=$self->haydock->pmGNorm;
     #field is xy,pm,nx,ny...
-    my $field_G=linearCombineIt($Es, $pmGNorm*$stateit); #En ^G|psi_n>
+    my $field_G=linearCombineIt($Es, $pmGNorm*$states); #En ^G|psi_n>
     #Choose +k
     my $Esp=$field_G->(:,(0)); #xy,nx,ny
     $Esp *= $self->filter->(*1) if $self->has_filter;
@@ -135,6 +147,27 @@ sub _build_field {
     $field_R*=$self->haydock->B->nelem; #scale to have unit macroscopic field
     return $field_R; #result is xy,nx,ny,...
 }
+
+sub _build_rawfield {
+    my $self=shift;
+    my $Es = -4*PI*$self->_Fn; # Drive is external polarization
+    #states are xy,nx,ny...
+    my $states=$self->haydock->states->slice("*1"); # dummy(0)
+    #pmGnorm is xy,pm,nx,ny...
+    my $pmGNorm=$self->haydock->pmGNorm;
+    #field is xy,pm,nx,ny...
+    my $field_G=linearCombineIt($Es, $pmGNorm*$states); #En ^G|psi_n>
+    #Choose +k
+    my $Esp=$field_G->(:,(0)); #xy,nx,ny
+    $Esp *= $self->filter->(*1) if $self->has_filter;
+    #get cartesian out of the way, fourier transform, put cartesian.
+    my $field_R=GtoR($Esp, $self->haydock->B->ndims, 1);
+    $field_R*=$self->haydock->B->nelem; #scale FFT
+    my $b0=$self->haydock->bs->slice((0));    # Should I multiply by $b0?
+    $field_R*=$b0*sqrt(2); # sqrt 2 from spinor normalization
+    return $field_R; #result is xy,nx,ny,...
+}
+
 
 __PACKAGE__->meta->make_immutable;
 

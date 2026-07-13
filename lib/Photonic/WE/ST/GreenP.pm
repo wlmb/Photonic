@@ -102,7 +102,6 @@ NOTE: Only works for polarizations along principal directions.
 
 use namespace::autoclean;
 use PDL::Lite;
-use Photonic::WE::ST::Haydock;
 use Photonic::Types -all;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);

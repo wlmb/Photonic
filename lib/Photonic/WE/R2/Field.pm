@@ -80,7 +80,7 @@ Spectral variable
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use Photonic::WE::R2::Haydock;
+use PDL::Constants qw(PI);
 use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types -all;
 use Moo;
@@ -147,6 +147,45 @@ sub _build_field {
     ##get cartesian out of the way, fourier transform, put cartesian.
     my $field_R=GtoR($Es, $ndims, 1);
     $field_R*=$self->haydock->B->nelem; #scale to have unit macroscopic field
+    return $field_R; #result is cartesian, nx, ny,...
+}
+
+sub _build_rawfield {
+    my $self=shift;
+    my $epsA=$self->epsA;
+    my $epsB=$self->epsB;
+    my $u=$self->u;
+    my $as=$self->haydock->as;
+    my $bs=$self->haydock->bs;
+    my $cs=$self->haydock->cs;
+    my $nh=$self->nh; #desired number of Haydock terms
+    #don't go beyond available values.
+    $nh=$self->haydock->iteration if $nh>$self->haydock->iteration;
+    # calculate using lapack for tridiag system
+    my $diag=$u - $as->(0:$nh-1);
+    # rotate complex zero from first to last element.
+    my $subdiag=-$bs->(0:$nh-1)->rotate(-1)->r2C;
+    my $supradiag=-$cs->(0:$nh-1)->rotate(-1)->r2C;
+    my $rhs=PDL->zeroes($nh); #build a nh pdl
+    $rhs->slice((0)).=1;
+    $rhs=$rhs->r2C;
+    #coefficients of g^{-1}E
+    my $giEs = cgtsv($subdiag, $diag, $supradiag, $rhs);
+    #states are xy,nx,ny...
+    my $stateit=$self->haydock->states;
+    #field is xy,nx,ny...
+    my $ndims=$self->haydock->B->ndims; # num. of dims of space
+    #field is cartesian, nx, ny...
+    my $field_G=linearCombineIt($giEs, $stateit); #En ^G|psi_n>
+    my $Es=$self->haydock->applyMetric($field_G);
+    $Es *= $self->filter->(*1) if $self->has_filter;
+    ##get cartesian out of the way, fourier transform, put cartesian.
+    my $field_R=GtoR($Es, $ndims, 1);
+    $field_R*=$self->haydock->B->nelem; #scale
+    my $b0=$self->haydock->bs->slice('(0)'); # #First state normalization factor
+    my $g0=$self->haydock->gs->slice('(0)'); # #First state sign
+    $field_R*=$b0; #scale??
+    $field_R*= -4*PI/($epsA-$epsB); # Interpreting the first state as external polarization.
     return $field_R; #result is cartesian, nx, ny,...
 }
 
