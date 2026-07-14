@@ -67,10 +67,6 @@ use Photonic::Types -all;
 use Moo;
 use MooX::StrictConstructor;
 
-# Temporary:
-#has 'rawfield'=>(is=>'lazy', isa=>PDLComplex,
-#           documentation=>'Calculated real space field, unnormalized');
-
 with 'Photonic::Roles::Field';
 
 sub BUILD {

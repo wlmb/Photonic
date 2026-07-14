@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    my $green=Photonic::WE::S::GreenP->new(haydock=>$h, nh=>$nh);
    my $greenProjection=$green->Gpp;
    my $WaveProjection=$green->waveOperator;
-   my $EpsTensor=$green->epsilon;
+   my $EpsProjection=$green->epsilon;
 
 =head1 DESCRIPTION
 
