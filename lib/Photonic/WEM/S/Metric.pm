@@ -59,15 +59,16 @@ in a binary medium where the host has no dissipation.
 
 =over 4
 
-=item * new(geometry=>$g, epsilon=>$e, $wavenumber=>$q, $wavevector=>$k);
+=item * new(mu=>$mu, geometry=>$g, epsilon=>$e, $wavenumber=>$q, $wavevector=>$k);
 
-Create a new Ph::WEM::S::Metric object with Geometry $g, dielectric
+Create a new Ph::WEM::S::Metric object with permeability $mu, Geometry $g, dielectric
 function of the host $e, vacuum wavenumber $q=omega/c  and wavevector
 $k. $q and $k are real.
 
 = item * apply(psi)
 
-Create and apply the magnetic metric to teh state psi provided in
+Create and apply the magnetic metric to the state psi provided in
+
 Haydock when it calls this method.
 
 =back
@@ -77,8 +78,8 @@ Haydock when it calls this method.
 
 
 use namespace::autoclean;
-use PDL::Primitive;
 use PDL::Lite;
+use PDL::Primitive;
 use PDL::MatrixOps;
 use PDL::NiceSlice;
 use Carp;
@@ -94,8 +95,7 @@ has 'LP'
        documentation=>'Longitudinal Projector in reciprocal spinorial space');
 has '_G_pm_k_div_sqrd'
     =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
-       documentation=>'Reciprocal vector in spinor space divided by its square');
-
+       documentation=>'Internal. Reciprocal vector in spinor space divided by its square');
 has  'value'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 	       documentation=>'Metric Tensor');
 
@@ -135,7 +135,7 @@ sub apply{
     # FT to real space and move dims
     my $G_X_psi_r = GtoR(mvN($G_X_psi_G,0,1,-1), $ndims,0); #nx:ny:nz:xyz:pm
     # left-multiply by mu and move dims back
-    my $mu_G_X_psi_r = mvN(($mu*($G_X_psi_r)),-2,-1,0); #xyz:pm:nx:ny:nz
+    my $mu_G_X_psi_r = mvN($mu*($G_X_psi_r),-2,-1,0); #xyz:pm:nx:ny:nz
     # mu G X psi in G space
     my $mu_G_X_psi_G = RtoG($mu_G_X_psi_r, $ndims,2); #xyz:pm:nx:ny:nz
     # cross produt with wavvectors
@@ -155,6 +155,7 @@ sub _build_LP{
     my $k=$self->wavevector; # bloch wavevector, solution
     return pdl(map{$_->outer($_)/$_->inner($_)->(*1,*1)}($G+$k, $G-$k))
 	->mv(-1,2); # (G+-k)(G+-k)/(G+-k)^2
+	->mv(-1,2); # (G+-k)(G+-k)/(G+-k)^2 xy:xy:pm:nx:...
 }
 
 sub _build__G_pm_k_div_sqrd { # (G+-k)/(G+-k)^2

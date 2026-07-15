@@ -72,7 +72,6 @@ sub dummyN {
   return $pdl if $how_many <= 0;
   my $ndims=$pdl->ndims;
   $where //= 0;
-  local $_;
   $_ = !$_ ? 0 : $_ > 0 ? $_ : $ndims + $_ + 1 for $where;
   $dim_size //= 1;
   my @before = (':') x $where;
@@ -90,15 +89,31 @@ sub any_complex { # test if an ndarray is any kind of complex
     grep ref $_ && ($_->isnull || !$_->type->real), @_;
 }
 
-sub cartesian_product { # all pairs of elements of $s1 and $s2
-    my ($s1, $s2) = @_;
-    my ($a1, $a2)=map {$_->ndims==1?$_->dummy(0):$_} ($s1, $s2);
-    my $r=append($a1->dummy(2), $a2->dummy(1));
-    $r->reshape($r->dim(0), $r->dim(1)*$r->dim(2));
+sub wave_operator {
+    my ($green, $nd) = @_;
+    lu_solve([lu_decomp($green)], r2C(PDL::MatrixOps::identity($nd)));
 }
 
-sub triangle_coords {
-  my ($n, $inc_diag) = @_;
+sub cartesian_product {
+  my ($s1, $s2) = @_;
+  my ($nd1, $nd2) = map $_->ndims, $s1, $s2;
+  my $ndims_target = List::Util::max(2, $nd1, $nd2);
+  $_ = dummyN($_, $ndims_target-$_->ndims) for grep $_->ndims < $ndims_target, $s1, $s2;
+  my @dims = $s1->dims;
+  $dims[-2] += $s2->dim(-2); # X1+X2
+  $dims[-1] *= $s2->dim(-1); # m*n
+  my $res = zeroes(@dims);
+  my ($res_mv, $s1_mv, $s2_mv) = map mvN($_, 0, $nd1-3, -1), $res, $s1, $s2; # now work with first 2 dims
+  $res->slice('0:'.($s1_mv->dim(-2)-1)) .= $s1_mv->dummy(2, $s2_mv->dim(-1))->clump(1,2);
+  $res->slice($s1_mv->dim(-2).':-1') .= $s2_mv->dummy(1, $s1_mv->dim(-1))->clump(1,2);
+  $res;
+}
+
+sub triangle_coords { # indices of lower triangular matrix, with or without diagonal
+    my (
+	$n,           # dimension
+	$inc_diag     # include diagonal
+	) = @_;
   my $x = xvals($n, $n);
   my $y = yvals($n, $n);
   my $mask = $inc_diag ? $x >= $y : $x > $y;
@@ -106,7 +121,17 @@ sub triangle_coords {
 }
 
 sub tensor {
-    my ($data, $decomp, $nd, $dims, $skip) = @_;
+    # build a symmetric tensor T_ij from its projections along the unit pair directions
+    # v_ij=e_i+e_j (normalized) i<=j (0,0), (0,1)...(1,1),(1,2)....
+    # The first argument are the projections. The second the LU decomposition of the matrix
+    # v_tt' with t the index of ij and t' that of i'j'. The third is the dimension of space.
+    my ($data,    # projections of the tensor
+	$decomp,  # LU decomposition of the unit vectors matrix
+	$nd,      # dimension of space
+	$dims,    # dimensions of tensor (may be >2 i.e., for nonlinear response,
+	          # T_kij, symmetric in ij)
+	$skip     # number of extra dimensions at front, to be skipped
+	) = @_;
     $skip //= 0;
     my $backsub = lu_solve($decomp, mvN($data, 0, $skip-1, -1));
     $backsub = mvN($backsub, -$skip, -1, 0) if $skip;
@@ -118,30 +143,46 @@ sub tensor {
     $tensor;
 }
 
-my @HAYDOCK_PARAMS = qw(
-  nh keepStates smallH
-);
+my @HAYDOCK_PARAMS = qw(nh keepStates smallH);
 sub make_haydock {
-  my ($self, $class, $pairs, $add_geom, @extra_attributes) = @_;
-  # This must change if G is not symmetric
-  [ map incarnate_as($class, $self, [ @HAYDOCK_PARAMS, @extra_attributes ],
-      _haydock_extra($self, $_, $add_geom),
-  ), $pairs->dog ];
+    # make array of haycodk calculators
+    my ($self,            # calling object
+	$class,           # class name for the Haydock calculator
+	$polarizations,   # array of polarizations for each calculator
+	$add_geom,        # use geometry (1) or metric (0)
+	@extra_attributes # additional attributes
+	) = @_;
+    # This must change if G is not symmetric
+    [ map incarnate_as($class, $self, [ @HAYDOCK_PARAMS, @extra_attributes ],
+		       _haydock_extra($self, $_, $add_geom),
+      ),
+      $polarizations->dog
+    ];
 }
 
 sub _haydock_extra {
-  my ($self, $u, $add_geom) = @_;
-  my $obj = dclone($add_geom ? $self->geometry : $self->metric);
-  $obj = $obj->new(%$obj, Direction0=>$u) if $add_geom; #add G0 direction
-  $add_geom ? (geometry=>$obj) : (metric=>$obj, polarization=>$u->r2C);
+    # clone and modify the appropriate geometry or metric for a given polarization
+    my ($self,    # calling object
+	$pol,       # polarization
+	$add_geom # choose to add geometry (1) or metric (0)
+	) = @_;
+    my $obj = dclone($add_geom ? $self->geometry : $self->metric);
+    $obj = $obj->new(%$obj, Direction0=>$pol) if $add_geom; #add G0 direction
+    $add_geom ? (geometry=>$obj) : (metric=>$obj, polarization=>$pol->r2C);
 }
 
 my @GREENP_PARAMS = qw(nh smallE);
 sub make_greenp {
-  my ($self, $class, $method, @extra_attributes) = @_;
-  $method ||= 'haydock';
-  [ map incarnate_as($class, $self, [ @GREENP_PARAMS, @extra_attributes ], haydock=>$_),
-      @{$self->$method}
+    # make array of projected Green functions
+    my ($self,             # the calling object
+	$projected_green,  # the class name for the projected Green function
+	$haydocks,         # method name for list of Haydock calculators
+	@extra_attributes  # to initialize the class of green projections
+	) = @_;
+    $haydocks //= 'haydock';
+    [ map incarnate_as($projected_green, $self,
+		       [ @GREENP_PARAMS, @extra_attributes ], haydock=>$_),
+      @{$self->$haydocks}
   ];
 }
 
@@ -259,7 +300,7 @@ sub VSProd { #Vector-Spinor product between two vector fields in reciprocal
     my $first_mG=$first->slice($sl); #xy:pm:nx:ny
     $first_mG=corner_rotate($first_mG, 2, $ndims-1); #rotate psi_{G=0} to opposite corner with coords. (0,0,...)
     my $prod=$first_mG*$second; #xy:pm:nx:ny
-    # clump all except xy.
+    # clump all except xy. #??
     $prod->mv(0, -1) #nx:ny:xy:pm
 	->clump(-1)  #nx*ny*xy*pm
 	->sumover;
@@ -398,11 +439,13 @@ sub apply_longitudinal_projection {
 }
 
 sub make_dyads {
+    # given V_n=e_i+e_j (normalized) the n-th sum of pairs of unit vectors
+    # build the matrix M_mn=F_ij V_mi Vmj with F_ij=1 or 2, according to whether i==j
     my ($nd, $unitPairs) = @_;
     my $ne = $nd*($nd+1)/2; #number of symmetric matrix elements
     my $matrix = PDL->zeroes($ne, $ne);
-    my $indexes = triangle_coords($nd, 1); # col0,col1=x,y
-    my $i_plus_seq = cartesian_product($indexes, sequence($ne)); # col2=seq
+    my $indices = triangle_coords($nd, 1); # xy, n
+    my $i_plus_seq = cartesian_product($indices, sequence($ne)); # col2=seq
     $i_plus_seq = cartesian_product($i_plus_seq, ones(2, 1)); # col3,4=ones
     $i_plus_seq->slice('(3)') .= sequence($ne)->dummy(1, $ne)->clump(-1); # col3=sequence of coords
     $i_plus_seq->slice('(4)') += $i_plus_seq->slice('(0)') != $i_plus_seq->slice('(1)'); # col4=factor

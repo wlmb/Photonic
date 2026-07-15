@@ -220,10 +220,10 @@ sub _build_firstState { #\delta_{G0}
     confess "Polarization has wrong dimensions. " .
 	  " Should be $d-dimensional complex vector, got ($e)."
 	unless any_complex($e) && $e->dim(0)==$d;
-    my $modulus2=$e->abs2->sumover;
+    my $modulus=$e->magnover->re;
     confess "Polarization should be non null" unless
-	$modulus2 > 0;
-    $e=$e/sqrt($modulus2);
+	$modulus > 0;
+    $e=$e/$modulus;
     $self->_normalizedPolarization($e);
     #Use same helicity for k and for -k, conjugate polarization, for allowing chirality
     my $phi=pdl($e, $e->conj)*$v->(*1,*1); #initial state ordinarily normalized

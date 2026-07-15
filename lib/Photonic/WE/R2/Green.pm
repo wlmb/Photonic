@@ -199,16 +199,20 @@ sub _build_greenTensor {
     my $epsB=$self->epsB;
     $self->_u(my $u=1/(1-$epsB/$epsA));
     $self->_converged(all { $_->converged } @{$self->greenP});
-    my $greenTensor = tensor(pdl([map $_->Gpp, @{$self->greenP}]), $self->geometry->unitDyadsLU, my $nd=$self->geometry->ndims, 2);
+    my $greenTensor = tensor(
+	pdl([map $_->Gpp, @{$self->greenP}]),
+	$self->geometry->unitDyadsLU,
+	my $nd=$self->geometry->ndims, 2
+	);
     #That's all unless you want the antisymmetric part
     return $greenTensor if $self->symmetric;
-    my $greenPc = pdl map $_->Gpp, my @cGP=@{$self->cGreenP}; #Green's projections along complex directions.
-    $self->_converged(any { $_->converged } $self, @cGP);
-    my $asy=$greenTensor->zeroes; #xy,xy, $ndx$nd
+    #Green's projections along complex directions.
+    my $greenPc = pdl([map $_->Gpp, my @cGP=@{$self->cGreenP}]);
+    $self->_converged(all { $_->converged } $self, @cGP);
+    my $asy=$greenTensor->zeroes; #xy,xy, $nd x $nd
     my $cpairs=$self->geometry->cUnitPairs->mv(1,-1);
-    my $indexes = triangle_coords($nd);
-    $indexes = $indexes->mv(-1,0)->whereND( ($indexes(0) <= $nd-2)->((0)) )->mv(0,-1); # first index only up to $nd-2, mv because whereND takes dims off bottom
-    $asy->indexND($indexes) .= #$asy is xy,xy. First index is column
+    my $indices = triangle_coords($nd);
+    $asy->indexND($indices) .= #$asy is xy,xy. First index is column
       $greenPc-
       ($cpairs->conj->(*1) # column, row
        *$cpairs->(:,*1)

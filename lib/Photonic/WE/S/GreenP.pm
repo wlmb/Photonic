@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
    my $green=Photonic::WE::S::GreenP->new(haydock=>$h, nh=>$nh);
    my $greenProjection=$green->Gpp;
    my $WaveProjection=$green->waveOperator;
-   my $EpsTensor=$green->epsilon;
+   my $EpsProjection=$green->epsilon;
 
 =head1 DESCRIPTION
 
@@ -102,7 +102,6 @@ NOTE: Only works for polarizations along principal directions.
 
 use namespace::autoclean;
 use PDL::Lite;
-use Photonic::WE::S::Haydock;
 use Photonic::Types -all;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);

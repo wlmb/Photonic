@@ -5,7 +5,11 @@ $Photonic::WEM::S::GreenP::VERSION = '0.024';
 
 =head1 NAME
 
+<<<<<<< HEAD
 Photonic::WEM::S::GreenP
+=======
+Photonic::WE::S::GreenP
+>>>>>>> origin/WEM
 
 =head1 VERSION
 
@@ -44,15 +48,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::WEM::S::GreenP;
+<<<<<<< HEAD
    my $green=Photonic::WEM::S::GreenP->new(haydock=>$h, nh=>$nh);
    my $greenProjection=$green->Gpp;
    my $WaveProjection=$green->waveOperator;
    my $EpsTensor=$green->epsilon;
+=======
+   my $green=Photonic::WE::S::GreenP->new(haydock=>$h, nh=>$nh);
+   my $greenProjection=$green->Gpp;
+   my $WaveProjection=$green->waveOperator;
+   my $EpsProjection=$green->epsilon;
+>>>>>>> origin/WEM
 
 =head1 DESCRIPTION
 
 Calculates the dielectric function for a given fixed
+<<<<<<< HEAD
 L<Photonic::WEM::S::Haydock> structure as a function of the dielectric
+=======
+L<Photonic::WE::ST::Haydock> structure as a function of the dielectric
+>>>>>>> origin/WEM
 functions of the components.
 
 =head1 ATTRIBUTES
@@ -61,8 +76,12 @@ functions of the components.
 
 =item * haydock
 
+<<<<<<< HEAD
 The L<Photonic::WEM::S::Haydock> structure (required). Haydock is
 given so no need to give mu, since this is only used to build Haydock.
+=======
+The L<Photonic::WE::ST::Haydock> structure (required).
+>>>>>>> origin/WEM
 
 =item * nh
 
@@ -102,72 +121,8 @@ NOTE: Only works for polarizations along principal directions.
 =cut
 
 use namespace::autoclean;
-use PDL::Lite;
-use Photonic::WEM::S::Haydock;
-use Photonic::Types -all;
-use Photonic::Utils qw(lentzCF);
-use List::Util qw(min);
 use Moo;
-use MooX::StrictConstructor;
-
-has 'nh' =>(is=>'ro', isa=>Num, required=>1,
-	    documentation=>'Desired no. of Haydock coefficients');
-has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
-    	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'haydock' =>(is=>'ro', isa=>Haydock, required=>1);
-has 'nhActual'=>(is=>'ro', isa=>Num, init_arg=>undef,
-                 writer=>'_nhActual');
-has 'converged'=>(is=>'ro', isa=>Num, init_arg=>undef, writer=>'_converged');
-has 'Gpp'=>(is=>'lazy', isa=>PDLComplex, init_arg=>undef,
-	      documentation=>'Value of projected Greens function');
-has 'waveOperator' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
-             documentation=>'Wave operator');
-has 'epsilon' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
-                   documentation=>'Projected dielectric function');
-
-sub _build_Gpp {
-    my $self=shift;
-    my $h = $self->haydock;
-    $h->run unless $h->iteration;
-    my $epsR=$h->epsilonR;
-    my $as=$h->as;
-    my $bcs=$h->bcs;
-    my $min= min($self->nh, $h->iteration);
-    #    b0+a1/b1+a2/...
-    #	lo debo convertir a
-    #       1-a_0-g0g1b1^2/1-a1-g1g2b2^2/...
-    #   entonces bn->1-an y an->-g{n-1}gnbn^2 o -bc_n
-    my ($fn, $n)=lentzCF(1-$as, -$bcs, $min, $self->smallE);
-    #If there are less available coefficients than $self->nh and all
-    #of them were used, there is no remaining work to do, so, converged
-    $self->_converged($n<$min || $h->iteration<=$self->nh);
-    $self->_nhActual($n);
-    my $g0b02=$h->gs->slice("(0)")*$h->b2s->slice("(0)");
-    return $g0b02/($epsR*$fn);
-}
-
-sub _build_waveOperator {
-    my $self=shift;
-    my $greenP=$self->Gpp;
-    my $wave=1/$greenP; #only works along principal directions!!
-    return $wave;
-}
-
-sub _build_epsilon {
-    my $self=shift;
-    my $wave=$self->waveOperator;
-    my $q=$self->haydock->metric->wavenumber;
-    my $q2=$q*$q;
-    my $k=$self->haydock->metric->wavevector;
-    my $k2=($k*$k)->sumover; #inner. my $k2=$k->inner($k); only works on real
-    my $p=$self->haydock->normalizedPolarization;
-    #Note $p->inner($p) might be complex, so is not necessarily 1.
-    my $p2=($p*$p)->sumover;
-    my $pk=($p*$k)->sumover;
-    my $proj=$p2*$k2/$q2 - $pk*$pk/$q2;
-    my $eps=$wave+$proj;
-    return $eps;
-}
+extends "Photonic::WE::S::GreenP";
 
 __PACKAGE__->meta->make_immutable;
 
