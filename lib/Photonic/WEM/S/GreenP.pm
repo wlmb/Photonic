@@ -5,11 +5,7 @@ $Photonic::WEM::S::GreenP::VERSION = '0.024';
 
 =head1 NAME
 
-<<<<<<< HEAD
 Photonic::WEM::S::GreenP
-=======
-Photonic::WE::S::GreenP
->>>>>>> origin/WEM
 
 =head1 VERSION
 
@@ -48,26 +44,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 SYNOPSIS
 
    use Photonic::WEM::S::GreenP;
-<<<<<<< HEAD
-   my $green=Photonic::WEM::S::GreenP->new(haydock=>$h, nh=>$nh);
-   my $greenProjection=$green->Gpp;
-   my $WaveProjection=$green->waveOperator;
-   my $EpsTensor=$green->epsilon;
-=======
    my $green=Photonic::WE::S::GreenP->new(haydock=>$h, nh=>$nh);
    my $greenProjection=$green->Gpp;
    my $WaveProjection=$green->waveOperator;
    my $EpsProjection=$green->epsilon;
->>>>>>> origin/WEM
 
 =head1 DESCRIPTION
 
 Calculates the dielectric function for a given fixed
-<<<<<<< HEAD
-L<Photonic::WEM::S::Haydock> structure as a function of the dielectric
-=======
 L<Photonic::WE::ST::Haydock> structure as a function of the dielectric
->>>>>>> origin/WEM
 functions of the components.
 
 =head1 ATTRIBUTES
@@ -76,12 +61,7 @@ functions of the components.
 
 =item * haydock
 
-<<<<<<< HEAD
-The L<Photonic::WEM::S::Haydock> structure (required). Haydock is
-given so no need to give mu, since this is only used to build Haydock.
-=======
 The L<Photonic::WE::ST::Haydock> structure (required).
->>>>>>> origin/WEM
 
 =item * nh
 
