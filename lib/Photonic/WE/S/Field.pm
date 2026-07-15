@@ -135,7 +135,7 @@ sub _build_field {
     my $stateit=$self->haydock->states;
     my $ndims=$self->haydock->B->ndims; # num. of dims of space
     #field is xy,pm,nx,ny...
-    my $field_G=linearCombine($giEs, $stateit); #En ^G|psi_n>
+    my $field_G=linearCombineIt($giEs, $stateit); #En ^G|psi_n>
     my $Es=$self->haydock->applyMetric($field_G);
     #Comment as normalization below makes it useless
     #$Es*=$bs->((0))/$self->haydock->metric->epsilon;
