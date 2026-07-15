@@ -192,7 +192,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::LE::NR2::Haydock;
-use Photonic::Utils qw(RtoG GtoR HProd linearCombine any_complex cgtsv top_slice mvN);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv top_slice mvN);
 use Photonic::Types -all;
 use PDL::Constants qw(PI);
 use Moo;
@@ -439,7 +439,7 @@ sub _build_selfConsistentL_G {
     $self->filterflag(0);
     my $PLn=$self->selfConsistentL_n;
     my $stateit=$self->HP->states;
-    my $result=linearCombine($PLn, $stateit);
+    my $result=linearCombineIt($PLn, $stateit);
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0)  if $filterflag;
     return $result;

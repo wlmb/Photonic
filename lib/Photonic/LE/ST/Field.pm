@@ -74,7 +74,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Constants qw(PI);
 use Photonic::LE::S::Haydock;
-use Photonic::Utils qw(cgtsv GtoR linearCombine);
+use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types -all;
 use Moo;
 use MooX::StrictConstructor;
