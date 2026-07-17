@@ -135,11 +135,8 @@ has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WEM::S::Metric'],
 	       handles=>[qw(geometry ndims dims)],required=>1);
-has 'mu' =>(is=>'ro', required=>1, isa=>PDLComplex,
-	    documentation=>'Magnetic permeability function');
 has 'haydock' =>(is=>'lazy', isa=>ArrayRef[Haydock],
-            init_arg=>undef,
-	    documentation=>'Array of Haydock calculators');
+            init_arg=>undef, documentation=>'Array of Haydock calculators');
 has 'greenP'=>(is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WEM::S::GreenP']],
              init_arg=>undef,
              documentation=>'Array of projected G calculators');
@@ -162,7 +159,8 @@ with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 sub _build_greenTensor {
     my $self=shift;
     $self->_converged(all { $_->converged } @{$self->greenP});
-    tensor(pdl([map $_->Gpp, @{$self->greenP}]), $self->geometry->unitDyadsLU, $self->geometry->ndims, 2);
+    tensor(pdl([map $_->Gpp, @{$self->greenP}]), $self->geometry->unitDyadsLU,
+	   $self->geometry->ndims, 2);
 }
 
 sub _build_haydock { # One Haydock coefficients calculator per direction0
@@ -171,7 +169,6 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
     my @haydocks = map{
 	Photonic::WEM::S::Haydock->new(
 	    metric=>$self->metric,
-	    mu=$self->mu,
 	    nh=>$self->nh,
 	    reorthogonalize=>$self->reorthogonalize,
 	    use_mask=>$self->use_mask,
