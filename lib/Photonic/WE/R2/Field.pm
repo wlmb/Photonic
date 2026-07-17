@@ -137,7 +137,7 @@ sub _build_field {
     #field is xy,nx,ny...
     my $ndims=$self->haydock->B->ndims; # num. of dims of space
     #field is cartesian, nx, ny...
-    my $field_G=linearCombine($giEs, $stateit); #En ^G|psi_n>
+    my $field_G=linearCombineIt($giEs, $stateit); #En ^G|psi_n>
     my $Es=$self->haydock->applyMetric($field_G);
     my $e_0=1/($Es->slice(":" . ",(0)" x $ndims)
 	       *$self->haydock->polarization->conj)->sumover;
