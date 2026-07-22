@@ -1,5 +1,5 @@
 package Photonic::LE::NR2::EpsTensor;
-$Photonic::LE::NR2::EpsTensor::VERSION = '0.024';
+$Photonic::LE::NR2::EpsTensor::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::NR2::EpsTensor
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -67,6 +67,28 @@ Dielectric function of component A
 =item * epsB
 
 Dielectric function of component B
+
+=back
+
+=head1 Other attributes
+
+=over 4
+
+=item * allh_class
+
+Class of the required Haydock calculators.
+
+=item * allh_attrs
+
+Attributes to be supplied to the Haydock constructors
+
+=item * epsl_class
+
+Class of the required longitudinal dielectric function calculators.
+
+=item * epsl_attrs
+
+Attributes to be supplied to the epsilon constructors
 
 =back
 

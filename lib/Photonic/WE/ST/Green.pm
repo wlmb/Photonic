@@ -1,5 +1,5 @@
 package Photonic::WE::ST::Green;
-$Photonic::WE::ST::Green::VERSION = '0.024';
+$Photonic::WE::ST::Green::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::ST::Green
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -154,21 +154,21 @@ has 'waveOperator' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
 has 'epsilonTensor' =>  (is=>'lazy', isa=>PDLComplex, init_arg=>undef,
                          documentation=>'macroscopic response');
 
-with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
-
 has 'cHaydock' =>(
     is=>'lazy', isa=>ArrayRef[Haydock],
     init_arg=>undef,
     documentation=>'Array of Haydock calculators for complex projection');
+
+has 'symmetric' => (
+    is=>'ro', required=>1, default=>0,
+    documentation=>'Flags only symmetric part required');
 
 has 'cGreenP'=>(
     is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WE::ST::GreenP']],
     init_arg=>undef,
     documentation=>'Array of projected G calculators for complex projection');
 
-has 'symmetric' => (
-    is=>'ro', required=>1, default=>0,
-    documentation=>'Flags only symmetric part required');
+with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 
 sub _build_greenTensor {
     my $self=shift;

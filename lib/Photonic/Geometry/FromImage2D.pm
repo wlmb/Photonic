@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromImage2D;
-$Photonic::Geometry::FromImage2D::VERSION = '0.024';
+$Photonic::Geometry::FromImage2D::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Geometry::FromImage2D
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -96,7 +96,7 @@ L<Photonic::Roles::Geometry>
 
 use namespace::autoclean;
 use Moo;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 
 BEGIN {
 # Put inoffensive path in taint mode. Or else, PDL::IO::Pic fails.

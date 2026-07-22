@@ -1,5 +1,5 @@
 package Photonic::WE::ST::GreenP;
-$Photonic::WE::ST::GreenP::VERSION = '0.024';
+$Photonic::WE::ST::GreenP::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::ST::GreenP
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -106,7 +106,7 @@ use Photonic::Types -all;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
 use Moo;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');

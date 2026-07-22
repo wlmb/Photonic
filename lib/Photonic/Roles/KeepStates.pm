@@ -1,5 +1,5 @@
 package Photonic::Roles::KeepStates;
-$Photonic::Roles::KeepStates::VERSION = '0.024';
+$Photonic::Roles::KeepStates::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Roles::KeepStates
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
    package Photonic::MyPackage;
    use Moo;
+   use MooX::StrictConstructor;
    with 'Photonic::Roles::KeepStates;
    has 'myfield' => (is=>'ro');
    ...

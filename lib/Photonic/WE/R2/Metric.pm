@@ -1,5 +1,5 @@
 package Photonic::WE::R2::Metric;
-$Photonic::WE::R2::Metric::VERSION = '0.024';
+$Photonic::WE::R2::Metric::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::R2::Metric
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -88,7 +88,7 @@ use PDL::NiceSlice;
 use Carp;
 use Moo;
 use Photonic::Types -all;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 
 has 'value'     => (is=>'lazy', isa=>PDLObj, init_arg=>undef,
                    documentation=>'Metric tensor');

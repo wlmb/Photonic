@@ -1,5 +1,5 @@
 package Photonic::LE::NP::Haydock;
-$Photonic::LE::NP::Haydock::VERSION = '0.024';
+$Photonic::LE::NP::Haydock::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::NP::Haydock
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 SYNOPSIS
 
@@ -116,7 +116,7 @@ use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(EProd any_complex apply_longitudinal_projection);
 use Moo;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 
 has 'geometry'=>(is=>'ro', isa => GeometryG0,
     handles=>[qw(B ndims dims r G GNorm L scale f)],required=>1

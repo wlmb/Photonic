@@ -1,5 +1,5 @@
 package Photonic::Roles::EpsTensor;
-$Photonic::Roles::EpsTensor::VERSION = '0.024';
+$Photonic::Roles::EpsTensor::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Roles::EpsTensor
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -53,9 +53,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =item (for developers)
 
     package Photonic::LE::S::EpsTensor;
-    $Photonic::LE::S::EpsTensor::VERSION= '0.024';
+    $Photonic::LE::S::EpsTensor::VERSION= '0.024_01';
     use namespace::autoclean;
     use Moo;
+    use MooX::StrictConstructor;
     with 'Photonic::Roles::EpsTensor';
     has...
 
@@ -74,11 +75,19 @@ of C<haydock> and C<epsL>:
 
 =item * allh_class
 
+Class of the required Haydock calculators.
+
 =item * allh_attrs
+
+Attributes to be supplied to the Haydock constructors
 
 =item * epsl_class
 
+Class of the required longitudinal dielectric function calculators.
+
 =item * epsl_attrs
+
+Attributes to be supplied to the epsilon constructors
 
 =back
 

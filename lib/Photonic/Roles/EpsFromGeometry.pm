@@ -1,5 +1,5 @@
 package Photonic::Roles::EpsFromGeometry;
-$Photonic::Roles::EpsFromGeometry::VERSION = '0.024';
+$Photonic::Roles::EpsFromGeometry::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -52,12 +52,13 @@ Photonic::Roles::EpsFromGeometry
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 SYNOPSIS
 
     package Photonic::LE::NP::Haydock;
     use Moo;
+    use MooX::StrictConstructor;
     with 'Photonic::Roles::EpsFromGeometry';
 
 =head1 DESCRIPTION

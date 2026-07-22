@@ -1,5 +1,5 @@
 package Photonic::LE::NP::EpsTensor;
-$Photonic::LE::NP::EpsTensor::VERSION = '0.024';
+$Photonic::LE::NP::EpsTensor::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -39,7 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 SYNOPSIS
 
@@ -65,6 +65,29 @@ Consumes L<Photonic::Roles::EpsTensor>, L<Photonic::Roles::KeepStates>
 
 A complex PDL giving the value of the dielectric function epsilon
 for each pixel of the system
+
+
+=back
+
+=head1 Other attributes
+
+=over 4
+
+=item * allh_class
+
+Class of the required Haydock calculators.
+
+=item * allh_attrs
+
+Attributes to be supplied to the Haydock constructors
+
+=item * epsl_class
+
+Class of the required longitudinal dielectric function calculators.
+
+=item * epsl_attrs
+
+Attributes to be supplied to the epsilon constructors
 
 =back
 

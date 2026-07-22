@@ -1,5 +1,5 @@
 package Photonic::WEM::S::Haydock;
-$Photonic::WEM::S::Haydock::VERSION = '0.024';
+$Photonic::WEM::S::Haydock::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WEM::S::Haydock
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 SYNOPSIS
 
@@ -138,8 +138,7 @@ use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(VSProd any_complex GtoR RtoG mvN);
 use Moo;
-use MooX::StrictConstructor;
-extends "Photonic::WE::S::Haydock";
+#use MooX::StrictConstructor;
 
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WEM::S::Metric'],
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',

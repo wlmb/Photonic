@@ -1,5 +1,5 @@
 package Photonic::LE::NR2::SHChiTensor;
-$Photonic::LE::NR2::SHChiTensor::VERSION = '0.024';
+$Photonic::LE::NR2::SHChiTensor::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::NR2::SHChiTensor
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -179,6 +179,7 @@ use Photonic::Utils qw(make_haydock tensor incarnate_as);
 use Photonic::Types -all;
 use Photonic::LE::NR2::EpsTensor;
 use Moo;
+use MooX::StrictConstructor;
 
 has 'nh' =>(is=>'ro', isa=>Num, required=>1,
 	    documentation=>'Desired no. of Haydock coefficients');

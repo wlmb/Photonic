@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromB;
-$Photonic::Geometry::FromB::VERSION = '0.024';
+$Photonic::Geometry::FromB::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -36,6 +36,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 use namespace::autoclean;
 use Moo;
+#use MooX::StrictConstructor;
+
 use Photonic::Types -all;
 
 has 'B' =>(is=>'ro', isa=>PDLObj, required=>1,
@@ -55,7 +57,7 @@ Photonic::Geometry::FromB
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 SYNOPSIS
 

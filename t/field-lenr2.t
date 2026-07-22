@@ -357,7 +357,8 @@ my $chi=Photonic::LE::NR2::SHChiTensor->new(
   keepStates=>1,
 );
 $got = Photonic::LE::NR2::SH->new(
-  shp=>$chi->nrshp->[0], epsA1=>$ea, epsB1=>$eb,epsA2=>$ea*$ea, epsB2=>$eb*$eb,
+  shp=>$chi->nrshp->[0],
+  epsA1=>$ea, epsB1=>$eb,epsA2=>$ea*$ea, epsB2=>$eb*$eb,
   filterflag=>0
 )->P2;
 $expected = pdl(<<'EOF');

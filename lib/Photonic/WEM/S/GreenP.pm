@@ -1,5 +1,5 @@
 package Photonic::WEM::S::GreenP;
-$Photonic::WEM::S::GreenP::VERSION = '0.024';
+$Photonic::WEM::S::GreenP::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::S::GreenP
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -102,6 +102,7 @@ NOTE: Only works for polarizations along principal directions.
 
 use namespace::autoclean;
 use Moo;
+#use MooX::StrictConstructor;
 extends "Photonic::WE::S::GreenP";
 
 __PACKAGE__->meta->make_immutable;

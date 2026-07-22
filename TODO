@@ -1,16 +1,28 @@
 # -*- mode: org; -*-
 
-* TODO [2026-05-08 Fri] Test all attributes are pod covered
+* TODO [2026-07-22 Wed] MooX::StricConstructor
+  I can't use strict constructors in some projected objects, as currently the
+  corresponding tensor calculations initialize arrays of constructors using
+  additional parameters, which seems unsafe. I have to construct them
+  safely and add the constriction. The suspects are routines in
+  Ph::Util such as make_haydock, _haydock_extra, make_greenp, and incarnate_as.
+* DONE [2026-05-08 Fri] pod-coverage
+  Test all attributes are pod covered
   My current xt/pod-coverage.t doesn't test lazy attributes. I don't
   understand why. Currently, there are many undocumented. I have to
   document them and I would like the tests to help with them.
-* TODO [2025-08-02 Sat] Check firstState in unretarded spinor calculations
+* DONE [2025-08-02 Sat] firstState
+  Check firstState in unretarded spinor calculations
   I use \delta_{G0}/sqrt2 for both the positive and negative parts. My
   guess is that the correct value is to change the sign of the G=0
   contribution, and that it won't affect any result. But for initial fields
   with many G's, it might make a difference. I have to make the
   corresponding changes to the tests also.
-* TODO [2025-04-30 Wed] Field normalization
+
+  Finally I conjugated the counterpropagating field in spinor
+  calculations.
+
+* DONE [2025-04-30 Wed] Field normalization
   - The normalization of the fields is done so that in the usual case
     the field is normalized to the macroscopic field. However, it is
     not clear if it will work when a firstState is given.
@@ -21,6 +33,9 @@
     it over and do it correctly.
   - If a firstState is given, there should be no need and no use for
     polarization in ...::Field
+
+    I made rawfield methods to return the unnormalized field,
+    interpreting the first state as an external polarization.
 * TODO [2025-02-20 Thu] KeepStates
   - It seems version 0.24 keeps states, without regards to keepStates,
     as the states are now kept in a state pdl instead of a perl

@@ -1,5 +1,5 @@
 package Photonic::LE::NR2::SH;
-$Photonic::LE::NR2::SH::VERSION = '0.024';
+$Photonic::LE::NR2::SH::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::NR2::SH
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 

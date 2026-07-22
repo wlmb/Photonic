@@ -1,5 +1,5 @@
 package Photonic::Roles::Haydock;
-$Photonic::Roles::Haydock::VERSION = '0.024';
+$Photonic::Roles::Haydock::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Roles::Haydock
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -63,9 +63,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =item (for developers)
 
     package Photonic::LE::NR2::Haydock;
-    $Photonic::LE::NR2::Haydock::VERSION= '0.024';
+    $Photonic::LE::NR2::Haydock::VERSION= '0.024_01';
     use namespace::autoclean;
     use Moo;
+    use MooX::StrictConstructor;
     has...
     with 'Photonic::Roles::Haydock';
 

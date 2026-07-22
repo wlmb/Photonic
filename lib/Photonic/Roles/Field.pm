@@ -1,5 +1,5 @@
 package Photonic::Roles::Field;
-$Photonic::Roles::Field::VERSION = '0.024';
+$Photonic::Roles::Field::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Roles::Field
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -54,6 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     package Photonic::LE::NR2::Field;
     use namespace::autoclean;
     use Moo;
+    use MooX::StrictConstructor;
     with 'Photonic::Roles::Field';
     has...
 

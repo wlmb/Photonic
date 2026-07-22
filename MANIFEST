@@ -63,7 +63,7 @@ lib/Photonic/WE/ST/GreenP.pm
 lib/Photonic/WE/ST/Haydock.pm
 lib/Photonic/WE/ST/Metric.pm
 #lib/Photonic/WEM/S/Field.pm
-#lib/Photonic/WEM/S/Green.pm
+lib/Photonic/WEM/S/Green.pm
 lib/Photonic/WEM/S/GreenP.pm
 lib/Photonic/WEM/S/Haydock.pm
 lib/Photonic/WEM/S/Metric.pm

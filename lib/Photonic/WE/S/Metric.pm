@@ -1,5 +1,5 @@
 package Photonic::WE::S::Metric;
-$Photonic::WE::S::Metric::VERSION = '0.024';
+$Photonic::WE::S::Metric::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::S::Metric
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -89,7 +89,7 @@ use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(any_complex);
 use Moo;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 
 # Later make it complex
 has 'value'     => (is=>'lazy', isa=>PDLObj, init_arg=>undef,

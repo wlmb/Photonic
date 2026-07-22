@@ -1,5 +1,5 @@
 package Photonic::LE::S::EpsL;
-$Photonic::LE::S::EpsL::VERSION = '0.024';
+$Photonic::LE::S::EpsL::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::S::EpsL
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -62,7 +62,7 @@ use namespace::autoclean;
 use Photonic::Utils qw(lentzCF);
 use List::Util qw(min);
 use Moo;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 
 with 'Photonic::Roles::EpsL';
 

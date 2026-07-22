@@ -1,5 +1,5 @@
 package Photonic::WE::R2::Haydock;
-$Photonic::WE::R2::Haydock::VERSION = '0.024';
+$Photonic::WE::R2::Haydock::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -39,7 +39,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use Carp;
 use Moo;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 use Photonic::Utils qw(MHProd any_complex GtoR RtoG);
 use Photonic::Types -all;
 
@@ -132,7 +132,7 @@ Photonic::WE::R2::Haydock
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 SYNOPSIS
 

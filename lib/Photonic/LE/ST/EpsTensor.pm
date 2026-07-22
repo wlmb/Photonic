@@ -1,5 +1,5 @@
 package Photonic::LE::ST::EpsTensor;
-$Photonic::LE::ST::EpsTensor::VERSION = '0.024';
+$Photonic::LE::ST::EpsTensor::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::ST::EpsTensor
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -57,6 +57,28 @@ functions of the components.
 Consumes L<Photonic::Roles::EpsTensor>, L<Photonic::Roles::KeepStates>,
 L<Photonic::Roles::UseMask>, L<Photonic::Roles::EpsFromGeometry>
 - please see those for attributes.
+
+=head1 Other attributes
+
+=over 4
+
+=item * allh_class
+
+Class of the required Haydock calculators.
+
+=item * allh_attrs
+
+Attributes to be supplied to the Haydock constructors
+
+=item * epsl_class
+
+Class of the required longitudinal dielectric function calculators.
+
+=item * epsl_attrs
+
+Attributes to be supplied to the epsilon constructors
+
+=back
 
 =cut
 

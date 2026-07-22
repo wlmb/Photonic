@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromEpsilon;
-$Photonic::Geometry::FromEpsilon::VERSION = '0.024';
+$Photonic::Geometry::FromEpsilon::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use namespace::autoclean;
 use Carp;
 use Moo;
+#use MooX::StrictConstructor;
+
 use Photonic::Types -all;
 
 has 'epsilon'=>(is=>'ro', isa=>PDLComplex, required=>1,
@@ -75,7 +77,7 @@ Photonic::Geometry::FromEpsilon
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 SYNOPSIS
 

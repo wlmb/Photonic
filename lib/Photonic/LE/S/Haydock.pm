@@ -1,5 +1,5 @@
 package Photonic::LE::S::Haydock;
-$Photonic::LE::S::Haydock::VERSION = '0.024';
+$Photonic::LE::S::Haydock::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::S::Haydock
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
@@ -113,7 +113,7 @@ use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(SProd any_complex GtoR RtoG);
 use Moo;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 
 has 'geometry'=>(is=>'ro', isa => GeometryG0,
     handles=>[qw(B ndims dims r G GNorm L scale f pmGNorm)],required=>1

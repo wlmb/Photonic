@@ -1,5 +1,5 @@
 package Photonic::Roles::Metric;
-$Photonic::Roles::Metric::VERSION = '0.024';
+$Photonic::Roles::Metric::VERSION = '0.024_01';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Roles::Metric
 
 =head1 VERSION
 
-version 0.024
+version 0.024_01
 
 =head1 COPYRIGHT NOTICE
 
