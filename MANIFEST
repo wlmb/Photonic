@@ -102,7 +102,7 @@ t/field-les.t
 t/field-wer2.t
 t/field-west.t
 t/field-wes.t
-t/field-wesm.t
+t/field-wems.t
 t/geometry.t
 t/greenp.t
 t/green.t
