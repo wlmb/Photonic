@@ -41,7 +41,6 @@ use Photonic::LE::NR2::SHChiTensor;
 use Test::More;
 use lib 't/lib';
 use TestUtils;
-use Machine::Epsilon;
 
 my $ea=1+2*i;
 my $eb=3+4*i;
@@ -376,46 +375,46 @@ $expected = pdl(<<'EOF');
  [ -0.014991596+0.011757369i ]
 ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "SHChiTensor SHPs P2") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "SHChiTensor SHPs P2") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate;
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "P2") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate(kind => 'f', mask => pdl(1));
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "P2") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate(kind => 'l');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate(kind => 'a');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "P2LMCalt") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "P2LMCalt") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate(kind => 'd');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "dipolar") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "dipolar") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate(kind => 'q');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "quadrupolar") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "quadrupolar") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate(kind => 'e');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "external") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "external") or diag "got: $got\nexpected: $expected";
 $got = $chi->evaluate(kind => 'el');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
-ok(Cagree($got, $expected, machine_epsilon()), "externalVecL") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected), "externalVecL") or diag "got: $got\nexpected: $expected";
 
 done_testing;
