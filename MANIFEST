@@ -62,11 +62,11 @@ lib/Photonic/WE/ST/Green.pm
 lib/Photonic/WE/ST/GreenP.pm
 lib/Photonic/WE/ST/Haydock.pm
 lib/Photonic/WE/ST/Metric.pm
-#lib/Photonic/WEM/S/Field.pm
 lib/Photonic/WEM/S/Green.pm
 lib/Photonic/WEM/S/GreenP.pm
 lib/Photonic/WEM/S/Haydock.pm
 lib/Photonic/WEM/S/Metric.pm
+lib/Photonic/WEM/S/Field.pm
 LICENSE
 Makefile.PL
 MANIFEST			This list of files
@@ -102,6 +102,7 @@ t/field-les.t
 t/field-wer2.t
 t/field-west.t
 t/field-wes.t
+t/field-wesm.t
 t/geometry.t
 t/greenp.t
 t/green.t

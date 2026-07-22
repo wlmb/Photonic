@@ -182,6 +182,12 @@ sub applyOperator {
     return $H_g_psi_G;
 }
 
+sub applyMetric {
+    my $self=shift;
+    my $psi=shift;
+    return $self->metric->apply($psi);
+}
+
 sub innerProduct {  #Return Hermitian product with metric
     my $self=shift;
     my $psi1=shift;

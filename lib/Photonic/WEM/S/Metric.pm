@@ -179,7 +179,7 @@ sub _build__G_pm_k_div_sqrd { # (G+-k)/(G+-k)^2
 }
 
 sub _build_value {
-    croak "Sorry, there is no value for the metric of magnetizable systems";
+    croak "Sorry, there is no value for the metric of magnetizable systems. Try 'apply'";
 }
 
 
