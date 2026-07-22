@@ -66,6 +66,7 @@ attributes and methods.
 
 Real space complex magnetic permeability for each volume element.
 
+=back
 
 =head1 METHODS
 
