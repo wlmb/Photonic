@@ -1,5 +1,5 @@
 package Photonic::WE::R2::Green;
-$Photonic::WE::R2::Green::VERSION = '0.024_01';
+$Photonic::WE::R2::Green::VERSION = '0.02401';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::R2::Green
 
 =head1 VERSION
 
-version 0.024_01
+version 0.02401
 
 =head1 COPYRIGHT NOTICE
 

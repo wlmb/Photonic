@@ -1,5 +1,5 @@
 package Photonic::LE::NR2::SHChiTensor;
-$Photonic::LE::NR2::SHChiTensor::VERSION = '0.024_01';
+$Photonic::LE::NR2::SHChiTensor::VERSION = '0.02401';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::NR2::SHChiTensor
 
 =head1 VERSION
 
-version 0.024_01
+version 0.02401
 
 =head1 COPYRIGHT NOTICE
 

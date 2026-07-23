@@ -1,5 +1,5 @@
 package Photonic::Roles::EpsTensor;
-$Photonic::Roles::EpsTensor::VERSION = '0.024_01';
+$Photonic::Roles::EpsTensor::VERSION = '0.02401';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Roles::EpsTensor
 
 =head1 VERSION
 
-version 0.024_01
+version 0.02401
 
 =head1 COPYRIGHT NOTICE
 
@@ -53,7 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =item (for developers)
 
     package Photonic::LE::S::EpsTensor;
-    $Photonic::LE::S::EpsTensor::VERSION= '0.024_01';
+    $Photonic::LE::S::EpsTensor::VERSION= '0.02401';
     use namespace::autoclean;
     use Moo;
     use MooX::StrictConstructor;

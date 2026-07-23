@@ -1,7 +1,7 @@
 # Photonic #
 
 This archive contains the distribution Photonic,
-version 0.024_01_01
+version 0.02401
 to run electromagnetic calculations for photonics and
 metamaterials.
 
@@ -46,6 +46,12 @@ the same terms as the Perl 5 programming language system itself.
  - W. L. Mochán, R. Singla, L. Juárez, and G. P. Ortiz, *Recursive
    Calculation of the Optical Response of Multicomponent
    Metamaterials*, physica status solidi (b) **257**, 1900560 (2020).
+
+ - W. Luis Mochán, Andrea López-Reyna and Guillermo
+   P. Ortiz, *Efficient homogenization of multicomponent metamaterials:
+   chiral effects*, physica status solidi (b) **262**, 202400526 (2025).
+   doi:10.1002/pssb.202400526.
+
 
 ## Authors ##
 
