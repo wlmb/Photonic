@@ -21,7 +21,7 @@ WriteMakefile(
 	'Carp'                           => '0',
 	'IO::File'                       => '0',
 	'List::Util'                     => '0',
-	'Machine::Epsilon'               => '0',
+	# 'Machine::Epsilon'               => '0',
 	'Moo'                            => '0',
 	'namespace::autoclean'           => '0',
 	'Type::Tiny'                     => '0',
@@ -41,7 +41,7 @@ WriteMakefile(
 	'Storable'                       => '0',
     },
     TEST_REQUIRES => {
-        'Machine::Epsilon'            => '0',
+        # 'Machine::Epsilon'            => '0',
 	'Test::More'                  => '0.88',
     },
     CONFIGURE_REQUIRES => {

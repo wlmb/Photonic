@@ -174,7 +174,6 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
 	    use_mask=>$self->use_mask,
 	    mask=>$self->mask,
 	    keepStates=>1,
-	    stateFN=>"rem$_.dat",
 	    polarization=>$pairs[$_]->r2C,
 	    )
     } 0..@pairs-1;
