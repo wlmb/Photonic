@@ -67,10 +67,6 @@ Value of flag to keep Haydock states in Haydock calculations (default 0)
 
 L<Photonic::WEM::S::Metric> describing the structure and some parameters.
 
-=item * mu
-
-The magnetic permeability function. Must be same type and dimensions as epsilon.
-
 =item * nh
 
 The maximum number of Haydock coefficients to use.
@@ -134,7 +130,7 @@ has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
 has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WEM::S::Metric'],
-	       handles=>[qw(geometry ndims dims)],required=>1);
+	       handles=>[qw(geometry ndims dims mu)],required=>1);
 has 'haydock' =>(is=>'lazy', isa=>ArrayRef[Haydock],
             init_arg=>undef, documentation=>'Array of Haydock calculators');
 has 'greenP'=>(is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WEM::S::GreenP']],

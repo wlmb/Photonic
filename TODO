@@ -1,5 +1,9 @@
 # -*- mode: org; -*-
 
+* TODO [2026-07-22 Wed] Check documentation
+  The documentation is not quite consistent. It has to be checked and
+  fixed systematically
+
 * TODO [2026-07-22 Wed] MooX::StricConstructor
   I can't use strict constructors in some projected objects, as currently the
   corresponding tensor calculations initialize arrays of constructors using
