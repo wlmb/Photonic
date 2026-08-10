@@ -14,11 +14,7 @@ version 0.024
 =head1 SYNOPSIS
 
     use Photonic::WEM::S::Haydock;
-<<<<<<< HEAD
     my $nr=Photonic::WEM::S::Haydock->new(metric=>$g, mu=>$mu, polarization=>$p);
-=======
-    my $nr=Photonic::WEM::S::Haydock->new(metric=>$g, polarization=>$p);
->>>>>>> origin/WEM
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;

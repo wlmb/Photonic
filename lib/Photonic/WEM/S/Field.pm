@@ -74,6 +74,7 @@ Consumes L<Photonic::Roles::Field>
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
+use PDL::Constants qw(PI);
 use Photonic::WEM::S::Haydock;
 use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
 use Photonic::Types -all;

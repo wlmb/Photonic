@@ -43,17 +43,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-    use Photonic::WEM::S::Metric;
-    my $gGG=Photonic::WEM::S::Metric->new(
-            geometry=>$geometry, epsilon=>$eps,
-            wavenumber => $q, $wavevector=>k);
+    use Photonic::WEM::S::Metric; my
+    $gGG=Photonic::WEM::S::Metric->new( geometry=>$geometry,
+    epsilon=>$eps, mu=>$mu wavenumber => $q, $wavevector=>k);
     f($gGG->value);
 
 =head1 DESCRIPTION
 
 Calculates the retarded metric tensor g_{GG'}^{ij} for use in the
 calculation of the retarded Haydock coefficients for the wave equation
-in a binary medium where the host has no dissipation.
+in a medium of arbitrary composition  where the host has no dissipation.
 
 =head1 METHODS
 
@@ -73,9 +72,7 @@ Haydock when it calls this method.
 
 =back
 
-
 =cut
-
 
 use namespace::autoclean;
 use PDL::Lite;
@@ -154,7 +151,6 @@ sub _build_LP{
     my $G=$self->G; #reciprocal lattice from Geometry
     my $k=$self->wavevector; # bloch wavevector, solution
     return pdl(map{$_->outer($_)/$_->inner($_)->(*1,*1)}($G+$k, $G-$k))
-	->mv(-1,2); # (G+-k)(G+-k)/(G+-k)^2
 	->mv(-1,2); # (G+-k)(G+-k)/(G+-k)^2 xy:xy:pm:nx:...
 }
 
