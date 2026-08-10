@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
     use Photonic::WEM::S::Metric;
     my $gGG=Photonic::WEM::S::Metric->new(
+            mu => $mu,
             geometry=>$geometry, epsilon=>$eps,
             wavenumber => $q, $wavevector=>k);
     f($gGG->value);

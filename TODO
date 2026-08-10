@@ -1,5 +1,17 @@
 # -*- mode: org; -*-
 
+* TODO [2026-07-26 Sun] firstState
+  Haydock modules have a firstState field that default to a
+  macroscopic field, but may be initialized  to an arbitrary
+  field. However, they expect the field in reciprocal space, and in
+  some cases, a spinor. Converting from a field in real space may
+  generate errors, so the conversion from real space field to spinor
+  field in reciprocal space should be handled by the modules
+  themselves. A public method to transform between these
+  representations is desirable, or a different optional field to
+  specify the first state either in its final form or as a field in
+  real space.
+
 * TODO [2026-07-22 Wed] Check documentation
   The documentation is not quite consistent. It has to be checked and
   fixed systematically
