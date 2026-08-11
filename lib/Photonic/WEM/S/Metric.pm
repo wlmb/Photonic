@@ -1,5 +1,5 @@
 package Photonic::WEM::S::Metric;
-$Photonic::WEM::S::Metric::VERSION = '0.024';
+$Photonic::WEM::S::Metric::VERSION = '0.02401';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WEM::S::Metric
 
 =head1 VERSION
 
-version 0.024
+version 0.02401
 
 =head1 COPYRIGHT NOTICE
 
@@ -43,9 +43,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-    use Photonic::WEM::S::Metric; my
-    $gGG=Photonic::WEM::S::Metric->new( geometry=>$geometry,
-    epsilon=>$eps, mu=>$mu wavenumber => $q, $wavevector=>k);
+    use Photonic::WEM::S::Metric;
+    my $gGG=Photonic::WEM::S::Metric->new(
+            mu => $mu,
+            geometry=>$geometry, epsilon=>$eps,
+            wavenumber => $q, $wavevector=>k);
     f($gGG->value);
 
 =head1 DESCRIPTION
@@ -53,6 +55,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 Calculates the retarded metric tensor g_{GG'}^{ij} for use in the
 calculation of the retarded Haydock coefficients for the wave equation
 in a medium of arbitrary composition  where the host has no dissipation.
+
+Implements 'Photonic::Roles::Metric'. Look there for the basic
+attributes and methods.
+
+=head1 OTHER ATTRIBUTES
+
+=over 4
+
+=item * mu
+
+Real space complex magnetic permeability for each volume element.
+
+=back
 
 =head1 METHODS
 
@@ -64,10 +79,9 @@ Create a new Ph::WEM::S::Metric object with permeability $mu, Geometry $g, diele
 function of the host $e, vacuum wavenumber $q=omega/c  and wavevector
 $k. $q and $k are real.
 
-= item * apply(psi)
+=item * apply($psi)
 
-Create and apply the magnetic metric to the state psi provided in
-
+Create and apply the magnetic metric to the state $psi provided in
 Haydock when it calls this method.
 
 =back
@@ -83,7 +97,7 @@ use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(any_complex mvN GtoR RtoG);
 use Moo;
-use MooX::StrictConstructor;
+#use MooX::StrictConstructor;
 
 has 'mu' =>(is=>'ro', isa=>PDLObj, required=>1,
 	    documentation=> 'Magnetic permeability, scalar function of position');
@@ -97,6 +111,7 @@ has  'value'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 	       documentation=>'Metric Tensor');
 
 with 'Photonic::Roles::Metric';
+
 # Roles::Metric Pulls the following attributes: geometry, epsilonRef,
 # wavenumber, and wavevector. All metrics need these parameters.
 
@@ -162,7 +177,7 @@ sub _build__G_pm_k_div_sqrd { # (G+-k)/(G+-k)^2
 }
 
 sub _build_value {
-    croak "Sorry, there is no value for the metric of magnetizable systems";
+    croak "Sorry, there is no value for the metric of magnetizable systems. Try 'apply'";
 }
 
 

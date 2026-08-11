@@ -1,13 +1,14 @@
-package Photonic::WEM::S::Field;
-$Photonic::WEM::S::Field::VERSION = '0.02401';
+package Photonic::WEM::ST::Field;
+$Photonic::WEM::ST::Field::VERSION = '0.02401';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::WEM::S::Field
+Photonic::WEM::ST::Field
 
 =head1 VERSION
+
 version 0.02401
 
 =head1 COPYRIGHT NOTICE
@@ -42,8 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-   use Photonic::WEM::S::Field;
-   my $nrf=Photonic::WE::S::Field->new(...);
+   use Photonic::WEM::ST::Field;
+   my $nrf=Photonic::WE::ST::Field->new(...);
    my $field=$nrf->field;
    my $rawfield=$nrf->rawfield;
 
@@ -61,7 +62,7 @@ Consumes L<Photonic::Roles::Field>
 use namespace::autoclean;
 use Moo;
 #use MooX::StrictConstructor;
-extends "Photonic::WE::S::Field";
+extends "Photonic::WE::ST::Field";
 
 __PACKAGE__->meta->make_immutable;
 

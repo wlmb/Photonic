@@ -1,5 +1,5 @@
 package Photonic::WEM::ST::Metric;
-$Photonic::WEM::ST::Metric::VERSION = '0.024';
+$Photonic::WEM::ST::Metric::VERSION = '0.02401';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WEM::ST::Metric
 
 =head1 VERSION
 
-version 0.024
+version 0.02401
 
 =head1 COPYRIGHT NOTICE
 
@@ -51,35 +51,43 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Calculates the retarded metric tensor g_{GG'}^{ij} for use in the
+Applies the retarded metric tensor g_{GG'}^{ij} for use in the
 calculation of the retarded Haydock coefficients for the wave equation
-of arbitrary periodic systems in 1, 2, and 3 dimensions of arbitrary
-composition where the host has no dissipation, when the response
-function are of tensorial nature. 
+in a medium with several components, allowing for a magnetic permeability.
 
+Implements 'Photonic::Roles::Metric'. Look there for the basic
+attributes and methods.
+
+=head1 OTHER ATTRIBUTES
+
+=over 4
+
+=item * mu
+
+Real space complex tensorial magnetic permeability for each volume element.
+
+=back
 
 =head1 METHODS
 
 =over 4
 
-=item * new(geometry=>$g, epsilon=>$e, mu=>$mu, $wavenumber=>$q, $wavevector=>$k);
+=item * new(mu=>$mu, geometry=>$g, epsilon=>$e, $wavenumber=>$q, $wavevector=>$k);
 
-Create a new Ph::WEM::ST::Metric object with Geometry $g, dielectric
-function of the host $e, microscopic permeability function in space of
-the composition $mu, vacuum wavenumber $q=omega/c and source
-wavevector $k.  $q and $k are real.
+Create a new Ph::WEM::ST::Metric object with permeability $mu, Geometry $g, dielectric
+function of the host $e, vacuum wavenumber $q=omega/c  and wavevector
+$k. $q and $k are real.
 
-= item * apply(psi)
+=item * apply($psi)
 
-Create and apply the magnetic metric to the state psi in reciprocal
-space provided in Haydock when it calls this method.
+Create and apply the magnetic metric to the state $psi provided in
+Haydock when it calls this method.
 
 =back
 
-
 =cut
 
-
+use v5.16;
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::Primitive;
@@ -91,66 +99,77 @@ use Photonic::Utils qw(any_complex mvN GtoR RtoG);
 use Moo;
 use MooX::StrictConstructor;
 
-has 'mu' =>(is=>'ro', isa=>PDLObj, required=>1,
-	    documentation=> 'Magnetic permeability, tensorial function of position');
+has 'mu' =>(is=>'ro', isa=>PDL3DComplexMatrixField, required=>1,
+	    documentation=> 'Magnetic permeability, scalar function of position');
 has 'LP'
     =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
        documentation=>'Longitudinal Projector in reciprocal spinorial space');
 has '_G_pm_k_div_sqrd'
     =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
        documentation=>'Internal. Reciprocal vector in spinor space divided by its square');
+
 has  'value'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 	       documentation=>'Metric Tensor');
 
 with 'Photonic::Roles::Metric';
+
 # Roles::Metric Pulls the following attributes: geometry, epsilonRef,
 # wavenumber, and wavevector. All metrics need these parameters.
 
 sub BUILD {
     my $self=shift;
     croak "Currenlty, only 3D is supported" unless $self->ndims==3;
-    my $eps=$self->epsilon;
+    my $epsRef=$self->epsilon;
     croak "For the time being the reference epsilon should be 1 or not initialized"
-	unless $eps==1;
+	unless $epsRef==1;
     my $k=$self->wavevector; # bloch wavevector, xyz
-    die "Wavevector should be 3D" unless $k->dims==1 && $k->dim(0)==3;
+    carp "Wavevector should be 3D" unless $k->dims==1 && $k->dim(0)==3;
+    my $epsTensor=$self->geometry->epsilon;
+    carp "Geometry should provide a 3d complex permittivity matrix field" unless
+	$epsTensor->ndims==3+2 && $epsTensor->dim(0)==$epsTensor->dim(1)
+	&&$epsTensor->dim(0)==3;
     my $mu=$self->mu;
-    die "Mu should be a $self->dims tensorial function" unless
-	(pdl($mu->dims)==pdl($self->dims))->all; #exactly the same dimensions
+    carp "Mu should be a $self->dims a 3d complex permeability matrix field" unless
+	$mu->ndims==3+2 && $mu->dim(0)==$mu->dim(1)&&$mu->dim(0)==3;
+    carp "Dimensions of permittivity, permeability and space should be compatible"
+	unless (pdl($epsTensor->dims)==pdl($mu->dims))->all
+	and (pdl($epsTensor->slice("(0),(0)")->dims)==pdl($self->dims))->all;
 }
 
 sub apply{
     # Evaluate the metric tensor applied to the state
     my $self = shift;
-    my $psi = shift; #xyz:pm:nx:ny:nz (in G-space)
-    my $q=$self->wavenumber; # wavenumber
-    my $mu=$self->mu; # magnetic permeability nx:ny:nz
+    my $psi = shift;                               # xyz:pm:nx:ny:nz
+    my $q=$self->wavenumber;                       # wavenumber
+    my $mu=$self->mu;                              # magnetic permeability xyz:xyz:nx:ny:nz
     my $ndims=$self->ndims;
-    # FIRST TERM of the metric
+    # First Term of the metric
     # apply longitudinal projector to state psi
-    my $long_part = $self->LP #xyz:xyz:pm:nx:ny:nz
-	->inner($psi(:,*1)); #xyz:1:pm:nx:ny:nz;
-	#xyz:pm:nx:ny:nz a this matrix vector mutiplication
-    # SECOND TERM
-    my $G_pm_k_div_sqr = $self->_G_pm_k_div_sqrd; #(G pm k)/|G pm k|^2
+    my $long_part = $self->LP                      # xyz:xyz:pm:nx:ny:nz
+	->inner(                                   # matrix vector mutiplication
+	     $psi->dummy(1)                        # xyz:(xyz):pm:nx:ny:nz;
+	);                                         # xyz:pm:nx:ny:nz
+    # Second term
+    my $G_pm_k_div_sqr = $self->_G_pm_k_div_sqrd;  #(G pm k)/|G pm k|^2 xyz:pm_nx:ny:nz
     # cross prod with psi
     my $G_X_psi_G = crossp($G_pm_k_div_sqr, $psi); #xyz:pm:nx:ny:nz
     # FT to real space and move dims
-    my $G_X_psi_r = GtoR(mvN($G_X_psi_G,0,1,-1), $ndims,0); #nx:ny:nz:xyz:pm
-    ############## tensorial change ############
-    # move dims to xyz:pm:nx:ny:nz and left-multiply by matrix mu
-    my $mu_G_X_psi_r = $mu x mvN(($G_X_psi_r),-2,-1,0); #xyz:pm:nx:ny:nz
-    #############################################
+    my $G_X_psi_r = GtoR(mvN($G_X_psi_G, 0,1,-1),
+			 $ndims,0);                #nx:ny:nz:xyz:pm
+    # left-multiply by mu and reorder dims back
+    my $mu_G_X_psi_r =
+	$mu->dummy(2)->inner(                  #xyz:xyz:(pm):nx:ny:nz matrix (spinor)
+	mvN(($G_X_psi_r),-2,-1,0)->dummy(1)    #xyz:(xyz):pm:nx:ny:nz vector dummy (spinor)
+	);                                     #xyz:pm:nx:ny:nz       vector spinor
     # mu G X psi in G space
     my $mu_G_X_psi_G = RtoG($mu_G_X_psi_r, $ndims,2); #xyz:pm:nx:ny:nz
-    # cross produt with wavvectors
-    my $G_X_mu_G_X_psi = crossp($G_pm_k_div_sqr, $mu_G_X_psi_G); #xyz::pm:nx:ny:nz
+    # cross product with wavvectors
+    my $G_X_mu_G_X_psi = crossp($G_pm_k_div_sqr, $mu_G_X_psi_G); #xyz:pm:nx:ny:nz
     # multiply by q**2
-    my $trans_part = ($q*$q)*$G_X_mu_G_X_psi; #xyz::pm:nx:ny:nz
+    my $trans_part = ($q*$q)*$G_X_mu_G_X_psi; #xyz:pm:nx:ny:nz
     # complete applied metric in G space
     return $long_part + $trans_part; #xyz:nx:ny:nz
 }
-
 
 #this is built here because it uses the k vector and it's an atributte
 #because it is called in Haydock to build the Hamiltonian
@@ -165,13 +184,21 @@ sub _build_LP{
 
 sub _build__G_pm_k_div_sqrd { # (G+-k)/(G+-k)^2
     my $self=shift;
-    my $k=$self->wavevector;
-    my $G=$self->G;
-    return pdl(map{$_/$_->inner($_)->(*1)}($G+$k, $G-$k))->mv(-1,1);
+    my $k=$self->wavevector;         # xyz
+    my $G=$self->G;                  # xyz:nx:ny:nz
+    return pdl(map{
+	$_                           # xyz:nx:ny:nz
+	    /
+	    $_->inner($_)            # nx:ny:nz
+	    ->(*1)                   # (xyz):nx:ny:nz
+	       }                     # xyz:nx:ny:nz
+	       ($G+$k, $G-$k)        # xyz:nx:ny:nz
+	)                            # xyz:nx:ny:nz:pm
+	->mv(-1,1);                  # xyz:pm:nx:ny:nz
 }
 
 sub _build_value {
-    croak "Sorry, there is no value for the metric of magnetizable systems. Use apply() instead.";
+    croak "Sorry, there is no value for the metric of magnetizable systems. Try 'apply'";
 }
 
 

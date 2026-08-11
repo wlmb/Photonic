@@ -1,11 +1,11 @@
-package Photonic::WEM::S::GreenP;
-$Photonic::WEM::S::GreenP::VERSION = '0.02401';
+package Photonic::WEM::ST::GreenP;
+$Photonic::WEM::ST::GreenP::VERSION = '0.02401';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::WEM::S::GreenP
+Photonic::WEM::ST::GreenP
 
 =head1 VERSION
 
@@ -43,8 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-   use Photonic::WEM::S::GreenP;
-   my $green=Photonic::WE::S::GreenP->new(haydock=>$h, nh=>$nh);
+   use Photonic::WEM::ST::GreenP;
+   my $green=Photonic::WEM::ST::GreenP->new(haydock=>$h, nh=>$nh);
    my $greenProjection=$green->Gpp;
    my $WaveProjection=$green->waveOperator;
    my $EpsProjection=$green->epsilon;
@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Calculates the dielectric function for a given fixed
-L<Photonic::WE::ST::Haydock> structure as a function of the dielectric
+L<Photonic::WEM::ST::Haydock> structure as a function of the dielectric
 functions of the components.
 
 =head1 ATTRIBUTES
@@ -61,7 +61,7 @@ functions of the components.
 
 =item * haydock
 
-The L<Photonic::WE::ST::Haydock> structure (required).
+The L<Photonic::WEM::ST::Haydock> structure (required).
 
 =item * nh
 
@@ -71,7 +71,7 @@ The maximum number of Haydock coefficients to use.
 
 Criteria of convergence. 0 means don't check. (defaults to 1e-7)
 
-=item * u
+=item * u ??
 
 The spectral variable used in the calculation
 
@@ -103,7 +103,7 @@ NOTE: Only works for polarizations along principal directions.
 use namespace::autoclean;
 use Moo;
 #use MooX::StrictConstructor;
-extends "Photonic::WE::S::GreenP";
+extends "Photonic::WE::ST::GreenP";
 
 __PACKAGE__->meta->make_immutable;
 

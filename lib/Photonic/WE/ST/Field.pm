@@ -1,5 +1,5 @@
 package Photonic::WE::ST::Field;
-$Photonic::WE::ST::Field::VERSION = '0.024';
+$Photonic::WE::ST::Field::VERSION = '0.02401';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::ST::Field
 
 =head1 VERSION
 
-version 0.024
+version 0.02401
 
 =head1 COPYRIGHT NOTICE
 
@@ -49,7 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 DESCRIPTION
 
-Calculates the non retarded electric field for a given fixed
+Calculates the retarded electric field for a given fixed
 Photonic::Geometry structure and given dielectric functions of
 the components.
 

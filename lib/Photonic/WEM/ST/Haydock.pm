@@ -1,5 +1,5 @@
 package Photonic::WEM::ST::Haydock;
-$Photonic::WEM::ST::Haydock::VERSION = '0.024';
+$Photonic::WEM::ST::Haydock::VERSION = '0.02401';
 
 =encoding UTF-8
 
@@ -9,12 +9,12 @@ Photonic::WEM::ST::Haydock
 
 =head1 VERSION
 
-version 0.024
+version 0.02401
 
 =head1 SYNOPSIS
 
     use Photonic::WEM::ST::Haydock;
-    my $nr=Photonic::WEM::ST::Haydock->new(metric=>$g, mu=>$mu, polarization=>$p);
+    my $nr=Photonic::WEM::ST::Haydock->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -26,9 +26,9 @@ version 0.024
 Implements calculation of Haydock coefficients and Haydock states for
 the calculation of the retarded dielectric function of arbitrary
 periodic systems (unbounded and bounded) with magnetic permeability
-being either 1 or different than 1 in arbitrary number of dimensions,
-one Haydock coefficient at a time. It uses the wave equation and the
-spinor representation.
+being either 1 or different than 1 in arbitrary number of
+dimensions, one Haydock coefficient at a time. It uses the wave
+equation and the spinor representation.
 
 Consumes L<Photonic::Roles::Haydock>, L<Photonic::Roles::UseMask>,
 L<Photonic::Roles::EpsFromGeometry>
@@ -44,11 +44,7 @@ A L<Photonic::WEM::ST::Metric> object defining the geometry of the
 system, the characteristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
 
-=item * mu
-
-The magnetic permeability function. Must be same type and dimensions as epsilon.
-
-=item * B ndims dims epsilon or mu
+=item * B ndims dims epsilon mu
 
 Accessors handled by metric (see L<Photonic::WEM::ST::Metric>)
 
@@ -141,13 +137,13 @@ use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(VSProd any_complex GtoR RtoG mvN);
 use Moo;
-use MooX::StrictConstructor;
-extends "Photonic::WE::ST::Haydock";
+#use MooX::StrictConstructor;
 
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WEM::ST::Metric'],
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',
 			 geometry=>'geometry', epsilonR=>'epsilon',
-	                 mu=>'mu'}, required=>1);
+	                 mu=>'mu'},
+	       required=>1);
 has 'polarization' =>(is=>'ro', required=>1, isa=>PDLComplex);
 has 'normalizedPolarization' =>(is=>'ro', isa=>PDLComplex,
      init_arg=>undef, writer=>'_normalizedPolarization');
@@ -163,24 +159,27 @@ sub applyOperator {
     my $psi=shift; #psi is xyz:pm:nx:ny:nz
     my $mask=undef;
     $mask=$self->mask if $self->use_mask;
-    my $epsilon = $self->epsilon; # 3x3
+    my $id=PDL::MatrixOps::identity($self->ndims);
     my $g = $self->metric; #metric object
     # apply metric
     my $g_psi_G=$g->apply($psi); # xyz:pm:nx:ny:nz.
     # FIRST TERM
     # get longitudinal projector and apply it to g psi
-    my $PL_g_psi_G = $g->LP #xyz:xyz:pm:nx:ny:nz
-			  ->inner($g_psi_G(:,*1)) #xyz:1:pm:nx:ny:nz
-			 ; # matrix-vector product xyz:pm:nx:ny:nz
+    my $PL_g_psi_G = $g->LP                  #xyz:xyz:pm:nx:ny:nz
+		     ->inner($g_psi_G(:,*1)) #xyz:pm:nx:ny:nz 
+                     ;                       # matrix-vector product xyz:pm:nx:ny:nz
     #SECOND TERM applied to g_psi
     #FT g_psi to real space
     my $g_psi_r = GtoR(mvN($g_psi_G,0,1,-1),$self->ndims,0); #nx:ny:nz:xyz:pm
-    ############ Tensorial Change ########
-    # move dims and left-multiply by epsilon in real space
-    my $eps_psi_r = $epsilon x mvN($g_psi_r,-2,-1,0); #xyz:pm:nx:ny:nz
-    ########################################
+    # left-multiply by epsilon in real space
+    my $eps_psi_r =
+	$self->epsilon                      #xyz:xyz:nx:ny:nz
+	->inner(
+            $g_psi_r->dummy(0)->mv(-2,0)    #xyz:(xyz):nx:ny:nz:pm
+	)                                   #xyz:nx:ny:nz:pm
+	->mv(0,-2);                         #nx:ny:nz:xyz:pm
     # FT the product to reciprocal space
-    my $eps_psi_G = mvN(RtoG(mvN($eps_psi_r,0,1,-1),$self->ndims,0),-2,-1,0); #xyz:pm:nx:ny:nz
+    my $eps_psi_G = mvN(RtoG($eps_psi_r, $self->ndims, 0),-2,-1,0); #xyz:pm:nx:ny:nz
     ### Apply Hamiltonian in G space
     my $H_g_psi_G = $PL_g_psi_G - $eps_psi_G;
     #psi_G is xyz:pm:nx:ny:nz mask is nx:ny:nz

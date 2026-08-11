@@ -1,11 +1,11 @@
-package Photonic::WEM::S::Green;
-$Photonic::WEM::S::Green::VERSION = '0.02401';
+package Photonic::WEM::ST::Green;
+$Photonic::WEM::ST::Green::VERSION = '0.02401';
 
 =encoding UTF-8
 
 =head1 NAME
 
-Photonic::WEM::S::Green
+Photonic::WEM::ST::Green
 
 =head1 VERSION
 
@@ -43,8 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-   use Photonic::WEM::S::Green;
-   my $G=Photonic::WEM::S::Green->new(metric=>$m, nh=>$nh);
+   use Photonic::WEM::ST::Green;
+   my $G=Photonic::WEM::ST::Green->new(metric=>$m, nh=>$nh);
    my $GreenTensor=$G->greenTensor;
    my $WaveTensor=$G->waveOperator;
    my $EpsTensor=$G->epsilonTensor;
@@ -52,7 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 =head1 DESCRIPTION
 
 Calculates the retarded green's tensor for a given fixed
-Photonic::WEM::S::Metric structure as a function of the dielectric
+Photonic::WEM::ST::Metric structure as a function of the dielectric
 and magnetic permeability functions of the components.
 
 =head1 ATTRIBUTES
@@ -65,7 +65,7 @@ Value of flag to keep Haydock states in Haydock calculations (default 0)
 
 =item * metric
 
-L<Photonic::WEM::S::Metric> describing the structure and some parameters.
+L<Photonic::WEM::ST::Metric> describing the structure and some parameters.
 
 =item * nh
 
@@ -78,7 +78,7 @@ fraction. 0 means don't check. (default 1e-7)
 
 =item * haydock
 
-Array of L<Photonic::WEM::S::Haydock> structures, one for each polarization
+Array of L<Photonic::WEM::ST::Haydock> structures, one for each polarization
 
 =item * reorthogonalize
 
@@ -86,7 +86,7 @@ Reorthogonalize haydock flag
 
 =item * greenP
 
-Array of L<Photonic::WEM::S::GreenP> structures, one for each direction.
+Array of L<Photonic::WEM::ST::GreenP> structures, one for each direction.
 
 =item * greenTensor
 
@@ -115,8 +115,8 @@ The macroscopic dielectric tensor
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
-use Photonic::WEM::S::Haydock;
-use Photonic::WEM::S::GreenP;
+use Photonic::WEM::ST::Haydock;
+use Photonic::WEM::ST::GreenP;
 use Photonic::Types -all;
 use Photonic::Utils qw(tensor make_haydock make_greenp any_complex);
 use List::Util qw(all);
@@ -129,11 +129,11 @@ has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for Haydock coefficients');
 has 'smallE'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
     	    documentation=>'Convergence criterium for use of Haydock coeff.');
-has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WEM::S::Metric'],
+has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WEM::ST::Metric'],
 	       handles=>[qw(geometry ndims dims mu)],required=>1);
 has 'haydock' =>(is=>'lazy', isa=>ArrayRef[Haydock],
             init_arg=>undef, documentation=>'Array of Haydock calculators');
-has 'greenP'=>(is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WEM::S::GreenP']],
+has 'greenP'=>(is=>'lazy', isa=>ArrayRef[InstanceOf['Photonic::WEM::ST::GreenP']],
              init_arg=>undef,
              documentation=>'Array of projected G calculators');
 has 'converged'=>(is=>'ro', init_arg=>undef, writer=>'_converged',
@@ -163,7 +163,7 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
     my ($self) = @_;
     my @pairs=$self->geometry->unitPairs->dog;
     my @haydocks = map{
-	Photonic::WEM::S::Haydock->new(
+	Photonic::WEM::ST::Haydock->new(
 	    metric=>$self->metric,
 	    nh=>$self->nh,
 	    reorthogonalize=>$self->reorthogonalize,
@@ -177,7 +177,7 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
 }
 
 sub _build_greenP {
-    make_greenp(shift, 'Photonic::WEM::S::GreenP');
+    make_greenp(shift, 'Photonic::WEM::ST::GreenP');
 }
 
 sub _build_waveOperator {
@@ -208,5 +208,3 @@ sub _build_epsilonTensor {
 __PACKAGE__->meta->make_immutable;
 
 1;
-
-__END__
