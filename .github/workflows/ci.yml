@@ -55,5 +55,4 @@ jobs:
           RELEASE_TESTING: 1
         run: |
           cpanm -n --installdeps --with-develop .
-          perl -Mblib -MPhotonic::WEM::ST::Metric -e1
           prove -br xt

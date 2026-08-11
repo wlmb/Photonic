@@ -90,6 +90,7 @@ Haydock when it calls this method.
 =cut
 
 
+use v5.16;
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::Primitive;
@@ -129,10 +130,11 @@ sub BUILD {
     carp "Wavevector should be 3D" unless $k->dims==1 && $k->dim(0)==3;
     my $epsTensor=$self->geometry->epsilon;
     carp "Geometry should provide a 3d complex permittivity matrix field" unless
-	$epsTensor->ndims==3+2 && $epsTensor->dim(0)==$epsTensor->dim(1)==3;
+	$epsTensor->ndims==3+2 && $epsTensor->dim(0)==$epsTensor->dim(1)
+	&&$epsTensor->dim(0)==3;
     my $mu=$self->mu;
     carp "Mu should be a $self->dims a 3d complex permeability matrix field" unless
-	$mu->ndims==3+2 && $mu->dim(0)==$mu->dim(1)==3;
+	$mu->ndims==3+2 && $mu->dim(0)==$mu->dim(1)&&$mu->dim(0)==3;
     carp "Dimensions of permittivity, permeability and space should be compatible"
 	unless (pdl($epsTensor->dims)==pdl($mu->dims))->all
 	and (pdl($epsTensor->slice("(0),(0)")->dims)==pdl($self->dims))->all;
