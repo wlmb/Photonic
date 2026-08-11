@@ -79,7 +79,7 @@ declare PDLComplexMatrixField => # NxN matrix for each point in N dimensional sp
 
 declare PDL3DComplexMatrixField => # 3x3 matrix for each point in 3 dimensional space
   as PDLComplexMatrix,
-  where { $_->dim(0)==$_->ndims-2==3},
+  where { $_->dim(0)==$_->ndims-2 && $_->dim(0)==3},
   ;
 
 __END__
