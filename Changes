@@ -2,6 +2,9 @@ Revision history for Photonic
 
 {{$NEXT}}
 
+
+  - Started WEM::ST modules for magnetizable anisotropic materials
+  - Added WE::S::Modules for magnetizable materials
   - Program rawfield to obtain the unnormalized fields, assuming the
     external source is an external polarization. Currently, modified
     LE::NR2::Field, LE::S::Field, Roles::Field, WE::S::Field, and the tests.

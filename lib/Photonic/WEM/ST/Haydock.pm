@@ -46,7 +46,7 @@ host dielectric function. Required in the initializer.
 
 =item * B ndims dims epsilon mu
 
-Accessors handled by metric (see L<Photonic::WEM::S::Metric>)
+Accessors handled by metric (see L<Photonic::WEM::ST::Metric>)
 
 =item * polarization complex PDL
 
@@ -173,7 +173,7 @@ sub applyOperator {
     #FT g_psi to real space
     my $g_psi_r = GtoR(mvN($g_psi_G,0,1,-1),$self->ndims,0); #nx:ny:nz:xyz:pm
     # left-multiply by epsilon in real space
-    my $eps_psi_r = (
+    my $eps_psi_r =
 	$self->epsilon                      #xyz:xyz:nx:ny:nz
 	->inner(
             $g_psi_r->dummy(0)->mv(-2,0)    #xyz:(xyz):nx:ny:nz:pm

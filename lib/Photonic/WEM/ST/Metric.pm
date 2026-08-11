@@ -75,7 +75,7 @@ Real space complex tensorial magnetic permeability for each volume element.
 
 =item * new(mu=>$mu, geometry=>$g, epsilon=>$e, $wavenumber=>$q, $wavevector=>$k);
 
-Create a new Ph::WEM::S::Metric object with permeability $mu, Geometry $g, dielectric
+Create a new Ph::WEM::ST::Metric object with permeability $mu, Geometry $g, dielectric
 function of the host $e, vacuum wavenumber $q=omega/c  and wavevector
 $k. $q and $k are real.
 
@@ -159,7 +159,7 @@ sub apply{
     my $G_X_psi_r = GtoR(mvN($G_X_psi_G, 0,1,-1),
 			 $ndims,0);                #nx:ny:nz:xyz:pm
     # left-multiply by mu and reorder dims back
-    my $mu_G_X_psi_r = (
+    my $mu_G_X_psi_r =
 	$mu->dummy(2)->inner(                  #xyz:xyz:(pm):nx:ny:nz matrix (spinor)
 	mvN(($G_X_psi_r),-2,-1,0)->dummy(1)    #xyz:(xyz):pm:nx:ny:nz vector dummy (spinor)
 	);                                     #xyz:pm:nx:ny:nz       vector spinor
