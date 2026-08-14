@@ -236,6 +236,7 @@ with 'Photonic::Roles::KeepStates', 'Photonic::Roles::UseMask';
 my %KIND2METHOD = (
   f => 'P2',
   l => 'selfConsistentVecL',
+  a => 'P2LMCalt',
   d => 'dipolar',
   q => 'quadrupolar',
   e => 'external',
