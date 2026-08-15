@@ -67,7 +67,7 @@ my $eb=3+4*i;
 
 {
     #View 2D from 1D superlattice. Long wavelength transverse case
-    my $Bt=zeroes(1,1,11)->yvals<5; #2D flat system
+    my $Bt=zeroes(1,1,11)->zvals<5; #2D flat system
     my $epsilont=$ea*(1-$Bt)+$eb*$Bt;
     my $mu=ones(1,1,11)->r2C;
     my $gt=Photonic::Geometry::FromB->new(B=>$Bt); #trans
@@ -104,7 +104,7 @@ my $eb=3+4*i;
 
 #View 2D from 1D superlattice. Long wavelength transverse case
 {
-    my $Bt=zeroes(1,1,11)->yvals<5; #2D flat system
+    my $Bt=zeroes(1,1,11)->zvals<5; #2D flat system
     my $epsilont=$ea*(1-$Bt)+$eb*$Bt;
     my $mu=ones(1,1,11)->r2C;
     my $gt=Photonic::Geometry::FromB->new(B=>$Bt); #trans
