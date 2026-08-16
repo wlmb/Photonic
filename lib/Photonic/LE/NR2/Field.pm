@@ -88,7 +88,7 @@ use PDL::Lite;
 use PDL::NiceSlice;
 use PDL::Constants qw(PI);
 use Photonic::LE::NR2::Haydock;
-use Photonic::Utils qw(cgtsv GtoR linearCombineIt);
+use Photonic::Utils qw(cgtsv GtoR linearCombine);
 use Photonic::Types -all;
 use Moo;
 use MooX::StrictConstructor;
@@ -156,7 +156,7 @@ sub _build_field {
     my $Es= $Fn/$Fn((0));
     my $nrGnorm = $self->haydock->GNorm;
     #field is cartesian,nx,ny...
-    my $field_G=linearCombineIt($Es, $nrGnorm*$states); #En ^G|psi_n>
+    my $field_G=linearCombine($Es, $nrGnorm*$states); #En ^G|psi_n>
     $field_G *= $self->filter->(*1) if $self->has_filter;
     # fourier transform vector field.
     my $field_R=GtoR($field_G, $self->haydock->ndims, 1);
@@ -170,7 +170,7 @@ sub _build_rawfield {
     my $states=$self->haydock->states->dummy(0);
     my $nrGnorm = $self->haydock->GNorm;
     #field is cartesian,nx,ny...
-    my $field_G=linearCombineIt($Es, $nrGnorm*$states); #En ^G|psi_n>
+    my $field_G=linearCombine($Es, $nrGnorm*$states); #En ^G|psi_n>
     $field_G *= $self->filter->(*1) if $self->has_filter;
     # fourier transform vector field.
     my $field_R=GtoR($field_G, $self->haydock->ndims, 1);

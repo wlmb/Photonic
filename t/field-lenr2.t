@@ -61,6 +61,7 @@ ok(Cagree($flv, $flx), "1D long field") or diag "got: $flv\nexpected: $flx";
 ok(Cagree($fle, $flex), "1D long response") or diag "got: $fle\nexpected: $flex";
 
 #View 2D from 1D superlattice.
+
 my $Bt=zeroes(1,11)->yvals<5; #2D flat system
 my $gt=Photonic::Geometry::FromB->new(B=>$Bt, Direction0=>pdl([1,0])); #trans
 my $nt=Photonic::LE::NR2::Haydock->new(geometry=>$gt, nh=>10, keepStates=>1);
@@ -74,13 +75,16 @@ ok(Cagree($fte, $favt), "1D trans response") or diag "got: $fte\nexpected: $favt
 
 # check raw fields
 # Longitudinal
+# 1D
 my $flv_raw=$flo->rawfield;
 my $flx_raw=-4*PI*($fla*(1-$B)+$flb*$B)->dummy(0);
 ok(Cagree($flv_raw, $flx_raw), "1D long rawfield");
+# 2D
 my $ftv_raw=$fto->rawfield;
 my $ftx_raw=-(4*PI+0*i)/($ea*(1-$gt->f)+$eb*$gt->f)*pdl([1,0]);
 ok(Cagree($ftv_raw, $ftx_raw), "1D trans field") or diag "got: $ftv_raw\nexpected: $ftx_raw";
 
+## NonRetarded Second Harmonic Plarization
 my ($dA, $dB) = (0, 1); # vacuum, then anything as is normalised to dB
 my $nrshp=Photonic::LE::NR2::SHP->new(
   haydock=>$nt, nh=>10, filter=>ones(1),
@@ -107,6 +111,7 @@ my $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected), "dipolar") or diag "got: $got\nexpected: $expected";
+# quadrupolar contrib
 $got=$nrsh->quadrupolar;
 $expected = r2C(pdl <<'EOF');
 [
@@ -124,6 +129,7 @@ $expected = r2C(pdl <<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected), "quadrupolar") or diag "got: $got\nexpected: $expected";
+# SH ext. polarization in reciprocal space
 $got=$nrsh->external_G;
 $expected = pdl(<<'EOF');
 [
@@ -141,6 +147,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected, 1e-33), "external_G") or diag "got: $got\nexpected: $expected";
+# SH ext. longitudinal polarization in reciprocal space
 $got=$nrsh->externalL_G;
 $expected = pdl(<<'EOF');
 [
@@ -158,6 +165,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalL_G") or diag "got: $got\nexpected: $expected";
+# SH ext. longitudinal polarization proj. in recip. space
 $got=$nrsh->externalVecL_G;
 $expected = pdl(<<'EOF');
 [
@@ -175,6 +183,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalVecL_G") or diag "got: $got\nexpected: $expected";
+# SH ext. longitudinal polarization proj. in real space'
 $got=$nrsh->externalVecL;
 $expected = pdl(<<'EOF');
 [
@@ -192,6 +201,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalVecL") or diag "got: $got\nexpected: $expected";
+# SH ext. longitudinal polarization in Haydock representation
 $got=$nrsh->externalL_n;
 $expected = pdl(<<'EOF');
 [
@@ -200,23 +210,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected, 1e-33), "externalL_n") or diag "got: $got\nexpected: $expected";
-$got=$nrsh->externalL_G;
-$expected = pdl(<<'EOF');
-[
- [ 0 ]
- [ -5.9528635e-17+2.4920212e-17i ]
- [ -2.7186406e-17+6.2313278e-17i ]
- [ -1.2929662e-17+5.3169197e-17i ]
- [ 1.3401775e-17+1.10965e-16i ]
- [ 1.5419056e-16+6.9763677e-17i ]
- [ -1.2848911e-16+1.1014649e-16i ]
- [ 1.8204495e-17+1.1027889e-16i ]
- [  2.729985e-17+4.7422124e-17i ]
- [ 4.3546668e-17+5.2208553e-17i ]
- [ 6.4125149e-17+7.2553859e-18i ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-33), "externalL_G") or diag "got: $got\nexpected: $expected";
+# SH self consistent longitudinal polarization in Haydock representation
 $got=$nrsh->selfConsistentL_G;
 $expected = pdl(<<'EOF');
 [
@@ -234,6 +228,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected, 1e-35), "selfConsistentL_G") or diag "got: $got\nexpected: $expected";
+# SH self consistent longitudinal polarization components in reciprocal space
 $got=$nrsh->selfConsistentVecL_G;
 $expected = pdl(<<'EOF');
 [
@@ -251,6 +246,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected, 1e-35), "selfConsistentVecL_G") or diag "got: $got\nexpected: $expected";
+# SH self consistent longitudinal polarization vector field in real space
 $got=$nrsh->selfConsistentVecL;
 $expected = pdl(<<'EOF');
 [
@@ -268,6 +264,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected, 1e-35), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
+# Linear "atomic" polarizability
 $got=$nrsh->alpha1;
 $expected = pdl(<<'EOF');
 [
@@ -285,6 +282,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected), "alpha1") or diag "got: $got\nexpected: $expected";
+# SH "atomic" polarizability
 $got=$nrsh->alpha2;
 $expected = pdl(<<'EOF');
 [
@@ -302,6 +300,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected), "alpha2") or diag "got: $got\nexpected: $expected";
+# longitudinal field at second harmonic
 $got=$nrsh->field2;
 $expected = pdl(<<'EOF');
 [
@@ -319,6 +318,7 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected), "field2") or diag "got: $got\nexpected: $expected";
+# SH self consistent total polarization vector field in real space
 $got=$nrsh->P2;
 $expected = pdl(<<'EOF');
 [
@@ -336,25 +336,21 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
+# Spectral variable at fundamental
 $got=$nrsh->u1;
 $expected = pdl(<<'EOF');
 -0.75-0.25i
 EOF
 ok(Cagree($got, $expected), "u1") or diag "got: $got\nexpected: $expected";
-$got=$nrsh->P2LMCalt;
-$expected = pdl(<<'EOF');
-[
- [ [ 0 -4.7586641e-16+6.7980915e-17i ] ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-46), "P2LMCalt") or diag "got: $got\nexpected: $expected";
 
+# second harmonic susceptibility tensor
 my $chi=Photonic::LE::NR2::SHChiTensor->new(
   geometry=>$gl,
   densityA=>$dA, densityB=>$dB, nhf=>10, nh=>10,
   epsA1=>$ea, epsB1=>$eb, epsA2=>$ea*$ea, epsB2=>$eb*$eb,
   keepStates=>1,
 );
+# non retarded SH polarizations and fields
 $got = Photonic::LE::NR2::SH->new(
   shp=>$chi->nrshp->[0],
   epsA1=>$ea, epsB1=>$eb,epsA2=>$ea*$ea, epsB2=>$eb*$eb,
@@ -376,41 +372,50 @@ $expected = pdl(<<'EOF');
 ]
 EOF
 ok(Cagree($got, $expected), "SHChiTensor SHPs P2") or diag "got: $got\nexpected: $expected";
+# different chis
 $got = $chi->evaluate;
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
+# chi P2
 $got = $chi->evaluate(kind => 'f', mask => pdl(1));
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
+
+# chi selfConsistentVecL
 $got = $chi->evaluate(kind => 'l');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
+# chi P2LMCalt
 $got = $chi->evaluate(kind => 'a');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "P2LMCalt") or diag "got: $got\nexpected: $expected";
+# chi dipolar
 $got = $chi->evaluate(kind => 'd');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "dipolar") or diag "got: $got\nexpected: $expected";
+# chi quadrupolar
 $got = $chi->evaluate(kind => 'q');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "quadrupolar") or diag "got: $got\nexpected: $expected";
+# chi external
 $got = $chi->evaluate(kind => 'e');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "external") or diag "got: $got\nexpected: $expected";
+# chi externalVecL
 $got = $chi->evaluate(kind => 'el');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]

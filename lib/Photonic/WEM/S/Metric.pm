@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 Calculates the retarded metric tensor g_{GG'}^{ij} for use in the
 calculation of the retarded Haydock coefficients for the wave equation
-in a binary medium where the host has no dissipation.
+in a medium of arbitrary composition  where the reference has no dissipation.
 
 Implements 'Photonic::Roles::Metric'. Look there for the basic
 attributes and methods.
@@ -86,9 +86,7 @@ Haydock when it calls this method.
 
 =back
 
-
 =cut
-
 
 use namespace::autoclean;
 use PDL::Lite;
@@ -103,14 +101,12 @@ use Moo;
 
 has 'mu' =>(is=>'ro', isa=>PDLObj, required=>1,
 	    documentation=> 'Magnetic permeability, scalar function of position');
-
 has 'LP'
     =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
        documentation=>'Longitudinal Projector in reciprocal spinorial space');
 has '_G_pm_k_div_sqrd'
     =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
        documentation=>'Internal. Reciprocal vector in spinor space divided by its square');
-
 has  'value'=>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
 	       documentation=>'Metric Tensor');
 
@@ -149,7 +145,7 @@ sub apply{
     # cross prod with psi
     my $G_X_psi_G = crossp($G_pm_k_div_sqr, $psi); #xyz:pm:nx:ny:nz
     # FT to real space and move dims
-    my $G_X_psi_r = GtoR(mvN($G_X_psi_G, 0,1,-1), $ndims,0); #nx:ny:nz:xyz:pm
+    my $G_X_psi_r = GtoR(mvN($G_X_psi_G,0,1,-1), $ndims,0); #nx:ny:nz:xyz:pm
     # left-multiply by mu and move dims back
     my $mu_G_X_psi_r = mvN($mu*($G_X_psi_r),-2,-1,0); #xyz:pm:nx:ny:nz
     # mu G X psi in G space

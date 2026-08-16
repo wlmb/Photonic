@@ -43,10 +43,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =head1 SYNOPSIS
 
-    use Photonic::WEM::ST::Metric;
-    my $gGG=Photonic::WEM::ST::Metric->new(
-            mu => $mu,
-            geometry=>$geometry, epsilon=>$eps,
+    use Photonic::WEM::S::Metric;
+    my $gGG=Photonic::WEM::S::Metric->new(
+            geometry=>$geometry, epsilon=>$eps, mu=>$mu,
             wavenumber => $q, $wavevector=>k);
     f($gGG->value);
 
@@ -54,7 +53,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 Applies the retarded metric tensor g_{GG'}^{ij} for use in the
 calculation of the retarded Haydock coefficients for the wave equation
-in a medium with several, allowing for a magnetic permeability.
+in a possibly anisotropic medium with several components, or more
+generally, a position dependent response, allowing for a magnetic
+permeability.
 
 Implements 'Photonic::Roles::Metric'. Look there for the basic
 attributes and methods.
@@ -86,9 +87,7 @@ Haydock when it calls this method.
 
 =back
 
-
 =cut
-
 
 use v5.16;
 use namespace::autoclean;
@@ -100,11 +99,10 @@ use Carp;
 use Photonic::Types -all;
 use Photonic::Utils qw(any_complex mvN GtoR RtoG);
 use Moo;
-#use MooX::StrictConstructor;
+use MooX::StrictConstructor;
 
 has 'mu' =>(is=>'ro', isa=>PDL3DComplexMatrixField, required=>1,
 	    documentation=> 'Magnetic permeability, scalar function of position');
-
 has 'LP'
     =>(is=>'lazy', isa=>PDLObj, init_arg=>undef,
        documentation=>'Longitudinal Projector in reciprocal spinorial space');

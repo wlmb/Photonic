@@ -8,7 +8,6 @@ $Photonic::WEM::S::Field::VERSION = '0.02401';
 Photonic::WEM::S::Field
 
 =head1 VERSION
-
 version 0.02401
 
 =head1 COPYRIGHT NOTICE

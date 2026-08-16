@@ -130,7 +130,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 =cut
 
-
 use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
@@ -167,7 +166,7 @@ sub applyOperator {
     # FIRST TERM
     # get longitudinal projector and apply it to g psi
     my $PL_g_psi_G = $g->LP                  #xyz:xyz:pm:nx:ny:nz
-		     ->inner($g_psi_G(:,*1)) #xyz:pm:nx:ny:nz (decía xyz:1:pm:nx:ny:nz ??)
+		     ->inner($g_psi_G(:,*1)) #xyz:pm:nx:ny:nz 
                      ;                       # matrix-vector product xyz:pm:nx:ny:nz
     #SECOND TERM applied to g_psi
     #FT g_psi to real space

@@ -111,9 +111,11 @@ has 'epsilon'   => (is=>'ro', isa=>PDLObj, required=>1,
 has 'wavenumber'=> (is=>'ro', isa=>PDLObj, required=>1,
                    documentation=>'Vacuum wavenumber w/c');
 has 'wavevector'=> (is=>'ro', isa=>PDLObj, required=>1,
-                   documentation=>'Wave vector');
+		    documentation=>'Wave vector');
+
 requires qw(value); #provided by metric instances
 
 no Moo::Role;
 
 1;
+

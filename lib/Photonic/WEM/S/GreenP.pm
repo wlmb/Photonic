@@ -5,7 +5,7 @@ $Photonic::WEM::S::GreenP::VERSION = '0.02401';
 
 =head1 NAME
 
-Photonic::WE::S::GreenP
+Photonic::WEM::S::GreenP
 
 =head1 VERSION
 

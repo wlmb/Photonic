@@ -44,7 +44,7 @@ A L<Photonic::WEM::S::Metric> object defining the geometry of the
 system, the characteristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
 
-=item * B ndims dims epsilon mu
+=item * B ndims dims epsilon or mu
 
 Accessors handled by metric (see L<Photonic::WEM::S::Metric>)
 
@@ -129,7 +129,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
     México
 
 =cut
-
 
 use namespace::autoclean;
 use PDL::Lite;

@@ -41,10 +41,11 @@ require Exporter;
 our @ISA=qw(Exporter);
 our @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
     HProd MHProd EProd VSProd SProd
-    corner_rotate mvN top_slice linearCombineIt lentzCF any_complex tensor
+    corner_rotate mvN top_slice linearCombine
+    lentzCF any_complex tensor
     make_haydock make_greenp
     cartesian_product dummyN triangle_coords incarnate_as
-    wave_operator apply_longitudinal_projection make_dyads
+    apply_longitudinal_projection make_dyads
     cgtsv lu_decomp lu_solve convert_units upper_sqrt
 );
 use PDL::LiteF;
@@ -58,12 +59,16 @@ require List::Util;
 
 
 sub top_slice :lvalue {
+    # slices an ndarray for a given last dimension
     my ($pdl, $index) = @_;
     my $slice_arg = join ',', (map ':', 1..($pdl->ndims-1)), $index;
     $pdl->slice($slice_arg);
 }
 
 sub dummyN {
+    # Inserts a block of $how_many dummy dimensions of size $dim_size
+    # (default 1) starting at dimension $where (default 0) into an
+    # ndarray $pdl.
   my ($pdl, $how_many, $where, $dim_size) = @_;
   return $pdl if $how_many <= 0;
   my $ndims=$pdl->ndims;
@@ -75,20 +80,15 @@ sub dummyN {
   $pdl->slice($slice_arg);
 }
 
-sub linearCombineIt { #complex linear combination of states
+sub linearCombine { #complex linear combination of states
     my ($coefficients, $states, $thread_dims)=@_;
     $thread_dims //= 0;
     $coefficients=dummyN($coefficients, $states->ndims-$coefficients->ndims);
     ($coefficients*$states)->mv(-$thread_dims-1,0)->sumover;
 }
 
-sub any_complex {
+sub any_complex { # test if an ndarray is any kind of complex
     grep ref $_ && ($_->isnull || !$_->type->real), @_;
-}
-
-sub wave_operator {
-    my ($green, $nd) = @_;
-    lu_solve([lu_decomp($green)], r2C(PDL::MatrixOps::identity($nd)));
 }
 
 sub cartesian_product {
@@ -537,7 +537,7 @@ ndarray.
 Adds C<$how_many> (no-op if <= 0) dummy dimensions of size C<$dim_size>
 (default 1) in the C<$which_dim> (default 0) position.
 
-=item * $r=linearCombineIt($c, $it, $thread_dims)
+=item * $r=linearCombine($c, $it, $thread_dims)
 
 Complex linear combination of states. $c is a 'complex'
 ndarray and $it is an ndarray of states from a L<Photonic::Roles::Haydock>.
@@ -639,20 +639,14 @@ True if any of the args are a complex PDL.
 
 =item * cartesian_product
 
-Given two ndarrays a(Z,x1,m), b(Z,x2,n), return c(Z,x1+x2,m*n), with
-each row from C<b> appended to all rows from C<a>. C<Z> can be empty
-but must be compatible; the shorter one will be "dummied up" from the
-zero end as necessary.
+Given two ndarrays a(x1,m), b(x2,n), return c(x1+x2,m*n), with
+each row from C<b> appended to all rows from C<a>. If one of them is
+1D, a dummy first index is added.
 
 =item * tensor
 
 Given a complex PDL, an LU decomposition array-ref as returned by
 L</lu_decomp>, and the size of the tensor, returns the tensor.
-
-=item * wave_operator
-
-Given a Green tensor and number of dimension in the geometry, returns
-a wave operator.
 
 =item * make_haydock
 

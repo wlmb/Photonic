@@ -35,6 +35,7 @@ use PDL::Constants qw(PI);
 use Photonic::WEM::S::Haydock;
 use Photonic::WEM::S::Metric;
 use Photonic::WEM::S::Field;
+use Photonic::Geometry::FromB;
 
 use Test::More tests => 4;
 use lib 't/lib';
@@ -45,7 +46,7 @@ my $eb=3+4*i;
 
 #Check field for simple 1D system.
 {
-    #Longitudinal case
+    #Longitudinal case vs. effective medium approximation
     my $B=zeroes(11,1,1)->xvals<5; #1D system
     my $epsilon=$ea*(1-$B)+$eb*$B;
     my $mu=ones(11,1,1)->r2C;
@@ -61,7 +62,7 @@ my $eb=3+4*i;
     my $flb=1/$eb;
     my $fproml=$fla*(1-$gl->f)+$flb*($gl->f);
     ($fla, $flb)=map {$_/$fproml} ($fla, $flb);
-    my $flx=pdl(($fla*(1-$B)+$flb*$B), 0,0)->mv(-1,0);
+    my $flx=pdl(($fla*(1-$B)+$flb*$B),0,0)->mv(-1,0);
     ok(Cagree($flv, $flx), "1D long field");
 }
 

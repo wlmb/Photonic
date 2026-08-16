@@ -495,20 +495,6 @@ $data = pdl(<<'EOF');
  ]
 ]
 EOF
-$got = wave_operator($data, 2);
-$expected = pdl(<<'EOF');
-[
- [
-      1.4483986+0.23487544i
-  1.1625849e-12+1.4461083e-12i
- ]
- [
-   1.1625849e-12+1.4461083e-12i
-  -5.0556058e-05+0.00057105487i
- ]
-]
-EOF
-ok all(approx($got, $expected)), 'wave_operator' or diag "got: $got, expected $expected";
 
 $data = pdl(<<'EOF');
 [

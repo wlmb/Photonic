@@ -105,29 +105,10 @@ sub _build_value {
     my $q=$self->wavenumber;
     my $eps=$self->epsilon;
     my $k=$self->wavevector;
-    if(any_complex($eps, $k, $q)) { #complex metric
-	#Make all complex
-	$_ = PDL::r2C($_) for $q, $k, $eps;
-	croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
-	    $k->dim(0)==$self->ndims;
-	my ($kPG, $kMG) = ($k+$G, $k-$G); #xy:nx:ny
-	# (k+G)(k+G) diad
-	my ($kPGkPG, $kMGkMG) = map $_->(:,*1)*$_->(*1),
-	   $kPG, $kMG; #xy:xy:nx:ny
-	# interior product
-	my ($kPG2,$kMG2) = map +($_*$_)->sumover, $kPG, $kMG; #nx:ny;
-	my $id=identity($self->ndims);
-	my $k02=$eps*$q*$q; # squared wavenumber in 'host'
-	#xyz xyz nx ny nz
-	#cartesian matrix for each wavevector.
-	my $gPGG=($k02*$id-$kPGkPG)/(($k02-$kPG2)->(*1,*1)); #xy:xy:nx:ny
-	my $gMGG=($k02*$id-$kMGkMG)/(($k02-$kMG2)->(*1,*1)); #xy:xy:nx:ny
-	my $gGG=PDL->pdl($gPGG, $gMGG)->mv(-1,2); #xy:xy:pm:nx:ny
-	return $gGG;
-    }
     croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
 	$k->dim(0)==$self->ndims and $k->ndims==1;
-    #might generalize to complex k
+    #croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
+    #	$k->dim(0)==$self->ndims; # Not enough
     my ($kPG, $kMG) = ($k+$G, $k-$G); #xy:nx:ny
     # (k+G)(k+G) diad
     my ($kPGkPG, $kMGkMG) = map $_->outer($_), $kPG, $kMG; #xy:xy:nx:ny
