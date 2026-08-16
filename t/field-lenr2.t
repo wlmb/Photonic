@@ -84,7 +84,7 @@ my $ftv_raw=$fto->rawfield;
 my $ftx_raw=-(4*PI+0*i)/($ea*(1-$gt->f)+$eb*$gt->f)*pdl([1,0]);
 ok(Cagree($ftv_raw, $ftx_raw), "1D trans field") or diag "got: $ftv_raw\nexpected: $ftx_raw";
 
-## NonRetarded Second Harmonic Plarization 
+## NonRetarded Second Harmonic Plarization
 my ($dA, $dB) = (0, 1); # vacuum, then anything as is normalised to dB
 my $nrshp=Photonic::LE::NR2::SHP->new(
   haydock=>$nt, nh=>10, filter=>ones(1),
@@ -397,7 +397,7 @@ $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "P2LMCalt") or diag "got: $got\nexpected: $expected";
-# chi dipolar 
+# chi dipolar
 $got = $chi->evaluate(kind => 'd');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
@@ -409,7 +409,7 @@ $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]
 EOF
 ok(Cagree($got, $expected), "quadrupolar") or diag "got: $got\nexpected: $expected";
-# chi external 
+# chi external
 $got = $chi->evaluate(kind => 'e');
 $expected = pdl(<<'EOF');
 [ [ [ 0 ] ] ]

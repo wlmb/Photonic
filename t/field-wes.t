@@ -45,7 +45,7 @@ my $eb=3+4*i;
 
 #Check field for simple 1D system.
 {
-    #Longitudinal case (effective medium approximation)
+    #Longitudinal case vs. effective medium approximation
     my $B=zeroes(11)->xvals<5; #1D system
     my $epsilon=$ea*(1-$B)+$eb*$B;
     my $gl=Photonic::Geometry::FromB->new(B=>$B); #long

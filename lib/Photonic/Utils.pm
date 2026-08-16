@@ -41,7 +41,8 @@ require Exporter;
 our @ISA=qw(Exporter);
 our @EXPORT_OK=qw(vectors2Dlist tile RtoG GtoR
     HProd MHProd EProd VSProd SProd
-    corner_rotate mvN top_slice linearCombineIt lentzCF any_complex tensor
+    corner_rotate mvN top_slice linearCombine
+    lentzCF any_complex tensor
     make_haydock make_greenp
     cartesian_product dummyN triangle_coords incarnate_as
     apply_longitudinal_projection make_dyads
@@ -79,7 +80,7 @@ sub dummyN {
   $pdl->slice($slice_arg);
 }
 
-sub linearCombineIt { #complex linear combination of states
+sub linearCombine { #complex linear combination of states
     my ($coefficients, $states, $thread_dims)=@_;
     $thread_dims //= 0;
     $coefficients=dummyN($coefficients, $states->ndims-$coefficients->ndims);
@@ -88,11 +89,6 @@ sub linearCombineIt { #complex linear combination of states
 
 sub any_complex { # test if an ndarray is any kind of complex
     grep ref $_ && ($_->isnull || !$_->type->real), @_;
-}
-
-sub wave_operator {
-    my ($green, $nd) = @_;
-    lu_solve([lu_decomp($green)], r2C(PDL::MatrixOps::identity($nd)));
 }
 
 sub cartesian_product {

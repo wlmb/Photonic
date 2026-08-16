@@ -54,7 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 Calculates the retarded metric tensor g_{GG'}^{ij} for use in the
 calculation of the retarded Haydock coefficients for the wave equation
-in a medium of arbitrary composition  where the host has no dissipation.
+in a medium of arbitrary composition  where the reference has no dissipation.
 
 Implements 'Photonic::Roles::Metric'. Look there for the basic
 attributes and methods.

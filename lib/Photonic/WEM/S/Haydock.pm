@@ -14,7 +14,7 @@ version 0.02401
 =head1 SYNOPSIS
 
     use Photonic::WEM::S::Haydock;
-    my $nr=Photonic::WEM::S::Haydock->new(metric=>$g, mu=>$mu, polarization=>$p);
+    my $nr=Photonic::WEM::S::Haydock->new(metric=>$g, polarization=>$p);
     $nr->iterate;
     say $nr->iteration;
     say $nr->current_a;
@@ -43,10 +43,6 @@ L<Photonic::Roles::EpsFromGeometry>
 A L<Photonic::WEM::S::Metric> object defining the geometry of the
 system, the characteristic function, the wavenumber, wavevector and
 host dielectric function. Required in the initializer.
-
-=item * mu
-
-The magnetic permeability function. Must be same type and dimensions as epsilon.
 
 =item * B ndims dims epsilon or mu
 
@@ -146,7 +142,8 @@ use Moo;
 has 'metric'=>(is=>'ro', isa => InstanceOf['Photonic::WEM::S::Metric'],
 	       handles=>{B=>'B', ndims=>'ndims', dims=>'dims',
 			 geometry=>'geometry', epsilonR=>'epsilon',
-	                 mu=>'mu'}, required=>1);
+	                 mu=>'mu'},
+	       required=>1);
 has 'polarization' =>(is=>'ro', required=>1, isa=>PDLComplex);
 has 'normalizedPolarization' =>(is=>'ro', isa=>PDLComplex,
      init_arg=>undef, writer=>'_normalizedPolarization');

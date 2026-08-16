@@ -64,7 +64,7 @@ my $db = (1-$da);
 
   my $epsilonl = $filmb*($eb*$ident5) + $filma*($ea*$ident5);
   my $mul = $filmb*$mub + $filma*$mua;
-  
+
   my $glf=Photonic::Geometry::FromB->new(B=>$filmb); #only used to get the correct filling fraction
   my $gl=Photonic::Geometry::FromEpsilonTensor->new(epsilon=>$epsilonl, L=>pdl([1,1,1])); #long
   my $ml=Photonic::WEM::ST::Metric->new(mu=>$mul, geometry=>$gl, epsilon=>pdl(1),
@@ -86,7 +86,7 @@ my $db = (1-$da);
   #View 2D from 1D superlattice. Long wavelength transverse case
   my $grid = zeroes(1,1,11);
   my $z    = $grid->zvals/11;
-  
+
   ## add two dimensions at the beggining
   my $filma = ($z<=$da)->dummy(0)->dummy(0);
   my $filmb = ($z>$da)->dummy(0)->dummy(0);
@@ -130,14 +130,14 @@ my $db = (1-$da);
   my $fla = (1/$ea);
   my $flb = (1/$eb);
   my $flx=pdl(-4*PI*($fla*$filma+$flb*$filmb),0,0)->mv(-1,0)->squeeze;
-  ok(Cagree($flv, $flx), "1D long rawfield");  
+  ok(Cagree($flv, $flx), "1D long rawfield");
 }
 
 {
   #View 2D from 1D superlattice. Long wavelength transverse case
   my $grid = zeroes(1,1,11);
   my $z    = $grid->zvals/11;
-  
+
   ## add two dimensions at the beggining
   my $filma = ($z<=$da)->dummy(0)->dummy(0);
   my $filmb = ($z>$da)->dummy(0)->dummy(0);
@@ -147,8 +147,8 @@ my $db = (1-$da);
 
   my $q=pdl(0.00001);
   my $k=pdl([0,0,0.0002]);
-  
-  my $glf=Photonic::Geometry::FromB->new(B=>$filmb); #only used to get the correct filling fraction  
+
+  my $glf=Photonic::Geometry::FromB->new(B=>$filmb); #only used to get the correct filling fraction
   my $gt=Photonic::Geometry::FromEpsilonTensor->new(epsilon=>$epsilont, L=>pdl([1,1,1])); #long
   my $mt=Photonic::WEM::ST::Metric->new(mu=>$mut, geometry=>$gt, epsilon=>pdl(1),
   				      wavenumber=>$q, wavevector=>$k);

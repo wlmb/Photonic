@@ -53,7 +53,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 Applies the retarded metric tensor g_{GG'}^{ij} for use in the
 calculation of the retarded Haydock coefficients for the wave equation
-in a medium with several components, allowing for a magnetic permeability.
+in a possibly anisotropic medium with several components, or more
+generally, a position dependent response, allowing for a magnetic
+permeability.
 
 Implements 'Photonic::Roles::Metric'. Look there for the basic
 attributes and methods.

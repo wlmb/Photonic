@@ -105,9 +105,10 @@ sub _build_value {
     my $q=$self->wavenumber;
     my $eps=$self->epsilon;
     my $k=$self->wavevector;
-    #Make all complex
     croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
-	$k->dim(0)==$self->ndims;
+	$k->dim(0)==$self->ndims and $k->ndims==1;
+    #croak "Wave vector must be ".$self->ndims."-dimensional vector" unless
+    #	$k->dim(0)==$self->ndims; # Not enough
     my ($kPG, $kMG) = ($k+$G, $k-$G); #xy:nx:ny
     # (k+G)(k+G) diad
     my ($kPGkPG, $kMGkMG) = map $_->outer($_), $kPG, $kMG; #xy:xy:nx:ny

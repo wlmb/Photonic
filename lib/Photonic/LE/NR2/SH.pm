@@ -192,7 +192,7 @@ use namespace::autoclean;
 use PDL::Lite;
 use PDL::NiceSlice;
 use Photonic::LE::NR2::Haydock;
-use Photonic::Utils qw(RtoG GtoR HProd linearCombineIt any_complex cgtsv top_slice mvN);
+use Photonic::Utils qw(RtoG GtoR HProd linearCombine any_complex cgtsv top_slice mvN);
 use Photonic::Types -all;
 use PDL::Constants qw(PI);
 use Moo;
@@ -445,7 +445,7 @@ sub _build_selfConsistentL_G {
     $self->filterflag(0);
     my $PLn=$self->selfConsistentL_n;
     my $stateit=$self->HP->states;
-    my $result=linearCombineIt($PLn, $stateit);
+    my $result=linearCombine($PLn, $stateit);
     $self->filterflag($filterflag);
     $result=$self->_filter($result,0)  if $filterflag;
     return $result;
@@ -498,7 +498,7 @@ sub _build_P2LMCalt {
     $rhs=$rhs->r2C;
     my $phi_n = cgtsv($subdiag, $diag, $supradiag, $rhs);
     my $states=$haydock->states;
-    my $phi_G=linearCombineIt($phi_n, $states);
+    my $phi_G=linearCombine($phi_n, $states);
     my $Pphi=$k*(1-$epsA2)*$u2/$epsA2*HProd($phi_G, $PexL_G, $self->ndims);
     my $beta_G=RtoG($B*GtoR($haydock->firstState,$ndims,0), $ndims,0);
     my $betaV_G=$beta_G->(*1)*$geom->GNorm;
@@ -506,7 +506,7 @@ sub _build_P2LMCalt {
     my $betaV_n=HProd($betaV_G,$states, $self->ndims, 1);
     my $psi = cgtsv($subdiag, $diag, $supradiag, $betaV_n->mv(0,-1)); # nx ny .... cartesian nh - threading
     $states=$haydock->states;
-    my $psi_G=linearCombineIt($psi, $states->dummy(-1), 1);
+    my $psi_G=linearCombine($psi, $states->dummy(-1), 1);
     my $Ppsi = HProd($psi_G, $PexL_G, $self->ndims);
     my $P2M=$Pphi+$Ppsi+$PexM*$nelem; # Unnormalize Pex !!
     return $P2M->(,*1,*1);
