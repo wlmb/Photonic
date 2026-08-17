@@ -1,5 +1,5 @@
 package Photonic::LE::NR2::Field;
-$Photonic::LE::NR2::Field::VERSION = '0.02401';
+$Photonic::LE::NR2::Field::VERSION = '0.02402';
 
 
 =encoding UTF-8
@@ -10,7 +10,7 @@ Photonic::LE::NR2::Field
 
 =head1 VERSION
 
-version 0.02401
+version 0.02402
 
 =head1 COPYRIGHT NOTICE
 
