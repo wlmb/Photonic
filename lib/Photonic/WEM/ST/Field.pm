@@ -1,5 +1,5 @@
 package Photonic::WEM::ST::Field;
-$Photonic::WEM::ST::Field::VERSION = '0.02401';
+$Photonic::WEM::ST::Field::VERSION = '0.02402';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WEM::ST::Field
 
 =head1 VERSION
 
-version 0.02401
+version 0.02402
 
 =head1 COPYRIGHT NOTICE
 

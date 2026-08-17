@@ -1,6 +1,8 @@
 Revision history for Photonic
 
 {{$NEXT}}
+
+0.02401 2026-08-16
   - Change cartesian_product from Utils to a simpler code. Fix
     documentation.
   - Remove wave_operator from Utils, as it is a plain inverse.

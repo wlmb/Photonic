@@ -1,5 +1,5 @@
 package Photonic::Roles::Geometry;
-$Photonic::Roles::Geometry::VERSION = '0.02401';
+$Photonic::Roles::Geometry::VERSION = '0.02402';
 
 =encoding UTF-8
 
@@ -281,7 +281,7 @@ Photonic::Roles::Geometry
 
 =head1 VERSION
 
-version 0.02401
+version 0.02402
 
 =head1 SYNOPSIS
 
@@ -295,7 +295,7 @@ version 0.02401
 =item (for developers)
 
     package Photonic::Geometry::FromB;
-    $Photonic::Geometry::Geometry::VERSION = '0.02401';
+    $Photonic::Geometry::Geometry::VERSION = '0.02402';
     use namespace::autoclean;
     use Moo;
     use Moo::StrictConstructor;

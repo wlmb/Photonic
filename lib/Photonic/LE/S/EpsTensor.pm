@@ -1,5 +1,5 @@
 package Photonic::LE::S::EpsTensor;
-$Photonic::LE::S::EpsTensor::VERSION = '0.02401';
+$Photonic::LE::S::EpsTensor::VERSION = '0.02402';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::LE::S::EpsTensor
 
 =head1 VERSION
 
-version 0.02401
+version 0.02402
 
 =head1 COPYRIGHT NOTICE
 

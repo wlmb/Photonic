@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromB;
-$Photonic::Geometry::FromB::VERSION = '0.02401';
+$Photonic::Geometry::FromB::VERSION = '0.02402';
 
 =encoding UTF-8
 
@@ -57,7 +57,7 @@ Photonic::Geometry::FromB
 
 =head1 VERSION
 
-version 0.02401
+version 0.02402
 
 =head1 SYNOPSIS
 
