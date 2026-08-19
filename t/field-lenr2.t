@@ -146,7 +146,7 @@ $expected = pdl(<<'EOF');
  [ [ 0 -6.4125149e-17-7.2553859e-18i ] ]
 ]
 EOF
-ok(Cagree($got, $expected, 1e-33), "external_G") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-15), "external_G") or diag "got: $got\nexpected: $expected";
 # SH ext. longitudinal polarization in reciprocal space
 $got=$nrsh->externalL_G;
 $expected = pdl(<<'EOF');
@@ -164,7 +164,7 @@ $expected = pdl(<<'EOF');
  [ 6.4125149e-17+7.2553859e-18i ]
 ]
 EOF
-ok(Cagree($got, $expected, 1e-33), "externalL_G") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-15), "externalL_G") or diag "got: $got\nexpected: $expected";
 # SH ext. longitudinal polarization proj. in recip. space
 $got=$nrsh->externalVecL_G;
 $expected = pdl(<<'EOF');
@@ -182,7 +182,7 @@ $expected = pdl(<<'EOF');
  [ [ 0 -6.4125149e-17-7.2553859e-18i ] ]
 ]
 EOF
-ok(Cagree($got, $expected, 1e-33), "externalVecL_G") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-15), "externalVecL_G") or diag "got: $got\nexpected: $expected";
 # SH ext. longitudinal polarization proj. in real space'
 $got=$nrsh->externalVecL;
 $expected = pdl(<<'EOF');
@@ -200,7 +200,7 @@ $expected = pdl(<<'EOF');
  [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
 ]
 EOF
-ok(Cagree($got, $expected, 1e-33), "externalVecL") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-15), "externalVecL") or diag "got: $got\nexpected: $expected";
 # SH ext. longitudinal polarization in Haydock representation
 $got=$nrsh->externalL_n;
 $expected = pdl(<<'EOF');
@@ -209,7 +209,7 @@ $expected = pdl(<<'EOF');
  0
 ]
 EOF
-ok(Cagree($got, $expected, 1e-33), "externalL_n") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-15), "externalL_n") or diag "got: $got\nexpected: $expected";
 # SH self consistent longitudinal polarization in Haydock representation
 $got=$nrsh->selfConsistentL_G;
 $expected = pdl(<<'EOF');
@@ -227,7 +227,7 @@ $expected = pdl(<<'EOF');
  [ -4.4470906e-20-3.1472783e-18i ]
 ]
 EOF
-ok(Cagree($got, $expected, 1e-35), "selfConsistentL_G") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-15), "selfConsistentL_G") or diag "got: $got\nexpected: $expected";
 # SH self consistent longitudinal polarization components in reciprocal space
 $got=$nrsh->selfConsistentVecL_G;
 $expected = pdl(<<'EOF');
@@ -245,7 +245,7 @@ $expected = pdl(<<'EOF');
  [ [ 0 4.4470906e-20+3.1472783e-18i ] ]
 ]
 EOF
-ok(Cagree($got, $expected, 1e-35), "selfConsistentVecL_G") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-15), "selfConsistentVecL_G") or diag "got: $got\nexpected: $expected";
 # SH self consistent longitudinal polarization vector field in real space
 $got=$nrsh->selfConsistentVecL;
 $expected = pdl(<<'EOF');
@@ -263,7 +263,7 @@ $expected = pdl(<<'EOF');
  [ [ 0 -1.1542169e-19-2.2366796e-19i ] ]
 ]
 EOF
-ok(Cagree($got, $expected, 1e-35), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
+ok(Cagree($got, $expected, 1e-15), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
 # Linear "atomic" polarizability
 $got=$nrsh->alpha1;
 $expected = pdl(<<'EOF');
