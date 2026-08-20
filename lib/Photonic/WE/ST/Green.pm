@@ -191,7 +191,7 @@ sub _build_greenTensor {
        *$cpairs->(:,*1)
        *$symmetric)->sumover->sumover
       ;
-    $asy *= PDL->i();
+    $asy *= PDL::Core::i();
     # This is wrong: $asy -= $asy->transpose;
     $asy = $asy-$asy->transpose;
     $symmetric+$asy;

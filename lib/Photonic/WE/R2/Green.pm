@@ -218,7 +218,7 @@ sub _build_greenTensor {
        *$cpairs->(:,*1)
        *$greenTensor)->sumover->sumover
       ;
-    $asy *= PDL->i();
+    $asy *= PDL::Core::i();
     $asy -= $asy->transpose;
     $greenTensor+$asy;
 }
