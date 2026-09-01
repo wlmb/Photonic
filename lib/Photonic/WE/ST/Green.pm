@@ -118,6 +118,8 @@ The macroscopic dielectric tensor
 
 use namespace::autoclean;
 use PDL::Lite;
+use PDL::Core;
+use PDL::MatrixOps;
 use PDL::NiceSlice;
 use Photonic::WE::ST::Haydock;
 use Photonic::WE::ST::GreenP;
@@ -191,7 +193,7 @@ sub _build_greenTensor {
        *$cpairs->(:,*1)
        *$symmetric)->sumover->sumover
       ;
-    $asy *= PDL::Core::i();
+    $asy *= i();
     # This is wrong: $asy -= $asy->transpose;
     $asy = $asy-$asy->transpose;
     $symmetric+$asy;
@@ -239,7 +241,7 @@ sub _build_epsilonTensor {
         $k2=$k->inner($k);
         $kk=$k->outer($k);
     }
-    my $id=PDL::MatrixOps::identity($k);
+    my $id=identity($k);
     $wave+$k2/$q2*$id - $kk/$q2;
 }
 

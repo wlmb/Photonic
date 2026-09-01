@@ -135,6 +135,8 @@ Returns the macroscopic dielectric tensor from the wave operator.
 
 use namespace::autoclean;
 use PDL::Lite;
+use PDL::Core;
+use PDL::MatrixOps;
 use PDL::NiceSlice;
 use Photonic::WE::R2::Haydock;
 use Photonic::WE::R2::GreenP;
@@ -218,7 +220,7 @@ sub _build_greenTensor {
        *$cpairs->(:,*1)
        *$greenTensor)->sumover->sumover
       ;
-    $asy *= PDL::Core::i();
+    $asy *= i();
     $asy -= $asy->transpose;
     $greenTensor+$asy;
 }
@@ -257,7 +259,7 @@ sub _build_epsilonTensor {
     my $k=$self->metric->wavevector;
     my $k2=$k->inner($k);
     my $kk=$k->outer($k);
-    my $id=PDL::MatrixOps::identity($k);
+    my $id=identity($k);
     $wave+$k2/$q2*$id - $kk/$q2;
 };
 
