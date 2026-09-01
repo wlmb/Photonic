@@ -132,6 +132,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 
 use namespace::autoclean;
 use PDL::Lite;
+use PDL::MatrixOps;
 use PDL::NiceSlice;
 use Carp;
 use Photonic::Types -all;
@@ -159,14 +160,14 @@ sub applyOperator {
     my $psi=shift; #psi is xyz:pm:nx:ny:nz
     my $mask=undef;
     $mask=$self->mask if $self->use_mask;
-    my $id=PDL::MatrixOps::identity($self->ndims);
+    my $id=identity($self->ndims);
     my $g = $self->metric; #metric object
     # apply metric
     my $g_psi_G=$g->apply($psi); # xyz:pm:nx:ny:nz.
     # FIRST TERM
     # get longitudinal projector and apply it to g psi
     my $PL_g_psi_G = $g->LP                  #xyz:xyz:pm:nx:ny:nz
-		     ->inner($g_psi_G(:,*1)) #xyz:pm:nx:ny:nz 
+		     ->inner($g_psi_G(:,*1)) #xyz:pm:nx:ny:nz
                      ;                       # matrix-vector product xyz:pm:nx:ny:nz
     #SECOND TERM applied to g_psi
     #FT g_psi to real space

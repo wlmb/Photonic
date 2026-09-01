@@ -132,6 +132,8 @@ use strict;
 use warnings;
 use namespace::autoclean;
 use PDL::Lite;
+use PDL::Core;
+use PDL::MatrixOps;
 use PDL::NiceSlice;
 use Carp;
 use Photonic::Types -all;
@@ -155,7 +157,7 @@ sub applyOperator {
     my $psi=shift; #psi is xy:pm:nx:ny...
     my $mask=undef;
     $mask=$self->mask if $self->use_mask;
-    my $id=PDL::MatrixOps::identity($self->ndims);
+    my $id=identity($self->ndims);
     my $gpsi=$self->applyMetric($psi);
     # gpsi is xy:pm:nx:ny. Get cartesian and pm out of the way and
     my $gpsi_r=GtoR($gpsi, $self->ndims, 2)->mv(1,-1); #xy:nx:ny:pm

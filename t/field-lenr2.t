@@ -84,269 +84,81 @@ my $ftv_raw=$fto->rawfield;
 my $ftx_raw=-(4*PI+0*i)/($ea*(1-$gt->f)+$eb*$gt->f)*pdl([1,0]);
 ok(Cagree($ftv_raw, $ftx_raw), "1D trans field") or diag "got: $ftv_raw\nexpected: $ftx_raw";
 
-## NonRetarded Second Harmonic Plarization
-my ($dA, $dB) = (0, 1); # vacuum, then anything as is normalised to dB
+## NonRetarded Second Harmonic Polarization
+my ($nA, $nB) = (0, 1); # vacuum, then anything as is normalised to dB
 my $nrshp=Photonic::LE::NR2::SHP->new(
   haydock=>$nt, nh=>10, filter=>ones(1),
-  densityA=>$dA, densityB=>$dB,
+  densityA=>$nA, densityB=>$nB,
 );
+my $ea2=$ea; # linear permittivity at 2w. Arbitrary
+my $eb2=2*$eb; # linear permittivity at 2w. Arbitrary
 my $nrsh=Photonic::LE::NR2::SH->new(
-  shp=>$nrshp, epsA1=>$ea, epsB1=>$eb, epsA2=>$ea*$ea, epsB2=>$eb*$eb,
+  shp=>$nrshp, epsA1=>$ea, epsB1=>$eb, epsA2=>$ea2, epsB2=>$eb2,
   filterflag => 1
 );
 my $got=$nrsh->dipolar;
-my $expected = pdl(<<'EOF');
-[
- [ [ 0 0 ] ]
- [ [ 0 -7.9823116e-17+1.1403302e-17i ] ]
- [ [ 0  4.1596509e-17-5.9423584e-18i ] ]
- [ [ 0 -2.9756908e-17+4.2509868e-18i ] ]
- [ [ 0  2.4722933e-17-3.5318475e-18i ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
-]
-EOF
+my $expected = pdl(0);
 ok(Cagree($got, $expected), "dipolar") or diag "got: $got\nexpected: $expected";
 # quadrupolar contrib
 $got=$nrsh->quadrupolar;
-$expected = r2C(pdl <<'EOF');
-[
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
-]
-EOF
+$expected = pdl(0);
 ok(Cagree($got, $expected), "quadrupolar") or diag "got: $got\nexpected: $expected";
 # SH ext. polarization in reciprocal space
 $got=$nrsh->external_G;
-$expected = pdl(<<'EOF');
-[
- [ [ 0 -4.3260582e-17+6.1800832e-18i ] ]
- [ [ 0 -5.9528635e-17+2.4920212e-17i ] ]
- [ [ 0 -2.7186406e-17+6.2313278e-17i ] ]
- [ [ 0 -1.2929662e-17+5.3169197e-17i ] ]
- [ [ 0 1.3401775e-17+1.10965e-16i ] ]
- [ [ 0 1.5419056e-16+6.9763677e-17i ] ]
- [ [ 0  1.2848911e-16-1.1014649e-16i ] ]
- [ [ 0 -1.8204495e-17-1.1027889e-16i ] ]
- [ [ 0  -2.729985e-17-4.7422124e-17i ] ]
- [ [ 0 -4.3546668e-17-5.2208553e-17i ] ]
- [ [ 0 -6.4125149e-17-7.2553859e-18i ] ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-33), "external_G") or diag "got: $got\nexpected: $expected";
+$expected = pdl(0);
+ok(Cagree($got, $expected), "external_G") or diag "got: $got\nexpected: $expected";
 # SH ext. longitudinal polarization in reciprocal space
 $got=$nrsh->externalL_G;
-$expected = pdl(<<'EOF');
-[
- [ 0 ]
- [ -5.9528635e-17+2.4920212e-17i ]
- [ -2.7186406e-17+6.2313278e-17i ]
- [ -1.2929662e-17+5.3169197e-17i ]
- [ 1.3401775e-17+1.10965e-16i ]
- [ 1.5419056e-16+6.9763677e-17i ]
- [ -1.2848911e-16+1.1014649e-16i ]
- [ 1.8204495e-17+1.1027889e-16i ]
- [  2.729985e-17+4.7422124e-17i ]
- [ 4.3546668e-17+5.2208553e-17i ]
- [ 6.4125149e-17+7.2553859e-18i ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-33), "externalL_G") or diag "got: $got\nexpected: $expected";
+$expected = pdl(0);
+ok(Cagree($got, $expected), "externalL_G") or diag "got: $got\nexpected: $expected";
 # SH ext. longitudinal polarization proj. in recip. space
 $got=$nrsh->externalVecL_G;
-$expected = pdl(<<'EOF');
-[
- [ [ 0 0 ] ]
- [ [ 0 -5.9528635e-17+2.4920212e-17i ] ]
- [ [ 0 -2.7186406e-17+6.2313278e-17i ] ]
- [ [ 0 -1.2929662e-17+5.3169197e-17i ] ]
- [ [ 0 1.3401775e-17+1.10965e-16i ] ]
- [ [ 0 1.5419056e-16+6.9763677e-17i ] ]
- [ [ 0  1.2848911e-16-1.1014649e-16i ] ]
- [ [ 0 -1.8204495e-17-1.1027889e-16i ] ]
- [ [ 0  -2.729985e-17-4.7422124e-17i ] ]
- [ [ 0 -4.3546668e-17-5.2208553e-17i ] ]
- [ [ 0 -6.4125149e-17-7.2553859e-18i ] ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-33), "externalVecL_G") or diag "got: $got\nexpected: $expected";
+$expected = pdl(0);
+ok(Cagree($got, $expected, 1e-15), "externalVecL_G") or diag "got: $got\nexpected: $expected";
 # SH ext. longitudinal polarization proj. in real space'
 $got=$nrsh->externalVecL;
-$expected = pdl(<<'EOF');
-[
- [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
- [ [ 0 -7.5890335e-17+1.0841476e-17i ] ]
- [ [ 0  4.5529289e-17-6.5041841e-18i ] ]
- [ [ 0 -2.5824128e-17+3.6891611e-18i ] ]
- [ [ 0  2.8655713e-17-4.0936733e-18i ] ]
- [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
- [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
- [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
- [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
- [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
- [ [ 0  3.9327802e-18-5.6182574e-19i ] ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-33), "externalVecL") or diag "got: $got\nexpected: $expected";
+$expected = pdl(0);
+ok(Cagree($got, $expected, 1e-15), "externalVecL") or diag "got: $got\nexpected: $expected";
 # SH ext. longitudinal polarization in Haydock representation
 $got=$nrsh->externalL_n;
-$expected = pdl(<<'EOF');
-[
- 3.2531646e-16-8.2814988e-33i
- 0
-]
-EOF
-ok(Cagree($got, $expected, 1e-33), "externalL_n") or diag "got: $got\nexpected: $expected";
+$expected = pdl(0);
+ok(Cagree($got, $expected), "externalL_n") or diag "got: $got\nexpected: $expected";
 # SH self consistent longitudinal polarization in Haydock representation
 $got=$nrsh->selfConsistentL_G;
-$expected = pdl(<<'EOF');
-[
- [ 0 ]
- [ 2.3385878e-18+1.910126e-18i ]
- [ 2.7283262e-18+2.436351e-19i ]
- [ 2.3719287e-18+6.4418678e-20i ]
- [ 4.2223945e-18-1.807201e-18i ]
- [  9.5067349e-19-6.5454932e-18i ]
- [ 5.5266405e-18+3.6340151e-18i ]
- [  4.1237233e-18-2.0133211e-18i ]
- [  1.4476152e-18-1.8171605e-18i ]
- [  1.6228705e-18-2.2408099e-18i ]
- [ -4.4470906e-20-3.1472783e-18i ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-35), "selfConsistentL_G") or diag "got: $got\nexpected: $expected";
+$expected = pdl(0);
+ok(Cagree($got, $expected, 1e-15), "selfConsistentL_G") or diag "got: $got\nexpected: $expected";
 # SH self consistent longitudinal polarization components in reciprocal space
 $got=$nrsh->selfConsistentVecL_G;
-$expected = pdl(<<'EOF');
-[
- [ [ 0 0 ] ]
- [ [ 0 2.3385878e-18+1.910126e-18i ] ]
- [ [ 0 2.7283262e-18+2.436351e-19i ] ]
- [ [ 0 2.3719287e-18+6.4418678e-20i ] ]
- [ [ 0 4.2223945e-18-1.807201e-18i ] ]
- [ [ 0  9.5067349e-19-6.5454932e-18i ] ]
- [ [ 0 -5.5266405e-18-3.6340151e-18i ] ]
- [ [ 0 -4.1237233e-18+2.0133211e-18i ] ]
- [ [ 0 -1.4476152e-18+1.8171605e-18i ] ]
- [ [ 0 -1.6228705e-18+2.2408099e-18i ] ]
- [ [ 0 4.4470906e-20+3.1472783e-18i ] ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-35), "selfConsistentVecL_G") or diag "got: $got\nexpected: $expected";
+$expected = pdl(0);
+ok(Cagree($got, $expected, 1e-15), "selfConsistentVecL_G") or diag "got: $got\nexpected: $expected";
 # SH self consistent longitudinal polarization vector field in real space
 $got=$nrsh->selfConsistentVecL;
-$expected = pdl(<<'EOF');
-[
- [ [ 0 -5.8607157e-21-4.999633e-20i ] ]
- [ [ 0  1.326045e-18+2.8874943e-18i ] ]
- [ [ 0 -6.9992818e-19-1.5807479e-18i ] ]
- [ [ 0  4.9065455e-19+1.0450579e-18i ] ]
- [ [ 0 -4.183805e-19-9.5980025e-19i ] ]
- [ [ 0 -1.1542169e-19-2.2366796e-19i ] ]
- [ [ 0 -1.1542169e-19-2.2366796e-19i ] ]
- [ [ 0 -1.1542169e-19-2.2366796e-19i ] ]
- [ [ 0 -1.1542169e-19-2.2366796e-19i ] ]
- [ [ 0 -1.1542169e-19-2.2366796e-19i ] ]
- [ [ 0 -1.1542169e-19-2.2366796e-19i ] ]
-]
-EOF
-ok(Cagree($got, $expected, 1e-35), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
+$expected = pdl(0);
+ok(Cagree($got, $expected), "selfConsistentVecL") or diag "got: $got\nexpected: $expected";
 # Linear "atomic" polarizability
 $got=$nrsh->alpha1;
-$expected = pdl(<<'EOF');
-[
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
- [ 0.15915494+0.31830989i ]
-]
-EOF
+$expected = ($eb-1)/(4*PI*$nB);
 ok(Cagree($got, $expected), "alpha1") or diag "got: $got\nexpected: $expected";
 # SH "atomic" polarizability
 $got=$nrsh->alpha2;
-$expected = pdl(<<'EOF');
-[
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
- [-0.636619772367581+1.90985931710274i]
-]
-EOF
+$expected = ($eb2-1)/(4*PI*$nB);
 ok(Cagree($got, $expected), "alpha2") or diag "got: $got\nexpected: $expected";
 # longitudinal field at second harmonic
 $got=$nrsh->field2;
-$expected = pdl(<<'EOF');
-[
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
- [ [1-2.77555756156289e-17i                       0]]
-]
-EOF
+$expected = pdl([1,0]);
 ok(Cagree($got, $expected), "field2") or diag "got: $got\nexpected: $expected";
 # SH self consistent total polarization vector field in real space
 $got=$nrsh->P2;
-$expected = pdl(<<'EOF');
-[
- [ [ 0 -1.2467976e-18-2.5931346e-19i ] ]
- [ [ 0 8.5108064e-20+2.6781772e-18i ] ]
- [ [ 0 -1.9408651e-18-1.790065e-18i ] ]
- [ [ 0 -7.5028237e-19+8.3574075e-19i ] ]
- [ [ 0 -1.6593174e-18-1.1691174e-18i ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
- [ [ 0 0 ] ]
-]
-EOF
+$expected = pdl(0);
 ok(Cagree($got, $expected), "P2") or diag "got: $got\nexpected: $expected";
 # Spectral variable at fundamental
 $got=$nrsh->u1;
-$expected = pdl(<<'EOF');
--0.75-0.25i
-EOF
+$expected = 1/(1-$eb/$ea);
 ok(Cagree($got, $expected), "u1") or diag "got: $got\nexpected: $expected";
-
 # second harmonic susceptibility tensor
 my $chi=Photonic::LE::NR2::SHChiTensor->new(
   geometry=>$gl,
-  densityA=>$dA, densityB=>$dB, nhf=>10, nh=>10,
+  densityA=>$nA, densityB=>$nB, nhf=>10, nh=>10,
   epsA1=>$ea, epsB1=>$eb, epsA2=>$ea*$ea, epsB2=>$eb*$eb,
   keepStates=>1,
 );

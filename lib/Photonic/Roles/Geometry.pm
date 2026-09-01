@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA  02110-1301 USA
 use Moo::Role;
 
 use PDL::Lite;
+use PDL::MatrixOps;
 use PDL::NiceSlice;
 use Photonic::Types -all;
 use Photonic::Utils qw(any_complex lu_decomp make_dyads triangle_coords);
@@ -100,7 +101,7 @@ sub _build_L {
 
 sub _build_units {
     my $self=shift;
-    PDL::MatrixOps::identity($self->B->ndims); # unit vectors
+    identity($self->B->ndims); # unit vectors
 }
 
 sub _build_primitive {
