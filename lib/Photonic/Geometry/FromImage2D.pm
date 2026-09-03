@@ -1,5 +1,5 @@
 package Photonic::Geometry::FromImage2D;
-$Photonic::Geometry::FromImage2D::VERSION = '0.02402';
+$Photonic::Geometry::FromImage2D::VERSION = '0.025';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::Geometry::FromImage2D
 
 =head1 VERSION
 
-version 0.02402
+version 0.025
 
 =head1 COPYRIGHT NOTICE
 

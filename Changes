@@ -2,6 +2,54 @@ Revision history for Photonic
 
 {{$NEXT}}
 
+0.025 2026-08-31
+ - Use consistently the imaginary constant i()
+ - Load PDL::MatrixOps and PDL::Core to remove use of explicit package names
+ - Modify tests of second harmonic fields where expected was actually
+   zero, and where there is an analytical expression for the expected result.
+
+0.02402 2026-08-31
+ - Added tests for fields t/field-wemst.t for tensorial magnetic response
+ - Fix test of ...WEM::S::Metric
+ - Fix synopsis of  ...WEM::S::Haydock
+ - Fix documentation of ...WEM::S::Haydock
+ - Fix documentation of WEM::S::Metric
+ - Fix documentation of WEM::ST::Metric
+ - Added tests for fields in magnetizable materials t/field-wems.t t/field-wemst.t
+ - Add applyMetric to WEM::ST::Haydock
+ - Add SH attribute P2LMCalt to LE::NR2::SH
+ - Add WEM::ST::Haydock
+ - Fix documentation of WEM::ST::Metric
+ - Finish code of WEM::ST::Metric
+ - Fix documentation of WEM::S::Haydoc, Metric
+ - Remove attribute mu from WEM::S::Green
+ - Add tests for rawfield in t/field-west.t
+ - Inherit WEM::S::Haydock from WE::S::Haydock
+ - Fix errors in WEM::S::Haydock
+ - Use additional some modules in WEM::S::Metric
+ - Fix errors in WEM::S::Haydock
+ - Add WEM::ST::Metric
+ - Remove garbage files
+ - Fix initial state for WEM::S::Haydock
+ - Add BUILD to WEM::S::Metric
+ - Fix apply in WEM::S::Metric
+ - Add longitudinal projector to WEM::S::Metric
+ - Change k pm G to G pm k, for consistency with theory
+ - Check dimensionality in WEM::S::Metric
+ - Add WEM::S::{Field Green GreenP Haydock Metric} modules
+ - Fix test field-wems.t
+ - Fix pod
+ - Remove multiple comparisons (don't work with old Perls)
+ - Update MANIFEST
+ - Start work on WEM::ST::...
+ - Update actions
+ - Add test t/field-wems.t
+ - Remove automatic creation of temporal files with fixed names from WEM::S::Green
+ - Add WEM::S::{Field Green}
+ - Added applyMetric to WEM::S::Metric
+ - Added WEM::S::{GreenP Haydock Metric}
+ - Add tests for WEM::S::GreenP
+
 0.02401 2026-08-16
   - Change cartesian_product from Utils to a simpler code. Fix
     documentation.

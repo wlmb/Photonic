@@ -1,5 +1,5 @@
 package Photonic::WE::ST::Haydock;
-$Photonic::WE::ST::Haydock::VERSION = '0.02402';
+$Photonic::WE::ST::Haydock::VERSION = '0.025';
 
 =encoding UTF-8
 
@@ -9,7 +9,7 @@ Photonic::WE::ST::Haydock
 
 =head1 VERSION
 
-version 0.02402
+version 0.025
 
 =head1 SYNOPSIS
 
