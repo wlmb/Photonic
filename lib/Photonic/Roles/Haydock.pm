@@ -90,21 +90,37 @@ Consumes L<Photonic::Roles::KeepStates>, L<Photonic::Roles::Reorthogonalize>
 
 =item * stateFN
 
-File where the states will be read from and stored, memory-mapped.
-See L<PDL::IO::FastRaw> for more information. Ensure that the geometry
-dimensions are the same as the states'.
+File where the states will be stored, memory-mapped, so they need not
+fit in RAM. See L<PDL::IO::FastRaw> for more information. Giving a
+C<stateFN> implies C<keepStates=E<gt>1>.
+
+The file is an output: any existing file with this name (and its
+C<.hdr>) is deleted and created anew. The exception is resuming into
+the same file, i.e., when C<stateFN> is C<loadAllFN> suffixed with
+C<.states>. Then the file must exist and belong to the same system
+(same type and state dimensions), or an error is raised; if it has
+fewer than C<nh+1> slots (resuming with a larger C<nh>), it is grown,
+keeping the stored states.
 
 =item * storeAllFN
 
 File in which important attributes will be stored, plus the
-calculated coefficients. If no C<stateFN> as above is given, one will
-be assumed that is this value suffixed with C<.states>.
+calculated coefficients. If C<keepStates> is set and no C<stateFN> as
+above is given, the states are stored in this value suffixed with
+C<.states>. Without C<keepStates> only the coefficients are stored.
 
 =item * loadAllFN
 
 File from which the attributes, coefficients and states will be loaded.
-The states will be expected in a file suffixed with C<.states>, and
-needs to have been memory-mapped as above.
+The states, if they were kept, will be expected in a file suffixed
+with C<.states>, memory-mapped as above. If they were not kept, only
+the coefficients are loaded; this is enough for Green's functions and
+dielectric tensors, but the iteration cannot be resumed beyond the
+stored C<iteration> unless it had converged, and an error is raised if
+C<nh> asks for more.
+
+C<loadAllFN> and C<storeAllFN> may be the same file, to continue a
+stored run and save the result in place.
 
 =item * smallH
 
@@ -113,7 +129,8 @@ b^2 coefficients are taken to be zero.
 
 =item * current_state next_state
 
-The n-th and n+1-th Haydock states
+The n-th and n+1-th Haydock states. Available with or without
+C<keepStates>.
 
 =item * current_a next_a
 
@@ -138,11 +155,19 @@ number of b coefficients is one less (but it starts with a dummy zero).
 
 =item * keepStates
 
-Flag to keep (1) or discard (0) Haydock states
+Flag to keep (1) or discard (0) Haydock states. Default 0.
+
+With 1, all C<nh+1> states are kept, as needed for fields and
+reorthogonalization (C<reorthogonalize> and C<stateFN> set it to 1).
+With 0, only the last three states (n-1, n, n+1) are held in a
+rotating buffer, which is all the recursion needs; the coefficients
+are identical, and memory is reduced from C<nh+1> to 3 states. This is
+enough for Green's functions and dielectric tensors.
 
 =item * states
 
-ndarray of Haydock states
+ndarray of Haydock states. Only available with C<keepStates>;
+otherwise it dies, as the states were not kept.
 
 =item * as
 
@@ -318,15 +343,21 @@ sub _build_coeff_pdl {
 sub _slot {
     my ($self, $n)=@_;
     $n % $self->_state_pdl->dim(-1);
+    # state_pdl is either nh+1 or less than 3
+    # see build_state
 }
 sub current_state :lvalue {
     my ($self)=@_;
     my $i=$self->iteration;
     my $t=$i ? top_slice($self->_state_pdl, '('.$self->_slot($i-1).')') : PDL::r2C(0);
+    # current state is stored using top slice which slices statepdl
+    # in the element '('.$self->_slot($i-1).')' of the last dimesion
 }
 sub next_state :lvalue {
     my ($self)=@_;
     my $t=top_slice($self->_state_pdl, '('.$self->_slot($self->iteration).')');
+    # state is stored using top slice which slices statepdl
+    # in the element '('.$self->_slot($i-1).')' of the last dimesion
 }
 sub states {
     my ($self)=@_;
@@ -342,10 +373,46 @@ sub _build__state_pdl {
     my $pdl;
     if (my $fn=$self->stateFN) {
 	require PDL::IO::FastRaw;
-	$pdl = PDL::IO::FastRaw::mapfraw(
-	    $fn,
-	    {Datatype=>$fs->type, Dims=>[$fs->dims, $self->nh+1], Creat=>!-f $fn},
-	);
+	my @dims = ($fs->dims, $self->nh+1);
+	my $loadfile = defined $self->loadAllFN ? $self->loadAllFN.".states" : '';
+	# Resuming into the same file: a missing file would be recreated
+	# with zeros and loaded as if it held the stored states.
+	croak "State file $fn to resume from does not exist"
+	    if $fn eq $loadfile && !-f $fn;
+	if ($fn eq $loadfile) {
+	    # Same file loadall will read: keep it, but make sure it is
+	    # compatible (a smaller/different file can crash: bus error).
+	    my $old = PDL::IO::FastRaw::mapfraw($fn, {ReadOnly=>1});
+	    my @odims = $old->dims;
+	    my $onslots = pop @odims;
+	    croak "State file $fn has dims (@{[$old->dims]}), type ", $old->type,
+		"; expected (@{[$fs->dims]}, slots), type ", $fs->type,
+		". It belongs to a different system; use another storeAllFN",
+		" to save the resumed run"
+		unless $old->type == $fs->type
+		    && "@odims" eq "@{[$fs->dims]}";
+	    undef $old;
+	    if ($onslots >= $self->nh+1) {
+		$pdl = PDL::IO::FastRaw::mapfraw($fn,
+		    {Datatype=>$fs->type, Dims=>\@dims});
+	    } else {
+		# Resuming with a larger nh: grow the file. Copy mapped
+		# file to mapped file, so the states need not fit in RAM.
+		rename $fn, "$fn.old" and rename "$fn.hdr", "$fn.old.hdr"
+		    or croak "Couldn't rename $fn to grow it: $!";
+		my $prev = PDL::IO::FastRaw::mapfraw("$fn.old", {ReadOnly=>1});
+		$pdl = PDL::IO::FastRaw::mapfraw($fn,
+		    {Datatype=>$fs->type, Dims=>\@dims, Creat=>1});
+		(my $t=top_slice($pdl, '0:'.($onslots-1))) .= $prev;
+		undef $prev;
+		unlink "$fn.old", "$fn.old.hdr";
+	    }
+	} else {
+	    # Output file: discard any old one and start fresh.
+	    unlink $fn, "$fn.hdr";
+	    $pdl = PDL::IO::FastRaw::mapfraw($fn,
+		{Datatype=>$fs->type, Dims=>\@dims, Creat=>1});
+	}
     } else {
 	# +1 to capture "next". If states are not kept, a rotating buffer
 	# with states n-1, n, n+1 is enough for the recursion.
@@ -459,11 +526,24 @@ sub loadall {
 	my $pdl_method = "_${_}_pdl";
 	(my $t=top_slice($self->$pdl_method, "0:$i")) .= $all->{$_}; # avoid 5.14.1 oddity
     }
-    return unless $self->keepStates;
+    if (!$self->keepStates) {
+	# Coefficients alone are enough for Green/epsilon, but the
+	# recursion cannot continue without the last states.
+	croak "Cannot resume Haydock iteration from $fn without stored states; ",
+	    "store with keepStates=>1 or use nh<=", $self->iteration
+	    if !$self->converged && $self->iteration < $self->nh;
+	return;
+    }
     $fn .= ".states";
     require PDL::IO::FastRaw;
     my $pdl = PDL::IO::FastRaw::mapfraw($fn);
     my $s=$self->_state_pdl;
+    if ($s->dim(-1) < $self->nh+1) {
+	# Built with a rotating buffer before keepStates was read from
+	# the file: switch to a full one.
+	my $full = PDL->zeroes($s->type, (($s->dims)[0..$s->ndims-2]), $self->nh+1);
+	$self->_set_state_pdl($s=$full);
+    }
     (my $t=top_slice($s, "0:$i")) .= top_slice($pdl, "0:$i");
 }
 
