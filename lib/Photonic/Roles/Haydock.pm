@@ -250,6 +250,7 @@ use IO::File;
 use Storable qw(store_fd fd_retrieve);
 use PDL::IO::Storable;
 use Carp;
+use List::Util ();
 
 requires
     '_fullorthogonalize_indeed',
@@ -267,7 +268,8 @@ has 'smallH'=>(is=>'ro', isa=>Num, required=>1, default=>1e-7,
 
 has nh=>(is=>'ro', required=>1,
          documentation=>'Maximum number of desired Haydock coefficients');
-has "_state_pdl"=>(is=>'lazy', init_arg=>undef, isa=>PDLComplex);
+has "_state_pdl"=>(is=>'lazy', init_arg=>undef, isa=>PDLComplex,
+		   writer=>'_set_state_pdl');
 my @poly_coeffs = qw(a b b2 c bc g);
 has "_${_}_pdl"=>(is=>'ro', lazy=>1, builder=>'_build_coeff_pdl', init_arg=>undef, isa=>PDLObj)
          for @poly_coeffs;
@@ -310,17 +312,26 @@ sub _build_coeff_pdl {
     $self->complexCoeffs ? $pdl->r2C : $pdl;
 }
 
+# Slot of the state buffer holding state $n. When all states are kept
+# the buffer has nh+1 slots and this is the identity; otherwise the
+# buffer is a rotating one with (at most) 3 slots: n-1, n and n+1.
+sub _slot {
+    my ($self, $n)=@_;
+    $n % $self->_state_pdl->dim(-1);
+}
 sub current_state :lvalue {
     my ($self)=@_;
     my $i=$self->iteration;
-    my $t=$i ? top_slice($self->_state_pdl, '('.($i-1).')') : PDL::r2C(0);
+    my $t=$i ? top_slice($self->_state_pdl, '('.$self->_slot($i-1).')') : PDL::r2C(0);
 }
 sub next_state :lvalue {
     my ($self)=@_;
-    my $t=top_slice($self->_state_pdl, '('.($self->iteration).')');
+    my $t=top_slice($self->_state_pdl, '('.$self->_slot($self->iteration).')');
 }
 sub states {
     my ($self)=@_;
+    croak "Haydock states were not kept; create the object with keepStates=>1"
+	unless $self->keepStates;
     my $i=$self->iteration;
     $i ? top_slice($self->_state_pdl, '0:'.($i-1)) : PDL->null;
 }
@@ -336,7 +347,10 @@ sub _build__state_pdl {
 	    {Datatype=>$fs->type, Dims=>[$fs->dims, $self->nh+1], Creat=>!-f $fn},
 	);
     } else {
-	$pdl = PDL->zeroes($fs->type, $fs->dims, $self->nh+1); # +1 to capture "next"
+	# +1 to capture "next". If states are not kept, a rotating buffer
+	# with states n-1, n, n+1 is enough for the recursion.
+	my $nslots = $self->keepStates ? $self->nh+1 : List::Util::min(3, $self->nh+1);
+	$pdl = PDL->zeroes($fs->type, $fs->dims, $nslots);
     }
     (my $t=top_slice($pdl, '(0)')) .= $fs;
     $pdl;
@@ -416,6 +430,9 @@ around BUILDARGS => sub {
     my ($orig, $class, %args) = @_;
     # Can't reorthogonalize without previous states
     $args{keepStates} = 1 if $args{reorthogonalize};
+    # A state file only makes sense if all states are kept
+    # asking for a state file means asking for the states
+    $args{keepStates} = 1 if defined $args{stateFN};
     $args{stateFN} = "$args{storeAllFN}.states"
 	if $args{keepStates} and defined $args{storeAllFN} and !defined $args{stateFN};
     $class->$orig(%args);
