@@ -167,10 +167,11 @@ sub _build_haydock { # One Haydock coefficients calculator per direction0
 	Photonic::WEM::ST::Haydock->new(
 	    metric=>$self->metric,
 	    nh=>$self->nh,
+	    smallH=>$self->smallH,
 	    reorthogonalize=>$self->reorthogonalize,
 	    use_mask=>$self->use_mask,
 	    mask=>$self->mask,
-	    keepStates=>1,
+	    keepStates=>$self->keepStates,
 	    polarization=>$pairs[$_]->r2C,
 	    )
     } 0..@pairs-1;
