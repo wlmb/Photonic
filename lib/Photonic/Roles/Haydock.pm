@@ -393,8 +393,10 @@ sub _build__state_pdl {
 		    && "@odims" eq "@{[$fs->dims]}";
 	    undef $old;
 	    if ($onslots >= $self->nh+1) {
+		# is this always correct?
+		# are not thetre sates that for the new run should not be reused?
 		$pdl = PDL::IO::FastRaw::mapfraw($fn,
-		    {Datatype=>$fs->type, Dims=>\@dims});
+						 {Datatype=>$fs->type, Dims=>\@dims});
 	    } else {
 		# Resuming with a larger nh: grow the file. Copy mapped
 		# file to mapped file, so the states need not fit in RAM.
@@ -419,6 +421,7 @@ sub _build__state_pdl {
 	my $nslots = $self->keepStates ? $self->nh+1 : List::Util::min(3, $self->nh+1);
 	$pdl = PDL->zeroes($fs->type, $fs->dims, $nslots);
     }
+    # save the first state in the states pdl and initialize 
     (my $t=top_slice($pdl, '(0)')) .= $fs;
     $pdl;
 }
