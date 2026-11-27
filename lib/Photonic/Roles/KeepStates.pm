@@ -62,6 +62,11 @@ Photonic subpackages to calculate the electromagnetic field
 Flag to keep the states that make up a Haydock basis. Default: don't
 keep states (0).
 
+Keeping states (1) is required to calculate fields. Without it, a
+Haydock calculator holds only its last three states, which saves
+memory and is enough for Green's functions and dielectric tensors.
+See L<Photonic::Roles::Haydock>.
+
 =cut
 
 use Moo::Role;

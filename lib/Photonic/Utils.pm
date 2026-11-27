@@ -522,10 +522,10 @@ Utility functions that may be useful.
 
 =over 4
 
-=item * $slice=top_slice($pdl, $slice_arg)
+=item * $slice=top_slice($pdl, $index)
 
-Applies the given C<$slice_arg> to the highest dimension of the given
-ndarray.
+Slices $pdl ndarray applying $index to the last dimension.
+Returns $pdl->slice(:,:,..,$pdl_dims,($index)).
 
 =item * $pdl=dummyN($pdl, $how_many, $where, $dim_size)
 

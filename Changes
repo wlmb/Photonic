@@ -2,6 +2,30 @@ Revision history for Photonic
 
 {{$NEXT}}
 
+0.025 2026-11-26
+
+ - Roles Haydock: Create a routine _slots that retunrs the number of
+   element of the last dimension of the preallocated pdl_states array.
+   For keepStates=> 0, slots={0,1,2}, otherwise slots={0,..,nh+1}.
+ - Roles Haydock: Haydock states builder was modififed. Attribute
+   build__pld_states without keepStates only creates a ring buffer of
+   size 3 that receives slots return.
+   Haydock with keepStates preallocates all nh+1 states in a ndarray with
+   nh+1 slots in the last dimension.
+ - Bus error fixed: Haydock with keepstates and stateFN, memory maps the states ndarray
+   to a file with stateFN name. If the file name exists and is loaded loadAllFN,
+   then it is used. Checks if the data is the same structure and type, if it is not,
+   it stops and gives an explicit erro message. If it is only that the slots number is
+   smaller to the new nh parameter, it creates a new file to store all the states with
+   witht he correct dimensions, removing the previous file but copying the previous
+   states in the new file. It the size is larger it keeps the file and uses it.
+   If not loadAllFN, just copy map the states.
+ - Define keepStates if stateFN
+ - WEM/Green pass keepStates to their haydock calculators instead of forcing it to be 1.
+ - Add t/allh_rolling.t to test all previous changes. For the rign buffer changes,
+   test that all the coefficients are identical for keepStates 1 or 0. Test that loading
+   and saving stateFN works correctly. 
+ 
 0.025 2026-08-31
  - Use consistently the imaginary constant i()
  - Load PDL::MatrixOps and PDL::Core to remove use of explicit package names
